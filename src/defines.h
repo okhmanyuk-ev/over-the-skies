@@ -5,7 +5,3 @@
 
 #define BUILD_DEVELOPER
 //#define BUILD_PRODUCTION
-
-#if defined(BUILD_DEVELOPER)
-//	#define BUILD_SPY
-#endif

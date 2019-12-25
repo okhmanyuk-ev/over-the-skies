@@ -39,9 +39,6 @@ Application::~Application()
 
 void Application::makeLoadingScene()
 {
-#if defined(BUILD_SPY)
-	return;
-#endif
 	auto root = mLoadingScene.getRoot();
 
 	auto logo = std::make_shared<Scene::Sprite>();
@@ -199,14 +196,6 @@ void Application::initialize()
 			})
 		);
 	}));
-
-#if defined(BUILD_SPY)
-	auto black_rect = std::make_shared<Scene::Rectangle>();
-	black_rect->setStretch({ 1.0f, 1.0f });
-	black_rect->setColor(Graphics::Color::Black);
-	black_rect->setAlpha(0.8f);
-	//root->attach(black_rect);
-#endif
 }
 
 void Application::frame()
