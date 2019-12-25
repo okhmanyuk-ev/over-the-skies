@@ -341,11 +341,11 @@ void Application::collide(std::shared_ptr<Plane> plane)
 		Shared::ActionHelpers::Kill(plane)
 	));
 
-	if (plane->ruby)
+	if (plane->hasRuby())
 	{
 		PROFILE->increaseRubies(1);
 
-		auto ruby = plane->ruby;
+		auto ruby = plane->getRuby();
 		auto pos = mHudHolder->unproject(ruby->project({ 0.0f, 0.0f }));
 		ruby->setAnchor({ 0.0f, 0.0f });
 		ruby->setPivot({ 0.0f, 0.0f });
@@ -524,7 +524,7 @@ void Application::spawnPlane(const glm::vec2& pos, float anim_delay)
 		ruby->setPosition({ 0.0f, -4.0f });
 		ruby->setSize({ 18.0f, 18.0f });
 		plane->attach(ruby);
-		plane->ruby = ruby;
+		plane->setRuby(ruby);
 	}
 }
 
@@ -617,7 +617,8 @@ void Application::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
 						Shared::ActionHelpers::MakeParallel(
 							Shared::ActionHelpers::ChangeScale(star, { 0.0f, 0.0f }, ShowDuration, Common::Easing::QuadraticIn),
 							Shared::ActionHelpers::Hide(star, ShowDuration, Common::Easing::QuadraticIn)
-						)),
+						)
+					),
 					Shared::ActionHelpers::Kill(star)
 				));
 			}),
