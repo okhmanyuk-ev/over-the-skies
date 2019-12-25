@@ -74,6 +74,7 @@ void Application::initialize()
 
 	// sky
 
+	mSky = std::make_shared<Sky>();
 	root->attach(mSky);
 
 	// stars holder
@@ -87,15 +88,18 @@ void Application::initialize()
 	CONSOLE->registerCVar("r_bloom_downscale_factor", { "float" }, CVAR_GETTER_INT_FUNC(mBloomLayer->getDownscaleFactor),
 		CVAR_SETTER_INT_FUNC(mBloomLayer->setDownscaleFactor));
 
+	mBloomLayer = std::make_shared<Scene::BloomLayer>();
 	mBloomLayer->setStretch({ 1.0f, 1.0f });
 	mBloomLayer->setDownscaleFactor(2.0f);
 	mSky->attach(mBloomLayer);
 
+	mStarsHolder1 = std::make_shared<Scene::Node>();
 	mStarsHolder1->setStretch({ 1.0f, 1.0f });
 	mStarsHolder1->setAnchor({ 0.5f, 1.0f });
 	mStarsHolder1->setPivot({ 0.5f, 1.0f });
 	mBloomLayer->attach(mStarsHolder1);
 
+	mStarsHolder2 = std::make_shared<Scene::Node>();
 	mStarsHolder2->setStretch({ 1.0f, 1.0f });
 	mStarsHolder2->setAnchor({ 0.5f, 0.0f });
 	mStarsHolder2->setPivot({ 0.5f, 1.0f });
@@ -104,8 +108,13 @@ void Application::initialize()
 	placeStarsToHolder(mStarsHolder1);
 	placeStarsToHolder(mStarsHolder2);
 
+	mAsteroidsHolder = std::make_shared<Scene::Node>();
+	mAsteroidsHolder->setStretch({ 1.0f, 1.0f });
+	mBloomLayer->attach(mAsteroidsHolder);
+
 	// game field
 
+	mGameField = std::make_shared<Scene::Node>();
 	mGameField->setVerticalAnchor(1.0f);
 	mGameField->setHorizontalSize(GameFieldWidth);
 	mGameField->setHorizontalAnchor(0.5f);
@@ -114,22 +123,26 @@ void Application::initialize()
 
 	// hud holder
 
+	mHudHolder = std::make_shared<Scene::Node>();
 	mHudHolder->setStretch({ 1.0f, 1.0f });
 	root->attach(mHudHolder);
 
 	// plane holder
 
+	mPlaneHolder = std::make_shared<Scene::Node>();
 	mPlaneHolder->setStretch({ 1.0f, 1.0f });
 	mGameField->attach(mPlaneHolder);
 
 	// trail
 
+	mParticlesHolder = std::make_shared<Scene::Node>();
 	mParticlesHolder->setVerticalAnchor(1.0f);
 	mParticlesHolder->setHorizontalStretch(1.0f);
 	mGameField->attach(mParticlesHolder);
 
 	// player
 
+	mPlayer = std::make_shared<Player>();
 	mPlayer->setSize(PlayerSize);
 	mPlayer->setPivot({ 0.5f, 0.5f });
 	mPlayer->setAlpha(0.0f);
@@ -137,6 +150,7 @@ void Application::initialize()
 
 	// score label
 
+	mScoreLabel = std::make_shared<Scene::Label>();
 	mScoreLabel->setFont(FONT("default"));
 	mScoreLabel->setAnchor({ 1.0f, 0.0f });
 	mScoreLabel->setPivot({ 1.0f, 0.0f });
@@ -146,6 +160,7 @@ void Application::initialize()
 
 	// ruby score sprite
 
+	mRubyScore.sprite = std::make_shared<Scene::Sprite>();
 	mRubyScore.sprite->setTexture(TEXTURE("ruby"));
 	mRubyScore.sprite->setPivot({ 0.0f, 0.0f });
 	mRubyScore.sprite->setAnchor({ 0.0f, 0.0f });
@@ -154,7 +169,7 @@ void Application::initialize()
 	mHudHolder->attach(mRubyScore.sprite);
 
 	// ruby score label
-
+	mRubyScore.label = std::make_shared<Scene::Label>();
 	mRubyScore.label->setFont(FONT("default"));
 	mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
 	mRubyScore.label->setAnchor({ 1.0f, 0.5f });
@@ -193,6 +208,14 @@ void Application::initialize()
 		return Shared::ActionHelpers::Delayed(10.0f,
 			Shared::ActionHelpers::Execute([this] {
 				changeSkyColor();
+			})
+		);
+	}));
+
+	Common::Actions::Run(Shared::ActionHelpers::RepeatInfinite([this] {
+		return Shared::ActionHelpers::Delayed(1.0f, 
+			Shared::ActionHelpers::Execute([this] {
+				spawnAsteroid();
 			})
 		);
 	}));
@@ -674,4 +697,30 @@ void Application::event(const Shared::TouchEmulator::Event& e)
 	{
 		mTouching = false;
 	}
+}
+
+void Application::spawnAsteroid()
+{
+	auto start_anchor = glm::linearRand(glm::vec2(1.0f, -0.5f), glm::vec2(1.5f, 0.0f));
+
+	auto asteroid = std::make_shared<Scene::Actionable<Scene::Rectangle>>();
+	asteroid->setPivot({ 0.5f, 0.5f });
+	asteroid->setAnchor(start_anchor);
+	asteroid->setSize(2.0f);
+
+	auto trail = std::make_shared<Scene::Trail>(mAsteroidsHolder);
+	trail->setStretch(1.0f);
+	trail->setLifetime(0.25f);
+	asteroid->attach(trail);
+
+	const float Speed = 512.0f + 256.0f;
+	const float Duration = 5.0f;
+	const glm::vec2 Direction = { -1.0f, 1.0f };
+
+	asteroid->runAction(Shared::ActionHelpers::MakeSequence(
+		Shared::ActionHelpers::ChangePositionByDirection(asteroid, Direction, Speed, Duration),
+		Shared::ActionHelpers::Kill(asteroid)
+	));
+
+	mAsteroidsHolder->attach(asteroid);
 }

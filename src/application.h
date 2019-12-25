@@ -44,28 +44,30 @@ namespace hcg001
 		void placeStarsToHolder(std::shared_ptr<Scene::Node> holder);
 		void changeSkyColor();
 		void spawnPlanes();
-		
+		void spawnAsteroid();
+
 	private:
 		void event(const Shared::TouchEmulator::Event& e) override;
 
 	private:
-		std::shared_ptr<Sky> mSky = std::make_shared<Sky>();
-		std::shared_ptr<Player> mPlayer = std::make_shared<Player>();
+		std::shared_ptr<Sky> mSky;
+		std::shared_ptr<Player> mPlayer;
 		std::shared_ptr<Scene::Trail> mTrail = nullptr;
-		std::shared_ptr<Scene::Node> mGameField = std::make_shared<Scene::Node>();
-		std::shared_ptr<Scene::Node> mHudHolder = std::make_shared<Scene::Node>();
-		std::shared_ptr<Scene::Node> mPlaneHolder = std::make_shared<Scene::Node>();
-		std::shared_ptr<Scene::Label> mScoreLabel = std::make_shared<Scene::Label>();
+		std::shared_ptr<Scene::Node> mGameField;
+		std::shared_ptr<Scene::Node> mHudHolder;
+		std::shared_ptr<Scene::Node> mPlaneHolder;
+		std::shared_ptr<Scene::Label> mScoreLabel;
 		struct 
 		{
-			std::shared_ptr<Scene::Sprite> sprite = std::make_shared<Scene::Sprite>();
-			std::shared_ptr<Scene::Label> label = std::make_shared<Scene::Label>();
+			std::shared_ptr<Scene::Sprite> sprite;
+			std::shared_ptr<Scene::Label> label;
 		} mRubyScore;
-		std::shared_ptr<Scene::Node> mParticlesHolder = std::make_shared<Scene::Node>();
+		std::shared_ptr<Scene::Node> mParticlesHolder;
 		
-		std::shared_ptr<Scene::BloomLayer> mBloomLayer = std::make_shared<Scene::BloomLayer>();
-		std::shared_ptr<Scene::Node> mStarsHolder1 = std::make_shared<Scene::Node>();
-		std::shared_ptr<Scene::Node> mStarsHolder2 = std::make_shared<Scene::Node>();
+		std::shared_ptr<Scene::BloomLayer> mBloomLayer;
+		std::shared_ptr<Scene::Node> mStarsHolder1;
+		std::shared_ptr<Scene::Node> mStarsHolder2;
+		std::shared_ptr<Scene::Node> mAsteroidsHolder;
 		
 		std::shared_ptr<Shared::SceneManager> mSceneManager;
 

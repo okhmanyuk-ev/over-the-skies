@@ -12,9 +12,9 @@ namespace hcg001
 	public:
 		bool hasRuby() const { return mRuby != nullptr; }
 		auto getRuby() const { return mRuby; }
-		void setRuby(std::shared_ptr<Scene::Node> value) { mRuby = value; }
+		void setRuby(std::shared_ptr<Scene::Sprite> value) { mRuby = value; }
 
 	public:
-		std::shared_ptr<Scene::Node> mRuby = nullptr;
+		std::shared_ptr<Scene::Sprite> mRuby = nullptr;
 	};
 }
