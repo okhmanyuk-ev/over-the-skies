@@ -213,7 +213,8 @@ void Application::initialize()
 	}));
 
 	Common::Actions::Run(Shared::ActionHelpers::RepeatInfinite([this] {
-		return Shared::ActionHelpers::Delayed(1.0f, 
+		auto duration = glm::linearRand(5.0f, 20.0f);
+		return Shared::ActionHelpers::Delayed(duration, 
 			Shared::ActionHelpers::Execute([this] {
 				spawnAsteroid();
 			})
@@ -249,7 +250,7 @@ void Application::frame()
 		mTimeAccumulator = 0.0f;
 	}
 
-	if (mPlayer->project({ mPlayer->getSize() / 2.0f }).y >= PLATFORM->getHeight())
+	if (mPlayer->project(mPlayer->getSize() / 2.0f).y >= PLATFORM->getHeight())
 	{
 		gameover();
 		return;
@@ -276,6 +277,7 @@ void Application::frame()
 		y += delta;
 
 		mGameField->setY(y);
+		mAsteroidsHolder->setY(y / 2.0f);
 
 		GAME_STATS("Y", y);
 
@@ -701,21 +703,22 @@ void Application::event(const Shared::TouchEmulator::Event& e)
 
 void Application::spawnAsteroid()
 {
-	auto start_anchor = glm::linearRand(glm::vec2(1.0f, -0.5f), glm::vec2(1.5f, 0.0f));
+	auto start_anchor = glm::linearRand(glm::vec2(0.5f, 0.0f), glm::vec2(1.5f, 0.0f));
 
 	auto asteroid = std::make_shared<Scene::Actionable<Scene::Rectangle>>();
 	asteroid->setPivot({ 0.5f, 0.5f });
 	asteroid->setAnchor(start_anchor);
 	asteroid->setSize(2.0f);
+	asteroid->setY(-mAsteroidsHolder->getY());
 
 	auto trail = std::make_shared<Scene::Trail>(mAsteroidsHolder);
 	trail->setStretch(1.0f);
 	trail->setLifetime(0.25f);
 	asteroid->attach(trail);
 
-	const float Speed = 512.0f + 256.0f;
+	const float Speed = glm::linearRand(256.0f, 512.0f + 256.0f);
 	const float Duration = 5.0f;
-	const glm::vec2 Direction = { -1.0f, 1.0f };
+	const glm::vec2 Direction = { -0.75f, 1.0f };
 
 	asteroid->runAction(Shared::ActionHelpers::MakeSequence(
 		Shared::ActionHelpers::ChangePositionByDirection(asteroid, Direction, Speed, Duration),
