@@ -44,7 +44,7 @@ namespace hcg001
 		void placeStarsToHolder(std::shared_ptr<Scene::Node> holder);
 		void changeSkyColor();
 		void spawnPlanes();
-		void spawnAsteroid();
+		void spawnAsteroid(float speed, float normalized_spread);
 
 	private:
 		void event(const Shared::TouchEmulator::Event& e) override;

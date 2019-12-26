@@ -217,9 +217,22 @@ void Application::initialize()
 
 	Common::Actions::Run(Shared::ActionHelpers::RepeatInfinite([this] {
 		auto duration = glm::linearRand(5.0f, 20.0f);
-		return Shared::ActionHelpers::Delayed(duration, 
-			Shared::ActionHelpers::Execute([this] {
-				spawnAsteroid();
+		return Shared::ActionHelpers::Delayed(duration,
+			Shared::ActionHelpers::Insert([this] {
+				auto seq = Shared::ActionHelpers::MakeSequence();
+				auto global_spread = glm::linearRand(0.0f, 1.0f);
+				auto speed = glm::linearRand(256.0f + 128.0f, 512.0f + 256.0f);
+				auto count = glm::linearRand(1, 3);
+				for (int i = 0; i < count; i++)
+				{
+					auto local_spread = glm::linearRand(-0.125f, 0.125f);
+					seq->add(Shared::ActionHelpers::Delayed(glm::linearRand(0.0f, 0.25f), 
+						Shared::ActionHelpers::Execute([this, speed, global_spread, local_spread] {
+							spawnAsteroid(speed, global_spread + local_spread);
+						})
+					));
+				}
+				return std::move(seq);
 			})
 		);
 	}));
@@ -704,13 +717,11 @@ void Application::event(const Shared::TouchEmulator::Event& e)
 	}
 }
 
-void Application::spawnAsteroid()
+void Application::spawnAsteroid(float speed, float normalized_spread)
 {
-	auto start_anchor = glm::linearRand(glm::vec2(0.5f, 0.0f), glm::vec2(1.5f, 0.0f));
-
 	auto asteroid = std::make_shared<Scene::Actionable<Scene::Rectangle>>();
 	asteroid->setPivot({ 0.5f, 0.5f });
-	asteroid->setAnchor(start_anchor);
+	asteroid->setAnchor({ 0.25f + normalized_spread, 0.0f });
 	asteroid->setSize(2.0f);
 	asteroid->setY(-mAsteroidsHolder->getY());
 
@@ -719,12 +730,11 @@ void Application::spawnAsteroid()
 	trail->setLifetime(0.25f);
 	asteroid->attach(trail);
 
-	const float Speed = glm::linearRand(256.0f, 512.0f + 256.0f);
 	const float Duration = 5.0f;
 	const glm::vec2 Direction = { -0.75f, 1.0f };
 
 	asteroid->runAction(Shared::ActionHelpers::MakeSequence(
-		Shared::ActionHelpers::ChangePositionByDirection(asteroid, Direction, Speed, Duration),
+		Shared::ActionHelpers::ChangePositionByDirection(asteroid, Direction, speed, Duration),
 		Shared::ActionHelpers::Kill(asteroid)
 	));
 
