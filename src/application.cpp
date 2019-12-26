@@ -79,6 +79,14 @@ void Application::initialize()
 
 	// stars holder
 
+	mBloomLayer = std::make_shared<Scene::BloomLayer>();
+	mBloomLayer->setStretch({ 1.0f, 1.0f });
+	mBloomLayer->setDownscaleFactor(2.0f);
+	mSky->attach(mBloomLayer);
+
+	CONSOLE->registerCVar("r_bloom_enabled", { "bool" }, CVAR_GETTER_BOOL_FUNC(mBloomLayer->isPostprocessEnabled),
+		CVAR_SETTER_BOOL_FUNC(mBloomLayer->setPostprocessEnabled));
+
 	CONSOLE->registerCVar("r_bloom_blur_passes", { "int" }, CVAR_GETTER_INT_FUNC(mBloomLayer->getBlurPasses),
 		CVAR_SETTER_INT_FUNC(mBloomLayer->setBlurPasses));
 
@@ -87,11 +95,6 @@ void Application::initialize()
 
 	CONSOLE->registerCVar("r_bloom_downscale_factor", { "float" }, CVAR_GETTER_INT_FUNC(mBloomLayer->getDownscaleFactor),
 		CVAR_SETTER_INT_FUNC(mBloomLayer->setDownscaleFactor));
-
-	mBloomLayer = std::make_shared<Scene::BloomLayer>();
-	mBloomLayer->setStretch({ 1.0f, 1.0f });
-	mBloomLayer->setDownscaleFactor(2.0f);
-	mSky->attach(mBloomLayer);
 
 	mStarsHolder1 = std::make_shared<Scene::Node>();
 	mStarsHolder1->setStretch({ 1.0f, 1.0f });
