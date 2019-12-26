@@ -2,18 +2,14 @@ package com.skymunge.hcg001;
 
 import android.app.NativeActivity;
 import android.os.Bundle;
+import android.app.Activity;
 import android.content.Intent;
-
-import com.android.billingclient.api.BillingClient;
-
 import org.fmod.FMOD;
 
-public class DummyActivity extends NativeActivity {
+public class DummyActivity extends Activity {
     static {
         System.loadLibrary("fmod");
     }
-    private BillingClient billingClient;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
