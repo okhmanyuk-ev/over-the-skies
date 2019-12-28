@@ -189,14 +189,12 @@ void Application::initialize()
 	mMainMenu->setStartCallback([this] {
 		mSceneManager->switchScreen(nullptr, [this] {
 			ready();
-			mSceneManager->switchScreen(mReadyMenu);
+			auto gameplay_screen = std::make_shared<GameplayScreen>();
+			gameplay_screen->setReadyCallback([this] {
+				start();
+			});
+			mSceneManager->switchScreen(gameplay_screen);
 		});
-	});
-
-	mReadyMenu = std::make_shared<ReadyMenu>();
-	mReadyMenu->setReadyCallback([this] {
-		mSceneManager->switchScreen(nullptr);
-		start();
 	});
 
 	mGameoverMenu = std::make_shared<GameoverMenu>();

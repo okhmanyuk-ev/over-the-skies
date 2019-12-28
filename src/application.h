@@ -3,7 +3,7 @@
 #include <Shared/all.h>
 #include "defines.h"
 #include "main_menu.h"
-#include "ready_menu.h"
+#include "gameplay_screen.h"
 #include "gameover_menu.h"
 #include "sky.h"
 #include "player.h"
@@ -72,7 +72,6 @@ namespace hcg001
 		std::shared_ptr<Shared::SceneManager> mSceneManager;
 
 		std::shared_ptr<MainMenu> mMainMenu;
-		std::shared_ptr<ReadyMenu> mReadyMenu;
 		std::shared_ptr<GameoverMenu> mGameoverMenu;
 
 	private:

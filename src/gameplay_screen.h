@@ -4,15 +4,16 @@
 
 namespace hcg001
 {
-	class ReadyMenu : public Scene::Clickable<Screen>
+	class GameplayScreen : public Scene::Actionable<Scene::Clickable<Screen>>
 	{
 	public:
-		ReadyMenu();
+		GameplayScreen();
 
 	public:
 		void setReadyCallback(std::function<void()> value) { mReadyCallback = value; }
 
 	private:
 		std::function<void()> mReadyCallback = nullptr;
+		bool mReady = false;
 	};
 }
