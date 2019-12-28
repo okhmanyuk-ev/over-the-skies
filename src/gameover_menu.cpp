@@ -3,7 +3,7 @@
 
 using namespace hcg001;
 
-GameoverMenu::GameoverMenu()
+GameoverMenu::GameoverMenu(int score)
 {
 	// score label
 
@@ -11,6 +11,7 @@ GameoverMenu::GameoverMenu()
 	mScoreLabel->setFontSize(56.0f);
 	mScoreLabel->setAnchor({ 0.5f, 0.25f });
 	mScoreLabel->setPivot({ 0.5f, 0.5f });
+	mScoreLabel->setText(std::to_string(score));
 	attach(mScoreLabel);
 
 	// crown
@@ -31,6 +32,7 @@ GameoverMenu::GameoverMenu()
 	mHighScoreLabel->setAnchor({ 1.0f, 0.5f });
 	mHighScoreLabel->setPivot({ 0.0f, 0.5f });
 	mHighScoreLabel->setHorizontalPosition(8.0f);
+	mHighScoreLabel->setText(std::to_string(PROFILE->getHighScore()));
 	crown->attach(mHighScoreLabel);
 
 	// ruby
@@ -50,6 +52,7 @@ GameoverMenu::GameoverMenu()
 	mRubyScoreLabel->setAnchor({ 1.0f, 0.5f });
 	mRubyScoreLabel->setPivot({ 0.0f, 0.5f });
 	mRubyScoreLabel->setHorizontalPosition(8.0f);
+	mRubyScoreLabel->setText(std::to_string(PROFILE->getRubies()));
 	ruby->attach(mRubyScoreLabel);
 
 	auto tap_label = std::make_shared<Scene::Label>();
@@ -61,20 +64,15 @@ GameoverMenu::GameoverMenu()
 	tap_label->setAlpha(0.0f);
 	attach(tap_label);
 
-	Common::Actions::Run(Shared::ActionHelpers::RepeatInfinite([this, tap_label]() -> Shared::ActionHelpers::Action {
-		if (getState() != State::Entered)
-			return nullptr;
+	Common::Actions::Run(
+		Shared::ActionHelpers::RepeatInfinite([this, tap_label]() -> Shared::ActionHelpers::Action {
+			if (getState() != State::Entered)
+				return nullptr;
 
-		return Shared::ActionHelpers::MakeSequence(
-			Shared::ActionHelpers::Show(tap_label, 0.75f),
-			Shared::ActionHelpers::Hide(tap_label, 0.75f)
-		);
-	}));
-}
-
-void GameoverMenu::updateScore(int score)
-{
-	mScoreLabel->setText(std::to_string(score));
-	mHighScoreLabel->setText(std::to_string(PROFILE->getHighScore()));
-	mRubyScoreLabel->setText(std::to_string(PROFILE->getRubies()));
+			return Shared::ActionHelpers::MakeSequence(
+				Shared::ActionHelpers::Show(tap_label, 0.75f),
+				Shared::ActionHelpers::Hide(tap_label, 0.75f)
+			);
+		})
+	);
 }

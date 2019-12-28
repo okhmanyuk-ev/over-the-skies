@@ -8,10 +8,7 @@ namespace hcg001
 	class GameoverMenu : public Scene::Clickable<Screen>
 	{
 	public:
-		GameoverMenu();
-	
-	public:
-		void updateScore(int score);
+		GameoverMenu(int score);
 
 	private:
 		std::shared_ptr<Scene::Label> mScoreLabel = std::make_shared<Scene::Label>();
