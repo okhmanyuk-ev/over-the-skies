@@ -77,44 +77,6 @@ void Application::initialize()
 	mSky = std::make_shared<Sky>();
 	root->attach(mSky);
 
-	// stars holder
-
-	mBloomLayer = std::make_shared<Scene::BloomLayer>();
-	mBloomLayer->setStretch({ 1.0f, 1.0f });
-	mBloomLayer->setDownscaleFactor(2.0f);
-	mSky->attach(mBloomLayer);
-
-	CONSOLE->registerCVar("r_bloom_enabled", { "bool" }, CVAR_GETTER_BOOL_FUNC(mBloomLayer->isPostprocessEnabled),
-		CVAR_SETTER_BOOL_FUNC(mBloomLayer->setPostprocessEnabled));
-
-	CONSOLE->registerCVar("r_bloom_blur_passes", { "int" }, CVAR_GETTER_INT_FUNC(mBloomLayer->getBlurPasses),
-		CVAR_SETTER_INT_FUNC(mBloomLayer->setBlurPasses));
-
-	CONSOLE->registerCVar("r_bloom_glow_passes", { "int" }, CVAR_GETTER_INT_FUNC(mBloomLayer->getGlowPasses),
-		CVAR_SETTER_INT_FUNC(mBloomLayer->setGlowPasses));
-
-	CONSOLE->registerCVar("r_bloom_downscale_factor", { "float" }, CVAR_GETTER_INT_FUNC(mBloomLayer->getDownscaleFactor),
-		CVAR_SETTER_INT_FUNC(mBloomLayer->setDownscaleFactor));
-
-	mStarsHolder1 = std::make_shared<Scene::Node>();
-	mStarsHolder1->setStretch({ 1.0f, 1.0f });
-	mStarsHolder1->setAnchor({ 0.5f, 1.0f });
-	mStarsHolder1->setPivot({ 0.5f, 1.0f });
-	mBloomLayer->attach(mStarsHolder1);
-
-	mStarsHolder2 = std::make_shared<Scene::Node>();
-	mStarsHolder2->setStretch({ 1.0f, 1.0f });
-	mStarsHolder2->setAnchor({ 0.5f, 0.0f });
-	mStarsHolder2->setPivot({ 0.5f, 1.0f });
-	mBloomLayer->attach(mStarsHolder2);
-
-	placeStarsToHolder(mStarsHolder1);
-	placeStarsToHolder(mStarsHolder2);
-
-	mAsteroidsHolder = std::make_shared<Scene::Node>();
-	mAsteroidsHolder->setStretch({ 1.0f, 1.0f });
-	mBloomLayer->attach(mAsteroidsHolder);
-
 	// hud holder
 
 	mHudHolder = std::make_shared<Scene::Node>();
@@ -153,39 +115,20 @@ void Application::initialize()
 			});
 			mSceneManager->switchScreen(gameover_screen);
 		});
+		gameplay_screen->setRubyCallback([this](auto ruby) {
+			collectRubyAnim(ruby);
+		});
 		mSceneManager->switchScreen(gameplay_screen);
 	});
 
 	mSceneManager->switchScreen(main_menu);
 
-	changeSkyColor();
+	mSky->changeColor();
 
 	Common::Actions::Run(Shared::ActionHelpers::RepeatInfinite([this] {
 		return Shared::ActionHelpers::Delayed(10.0f,
 			Shared::ActionHelpers::Execute([this] {
-				changeSkyColor();
-			})
-		);
-	}));
-
-	Common::Actions::Run(Shared::ActionHelpers::RepeatInfinite([this] {
-		auto duration = glm::linearRand(5.0f, 20.0f);
-		return Shared::ActionHelpers::Delayed(duration,
-			Shared::ActionHelpers::Insert([this] {
-				auto seq = Shared::ActionHelpers::MakeSequence();
-				auto global_spread = glm::linearRand(0.0f, 1.0f);
-				auto speed = glm::linearRand(256.0f + 128.0f, 512.0f + 256.0f);
-				auto count = glm::linearRand(1, 3);
-				for (int i = 0; i < count; i++)
-				{
-					auto local_spread = glm::linearRand(-0.125f, 0.125f);
-					seq->add(Shared::ActionHelpers::Delayed(glm::linearRand(0.0f, 0.25f), 
-						Shared::ActionHelpers::Execute([this, speed, global_spread, local_spread] {
-							spawnAsteroid(speed, global_spread + local_spread);
-						})
-					));
-				}
-				return std::move(seq);
+				mSky->changeColor();
 			})
 		);
 	}));
@@ -199,74 +142,28 @@ void Application::frame()
 		mSceneEditor.show();
 }
 
-void Application::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
+void Application::collectRubyAnim(std::shared_ptr<Scene::Node> ruby)
 {
-	Common::Actions::Run(Shared::ActionHelpers::RepeatInfinite([holder] {
-		return Shared::ActionHelpers::MakeSequence(
-			Shared::ActionHelpers::Execute([holder] {
-				auto size = glm::linearRand(4.0f, 6.0f);
-				
-				auto star = std::make_shared<Scene::Actionable<Scene::Sprite>>();
-				star->setTexture(TEXTURE("textures/background_star.png"));
-				star->setAnchor(glm::linearRand(glm::vec2(0.0f), glm::vec2(1.0f)));
-				star->setPivot({ 0.5f, 0.5f });
-				star->setSize({ size, size });
-				star->setRotation(glm::radians(45.0f));
-				star->setScale({ 0.0f, 0.0f });
-				star->setAlpha(0.0f);
-				holder->attach(star);
+	auto pos = mHudHolder->unproject(ruby->project({ 0.0f, 0.0f }));
+	ruby->setAnchor({ 0.0f, 0.0f });
+	ruby->setPivot({ 0.0f, 0.0f });
+	ruby->setPosition(pos);
+	ruby->getParent()->detach(ruby);
+	mHudHolder->attach(ruby);
 
-				const float ShowDuration = 2.0f;
-				const float HoldDuration = 0.5f;
-				const float StarAlpha = 0.75f;
+	auto dest_pos = mHudHolder->unproject(mRubyScore.sprite->project({ 0.0f, 0.0f }));
 
-				star->runAction(Shared::ActionHelpers::MakeSequence(
-					Shared::ActionHelpers::MakeParallel(
-						Shared::ActionHelpers::ChangeScale(star, { 1.0f, 1.0f }, ShowDuration, Common::Easing::QuadraticOut),
-						Shared::ActionHelpers::ChangeAlpha(star, StarAlpha, ShowDuration, Common::Easing::QuadraticOut)
-					),
-					Shared::ActionHelpers::Delayed(HoldDuration,
-						Shared::ActionHelpers::MakeParallel(
-							Shared::ActionHelpers::ChangeScale(star, { 0.0f, 0.0f }, ShowDuration, Common::Easing::QuadraticIn),
-							Shared::ActionHelpers::Hide(star, ShowDuration, Common::Easing::QuadraticIn)
-						)
-					),
-					Shared::ActionHelpers::Kill(star)
-				));
-			}),
-			Shared::ActionHelpers::Wait(0.25f)
-		);
-	}));
-}
+	const float MoveDuration = 0.75f;
 
-void Application::changeSkyColor()
-{
-	auto topHsv = glm::vec3(glm::linearRand(0.0f, 360.0f), 0.75f, 0.125f);
-	auto bottomHsv = glm::vec3(glm::linearRand(0.0f, 360.0f), 0.25f, 0.5f);
-
-	mSky->changeColor(glm::rgbColor(topHsv), glm::rgbColor(bottomHsv));
-}
-
-void Application::spawnAsteroid(float speed, float normalized_spread)
-{
-	auto asteroid = std::make_shared<Scene::Actionable<Scene::Rectangle>>();
-	asteroid->setPivot({ 0.5f, 0.5f });
-	asteroid->setAnchor({ 0.25f + normalized_spread, 0.0f });
-	asteroid->setSize(2.0f);
-	asteroid->setY(-mAsteroidsHolder->getY());
-
-	auto trail = std::make_shared<Scene::Trail>(mAsteroidsHolder);
-	trail->setStretch(1.0f);
-	trail->setLifetime(0.25f);
-	asteroid->attach(trail);
-
-	const float Duration = 5.0f;
-	const glm::vec2 Direction = { -0.75f, 1.0f };
-
-	asteroid->runAction(Shared::ActionHelpers::MakeSequence(
-		Shared::ActionHelpers::ChangePositionByDirection(asteroid, Direction, speed, Duration),
-		Shared::ActionHelpers::Kill(asteroid)
+	Common::Actions::Run(Shared::ActionHelpers::MakeSequence(
+		Shared::ActionHelpers::MakeParallel(
+			Shared::ActionHelpers::ChangePosition(ruby, dest_pos, MoveDuration, Common::Easing::QuarticInOut),
+			Shared::ActionHelpers::ChangeSize(ruby, mRubyScore.sprite->getSize(), MoveDuration, Common::Easing::QuarticInOut)
+		),
+		Shared::ActionHelpers::Kill(ruby),
+		Shared::ActionHelpers::Execute([this] {
+			mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
+		}),
+		Shared::ActionHelpers::Shake(mRubyScore.label, 2.0f, 0.2f)
 	));
-
-	mAsteroidsHolder->attach(asteroid);
 }

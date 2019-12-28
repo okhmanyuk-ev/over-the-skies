@@ -246,34 +246,11 @@ void GameplayScreen::collide(std::shared_ptr<Plane> plane)
 		Shared::ActionHelpers::Kill(plane)
 	));
 
-	/*if (plane->hasRuby())
+	if (plane->hasRuby())
 	{
 		PROFILE->increaseRubies(1);
-
-		auto ruby = plane->getRuby();
-		auto pos = mHudHolder->unproject(ruby->project({ 0.0f, 0.0f }));
-		ruby->setAnchor({ 0.0f, 0.0f });
-		ruby->setPivot({ 0.0f, 0.0f });
-		ruby->setPosition(pos);
-		plane->detach(ruby);
-		mHudHolder->attach(ruby);
-
-		auto dest_pos = mHudHolder->unproject(mRubyScore.sprite->project({ 0.0f, 0.0f }));
-
-		const float MoveDuration = 0.75f;
-
-		Common::Actions::Run(Shared::ActionHelpers::MakeSequence(
-			Shared::ActionHelpers::MakeParallel(
-				Shared::ActionHelpers::ChangePosition(ruby, dest_pos, MoveDuration, Common::Easing::QuarticInOut),
-				Shared::ActionHelpers::ChangeSize(ruby, mRubyScore.sprite->getSize(), MoveDuration, Common::Easing::QuarticInOut)
-			),
-			Shared::ActionHelpers::Kill(ruby),
-			Shared::ActionHelpers::Execute([this] {
-				mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
-			}),
-			Shared::ActionHelpers::Shake(mRubyScore.label, 2.0f, 0.2f)
-		));
-	}*/
+		mRubyCallback(plane->getRuby());
+	}
 }
 
 void GameplayScreen::spawnPlanes()
@@ -382,10 +359,7 @@ void GameplayScreen::start()
 void GameplayScreen::gameover()
 {
 	mGameoverCallback();
-
-	//TASK->addTask([this] {
-	//	PROFILE->save();
-	//});
+	PROFILE->saveAsync();
 }
 
 void GameplayScreen::slide(float distance)

@@ -24,9 +24,7 @@ namespace hcg001
 		void loading(const std::string& stage, float process) override;
 		void initialize() override;
 		void frame() override;
-		void placeStarsToHolder(std::shared_ptr<Scene::Node> holder);
-		void changeSkyColor();
-		void spawnAsteroid(float speed, float normalized_spread);
+		void collectRubyAnim(std::shared_ptr<Scene::Node> ruby);
 
 	private:
 		std::shared_ptr<Sky> mSky;
@@ -36,11 +34,6 @@ namespace hcg001
 			std::shared_ptr<Scene::Sprite> sprite;
 			std::shared_ptr<Scene::Label> label;
 		} mRubyScore;
-		
-		std::shared_ptr<Scene::BloomLayer> mBloomLayer;
-		std::shared_ptr<Scene::Node> mStarsHolder1;
-		std::shared_ptr<Scene::Node> mStarsHolder2;
-		std::shared_ptr<Scene::Node> mAsteroidsHolder;
 		
 		std::shared_ptr<Shared::SceneManager> mSceneManager;
 

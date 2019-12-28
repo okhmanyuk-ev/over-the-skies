@@ -24,10 +24,77 @@ Sky::Sky()
 			std::to_string(static_cast<int>(bottom.g)) + " " +
 			std::to_string(static_cast<int>(bottom.b)));
 	}));
+
+	auto bloom_layer = std::make_shared<Scene::BloomLayer>();
+	bloom_layer->setStretch({ 1.0f, 1.0f });
+	bloom_layer->setDownscaleFactor(2.0f);
+	attach(bloom_layer);
+
+	CONSOLE->registerCVar("r_bloom_enabled", { "bool" }, CVAR_GETTER_BOOL_FUNC(bloom_layer->isPostprocessEnabled),
+		CVAR_SETTER_BOOL_FUNC(bloom_layer->setPostprocessEnabled));
+
+	CONSOLE->registerCVar("r_bloom_blur_passes", { "int" }, CVAR_GETTER_INT_FUNC(bloom_layer->getBlurPasses),
+		CVAR_SETTER_INT_FUNC(bloom_layer->setBlurPasses));
+
+	CONSOLE->registerCVar("r_bloom_glow_passes", { "int" }, CVAR_GETTER_INT_FUNC(bloom_layer->getGlowPasses),
+		CVAR_SETTER_INT_FUNC(bloom_layer->setGlowPasses));
+
+	CONSOLE->registerCVar("r_bloom_downscale_factor", { "float" }, CVAR_GETTER_INT_FUNC(bloom_layer->getDownscaleFactor),
+		CVAR_SETTER_INT_FUNC(bloom_layer->setDownscaleFactor));
+
+	// stars holder
+
+	mStarsHolder1 = std::make_shared<Scene::Node>();
+	mStarsHolder1->setStretch({ 1.0f, 1.0f });
+	mStarsHolder1->setAnchor({ 0.5f, 1.0f });
+	mStarsHolder1->setPivot({ 0.5f, 1.0f });
+	bloom_layer->attach(mStarsHolder1);
+
+	mStarsHolder2 = std::make_shared<Scene::Node>();
+	mStarsHolder2->setStretch({ 1.0f, 1.0f });
+	mStarsHolder2->setAnchor({ 0.5f, 0.0f });
+	mStarsHolder2->setPivot({ 0.5f, 1.0f });
+	bloom_layer->attach(mStarsHolder2);
+
+	placeStarsToHolder(mStarsHolder1);
+	placeStarsToHolder(mStarsHolder2);
+
+	// asteroids
+
+	mAsteroidsHolder = std::make_shared<Scene::Node>();
+	mAsteroidsHolder->setStretch({ 1.0f, 1.0f });
+	bloom_layer->attach(mAsteroidsHolder);
+
+	runAction(Shared::ActionHelpers::RepeatInfinite([this] {
+		auto duration = glm::linearRand(5.0f, 20.0f);
+		return Shared::ActionHelpers::Delayed(duration,
+			Shared::ActionHelpers::Insert([this] {
+				auto seq = Shared::ActionHelpers::MakeSequence();
+				auto global_spread = glm::linearRand(0.0f, 1.0f);
+				auto speed = glm::linearRand(256.0f + 128.0f, 512.0f + 256.0f);
+				auto count = glm::linearRand(1, 3);
+				for (int i = 0; i < count; i++)
+				{
+					auto local_spread = glm::linearRand(-0.125f, 0.125f);
+					seq->add(Shared::ActionHelpers::Delayed(glm::linearRand(0.0f, 0.25f), 
+						Shared::ActionHelpers::Execute([this, speed, global_spread, local_spread] {
+							spawnAsteroid(speed, global_spread + local_spread);
+						})
+					));
+				}
+				return std::move(seq);
+			})
+		);
+	}));
 }
 
-void Sky::changeColor(glm::vec3 top, glm::vec3 bottom)
+void Sky::changeColor()
 {
+	auto top_hsv = glm::vec3(glm::linearRand(0.0f, 360.0f), 0.75f, 0.125f);
+	auto bottom_hsv = glm::vec3(glm::linearRand(0.0f, 360.0f), 0.25f, 0.5f);
+	auto top = glm::rgbColor(top_hsv);
+	auto bottom = glm::rgbColor(bottom_hsv);
+
 	const float ChangeDuration = 2.5f;
 
 	runAction(Shared::ActionHelpers::ChangeColor(mTopColor, top, ChangeDuration, Common::Easing::QuadraticInOut));
@@ -50,4 +117,68 @@ void Sky::draw()
 	GRAPHICS->draw(Renderer::Topology::TriangleList, vertices, indices, model);
 
 	Node::draw();
+}
+
+void Sky::spawnAsteroid(float speed, float normalized_spread)
+{
+	auto asteroid = std::make_shared<Scene::Actionable<Scene::Rectangle>>();
+	asteroid->setPivot({ 0.5f, 0.5f });
+	asteroid->setAnchor({ 0.25f + normalized_spread, 0.0f });
+	asteroid->setSize(2.0f);
+	asteroid->setY(-mAsteroidsHolder->getY());
+
+	auto trail = std::make_shared<Scene::Trail>(mAsteroidsHolder);
+	trail->setStretch(1.0f);
+	trail->setLifetime(0.25f);
+	asteroid->attach(trail);
+
+	const float Duration = 5.0f;
+	const glm::vec2 Direction = { -0.75f, 1.0f };
+
+	asteroid->runAction(Shared::ActionHelpers::MakeSequence(
+		Shared::ActionHelpers::ChangePositionByDirection(asteroid, Direction, speed, Duration),
+		Shared::ActionHelpers::Kill(asteroid)
+	));
+
+	mAsteroidsHolder->attach(asteroid);
+}
+
+void Sky::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
+{
+	Common::Actions::Run(Shared::ActionHelpers::RepeatInfinite([holder] {
+		return Shared::ActionHelpers::MakeSequence(
+			Shared::ActionHelpers::Execute([holder] {
+				auto size = glm::linearRand(4.0f, 6.0f);
+				
+				auto star = std::make_shared<Scene::Actionable<Scene::Sprite>>();
+				star->setTexture(TEXTURE("textures/background_star.png"));
+				star->setAnchor(glm::linearRand(glm::vec2(0.0f), glm::vec2(1.0f)));
+				star->setPivot({ 0.5f, 0.5f });
+				star->setSize({ size, size });
+				star->setRotation(glm::radians(45.0f));
+				star->setScale({ 0.0f, 0.0f });
+				star->setAlpha(0.0f);
+				holder->attach(star);
+
+				const float ShowDuration = 2.0f;
+				const float HoldDuration = 0.5f;
+				const float StarAlpha = 0.75f;
+
+				star->runAction(Shared::ActionHelpers::MakeSequence(
+					Shared::ActionHelpers::MakeParallel(
+						Shared::ActionHelpers::ChangeScale(star, { 1.0f, 1.0f }, ShowDuration, Common::Easing::QuadraticOut),
+						Shared::ActionHelpers::ChangeAlpha(star, StarAlpha, ShowDuration, Common::Easing::QuadraticOut)
+					),
+					Shared::ActionHelpers::Delayed(HoldDuration,
+						Shared::ActionHelpers::MakeParallel(
+							Shared::ActionHelpers::ChangeScale(star, { 0.0f, 0.0f }, ShowDuration, Common::Easing::QuadraticIn),
+							Shared::ActionHelpers::Hide(star, ShowDuration, Common::Easing::QuadraticIn)
+						)
+					),
+					Shared::ActionHelpers::Kill(star)
+				));
+			}),
+			Shared::ActionHelpers::Wait(0.25f)
+		);
+	}));
 }

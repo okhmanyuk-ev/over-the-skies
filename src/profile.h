@@ -14,6 +14,7 @@ namespace hcg001
 	public:
 		void load();
 		void save();
+		void saveAsync();
 		void clear();
 
 	public:

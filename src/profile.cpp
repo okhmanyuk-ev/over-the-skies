@@ -38,3 +38,10 @@ void Profile::clear()
 	mRubies = 0;
 	mSkins = { 0 };
 }
+
+void Profile::saveAsync()
+{
+	TASK->addTask([this] {
+		save();
+	});
+}
