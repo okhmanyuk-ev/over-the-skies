@@ -182,3 +182,22 @@ void Sky::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
 		);
 	}));
 }
+
+void Sky::moveSky(float y)
+{	
+	float delta = y - mLastY;
+	mLastY = y;
+
+	mAsteroidsHolder->setY(y / 2.0f);
+
+	float stars_delta = (delta * 0.0005f);
+
+	mStarsHolder1->setVerticalAnchor(mStarsHolder1->getVerticalAnchor() + stars_delta);
+	mStarsHolder2->setVerticalAnchor(mStarsHolder2->getVerticalAnchor() + stars_delta);
+
+	if (mStarsHolder1->getVerticalAnchor() >= 2.0f)
+		mStarsHolder1->setVerticalAnchor(mStarsHolder1->getVerticalAnchor() - 2.0f);
+
+	if (mStarsHolder2->getVerticalAnchor() >= 2.0f)
+		mStarsHolder2->setVerticalAnchor(mStarsHolder2->getVerticalAnchor() - 2.0f);
+}

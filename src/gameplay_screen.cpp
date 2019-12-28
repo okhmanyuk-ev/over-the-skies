@@ -58,7 +58,7 @@ GameplayScreen::GameplayScreen(Skin skin)
 
 	//
 
-	mPlayer->setTexture(TEXTURE(/*SkinPath.at(mMainMenu->getChoosedSkin())*/"textures/skins/ball.png"));
+	mPlayer->setTexture(TEXTURE(SkinPath.at(skin)));
 	Common::Actions::Run(Shared::ActionHelpers::Delayed(0.25f, Shared::ActionHelpers::MakeSequence(
 		Shared::ActionHelpers::Show(mPlayer, 0.25f),
 		Shared::ActionHelpers::Execute([this] {
@@ -151,20 +151,8 @@ void GameplayScreen::update()
 		y += delta;
 
 		mGameField->setY(y);
-		GAME_STATS("Y", y);
 	
-	//	mAsteroidsHolder->setY(y / 2.0f);
-
-	/*	float stars_delta = (delta * 0.0005f);
-
-		mStarsHolder1->setVerticalAnchor(mStarsHolder1->getVerticalAnchor() + stars_delta);
-		mStarsHolder2->setVerticalAnchor(mStarsHolder2->getVerticalAnchor() + stars_delta);
-
-		if (mStarsHolder1->getVerticalAnchor() >= 2.0f)
-			mStarsHolder1->setVerticalAnchor(mStarsHolder1->getVerticalAnchor() - 2.0f);
-
-		if (mStarsHolder2->getVerticalAnchor() >= 2.0f)
-			mStarsHolder2->setVerticalAnchor(mStarsHolder2->getVerticalAnchor() - 2.0f);*/
+		mMoveSkyCallback(y);
 	}
 
 	removeFarPlanes();
@@ -282,7 +270,7 @@ void GameplayScreen::spawnPlane(const glm::vec2& pos, float anim_delay)
 	auto width = PlaneSize.x;
 	auto diff = PlaneSize.x - PlayerSize.x;
 
-	width -= diff * glm::clamp(static_cast<float>(/*mScore*/ 0.0f) / 100.0f, 0.0f, 1.0f);
+	width -= diff * glm::clamp(static_cast<float>(mScore) / 100.0f, 0.0f, 1.0f);
 
 	plane->setSize({ width, PlaneSize.y });
 	plane->setPivot({ 0.5f, 0.5f });

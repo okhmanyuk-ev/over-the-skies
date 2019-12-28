@@ -15,6 +15,7 @@ namespace hcg001
 
 	public:
 		void changeColor();
+		void moveSky(float y);
 
 	protected:
 		void draw() override;
@@ -27,5 +28,6 @@ namespace hcg001
 	private:
 		std::shared_ptr<Scene::Color> mTopColor = std::make_shared<Scene::Color>();
 		std::shared_ptr<Scene::Color> mBottomColor = std::make_shared<Scene::Color>();
+		float mLastY = 0.0f;
 	};
 }
