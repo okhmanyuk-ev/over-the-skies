@@ -1,5 +1,6 @@
 #include "main_menu.h"
 #include "profile.h"
+#include "defines.h"
 
 using namespace hcg001;
 
@@ -141,7 +142,7 @@ MainMenu::MainMenu()
 	}));
 
 #if defined(BUILD_DEVELOPER)
-	runAction(Shared::CommonActions::ExecuteInfinite([this] {
+	runAction(Shared::ActionHelpers::ExecuteInfinite([this] {
 		if (getSceneManager()->hasOpenedWindows())
 			return;
 
