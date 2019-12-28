@@ -4,23 +4,32 @@ using namespace hcg001;
 
 GameplayScreen::GameplayScreen()
 {
-	auto ready_label = std::make_shared<Scene::Label>();
-	ready_label->setFont(FONT("default"));
-	ready_label->setFontSize(28.0f);
-	ready_label->setAnchor({ 0.5f, 0.25f });
-	ready_label->setPivot({ 0.5f, 0.5f });
-	ready_label->setText(LOCALIZE("READY_MENU_TITLE"));
-	attach(ready_label);
+	setTouchable(true);
 
-	setChooseCallback([this, ready_label] {
-		if (mReady)
-			return;
+	mReadyLabel = std::make_shared<Scene::Label>();
+	mReadyLabel->setFont(FONT("default"));
+	mReadyLabel->setFontSize(28.0f);
+	mReadyLabel->setAnchor({ 0.5f, 0.25f });
+	mReadyLabel->setPivot({ 0.5f, 0.5f });
+	mReadyLabel->setText(LOCALIZE("READY_MENU_TITLE"));
+	attach(mReadyLabel);
+}
 
-		runAction(Shared::ActionHelpers::MakeSequence(
-			Shared::ActionHelpers::Hide(ready_label, 0.5f),
-			Shared::ActionHelpers::Kill(ready_label)
-		));
-		mReadyCallback();
-		mReady = true;
-	});
+void GameplayScreen::touch(Touch type, const glm::vec2& pos)
+{
+	Scene::Actionable<Screen>::touch(type, pos);
+
+	if (!mReady)
+	{
+		if (type == Touch::Begin)
+		{
+			runAction(Shared::ActionHelpers::MakeSequence(
+				Shared::ActionHelpers::Hide(mReadyLabel, 0.5f),
+				Shared::ActionHelpers::Kill(mReadyLabel)
+			));
+			mReadyCallback();
+			mReady = true;
+		}
+		return;
+	}
 }

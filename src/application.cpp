@@ -491,7 +491,7 @@ void Application::gameover()
 	mGameoverMenu->updateScore(mScore);
 	
 	clearField([this] {
-		Common::Actions::Run(Shared::ActionHelpers::ChangePosition(mGameField, { mGameField->getX(), 0.0f }, 0.75f, Common::Easing::ExponentialOut));
+		mGameField->setY(0.0f);
 		mSceneManager->switchScreen(mGameoverMenu);
 	});
 	
