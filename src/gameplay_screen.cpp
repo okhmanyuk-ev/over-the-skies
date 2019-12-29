@@ -214,6 +214,7 @@ void GameplayScreen::physics(float dTime)
 
 void GameplayScreen::jump()
 {
+	AUDIO->play(mClickSound);
 	const float JumpVelocity = -10.0f;
 	mVelocity.y = JumpVelocity;
 }

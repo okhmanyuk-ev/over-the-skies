@@ -41,6 +41,7 @@ namespace hcg001
 		std::shared_ptr<Scene::Node> mParticlesHolder;
 		std::shared_ptr<Player> mPlayer;
 		std::shared_ptr<Scene::Label> mScoreLabel;
+		Audio::Sound mClickSound = Audio::Sound(Platform::Asset("sounds/click.wav"));
 
 	public:
 		auto getScore() const { return mScore; }
