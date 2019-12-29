@@ -25,22 +25,22 @@ Sky::Sky()
 			std::to_string(static_cast<int>(bottom.b)));
 	}));
 
-	auto bloom_layer = std::make_shared<Scene::BloomLayer>();
-	bloom_layer->setStretch({ 1.0f, 1.0f });
-	bloom_layer->setDownscaleFactor(2.0f);
-	attach(bloom_layer);
+	mBloomLayer = std::make_shared<Scene::BloomLayer>();
+	mBloomLayer->setStretch({ 1.0f, 1.0f });
+	mBloomLayer->setDownscaleFactor(2.0f);
+	attach(mBloomLayer);
 
-	CONSOLE->registerCVar("r_bloom_enabled", { "bool" }, CVAR_GETTER_BOOL_FUNC(bloom_layer->isPostprocessEnabled),
-		CVAR_SETTER_BOOL_FUNC(bloom_layer->setPostprocessEnabled));
+	CONSOLE->registerCVar("r_bloom_enabled", { "bool" }, CVAR_GETTER_BOOL_FUNC(mBloomLayer->isPostprocessEnabled),
+		CVAR_SETTER_BOOL_FUNC(mBloomLayer->setPostprocessEnabled));
 
-	CONSOLE->registerCVar("r_bloom_blur_passes", { "int" }, CVAR_GETTER_INT_FUNC(bloom_layer->getBlurPasses),
-		CVAR_SETTER_INT_FUNC(bloom_layer->setBlurPasses));
+	CONSOLE->registerCVar("r_bloom_blur_passes", { "int" }, CVAR_GETTER_INT_FUNC(mBloomLayer->getBlurPasses),
+		CVAR_SETTER_INT_FUNC(mBloomLayer->setBlurPasses));
 
-	CONSOLE->registerCVar("r_bloom_glow_passes", { "int" }, CVAR_GETTER_INT_FUNC(bloom_layer->getGlowPasses),
-		CVAR_SETTER_INT_FUNC(bloom_layer->setGlowPasses));
+	CONSOLE->registerCVar("r_bloom_glow_passes", { "int" }, CVAR_GETTER_INT_FUNC(mBloomLayer->getGlowPasses),
+		CVAR_SETTER_INT_FUNC(mBloomLayer->setGlowPasses));
 
-	CONSOLE->registerCVar("r_bloom_downscale_factor", { "float" }, CVAR_GETTER_INT_FUNC(bloom_layer->getDownscaleFactor),
-		CVAR_SETTER_INT_FUNC(bloom_layer->setDownscaleFactor));
+	CONSOLE->registerCVar("r_bloom_downscale_factor", { "float" }, CVAR_GETTER_INT_FUNC(mBloomLayer->getDownscaleFactor),
+		CVAR_SETTER_INT_FUNC(mBloomLayer->setDownscaleFactor));
 
 	// stars holder
 
@@ -48,13 +48,13 @@ Sky::Sky()
 	mStarsHolder1->setStretch({ 1.0f, 1.0f });
 	mStarsHolder1->setAnchor({ 0.5f, 1.0f });
 	mStarsHolder1->setPivot({ 0.5f, 1.0f });
-	bloom_layer->attach(mStarsHolder1);
+	mBloomLayer->attach(mStarsHolder1);
 
 	mStarsHolder2 = std::make_shared<Scene::Node>();
 	mStarsHolder2->setStretch({ 1.0f, 1.0f });
 	mStarsHolder2->setAnchor({ 0.5f, 0.0f });
 	mStarsHolder2->setPivot({ 0.5f, 1.0f });
-	bloom_layer->attach(mStarsHolder2);
+	mBloomLayer->attach(mStarsHolder2);
 
 	placeStarsToHolder(mStarsHolder1);
 	placeStarsToHolder(mStarsHolder2);
@@ -63,7 +63,7 @@ Sky::Sky()
 
 	mAsteroidsHolder = std::make_shared<Scene::Node>();
 	mAsteroidsHolder->setStretch({ 1.0f, 1.0f });
-	bloom_layer->attach(mAsteroidsHolder);
+	mBloomLayer->attach(mAsteroidsHolder);
 
 	runAction(Shared::ActionHelpers::RepeatInfinite([this] {
 		auto duration = glm::linearRand(5.0f, 20.0f);
@@ -185,10 +185,13 @@ void Sky::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
 
 void Sky::moveSky(float y)
 {	
+	mAsteroidsHolder->setY(y / 2.0f);
+
+	if (y < mLastY)
+		mLastY = y;
+
 	float delta = y - mLastY;
 	mLastY = y;
-
-	mAsteroidsHolder->setY(y / 2.0f);
 
 	float stars_delta = (delta * 0.0005f);
 

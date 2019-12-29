@@ -21,6 +21,7 @@ namespace hcg001
 		void draw() override;
 
 	private:
+		std::shared_ptr<Scene::BloomLayer> mBloomLayer;
 		std::shared_ptr<Scene::Node> mStarsHolder1;
 		std::shared_ptr<Scene::Node> mStarsHolder2;
 		std::shared_ptr<Scene::Node> mAsteroidsHolder;
