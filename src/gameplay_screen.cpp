@@ -395,7 +395,7 @@ void GameplayScreen::setupTrail(Skin skin)
 			}));
 		}));
 	}
-	else if (skin == Skin::Third)
+	/*else if (skin == Skin::Third)
 	{
 		mPlayer->runAction(Shared::ActionHelpers::RepeatInfinite([this] {
 			return Shared::ActionHelpers::Delayed(0.025f, Shared::ActionHelpers::Execute([this] {
@@ -415,5 +415,5 @@ void GameplayScreen::setupTrail(Skin skin)
 		trail->setColor(Graphics::Color::Aquamarine);
 		trail->setNarrowing(true);
 		mPlayer->attach(trail);
-	}
+	}*/
 }

@@ -9,8 +9,8 @@ namespace hcg001
 	{
 		Ball,
 		Snowflake,
-		Third,
-		Fourth
+	//	Third,
+	//	Fourth
 	};
 
 	const inline int SkinCount = 4;
@@ -18,14 +18,14 @@ namespace hcg001
 	const inline std::map<Skin, std::string> SkinPath = { 
 		{ Skin::Ball, "textures/skins/ball.png" },
 		{ Skin::Snowflake, "textures/skins/snowflake.png" },
-		{ Skin::Third, "textures/skins/third.png" },
-		{ Skin::Fourth, "textures/skins/fourth.png" },
+	//	{ Skin::Third, "textures/skins/third.png" },
+	//	{ Skin::Fourth, "textures/skins/fourth.png" },
 	};
 
 	const inline std::map<Skin, int> SkinCost = {
 		{ Skin::Ball, 0 },
 		{ Skin::Snowflake, 10 },
-		{ Skin::Third, 25 },
-		{ Skin::Fourth, 50 }
+	//	{ Skin::Third, 25 },
+	//	{ Skin::Fourth, 50 }
 	};
 }
