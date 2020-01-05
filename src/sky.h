@@ -4,7 +4,7 @@
 
 namespace hcg001
 {
-	class Sky : public Scene::Actionable<Scene::Node>
+	class Sky : public Scene::Actionable<Scene::Rectangle>
 	{
 	public:
 		Sky();
@@ -18,7 +18,7 @@ namespace hcg001
 		void moveSky(float y);
 
 	protected:
-		void draw() override;
+		void update() override;
 
 	private:
 		std::shared_ptr<Scene::BloomLayer> mBloomLayer;

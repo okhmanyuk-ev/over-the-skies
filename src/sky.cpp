@@ -101,22 +101,14 @@ void Sky::changeColor()
 	runAction(Shared::ActionHelpers::ChangeColor(mBottomColor, bottom, ChangeDuration, Common::Easing::QuadraticInOut));
 }
 
-void Sky::draw()
+void Sky::update()
 {
-	auto model = glm::scale(getTransform(), { getSize(), 1.0f });
+	Scene::Actionable<Scene::Rectangle>::update();
 
-	std::vector<Renderer::Vertex::PositionColor> vertices = {
-		{ { 0.0f, 0.0f, 0.0f }, { mTopColor->getColor() } },
-		{ { 0.0f, 1.0f, 0.0f }, { mBottomColor->getColor() } },
-		{ { 1.0f, 1.0f, 0.0f }, { mBottomColor->getColor() } },
-		{ { 1.0f, 0.0f, 0.0f }, { mTopColor->getColor() } }
-	};
-
-	static const std::vector<uint32_t> indices = { 0, 1, 2, 0, 2, 3 };
-
-	GRAPHICS->draw(Renderer::Topology::TriangleList, vertices, indices, model);
-
-	Node::draw();
+	setCornerColor(Scene::Rectangle::Corner::TopLeft, mTopColor->getColor());
+	setCornerColor(Scene::Rectangle::Corner::TopRight, mTopColor->getColor());
+	setCornerColor(Scene::Rectangle::Corner::BottomLeft, mBottomColor->getColor());
+	setCornerColor(Scene::Rectangle::Corner::BottomRight, mBottomColor->getColor());
 }
 
 void Sky::spawnAsteroid(float speed, float normalized_spread)
