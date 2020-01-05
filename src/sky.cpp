@@ -104,11 +104,7 @@ void Sky::changeColor()
 void Sky::update()
 {
 	Scene::Actionable<Scene::Rectangle>::update();
-
-	setCornerColor(Scene::Rectangle::Corner::TopLeft, mTopColor->getColor());
-	setCornerColor(Scene::Rectangle::Corner::TopRight, mTopColor->getColor());
-	setCornerColor(Scene::Rectangle::Corner::BottomLeft, mBottomColor->getColor());
-	setCornerColor(Scene::Rectangle::Corner::BottomRight, mBottomColor->getColor());
+	setVerticalGradient(mTopColor->getColor(), mBottomColor->getColor());
 }
 
 void Sky::spawnAsteroid(float speed, float normalized_spread)
