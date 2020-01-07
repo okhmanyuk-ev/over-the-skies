@@ -21,7 +21,7 @@ namespace hcg001
 
 	private:
 		void makeLoadingScene();
-		void loading(const std::string& stage, float process) override;
+		void loading(const std::string& stage, float progress) override;
 		void initialize() override;
 		void frame() override;
 		void collectRubyAnim(std::shared_ptr<Scene::Node> ruby);
@@ -38,7 +38,7 @@ namespace hcg001
 		std::shared_ptr<Shared::SceneManager> mSceneManager;
 
 	private:
-		Scene::Scene mLoadingScene;
+		Shared::SceneHelpers::SplashScene mSplashScene = Shared::SceneHelpers::SplashScene(TEXTURE("textures/logo.png"));
 		Scene::Scene mGameScene;
 
 	private:

@@ -28,8 +28,6 @@ Application::Application() : RichApplication(PROJECT_CODE)
 	CONSOLE->registerCVar("g_node_editor", { "bool" }, CVAR_GETTER_BOOL(mNodeEditor), CVAR_SETTER_BOOL(mNodeEditor));
 
 	STATS->setAlignment(Shared::StatsSystem::Align::BottomRight);
-
-	makeLoadingScene();
 }
 
 Application::~Application()
@@ -37,24 +35,12 @@ Application::~Application()
 	PROFILE->save();
 }
 
-void Application::makeLoadingScene()
+void Application::loading(const std::string& stage, float progress)
 {
-	auto root = mLoadingScene.getRoot();
-
-	auto logo = std::make_shared<Scene::Sprite>();
-	logo->setTexture(TEXTURE("textures/logo.png"));
-	logo->setAnchor({ 0.5f, 0.5f });
-	logo->setPivot({ 0.5f, 0.5f });
-	logo->setSampler(Renderer::Sampler::Linear);
-	logo->setSize({ 286.0f, 286.0f });
-	root->attach(logo);
-}
-
-void Application::loading(const std::string& stage, float process)
-{
-	mLoadingScene.frame();
+	mSplashScene.updateProgress(progress);
+	mSplashScene.frame();
 #if defined BUILD_DEVELOPER
-	RichApplication::loading(stage, process);
+	//RichApplication::loading(stage, progress);
 #endif
 }
 
