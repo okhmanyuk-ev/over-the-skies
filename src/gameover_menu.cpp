@@ -1,5 +1,6 @@
 #include "gameover_menu.h"
 #include "defines.h"
+#include "game_systems.h"
 
 using namespace hcg001;
 

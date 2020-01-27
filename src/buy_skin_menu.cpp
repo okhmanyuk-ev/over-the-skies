@@ -1,4 +1,5 @@
 #include "buy_skin_menu.h"
+#include "game_systems.h"
 
 using namespace hcg001;
 
@@ -21,7 +22,8 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	mImage->setSize({ 96.0f, 96.0f });
 	attach(mImage);
 
-	mBuyButton = std::make_shared<Shared::SceneHelpers::FastButton>(LOCALIZE("BUY_SKIN_BUY"), 20.0f);
+	mBuyButton = std::make_shared<Shared::SceneHelpers::FastButton>(20.0f);
+	mBuyButton->setLabelText(LOCALIZE("BUY_SKIN_BUY"));
 	mBuyButton->setClickCallback([this, skin] {
 		PROFILE->decreaseRubies(SkinCost.at(skin));
 		auto skins = PROFILE->getSkins();
@@ -36,7 +38,8 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	mBuyButton->setPosition({ -8.0f, 0.0f });
 	attach(mBuyButton);
 
-	mCancelButton = std::make_shared<Shared::SceneHelpers::FastButton>(LOCALIZE("BUY_SKIN_CANCEL"), 20.0f);
+	mCancelButton = std::make_shared<Shared::SceneHelpers::FastButton>(20.0f);
+	mCancelButton->setLabelText(LOCALIZE("BUY_SKIN_CANCEL"));
 	mCancelButton->setClickCallback([this] {
 		mExitCallback();
 	});

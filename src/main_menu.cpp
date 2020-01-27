@@ -1,6 +1,6 @@
 #include "main_menu.h"
-#include "profile.h"
 #include "defines.h"
+#include "game_systems.h"
 
 using namespace hcg001;
 
@@ -16,7 +16,8 @@ MainMenu::MainMenu()
 
 	const float ButtonLabelFontSize = 20.0f;
 
-	auto play_button = std::make_shared<Shared::SceneHelpers::FastButton>(LOCALIZE("MAIN_MENU_PLAY"), ButtonLabelFontSize);
+	auto play_button = std::make_shared<Shared::SceneHelpers::FastButton>(ButtonLabelFontSize);
+	play_button->setLabelText(LOCALIZE("MAIN_MENU_PLAY"));
 	play_button->setClickCallback([this] {
 		if (PROFILE->isSkinLocked(mChoosedSkin))
 			return;
@@ -29,7 +30,8 @@ MainMenu::MainMenu()
 	play_button->setPivot({ 0.5f, 0.5f });
 	attach(play_button);
 
-	auto unlock_button = std::make_shared<Shared::SceneHelpers::FastButton>(LOCALIZE("MAIN_MENU_UNLOCK"), ButtonLabelFontSize);
+	auto unlock_button = std::make_shared<Shared::SceneHelpers::FastButton>(ButtonLabelFontSize);
+	unlock_button->setLabelText(LOCALIZE("MAIN_MENU_UNLOCK"));
 	unlock_button->setClickCallback([this, ButtonLabelFontSize, unlock_button] {
 		if (!PROFILE->isSkinLocked(mChoosedSkin))
 			return;

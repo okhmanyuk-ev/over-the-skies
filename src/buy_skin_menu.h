@@ -3,7 +3,6 @@
 #include <Shared/all.h>
 #include "screen.h"
 #include "skin.h"
-#include "profile.h"
 
 namespace hcg001
 {

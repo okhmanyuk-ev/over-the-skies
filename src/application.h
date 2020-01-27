@@ -8,8 +8,8 @@
 #include "sky.h"
 #include "player.h"
 #include "plane.h"
-#include "profile.h"
 #include "skin.h"
+#include "game_systems.h"
 
 namespace hcg001
 {
@@ -45,7 +45,7 @@ namespace hcg001
 		bool mNodeEditor = false;
 
 	private:
-		Shared::LocalizationSystem mLocalization = Shared::LocalizationSystem("localization");
+		GameSystems mGameSystems;
 		Profile mProfile;
 		Shared::SceneEditor mSceneEditor = Shared::SceneEditor(mGameScene);
 	};

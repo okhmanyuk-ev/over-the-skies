@@ -4,9 +4,6 @@
 
 #include "skin.h"
 
-#define PROFILE_SYSTEM_KEY "profile"
-#define PROFILE static_cast<hcg001::Profile*>(ENGINE->getCustomSystem(PROFILE_SYSTEM_KEY))
-
 namespace hcg001
 {
 	class Profile
