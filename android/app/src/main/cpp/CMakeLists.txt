@@ -52,6 +52,10 @@ file(GLOB SHARED_SRC
     ${BASE_DIR}sky/src/Shared/*.cpp
     ${BASE_DIR}sky/src/Shared/*.h)
 
+file(GLOB NETWORK_SRC
+    ${BASE_DIR}sky/src/Network/*.cpp
+    ${BASE_DIR}sky/src/Network/*.h)
+
 file(GLOB IMGUI_SRC
     ${BASE_DIR}sky/lib/imgui/*.cpp
     ${BASE_DIR}sky/lib/imgui/*.h)
@@ -62,8 +66,7 @@ file(GLOB TINYUTF8_SRC
     ${BASE_DIR}sky/lib/tinyutf8/*.hpp)
 
 file(GLOB FMT_SRC
-    ${BASE_DIR}sky/lib/fmt/src/*.cc
-)
+    ${BASE_DIR}sky/lib/fmt/src/*.cc)
 
 include_directories(${BASE_DIR}sky/src)
 include_directories(${BASE_DIR}sky/lib/imgui)
@@ -85,6 +88,7 @@ add_library(main SHARED
     ${RENDERER_SRC}
     ${AUDIO_SRC}
     ${SCENE_SRC}
+    ${NETWORK_SRC}
     ${SHARED_SRC}
     ${IMGUI_SRC}
     ${TINYUTF8_SRC}
@@ -96,11 +100,11 @@ target_compile_definitions(main PRIVATE -DGLM_ENABLE_EXPERIMENTAL)
 add_library(fmod SHARED IMPORTED)
 
 set_target_properties(fmod PROPERTIES IMPORTED_LOCATION
-        ../../../../../../sky/lib/fmod/android/${ANDROID_ABI}/libfmod.so)
+    ../../../../../../sky/lib/fmod/android/${ANDROID_ABI}/libfmod.so)
 
 add_custom_command(TARGET main POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy
-        ../../../../../../sky/lib/fmod/android/${ANDROID_ABI}/libfmod.so
-        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libfmod.so)
+    ../../../../../../sky/lib/fmod/android/${ANDROID_ABI}/libfmod.so
+    ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libfmod.so)
 
 target_link_libraries(main
     android

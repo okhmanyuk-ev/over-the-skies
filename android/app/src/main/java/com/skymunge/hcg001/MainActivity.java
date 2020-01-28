@@ -9,12 +9,17 @@ import android.os.Bundle;
 
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
+import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
+import com.android.billingclient.api.SkuDetails;
+import com.android.billingclient.api.SkuDetailsParams;
+import com.android.billingclient.api.SkuDetailsResponseListener;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends NativeActivity {
@@ -27,50 +32,26 @@ public class MainActivity extends NativeActivity {
     @Override
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
+     //   setupBillingClient();
+    }
 
-      /*  Dialog dialog = new AlertDialog.Builder(this)
-                .setMessage("awdawd")
-                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
+    private void setupBillingClient() {
+        billingClient = BillingClient.newBuilder(this)
+                .enablePendingPurchases()
+                .setListener(new PurchasesUpdatedListener() {
+                    @Override
+                    public void onPurchasesUpdated(BillingResult billingResult, @Nullable List<Purchase> list) {
+                        //
                     }
                 })
-                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
-                }).create();
+                .build();
 
-        dialog.show();*/
-
-
-
-
-
-
-
-      /*  billingClient = BillingClient.newBuilder(this).setListener(new PurchasesUpdatedListener() {
-            @Override
-            public void onPurchasesUpdated(BillingResult result, @Nullable List<Purchase> purchases){
-                if (result.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
-                    //сюда мы попадем когда будет осуществлена покупк
-                }
-            }
-            //public void onPurchasesUpdated(int responseCode, @Nullable List<Purchase> purchases) {
-
-            //}
-        }).build();
-*/
-
-
-
-
-/*
         billingClient.startConnection(new BillingClientStateListener() {
             @Override
-            public void onBillingSetupFinished(BillingResult result) {
-                if (result.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                    // The BillingClient is ready. You can query purchases here.
+            public void onBillingSetupFinished(BillingResult billingResult) {
+                int response = billingResult.getResponseCode();
+                if (response == BillingClient.BillingResponseCode.OK) {
+                    setupSkuList();
                 }
             }
             @Override
@@ -78,6 +59,49 @@ public class MainActivity extends NativeActivity {
                 // Try to restart the connection on the next request to
                 // Google Play by calling the startConnection() method.
             }
-        });*/
+        });
     }
+
+    private void setupSkuList() {
+        List<String> skuList = new ArrayList<>();
+        skuList.add("rubies.001");
+
+        SkuDetailsParams params = SkuDetailsParams.newBuilder()
+                .setSkusList(skuList)
+                .setType(BillingClient.SkuType.INAPP)
+                .build();
+
+        billingClient.querySkuDetailsAsync(params,
+                new SkuDetailsResponseListener() {
+                    @Override
+                    public void onSkuDetailsResponse(BillingResult billingResult, List<SkuDetails> skuDetailsList) {
+                        int response = billingResult.getResponseCode();
+                        if (response == BillingClient.BillingResponseCode.OK) {
+
+
+                            for (SkuDetails skuDetails : skuDetailsList) {
+                                String sku = skuDetails.getSku();
+                                String price = skuDetails.getPrice();
+
+                                launchBilling(skuDetails);
+
+                                break;
+                            }
+
+
+
+
+                        }
+                    }
+                });
+    }
+
+    private void launchBilling(SkuDetails skuDetails) {
+        BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
+                .setSkuDetails(skuDetails)
+                .build();
+
+        billingClient.launchBillingFlow(this, billingFlowParams);
+    }
+
 }
