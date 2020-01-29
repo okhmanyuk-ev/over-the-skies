@@ -22,6 +22,7 @@ android {
     }
     sourceSets {
         main.assets.srcDirs += '../../assets'
+        main.java.srcDirs += '../../sky/src/Platform/java/'
     }
     externalNativeBuild {
         cmake {
