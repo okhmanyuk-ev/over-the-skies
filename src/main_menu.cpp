@@ -15,6 +15,7 @@ MainMenu::MainMenu()
 	attach(title);
 
 	const float ButtonLabelFontSize = 20.0f;
+	const glm::vec2 ButtonSize = { 192.0f, 48.0f };
 
 	auto play_button = std::make_shared<Shared::SceneHelpers::FastButton>(ButtonLabelFontSize);
 	play_button->setLabelText(LOCALIZE("MAIN_MENU_PLAY"));
@@ -25,7 +26,7 @@ MainMenu::MainMenu()
 		if (mStartCallback)
 			mStartCallback();
 	});
-	play_button->setSize({ 192.0f, 48.0f });
+	play_button->setSize(ButtonSize);
 	play_button->setAnchor({ -0.5f, 0.75f });
 	play_button->setPivot({ 0.5f, 0.5f });
 	attach(play_button);
@@ -50,7 +51,7 @@ MainMenu::MainMenu()
 		});
 		getSceneManager()->switchScreen(buy_skin_menu);
 	});
-	unlock_button->setSize({ 192.0f, 48.0f });
+	unlock_button->setSize(ButtonSize);
 	unlock_button->setAnchor({ 1.5f, 0.75f });
 	unlock_button->setPivot({ 0.5f, 0.5f });
 	attach(unlock_button);
@@ -149,7 +150,7 @@ MainMenu::MainMenu()
 			return;
 
 		ImGui::Begin("dev", nullptr, ImGui::User::ImGuiWindowFlags_ControlPanel);
-		ImGui::SetWindowPos(ImGui::User::TopLeftCorner());
+		ImGui::SetWindowPos(ImGui::User::TopRightCorner());
 
 		if (ImGui::Button("CLEAR PROFILE"))
 		{
@@ -166,6 +167,20 @@ MainMenu::MainMenu()
 		ImGui::End();
 	}));
 #endif
+
+	auto purchase_button = std::make_shared<Shared::SceneHelpers::FastButton>(ButtonLabelFontSize);
+	purchase_button->setLabelText(LOCALIZE("MAIN_MENU_PURCHASE_RUBIES"));
+	purchase_button->setSize(ButtonSize);
+	purchase_button->setAnchor({ 0.5f, 0.75f });
+	purchase_button->setPivot({ 0.5f, 1.6f });
+	purchase_button->setClickCallback([] {
+		auto onSuccess = [] {
+			PROFILE->increaseRubies(500);
+		};
+		auto onFail = [] {};
+		PLATFORM->purchase("rubies.001", onSuccess, onFail);
+	});
+	attach(purchase_button);
 }
 
 void MainMenu::refresh()

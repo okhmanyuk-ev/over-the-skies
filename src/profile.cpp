@@ -35,7 +35,7 @@ void Profile::save()
 void Profile::clear()
 {
 	mHighScore = 0;
-	mRubies = 0;
+	setRubies(0);
 	mSkins = { 0 };
 }
 
@@ -44,4 +44,13 @@ void Profile::saveAsync()
 	TASK->addTask([this] {
 		save();
 	});
+}
+
+void Profile::setRubies(int value)
+{
+	if (mRubies == value)
+		return;
+
+	mRubies = value;
+	EVENT->emit(RubiesChangedEvent());
 }

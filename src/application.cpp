@@ -16,6 +16,8 @@ Application::Application() : RichApplication(PROJECT_CODE)
 
 	PROFILE->load();
 
+	PLATFORM->initializeBilling({ "rubies.001" });
+
 	addLoadingTasks({
 		{ "fonts", [this] {
 			PRECACHE_FONT_ALIAS("fonts/sansation.ttf", "default");
@@ -154,9 +156,11 @@ void Application::collectRubyAnim(std::shared_ptr<Scene::Node> ruby)
 			Shared::ActionHelpers::ChangeSize(ruby, mRubyScore.sprite->getSize(), MoveDuration, Common::Easing::QuarticInOut)
 		),
 		Shared::ActionHelpers::Kill(ruby),
-		Shared::ActionHelpers::Execute([this] {
-			mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
-		}),
 		Shared::ActionHelpers::Shake(mRubyScore.label, 2.0f, 0.2f)
 	));
+}
+
+void Application::event(const Profile::RubiesChangedEvent& e)
+{
+	mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
 }

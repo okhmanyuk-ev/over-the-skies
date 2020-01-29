@@ -13,18 +13,21 @@
 
 namespace hcg001
 {
-	class Application : public Shared::RichApplication
+	class Application : public Shared::RichApplication,
+		public Common::EventSystem::Listenable<Profile::RubiesChangedEvent>
 	{
 	public:
 		Application();
 		~Application();
 
 	private:
-		void makeLoadingScene();
 		void loading(const std::string& stage, float progress) override;
 		void initialize() override;
 		void frame() override;
 		void collectRubyAnim(std::shared_ptr<Scene::Node> ruby);
+
+	private:
+		void event(const Profile::RubiesChangedEvent& e) override;
 
 	private:
 		std::shared_ptr<Sky> mSky;
