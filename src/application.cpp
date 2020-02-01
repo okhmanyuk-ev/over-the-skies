@@ -46,7 +46,7 @@ void Application::loading(const std::string& stage, float progress)
 	mSplashScene.updateProgress(progress);
 	mSplashScene.frame();
 #if defined BUILD_DEVELOPER
-	//RichApplication::loading(stage, progress);
+	RichApplication::loading(stage, progress);
 #endif
 }
 
@@ -55,7 +55,7 @@ void Application::initialize()
 #if defined(BUILD_DEVELOPER)
 	CONSOLE->execute("hud_show_fps 1");
 	CONSOLE->execute("hud_show_drawcalls 1");
-#elif defined(BUILD_PRODUCTION)
+#else
 	CONSOLE_DEVICE->setEnabled(false);
 	STATS->setEnabled(false);
 #endif

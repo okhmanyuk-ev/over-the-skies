@@ -4,4 +4,7 @@
 #define PROJECT_NAME "OVER THE SKY"
 
 #define BUILD_DEVELOPER
-//#define BUILD_PRODUCTION
+
+#if defined(ANDROID_RELEASE)
+#undef BUILD_DEVELOPER
+#endif
