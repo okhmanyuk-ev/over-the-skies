@@ -43,8 +43,8 @@ Application::~Application()
 
 void Application::loading(const std::string& stage, float progress)
 {
-	mSplashScene.updateProgress(progress);
-	mSplashScene.frame();
+	//mSplashScene.updateProgress(progress);
+	//mSplashScene.frame();
 #if defined BUILD_DEVELOPER
 	RichApplication::loading(stage, progress);
 #endif
