@@ -7,9 +7,7 @@ Application::Application() : RichApplication(PROJECT_CODE)
 	PLATFORM->setTitle(PROJECT_NAME);
 	PLATFORM->resize(360, 640);
 
-	ENGINE->setCustomSystem(&mGameSystems);
-
-	GAME_SYSTEMS->setProfile(&mProfile);
+	ENGINE->addSystem<Profile>(std::make_shared<Profile>());
 
 	LOCALIZATION->loadDicrionaries("localization");
 	LOCALIZATION->setLanguage(Shared::LocalizationSystem::Language::English);

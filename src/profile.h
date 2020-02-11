@@ -4,6 +4,8 @@
 
 #include "skin.h"
 
+#define PROFILE ENGINE->getSystem<hcg001::Profile>()
+
 namespace hcg001
 {
 	class Profile

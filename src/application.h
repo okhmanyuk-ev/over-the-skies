@@ -9,7 +9,7 @@
 #include "player.h"
 #include "plane.h"
 #include "skin.h"
-#include "game_systems.h"
+#include "profile.h"
 
 namespace hcg001
 {
@@ -48,8 +48,6 @@ namespace hcg001
 		bool mNodeEditor = false;
 
 	private:
-		GameSystems mGameSystems;
-		Profile mProfile;
 		Shared::SceneEditor mSceneEditor = Shared::SceneEditor(mGameScene);
 	};
 }
