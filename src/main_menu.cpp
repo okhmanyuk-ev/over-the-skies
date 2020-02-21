@@ -17,8 +17,9 @@ MainMenu::MainMenu()
 	const float ButtonLabelFontSize = 20.0f;
 	const glm::vec2 ButtonSize = { 192.0f, 48.0f };
 
-	auto play_button = std::make_shared<Shared::SceneHelpers::FastButton>(ButtonLabelFontSize);
-	play_button->setLabelText(LOCALIZE("MAIN_MENU_PLAY"));
+	auto play_button = std::make_shared<Shared::SceneHelpers::FastButton>();
+	play_button->getLabel()->setFontSize(ButtonLabelFontSize);
+	play_button->getLabel()->setText(LOCALIZE("MAIN_MENU_PLAY"));
 	play_button->setClickCallback([this] {
 		if (PROFILE->isSkinLocked(mChoosedSkin))
 			return;
@@ -31,8 +32,9 @@ MainMenu::MainMenu()
 	play_button->setPivot({ 0.5f, 0.5f });
 	attach(play_button);
 
-	auto unlock_button = std::make_shared<Shared::SceneHelpers::FastButton>(ButtonLabelFontSize);
-	unlock_button->setLabelText(LOCALIZE("MAIN_MENU_UNLOCK"));
+	auto unlock_button = std::make_shared<Shared::SceneHelpers::FastButton>();
+	unlock_button->getLabel()->setFontSize(ButtonLabelFontSize);
+	unlock_button->getLabel()->setText(LOCALIZE("MAIN_MENU_UNLOCK"));
 	unlock_button->setClickCallback([this, ButtonLabelFontSize, unlock_button] {
 		if (!PROFILE->isSkinLocked(mChoosedSkin))
 			return;
@@ -168,11 +170,12 @@ MainMenu::MainMenu()
 	}));
 #endif
 
-	auto purchase_button = std::make_shared<Shared::SceneHelpers::FastButton>(ButtonLabelFontSize);
-	purchase_button->setLabelText(LOCALIZE("MAIN_MENU_PURCHASE_RUBIES"));
-	purchase_button->setSize(ButtonSize);
-	purchase_button->setAnchor({ 0.5f, 0.75f });
-	purchase_button->setPivot({ 0.5f, 1.6f });
+	auto purchase_button = std::make_shared<Shared::SceneHelpers::FastButton>();
+	purchase_button->getLabel()->setText(LOCALIZE("MAIN_MENU_PURCHASE_RUBIES"));
+	purchase_button->getLabel()->setFontSize(14.0f);
+	purchase_button->setSize({ 86.0f, 28.0f });
+	purchase_button->setPosition({ 100.0f, 28.0f });
+	purchase_button->setPivot({ 0.0f, 0.5f });
 	purchase_button->setClickCallback([] {
 		auto onSuccess = [] {
 			PROFILE->increaseRubies(500);
