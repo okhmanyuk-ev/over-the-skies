@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId = 'com.skymunge.hcg001'
-        minSdkVersion 22
+        minSdkVersion 24
         targetSdkVersion 29
     }
     sourceSets {
@@ -16,22 +16,6 @@ android {
     externalNativeBuild {
         cmake {
             path 'src/main/cpp/CMakeLists.txt'
-        }
-    }
-    buildTypes {
-        release {
-            externalNativeBuild {
-                cmake {
-                    cppFlags += "-DANDROID_RELEASE"
-                }
-            }
-        }
-        debug {
-            externalNativeBuild {
-                cmake {
-                    cppFlags += "-DANDROID_DEBUG"
-                }
-            }
         }
     }
 }
