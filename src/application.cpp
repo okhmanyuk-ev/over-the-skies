@@ -14,7 +14,12 @@ Application::Application() : RichApplication(PROJECT_CODE)
 
 	PROFILE->load();
 
-	PLATFORM->initializeBilling({ "rubies.001" });
+	PLATFORM->initializeBilling({
+		{ "rubies.001", [this] { 
+			PROFILE->setRubies(PROFILE->getRubies() + 200);
+			PROFILE->saveAsync();
+		} }
+	});
 
 	addLoadingTasks({
 		{ "fonts", [this] {
@@ -160,5 +165,8 @@ void Application::collectRubyAnim(std::shared_ptr<Scene::Node> ruby)
 
 void Application::event(const Profile::RubiesChangedEvent& e)
 {
+	if (!isInitialized())
+		return;
+
 	mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
 }

@@ -177,11 +177,7 @@ MainMenu::MainMenu()
 	purchase_button->setPosition({ 100.0f, 28.0f });
 	purchase_button->setPivot({ 0.0f, 0.5f });
 	purchase_button->setClickCallback([] {
-		auto onSuccess = [] {
-			PROFILE->increaseRubies(500);
-		};
-		auto onFail = [] {};
-		PLATFORM->purchase("rubies.001", onSuccess, onFail);
+		PLATFORM->purchase("rubies.001");
 	});
 	attach(purchase_button);
 }
