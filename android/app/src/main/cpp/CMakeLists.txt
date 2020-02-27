@@ -38,7 +38,9 @@ file(GLOB RENDERER_SRC
     ${BASE_DIR}sky/src/Renderer/D3D11/*.cpp
     ${BASE_DIR}sky/src/Renderer/D3D11/*.h
     ${BASE_DIR}sky/src/Renderer/OpenGL/*.cpp
-    ${BASE_DIR}sky/src/Renderer/OpenGL/*.h)
+    ${BASE_DIR}sky/src/Renderer/OpenGL/*.h
+    ${BASE_DIR}sky/src/Renderer/shaders/*.cpp
+    ${BASE_DIR}sky/src/Renderer/shaders/*.h)
 
 file(GLOB AUDIO_SRC
     ${BASE_DIR}sky/src/Audio/*.cpp
