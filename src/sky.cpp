@@ -29,6 +29,7 @@ Sky::Sky()
 	mBloomLayer->setStretch(1.0f);
 	mBloomLayer->setDownscaleFactor(2.0f);
 	mBloomLayer->setGlowIntensity(2.0f);
+	mBloomLayer->setBrightThreshold(0.0f);
 	attach(mBloomLayer);
 
 	CONSOLE->registerCVar("r_bloom_enabled", { "bool" }, CVAR_GETTER_BOOL_FUNC(mBloomLayer->isPostprocessEnabled),
