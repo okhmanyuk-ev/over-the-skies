@@ -71,4 +71,4 @@ endif()
 
 add_subdirectory(sky)
 target_link_libraries(${PROJECT_NAME} sky)
-copy_required_dlls(${PROJECT_NAME})
+copy_required_libs(${PROJECT_NAME})

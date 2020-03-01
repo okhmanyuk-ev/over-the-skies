@@ -16,11 +16,8 @@ add_library(main SHARED
     ${MAIN_SRC}
 )
 
-# sky
-
 add_subdirectory(${BASE_DIR}sky sky)
-
-# fmod
+copy_required_libs(main)
 
 add_library(fmod SHARED IMPORTED)
 
