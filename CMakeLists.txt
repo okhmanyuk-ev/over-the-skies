@@ -6,8 +6,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # main
 
-add_definitions(-DGLM_ENABLE_EXPERIMENTAL)
-
 if(WIN32)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
     add_definitions(-DNOMINMAX)
@@ -71,4 +69,7 @@ endif()
 
 # sky
 
-include(sky/CMakeLists.txt)
+add_subdirectory(sky)
+
+target_link_libraries(${PROJECT_NAME} sky)
+copy_required_dlls(${PROJECT_NAME})
