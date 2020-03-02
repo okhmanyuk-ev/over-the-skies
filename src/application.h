@@ -10,6 +10,7 @@
 #include "plane.h"
 #include "skin.h"
 #include "profile.h"
+#include "cheats.h"
 
 namespace hcg001
 {

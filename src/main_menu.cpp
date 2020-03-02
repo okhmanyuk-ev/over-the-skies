@@ -146,30 +146,6 @@ MainMenu::MainMenu()
 		mDecideButtons = distance <= 32.0f && mScrollTarget == nullptr;
 	}));
 
-#if defined(BUILD_DEVELOPER)
-	runAction(Shared::ActionHelpers::ExecuteInfinite([this] {
-		if (getSceneManager()->hasOpenedWindows())
-			return;
-
-		ImGui::Begin("dev", nullptr, ImGui::User::ImGuiWindowFlags_ControlPanel);
-		ImGui::SetWindowPos(ImGui::User::TopRightCorner());
-
-		if (ImGui::Button("CLEAR PROFILE"))
-		{
-			PROFILE->clear();
-			refresh();
-		}
-
-		if (ImGui::Button("RUBIES +10"))
-		{
-			PROFILE->setRubies(PROFILE->getRubies() + 10);
-			refresh();
-		}
-
-		ImGui::End();
-	}));
-#endif
-
 	auto purchase_button = std::make_shared<Shared::SceneHelpers::FastButton>();
 	purchase_button->getLabel()->setText(LOCALIZE("MAIN_MENU_PURCHASE_RUBIES"));
 	purchase_button->getLabel()->setFontSize(14.0f);
