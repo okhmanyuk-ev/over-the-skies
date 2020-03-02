@@ -24,6 +24,7 @@ namespace hcg001
 	private:
 		void physics(float dTime);
 		void jump();
+		void downslide();
 		void collide(std::shared_ptr<Plane> plane);
 		void removeFarPlanes();
 		void spawnPlanes();
@@ -31,8 +32,8 @@ namespace hcg001
 		void spawnParticle(const glm::vec2& pos, std::shared_ptr<Renderer::Texture> texture, const glm::vec3& color = Graphics::Color::White);
 		void start();
 		void gameover();
-		void slide(float distance);
 		void setupTrail(Skin skin);
+		void tap();
 
 	private:
 		std::shared_ptr<Scene::Label> mReadyLabel;
@@ -50,10 +51,9 @@ namespace hcg001
 		bool mReady = false;
 		float mTimeAccumulator = 0.0f;
 		glm::vec2 mVelocity = { 0.0f, 0.0f };
-		float mTouchPos = 0.0f;
-		bool mTouching = false;
 		float mMaxY = 0.0f;
 		int mScore = 0;
+		bool mDownslide = false;
 
 	public:
 		void setGameoverCallback(std::function<void()> value) { mGameoverCallback = value; }

@@ -55,7 +55,6 @@ GameplayScreen::GameplayScreen(Skin skin)
 	mScoreLabel->setText("0");
 	attach(mScoreLabel);
 
-
 	//
 
 	mPlayer->setTexture(TEXTURE(SkinPath.at(skin)));
@@ -74,34 +73,10 @@ void GameplayScreen::touch(Touch type, const glm::vec2& pos)
 {
 	Scene::Actionable<Screen>::touch(type, pos);
 
-	if (!mReady)
-	{
-		if (type == Touch::Begin)
-		{
-			start();
-			mReady = true;
-		}
-		else
-		{
-			return;
-		}
-	}
+	if (type != Touch::Begin)
+		return;
 
-	if (type == Touch::Begin)
-	{
-		mTouching = true;
-		mTouchPos = pos.x;
-	}
-	else if (type == Touch::Continue && mTouching)
-	{
-		auto distance = pos.x - mTouchPos;
-		slide(distance);
-		mTouchPos = pos.x;
-	}
-	else if (type == Touch::End)
-	{
-		mTouching = false;
-	}
+	tap();
 }
 
 void GameplayScreen::update()
@@ -161,7 +136,7 @@ void GameplayScreen::update()
 
 void GameplayScreen::physics(float dTime)
 {
-	const float Gravitation = 0.3f;
+	const float Gravitation = 0.075f;
 	const float MaxFallSpeed = 10.0f;
 
 	mVelocity.y += Gravitation * dTime * 100.0f;
@@ -181,7 +156,7 @@ void GameplayScreen::physics(float dTime)
 	float next_l = mPlayer->getX() - (mPlayer->getWidth() * mPlayer->getHorizontalPivot());
 	float next_r = mPlayer->getX() + (mPlayer->getWidth() * mPlayer->getHorizontalPivot());
 
-	if (mVelocity.y > 0.0f) // if move down 
+	if (mVelocity.y > 0.0f && mDownslide) // if move down 
 	{
 		glm::vec2 min = { glm::min(prev_l, next_l), prev_y };
 		glm::vec2 max = { glm::max(prev_r, next_r), next_y };
@@ -219,9 +194,20 @@ void GameplayScreen::jump()
 	mVelocity.y = JumpVelocity;
 }
 
+void GameplayScreen::downslide()
+{
+	if (mDownslide)
+		return;
+
+	const float DownslideVelocity = 10.0f;
+	mVelocity.y = DownslideVelocity;
+	mDownslide = true;
+}
+
 void GameplayScreen::collide(std::shared_ptr<Plane> plane)
 {
 	jump();
+	mDownslide = false;
 
 	mScore += 1;
 	mScoreLabel->setText(std::to_string(mScore));
@@ -256,10 +242,8 @@ void GameplayScreen::spawnPlanes()
 
 	while (mPlaneHolder->getNodes().size() < 20)
 	{
-		float min = PlaneSize.x;
-		float max = GameFieldWidth - PlaneSize.x;
-		float d = (mGameField->getWidth() - GameFieldWidth) / 2.0f;
-		spawnPlane({ glm::linearRand(min, max) + d, mPlaneHolder->getNodes().back()->getY() - PlaneStep }, anim_delay);
+		glm::vec2 plane_pos = { GameFieldWidth / 2.0f, mPlaneHolder->getNodes().back()->getY() - PlaneStep };
+		spawnPlane(plane_pos, anim_delay);
 		anim_delay += AnimWait;
 	}
 }
@@ -351,28 +335,6 @@ void GameplayScreen::gameover()
 	PROFILE->saveAsync();
 }
 
-void GameplayScreen::slide(float distance)
-{
-	if (distance == 0.0f)
-		return;
-
-	auto x = mPlayer->getX();
-
-	x += (distance / PLATFORM->getScale()) * 1.75f;
-
-	float half_width = mPlayer->getWidth() * 0.5f;
-	float min = half_width;
-	float max = PLATFORM->getLogicalWidth() - half_width;
-
-	if (x < min)
-		x = min;
-
-	if (x > max)
-		x = max;
-
-	mPlayer->setX(x);
-}
-
 void GameplayScreen::setupTrail(Skin skin)
 {
 	if (skin == Skin::Ball)
@@ -395,25 +357,15 @@ void GameplayScreen::setupTrail(Skin skin)
 			}));
 		}));
 	}
-	/*else if (skin == Skin::Third)
+}
+
+void GameplayScreen::tap()
+{
+	if (!mReady)
 	{
-		mPlayer->runAction(Shared::ActionHelpers::RepeatInfinite([this] {
-			return Shared::ActionHelpers::Delayed(0.025f, Shared::ActionHelpers::Execute([this] {
-				FRAME->addOne([this] {
-					spawnParticle(mPlayer->getPosition(), TEXTURE("textures/skins/ball.png"), Graphics::Color::Gold);
-				});
-			}));
-		}));
+		start();
+		mReady = true;
 	}
-	else if (skin == Skin::Fourth)
-	{
-		auto trail = std::make_shared<Scene::Trail>(mGameField);
-		trail->setAnchor({ 0.5f, 0.5f });
-		trail->setPivot({ 0.5f, 0.5f });
-		trail->setStretch({ 0.9f, 0.9f });
-		trail->setLifetime(0.75f);
-		trail->setColor(Graphics::Color::Aquamarine);
-		trail->setNarrowing(true);
-		mPlayer->attach(trail);
-	}*/
+	
+	downslide();
 }
