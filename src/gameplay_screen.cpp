@@ -109,12 +109,11 @@ void GameplayScreen::update()
 void GameplayScreen::physics(float dTime)
 {
 	const float Gravitation = 0.075f;
-	const float MaxFallSpeed = 10.0f;
 
 	mVelocity.y += Gravitation * dTime * 100.0f;
 
-	if (mVelocity.y > MaxFallSpeed)
-		mVelocity.y = MaxFallSpeed;
+	if (mVelocity.y > MaxFallVelocity)
+		mVelocity.y = MaxFallVelocity;
 
 	float prev_y = mPlayer->getY() + (mPlayer->getHeight() * mPlayer->getVerticalPivot());
 	float prev_l = mPlayer->getX() - (mPlayer->getWidth() * mPlayer->getHorizontalPivot());
@@ -166,8 +165,8 @@ void GameplayScreen::camera(float dTime)
 
 	auto pos = mGameField->getPosition();
 	glm::vec2 target;
-	target.x = -mPlayer->getX() + (PLATFORM->getLogicalWidth() / 2.0f);
-	target.y = mMaxY - (PLATFORM->getLogicalHeight() / 2.0f);
+	target.x = -mPlayer->getX() + (PLATFORM->getLogicalWidth() * 0.33f);
+	target.y = mMaxY - (PLATFORM->getLogicalHeight() * 0.66f);
 
 	if (target.y < 0.0f)
 		target.y = 0.0f;
@@ -191,8 +190,7 @@ void GameplayScreen::downslide()
 	if (mDownslide)
 		return;
 
-	const float DownslideVelocity = 10.0f;
-	mVelocity.y = DownslideVelocity;
+	mVelocity.y = MaxFallVelocity;
 	mDownslide = true;
 }
 
@@ -233,11 +231,17 @@ void GameplayScreen::spawnPlanes()
 		anim_delay += AnimWait;
 	}
 
-	while (mPlaneHolder->getNodes().size() < 20)
+	while (mPlaneHolder->getNodes().size() < 5)
 	{
-		//glm::vec2 plane_pos = { GameFieldWidth / 2.0f, mPlaneHolder->getNodes().back()->getY() - PlaneStep };
-		glm::vec2 plane_pos = { mPlayer->getX() + 64.0f, mPlayer->getY() + PlaneStep / 2.0f };
-		spawnPlane(plane_pos, anim_delay);
+		float min_x = mPlayer->getX() + 64.0f;
+		float max_x = min_x + 256.0f;
+		float pos_x = glm::linearRand(min_x, max_x);
+
+		float min_y = mPlayer->getY() + 128.0f;
+		float max_y = min_y - 256.0f;
+		float pos_y = glm::linearRand(min_y, max_y);
+
+		spawnPlane({ pos_x, pos_y }, anim_delay);
 		anim_delay += AnimWait;
 	}
 }

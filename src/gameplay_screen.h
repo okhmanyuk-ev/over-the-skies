@@ -12,6 +12,7 @@ namespace hcg001
 	private:
 		const glm::vec2 PlaneSize = { 72.0f, 8.0f };
 		const glm::vec2 PlayerSize = { 18.0f, 18.0f };
+		const float MaxFallVelocity = 15.0f;
 
 	public:
 		GameplayScreen(Skin skin);
