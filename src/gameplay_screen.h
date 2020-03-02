@@ -23,6 +23,7 @@ namespace hcg001
 		
 	private:
 		void physics(float dTime);
+		void camera(float dTime);
 		void jump();
 		void downslide();
 		void collide(std::shared_ptr<Plane> plane);
@@ -49,7 +50,7 @@ namespace hcg001
 
 	private:
 		bool mReady = false;
-		float mTimeAccumulator = 0.0f;
+		float mPhysTimeAccumulator = 0.0f;
 		glm::vec2 mVelocity = { 0.0f, 0.0f };
 		float mMaxY = 0.0f;
 		int mScore = 0;

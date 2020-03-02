@@ -18,10 +18,7 @@ GameplayScreen::GameplayScreen(Skin skin)
 	// game field
 
 	mGameField = std::make_shared<Scene::Node>();
-	mGameField->setVerticalAnchor(1.0f);
-	mGameField->setHorizontalSize(GameFieldWidth);
-	mGameField->setHorizontalAnchor(0.5f);
-	mGameField->setHorizontalPivot(0.5f);
+	mGameField->setAnchor({ 0.0f, 1.0f });
 	attach(mGameField);
 
 	// plane holder
@@ -88,20 +85,14 @@ void GameplayScreen::update()
 
 	float dTime = Clock::ToSeconds(FRAME->getTimeDelta());
 
-	mTimeAccumulator += dTime;
+	mPhysTimeAccumulator += dTime;
 
 	const float PhysTimeStep = 1.0f / 120.0f;
 
-	while (mTimeAccumulator >= PhysTimeStep)
+	while (mPhysTimeAccumulator >= PhysTimeStep)
 	{
 		physics(PhysTimeStep);
-		mTimeAccumulator -= PhysTimeStep;
-	}
-
-	if (mTimeAccumulator > 0.0f)
-	{
-		physics(mTimeAccumulator);
-		mTimeAccumulator = 0.0f;
+		mPhysTimeAccumulator -= PhysTimeStep;
 	}
 
 	if (mPlayer->project(mPlayer->getSize() / 2.0f).y >= PLATFORM->getHeight())
@@ -110,26 +101,7 @@ void GameplayScreen::update()
 		return;
 	}
 
-	// camera
-
-	{
-		if (mMaxY < -mPlayer->getY())
-			mMaxY = -mPlayer->getY();
-
-		float y = mGameField->getY();
-		float target = mMaxY - (PLATFORM->getLogicalHeight() / 2.0f);
-
-		if (target < 0.0f)
-			target = 0.0f;
-
-		float delta = (target - y) * 0.09375f * dTime * 100.0f;
-		y += delta;
-
-		mGameField->setY(y);
-	
-		mMoveSkyCallback(y);
-	}
-
+	camera(dTime);
 	removeFarPlanes();
 	spawnPlanes();
 }
@@ -185,6 +157,26 @@ void GameplayScreen::physics(float dTime)
 			break;
 		}
 	}
+}
+
+void GameplayScreen::camera(float dTime)
+{
+	if (mMaxY < -mPlayer->getY())
+		mMaxY = -mPlayer->getY();
+
+	auto pos = mGameField->getPosition();
+	glm::vec2 target;
+	target.x = -mPlayer->getX() + (PLATFORM->getLogicalWidth() / 2.0f);
+	target.y = mMaxY - (PLATFORM->getLogicalHeight() / 2.0f);
+
+	if (target.y < 0.0f)
+		target.y = 0.0f;
+
+	pos += (target - pos);// * 0.9375f * dTime * 10.0f; // TODO: uncomment for smooth camera
+
+	mGameField->setPosition(pos);
+
+	mMoveSkyCallback(pos.y); // TODO: move sky by X too
 }
 
 void GameplayScreen::jump()
@@ -327,6 +319,8 @@ void GameplayScreen::start()
 		Shared::ActionHelpers::Hide(mReadyLabel, 0.5f),
 		Shared::ActionHelpers::Kill(mReadyLabel)
 	));
+
+	mVelocity.x = 2.0f;
 }
 
 void GameplayScreen::gameover()
