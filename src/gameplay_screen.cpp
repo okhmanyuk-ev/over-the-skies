@@ -61,7 +61,7 @@ GameplayScreen::GameplayScreen(Skin skin)
 			spawnPlanes();
 		}))
 	));
-	mPlayer->setPosition({ GameFieldWidth / 2.0f, (-PLATFORM->getLogicalHeight() / 2.0f) + 36.0f });
+	mPlayer->setPosition({ PLATFORM->getLogicalWidth() / 2.0f, (-PLATFORM->getLogicalHeight() / 2.0f) + 36.0f });
 
 	setupTrail(skin);
 }
@@ -198,6 +198,7 @@ void GameplayScreen::downslide()
 
 void GameplayScreen::collide(std::shared_ptr<Plane> plane)
 {
+	mVelocity.x = 2.0f;
 	jump();
 	mDownslide = false;
 
@@ -234,7 +235,8 @@ void GameplayScreen::spawnPlanes()
 
 	while (mPlaneHolder->getNodes().size() < 20)
 	{
-		glm::vec2 plane_pos = { GameFieldWidth / 2.0f, mPlaneHolder->getNodes().back()->getY() - PlaneStep };
+		//glm::vec2 plane_pos = { GameFieldWidth / 2.0f, mPlaneHolder->getNodes().back()->getY() - PlaneStep };
+		glm::vec2 plane_pos = { mPlayer->getX() + 64.0f, mPlayer->getY() + PlaneStep / 2.0f };
 		spawnPlane(plane_pos, anim_delay);
 		anim_delay += AnimWait;
 	}
@@ -319,8 +321,6 @@ void GameplayScreen::start()
 		Shared::ActionHelpers::Hide(mReadyLabel, 0.5f),
 		Shared::ActionHelpers::Kill(mReadyLabel)
 	));
-
-	mVelocity.x = 2.0f;
 }
 
 void GameplayScreen::gameover()
