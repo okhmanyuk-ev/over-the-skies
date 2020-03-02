@@ -76,8 +76,8 @@ MainMenu::MainMenu()
 			
 			runAction(Shared::ActionHelpers::MakeSequence(
 				Shared::ActionHelpers::MakeParallel(
-					Shared::ActionHelpers::ChangeHorizontalAnchor(play_button, -0.5f, Duration, Common::Easing::CubicIn),
-					Shared::ActionHelpers::ChangeHorizontalAnchor(unlock_button, 0.5f, Duration, Common::Easing::CubicIn)
+					Shared::ActionHelpers::ChangeHorizontalAnchor(play_button, -0.5f, Duration, Common::Easing::CubicInOut),
+					Shared::ActionHelpers::ChangeHorizontalAnchor(unlock_button, 0.5f, Duration, Common::Easing::CubicInOut)
 				),
 				Shared::ActionHelpers::Execute([this] { mButtonsAnimating = false; })
 			));
@@ -88,8 +88,8 @@ MainMenu::MainMenu()
 			mButtonsAnimating = true;
 			runAction(Shared::ActionHelpers::MakeSequence(
 				Shared::ActionHelpers::MakeParallel(
-					Shared::ActionHelpers::ChangeHorizontalAnchor(play_button, 0.5f, Duration, Common::Easing::CubicIn),
-					Shared::ActionHelpers::ChangeHorizontalAnchor(unlock_button, 1.5f, Duration, Common::Easing::CubicIn)
+					Shared::ActionHelpers::ChangeHorizontalAnchor(play_button, 0.5f, Duration, Common::Easing::CubicInOut),
+					Shared::ActionHelpers::ChangeHorizontalAnchor(unlock_button, 1.5f, Duration, Common::Easing::CubicInOut)
 				),
 				Shared::ActionHelpers::Execute([this] { mButtonsAnimating = false; })
 			));
