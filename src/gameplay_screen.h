@@ -12,7 +12,7 @@ namespace hcg001
 	private:
 		const glm::vec2 PlaneSize = { 72.0f, 8.0f };
 		const glm::vec2 PlayerSize = { 18.0f, 18.0f };
-		const float MaxFallVelocity = 15.0f;
+		const float MaxFallVelocity = 20.0f;
 
 	public:
 		GameplayScreen(Skin skin);
@@ -55,6 +55,8 @@ namespace hcg001
 		float mMaxY = 0.0f;
 		int mScore = 0;
 		bool mDownslide = false;
+		float mMaxHorzPlane = 0.0f;
+		float mMaxVertPlane = 0.0f;
 
 	public:
 		void setGameoverCallback(std::function<void()> value) { mGameoverCallback = value; }

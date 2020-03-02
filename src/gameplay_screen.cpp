@@ -61,7 +61,7 @@ GameplayScreen::GameplayScreen(Skin skin)
 			spawnPlanes();
 		}))
 	));
-	mPlayer->setPosition({ PLATFORM->getLogicalWidth() / 2.0f, (-PLATFORM->getLogicalHeight() / 2.0f) + 36.0f });
+	mPlayer->setPosition({ PLATFORM->getLogicalWidth() / 2.0f, (-PLATFORM->getLogicalHeight() / 2.0f) - 32.0f });
 
 	setupTrail(skin);
 }
@@ -93,6 +93,12 @@ void GameplayScreen::update()
 	{
 		physics(PhysTimeStep);
 		mPhysTimeAccumulator -= PhysTimeStep;
+	}
+
+	if (mPhysTimeAccumulator > 0.0f)
+	{
+		physics(mPhysTimeAccumulator);
+		mPhysTimeAccumulator = 0.0f;
 	}
 
 	if (mPlayer->project(mPlayer->getSize() / 2.0f).y >= PLATFORM->getHeight())
@@ -171,7 +177,9 @@ void GameplayScreen::camera(float dTime)
 	if (target.y < 0.0f)
 		target.y = 0.0f;
 
-	pos += (target - pos);// * 0.9375f * dTime * 10.0f; // TODO: uncomment for smooth camera
+	const float Speed = 9.0f;
+
+	pos += (target - pos) * dTime * Speed;
 
 	mGameField->setPosition(pos);
 
@@ -181,8 +189,7 @@ void GameplayScreen::camera(float dTime)
 void GameplayScreen::jump()
 {
 	AUDIO->play(mClickSound);
-	const float JumpVelocity = -10.0f;
-	mVelocity.y = JumpVelocity;
+	mVelocity.y = -10.0f;
 }
 
 void GameplayScreen::downslide()
@@ -196,7 +203,7 @@ void GameplayScreen::downslide()
 
 void GameplayScreen::collide(std::shared_ptr<Plane> plane)
 {
-	mVelocity.x = 2.0f;
+	mVelocity.x = 2.5f;
 	jump();
 	mDownslide = false;
 
@@ -223,13 +230,26 @@ void GameplayScreen::spawnPlanes()
 {
 	float anim_delay = 0.0f;
 	const float AnimWait = 0.125f / 1.25f;
-	const float PlaneStep = 96.0f;
 
 	if (!mPlaneHolder->hasNodes())
 	{
-		spawnPlane(mPlayer->getPosition() + glm::vec2(0.0f, PlaneStep / 2.0f), anim_delay);
+		auto pos = mPlayer->getPosition();
+		pos.y += 96.0f;
+		spawnPlane(pos, anim_delay);
 		anim_delay += AnimWait;
 	}
+
+	/*auto start = mPlayer->getPosition();
+	auto dest = start;
+	
+	dest.x += 200.0f;
+	dest.y -= 200.0f;
+
+
+	while (mMaxHorzPlane <= dest.x)
+	{
+			
+	}*/
 
 	while (mPlaneHolder->getNodes().size() < 5)
 	{
