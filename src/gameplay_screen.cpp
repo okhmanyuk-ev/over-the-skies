@@ -187,14 +187,16 @@ void GameplayScreen::camera(float dTime)
 	pos += (target - pos) * dTime * Speed;
 
 	mGameField->setPosition(pos);
-
 	mMoveSkyCallback(pos);
 }
 
-void GameplayScreen::jump()
+void GameplayScreen::jump(bool powerjump)
 {
 	AUDIO->play(mClickSound);
 	mVelocity.y = -10.0f;
+
+	if (powerjump)
+		mVelocity.y *= 2.0f;
 }
 
 void GameplayScreen::downslide()
@@ -210,7 +212,7 @@ void GameplayScreen::collide(std::shared_ptr<Plane> plane)
 {
 	plane->setCrashed(true);
 	mVelocity.x = 3.0f;
-	jump();
+	jump(plane->hasRuby());
 	mDownslide = false;
 
 	mScore += 1;
@@ -251,13 +253,13 @@ void GameplayScreen::spawnPlanes()
 	}
 
 	/*if (mPlayer->getY() < mLastPlanePos.y)
-		mLastPlanePos.y = mPlayer->getY();*/
+		mLastPlanePos.y = mPlayer->getY();
 
-	/*if (mPlayer->getX() > mLastPlanePos.x)
+	if (mPlayer->getX() > mLastPlanePos.x)
 		mLastPlanePos.x = mPlayer->getX();*/
 
-	/*if (mLastPlanePos.x <= 0.0f || mLastPlanePos.y >= 0.0f)
-		mLastPlanePos = mPlayer->getPosition();*/
+	if (mLastPlanePos.x - mPlayer->getX() > 286.0f)
+		mLastPlanePos.x = mPlayer->getX() + 286.0f;
 
 	while (mLastPlanePos.y >= mPlayer->getY())
 	{
