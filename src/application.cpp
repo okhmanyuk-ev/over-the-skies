@@ -113,8 +113,8 @@ void Application::initialize()
 		gameplay_screen->setRubyCallback([this](auto ruby) {
 			collectRubyAnim(ruby);
 		});
-		gameplay_screen->setMoveSkyCallback([this](auto y) {
-			mSky->moveSky(y);
+		gameplay_screen->setMoveSkyCallback([this](auto offset) {
+			mSky->moveSky(offset);
 		});
 		mSceneManager->switchScreen(gameplay_screen);
 	});

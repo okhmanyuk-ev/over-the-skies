@@ -188,7 +188,7 @@ void GameplayScreen::camera(float dTime)
 
 	mGameField->setPosition(pos);
 
-	mMoveSkyCallback(pos.y); // TODO: move sky by X too
+	mMoveSkyCallback(pos);
 }
 
 void GameplayScreen::jump()

@@ -58,13 +58,16 @@ namespace hcg001
 		glm::vec2 mLastPlanePos = { 0.0f, 0.0f };
 
 	public:
+		using MoveSkyCallback = std::function<void(const glm::vec2&)>;
+
+	public:
 		void setGameoverCallback(std::function<void()> value) { mGameoverCallback = value; }
 		void setRubyCallback(std::function<void(std::shared_ptr<Scene::Node>)> value) { mRubyCallback = value; }
-		void setMoveSkyCallback(std::function<void(float)> value) { mMoveSkyCallback = value; }
+		void setMoveSkyCallback(MoveSkyCallback value) { mMoveSkyCallback = value; }
 
 	private:
 		std::function<void()> mGameoverCallback = nullptr;
 		std::function<void(std::shared_ptr<Scene::Node>)> mRubyCallback = nullptr;
-		std::function<void(float)> mMoveSkyCallback = nullptr;
+		MoveSkyCallback mMoveSkyCallback = nullptr;
 	};
 }

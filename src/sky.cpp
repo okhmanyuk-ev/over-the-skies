@@ -46,20 +46,34 @@ Sky::Sky()
 
 	// stars holder
 
-	mStarsHolder1 = std::make_shared<Scene::Node>();
-	mStarsHolder1->setStretch({ 1.0f, 1.0f });
-	mStarsHolder1->setAnchor({ 0.5f, 1.0f });
-	mStarsHolder1->setPivot({ 0.5f, 1.0f });
-	mBloomLayer->attach(mStarsHolder1);
+	mStarsBottomLeft = std::make_shared<Scene::Node>();
+	mStarsBottomLeft->setStretch({ 1.0f, 1.0f });
+	mStarsBottomLeft->setAnchor({ 0.0f, 1.0f });
+	mStarsBottomLeft->setPivot({ 0.0f, 1.0f });
+	mBloomLayer->attach(mStarsBottomLeft);
 
-	mStarsHolder2 = std::make_shared<Scene::Node>();
-	mStarsHolder2->setStretch({ 1.0f, 1.0f });
-	mStarsHolder2->setAnchor({ 0.5f, 0.0f });
-	mStarsHolder2->setPivot({ 0.5f, 1.0f });
-	mBloomLayer->attach(mStarsHolder2);
+	mStarsTopLeft = std::make_shared<Scene::Node>();
+	mStarsTopLeft->setStretch({ 1.0f, 1.0f });
+	mStarsTopLeft->setAnchor({ 0.0f, 0.0f });
+	mStarsTopLeft->setPivot({ 0.0f, 1.0f });
+	mBloomLayer->attach(mStarsTopLeft);
 
-	placeStarsToHolder(mStarsHolder1);
-	placeStarsToHolder(mStarsHolder2);
+	mStarsBottomRight = std::make_shared<Scene::Node>();
+	mStarsBottomRight->setStretch({ 1.0f, 1.0f });
+	mStarsBottomRight->setAnchor({ 1.0f, 1.0f });
+	mStarsBottomRight->setPivot({ 0.0f, 1.0f });
+	mBloomLayer->attach(mStarsBottomRight);
+
+	mStarsTopRight = std::make_shared<Scene::Node>();
+	mStarsTopRight->setStretch({ 1.0f, 1.0f });
+	mStarsTopRight->setAnchor({ 1.0f, 0.0f });
+	mStarsTopRight->setPivot({ 0.0f, 1.0f });
+	mBloomLayer->attach(mStarsTopRight);
+
+	placeStarsToHolder(mStarsBottomLeft);
+	placeStarsToHolder(mStarsTopLeft);
+	placeStarsToHolder(mStarsBottomRight);
+	placeStarsToHolder(mStarsTopRight);
 
 	// asteroids
 
@@ -68,8 +82,8 @@ Sky::Sky()
 	mBloomLayer->attach(mAsteroidsHolder);
 
 	runAction(Shared::ActionHelpers::RepeatInfinite([this] {
-		auto duration = glm::linearRand(5.0f, 20.0f);
-		return Shared::ActionHelpers::Delayed(duration,
+		auto delay = glm::linearRand(5.0f, 20.0f);
+		return Shared::ActionHelpers::Delayed(delay,
 			Shared::ActionHelpers::Insert([this] {
 				auto seq = Shared::ActionHelpers::MakeSequence();
 				auto global_spread = glm::linearRand(0.0f, 1.0f);
@@ -115,7 +129,7 @@ void Sky::spawnAsteroid(float speed, float normalized_spread)
 	asteroid->setPivot({ 0.5f, 0.5f });
 	asteroid->setAnchor({ 0.25f + normalized_spread, 0.0f });
 	asteroid->setSize(2.0f);
-	asteroid->setY(-mAsteroidsHolder->getY());
+	asteroid->setPosition(-mAsteroidsHolder->getPosition());
 
 	auto trail = std::make_shared<Scene::Trail>(mAsteroidsHolder);
 	trail->setStretch(1.0f);
@@ -173,24 +187,38 @@ void Sky::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
 	}));
 }
 
-void Sky::moveSky(float y)
+void Sky::moveSky(const glm::vec2& offset)
 {	
-	mAsteroidsHolder->setY(y / 2.0f);
+	mAsteroidsHolder->setPosition(offset / 2.0f);
 
-	if (y < mLastY)
-		mLastY = y;
+	if (offset.y < mLastPos.y)
+		mLastPos.y = offset.y;
 
-	float delta = y - mLastY;
-	mLastY = y;
+	if (offset.x > mLastPos.x)
+		mLastPos.x = offset.x;
 
-	float stars_delta = (delta * 0.0005f);
+	float delta_x = offset.x - mLastPos.x;
+	float delta_y = offset.y - mLastPos.y;
 
-	mStarsHolder1->setVerticalAnchor(mStarsHolder1->getVerticalAnchor() + stars_delta);
-	mStarsHolder2->setVerticalAnchor(mStarsHolder2->getVerticalAnchor() + stars_delta);
+	mLastPos = offset;
 
-	if (mStarsHolder1->getVerticalAnchor() >= 2.0f)
-		mStarsHolder1->setVerticalAnchor(mStarsHolder1->getVerticalAnchor() - 2.0f);
+	float stars_delta_x = (delta_x * 0.0005f);
+	float stars_delta_y = (delta_y * 0.0005f);
 
-	if (mStarsHolder2->getVerticalAnchor() >= 2.0f)
-		mStarsHolder2->setVerticalAnchor(mStarsHolder2->getVerticalAnchor() - 2.0f);
+	glm::vec2 stars_delta = { stars_delta_x, stars_delta_y };
+
+	auto moveStars = [](std::shared_ptr<Scene::Node> stars, const glm::vec2& stars_delta) {
+		stars->setAnchor(stars->getAnchor() + stars_delta);
+
+		if (stars->getVerticalAnchor() >= 2.0f)
+			stars->setVerticalAnchor(stars->getVerticalAnchor() - 2.0f);
+
+		if (stars->getHorizontalAnchor() <= -1.0f)
+			stars->setHorizontalAnchor(stars->getHorizontalAnchor() + 2.0f);
+	};
+
+	moveStars(mStarsBottomLeft, stars_delta);
+	moveStars(mStarsTopLeft, stars_delta);
+	moveStars(mStarsBottomRight, stars_delta);
+	moveStars(mStarsTopRight, stars_delta);
 }

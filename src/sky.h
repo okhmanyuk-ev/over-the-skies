@@ -15,20 +15,22 @@ namespace hcg001
 
 	public:
 		void changeColor();
-		void moveSky(float y);
+		void moveSky(const glm::vec2& offset);
 
 	protected:
 		void update() override;
 
 	private:
 		std::shared_ptr<Scene::BloomLayer> mBloomLayer;
-		std::shared_ptr<Scene::Node> mStarsHolder1;
-		std::shared_ptr<Scene::Node> mStarsHolder2;
+		std::shared_ptr<Scene::Node> mStarsBottomLeft;
+		std::shared_ptr<Scene::Node> mStarsTopLeft;
+		std::shared_ptr<Scene::Node> mStarsBottomRight;
+		std::shared_ptr<Scene::Node> mStarsTopRight;
 		std::shared_ptr<Scene::Node> mAsteroidsHolder;
 
 	private:
 		std::shared_ptr<Scene::Color> mTopColor = std::make_shared<Scene::Color>();
 		std::shared_ptr<Scene::Color> mBottomColor = std::make_shared<Scene::Color>();
-		float mLastY = 0.0f;
+		glm::vec2 mLastPos = { 0.0f, 0.0f };
 	};
 }
