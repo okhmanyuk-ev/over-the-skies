@@ -102,21 +102,21 @@ void Application::initialize()
 
 	auto main_menu = std::make_shared<MainMenu>();
 	main_menu->setStartCallback([this, main_menu] {
-		auto gameplay_screen = std::make_shared<GameplayScreen>(main_menu->getChoosedSkin());
-		gameplay_screen->setGameoverCallback([this, main_menu, gameplay_screen] {
-			auto gameover_screen = std::make_shared<GameoverMenu>(gameplay_screen->getScore());
+		auto gameplay = std::make_shared<Gameplay>(main_menu->getChoosedSkin());
+		gameplay->setGameoverCallback([this, main_menu, gameplay] {
+			auto gameover_screen = std::make_shared<GameoverMenu>(gameplay->getScore());
 			gameover_screen->setClickCallback([this, main_menu] {
 				mSceneManager->switchScreen(main_menu);
 			});
 			mSceneManager->switchScreen(gameover_screen);
 		});
-		gameplay_screen->setRubyCallback([this](auto ruby) {
+		gameplay->setRubyCallback([this](auto ruby) {
 			collectRubyAnim(ruby);
 		});
-		gameplay_screen->setMoveSkyCallback([this](auto offset) {
+		gameplay->setMoveSkyCallback([this](auto offset) {
 			mSky->moveSky(offset);
 		});
-		mSceneManager->switchScreen(gameplay_screen);
+		mSceneManager->switchScreen(gameplay);
 	});
 
 	mSceneManager->switchScreen(main_menu);

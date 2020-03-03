@@ -7,7 +7,7 @@
 
 namespace hcg001
 {
-	class GameplayScreen : public Scene::Actionable<Screen>
+	class Gameplay : public Scene::Actionable<Screen>
 	{
 	private:
 		const glm::vec2 PlaneSize = { 72.0f, 8.0f };
@@ -15,7 +15,7 @@ namespace hcg001
 		const float MaxFallVelocity = 20.0f;
 
 	public:
-		GameplayScreen(Skin skin);
+		Gameplay(Skin skin);
 
 	protected:
 		void touch(Touch type, const glm::vec2& pos) override;
@@ -31,6 +31,7 @@ namespace hcg001
 		void spawnPlanes();
 		void spawnPlane(const glm::vec2& pos, float anim_delay);
 		void spawnParticle(const glm::vec2& pos, std::shared_ptr<Renderer::Texture> texture, const glm::vec3& color = Graphics::Color::White);
+		void spawnCrashParticles(const glm::vec2& pos);
 		void start();
 		void gameover();
 		void setupTrail(Skin skin);

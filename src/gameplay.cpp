@@ -1,9 +1,9 @@
-#include "gameplay_screen.h"
+#include "gameplay.h"
 #include "profile.h"
 
 using namespace hcg001;
 
-GameplayScreen::GameplayScreen(Skin skin)
+Gameplay::Gameplay(Skin skin)
 {
 	setTouchable(true);
 
@@ -66,7 +66,7 @@ GameplayScreen::GameplayScreen(Skin skin)
 	setupTrail(skin);
 }
 
-void GameplayScreen::touch(Touch type, const glm::vec2& pos)
+void Gameplay::touch(Touch type, const glm::vec2& pos)
 {
 	Scene::Actionable<Screen>::touch(type, pos);
 
@@ -76,7 +76,7 @@ void GameplayScreen::touch(Touch type, const glm::vec2& pos)
 	tap();
 }
 
-void GameplayScreen::update()
+void Gameplay::update()
 {
 	Scene::Actionable<Screen>::update();
 
@@ -112,7 +112,7 @@ void GameplayScreen::update()
 	spawnPlanes();
 }
 
-void GameplayScreen::physics(float dTime)
+void Gameplay::physics(float dTime)
 {
 	const float Gravitation = 0.075f;
 
@@ -169,7 +169,7 @@ void GameplayScreen::physics(float dTime)
 	}
 }
 
-void GameplayScreen::camera(float dTime)
+void Gameplay::camera(float dTime)
 {
 	if (mMaxY < -mPlayer->getY())
 		mMaxY = -mPlayer->getY();
@@ -190,7 +190,7 @@ void GameplayScreen::camera(float dTime)
 	mMoveSkyCallback(pos);
 }
 
-void GameplayScreen::jump(bool powerjump)
+void Gameplay::jump(bool powerjump)
 {
 	AUDIO->play(mClickSound);
 	mVelocity.y = -10.0f;
@@ -199,7 +199,7 @@ void GameplayScreen::jump(bool powerjump)
 		mVelocity.y *= 2.0f;
 }
 
-void GameplayScreen::downslide()
+void Gameplay::downslide()
 {
 	if (mDownslide)
 		return;
@@ -208,13 +208,13 @@ void GameplayScreen::downslide()
 	mDownslide = true;
 }
 
-void GameplayScreen::collide(std::shared_ptr<Plane> plane)
+void Gameplay::collide(std::shared_ptr<Plane> plane)
 {
 	plane->setCrashed(true);
 	mVelocity.x = 3.0f;
 	jump(plane->hasRuby());
 	mDownslide = false;
-
+	spawnCrashParticles(mPlayer->getPosition() + glm::vec2(0.0f, mPlayer->getHeight() * mPlayer->getVerticalPivot()));
 	mScore += 1;
 	mScoreLabel->setText(std::to_string(mScore));
 	runAction(Shared::ActionHelpers::Shake(mScoreLabel, 2.0f, 0.2f));
@@ -224,6 +224,7 @@ void GameplayScreen::collide(std::shared_ptr<Plane> plane)
 
 	plane->runAction(Shared::ActionHelpers::MakeSequence(
 		Shared::ActionHelpers::ChangeScale(plane, { 0.0f, 0.0f }, 0.25f, Common::Easing::BackIn),
+	//	Shared::ActionHelpers::Hide(plane, 0.25f),
 		Shared::ActionHelpers::Kill(plane)
 	));
 
@@ -234,7 +235,7 @@ void GameplayScreen::collide(std::shared_ptr<Plane> plane)
 	}
 }
 
-void GameplayScreen::spawnPlanes()
+void Gameplay::spawnPlanes()
 {
 	float anim_delay = 0.0f;
 	const float AnimWait = 0.125f / 1.125f;
@@ -270,7 +271,7 @@ void GameplayScreen::spawnPlanes()
 	}
 }
 
-void GameplayScreen::spawnPlane(const glm::vec2& pos, float anim_delay)
+void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay)
 {
 	mLastPlanePos = pos;
 
@@ -304,7 +305,7 @@ void GameplayScreen::spawnPlane(const glm::vec2& pos, float anim_delay)
 	}
 }
 
-void GameplayScreen::spawnParticle(const glm::vec2& pos, std::shared_ptr<Renderer::Texture> texture, const glm::vec3& color)
+void Gameplay::spawnParticle(const glm::vec2& pos, std::shared_ptr<Renderer::Texture> texture, const glm::vec3& color)
 {
 	auto particle = std::make_shared<Scene::Actionable<Scene::Sprite>>();
 	particle->setTexture(texture);
@@ -330,7 +331,35 @@ void GameplayScreen::spawnParticle(const glm::vec2& pos, std::shared_ptr<Rendere
 	mParticlesHolder->attach(particle);
 }
 
-void GameplayScreen::removeFarPlanes()
+void Gameplay::spawnCrashParticles(const glm::vec2& pos)
+{
+	for (int i = 0; i < 16; i++)
+	{
+		auto particle = std::make_shared<Scene::Actionable<Scene::Sprite>>();
+		particle->setTexture(TEXTURE("textures/crash_particle.png"));
+		particle->setPosition(pos);
+		particle->setSize({ 8.0f, 8.0f });
+		particle->setPivot({ 0.5f, 0.5f });
+		particle->setRotation(glm::radians(glm::linearRand(0.0f, 360.0f)));
+
+		const auto Direction = glm::diskRand(1.0f);
+		const float Distance = 48.0f;
+		const float Duration = glm::linearRand(0.25f, 1.0f);
+
+		particle->runAction(Shared::ActionHelpers::MakeSequence(
+			Shared::ActionHelpers::MakeParallel(
+				Shared::ActionHelpers::ChangePosition(particle, particle->getPosition() + (Direction * Distance), Duration, Common::Easing::CubicOut),
+				Shared::ActionHelpers::ChangeScale(particle, { 0.0f, 0.0f }, Duration),
+				Shared::ActionHelpers::Hide(particle, Duration)
+			),
+			Shared::ActionHelpers::Kill(particle)
+		));
+
+		mParticlesHolder->attach(particle);
+	}
+}
+
+void Gameplay::removeFarPlanes()
 {
 	auto planes = mPlaneHolder->getNodes();
 
@@ -345,7 +374,7 @@ void GameplayScreen::removeFarPlanes()
 	}
 }
 
-void GameplayScreen::start()
+void Gameplay::start()
 {
 	runAction(Shared::ActionHelpers::MakeSequence(
 		Shared::ActionHelpers::Hide(mReadyLabel, 0.5f),
@@ -353,13 +382,13 @@ void GameplayScreen::start()
 	));
 }
 
-void GameplayScreen::gameover()
+void Gameplay::gameover()
 {
 	mGameoverCallback();
 	PROFILE->saveAsync();
 }
 
-void GameplayScreen::setupTrail(Skin skin)
+void Gameplay::setupTrail(Skin skin)
 {
 	if (skin == Skin::Ball)
 	{
@@ -374,7 +403,8 @@ void GameplayScreen::setupTrail(Skin skin)
 	else if (skin == Skin::Snowflake)
 	{
 		mPlayer->runAction(Shared::ActionHelpers::RepeatInfinite([this] {
-			return Shared::ActionHelpers::Delayed(0.025f, Shared::ActionHelpers::Execute([this] {
+			auto delay = glm::linearRand(0.02f, 0.03f);
+			return Shared::ActionHelpers::Delayed(delay, Shared::ActionHelpers::Execute([this] {
 				FRAME->addOne([this] {
 					spawnParticle(mPlayer->getPosition(), TEXTURE("textures/skins/snowflake.png"));
 				});
@@ -383,7 +413,7 @@ void GameplayScreen::setupTrail(Skin skin)
 	}
 }
 
-void GameplayScreen::tap()
+void Gameplay::tap()
 {
 	if (!mReady)
 	{

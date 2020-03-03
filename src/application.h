@@ -3,7 +3,7 @@
 #include <shared/all.h>
 #include "defines.h"
 #include "main_menu.h"
-#include "gameplay_screen.h"
+#include "gameplay.h"
 #include "gameover_menu.h"
 #include "sky.h"
 #include "player.h"
