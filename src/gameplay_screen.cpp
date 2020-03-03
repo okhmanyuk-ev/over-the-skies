@@ -62,7 +62,7 @@ GameplayScreen::GameplayScreen(Skin skin)
 		}))
 	));
 	mPlayer->setPosition({ PLATFORM->getLogicalWidth() / 2.0f, (-PLATFORM->getLogicalHeight() / 2.0f) - 32.0f });
-
+	
 	setupTrail(skin);
 }
 
@@ -138,8 +138,13 @@ void GameplayScreen::physics(float dTime)
 		glm::vec2 min = { glm::min(prev_l, next_l), prev_y };
 		glm::vec2 max = { glm::max(prev_r, next_r), next_y };
 
-		for (const auto plane : mPlaneHolder->getNodes())
+		for (const auto node : mPlaneHolder->getNodes())
 		{
+			auto plane = std::static_pointer_cast<Plane>(node);
+
+			if (plane->isCrashed())
+				continue;
+
 			float plane_y = plane->getY() - (plane->getHeight() * plane->getVerticalPivot());
 			float plane_l = plane->getX() - (plane->getWidth() * plane->getHorizontalPivot());
 			float plane_r = plane->getX() + (plane->getWidth() * plane->getHorizontalPivot());
@@ -158,7 +163,7 @@ void GameplayScreen::physics(float dTime)
 
 			mVelocity.y = 0.0f;
 			mPlayer->setY(plane_y - (mPlayer->getHeight() * mPlayer->getVerticalPivot()));
-			collide(std::static_pointer_cast<Plane>(plane));
+			collide(plane);
 			break;
 		}
 	}
@@ -177,7 +182,7 @@ void GameplayScreen::camera(float dTime)
 	if (target.y < 0.0f)
 		target.y = 0.0f;
 
-	const float Speed = 9.0f;
+	const float Speed = 8.0f;
 
 	pos += (target - pos) * dTime * Speed;
 
@@ -203,7 +208,8 @@ void GameplayScreen::downslide()
 
 void GameplayScreen::collide(std::shared_ptr<Plane> plane)
 {
-	mVelocity.x = 2.5f;
+	plane->setCrashed(true);
+	mVelocity.x = 3.0f;
 	jump();
 	mDownslide = false;
 
@@ -229,7 +235,7 @@ void GameplayScreen::collide(std::shared_ptr<Plane> plane)
 void GameplayScreen::spawnPlanes()
 {
 	float anim_delay = 0.0f;
-	const float AnimWait = 0.125f / 1.25f;
+	const float AnimWait = 0.125f / 1.125f;
 
 	if (!mPlaneHolder->hasNodes())
 	{
@@ -237,30 +243,26 @@ void GameplayScreen::spawnPlanes()
 		pos.y += 96.0f;
 		spawnPlane(pos, anim_delay);
 		anim_delay += AnimWait;
+
+		pos.y -= 56.0f;
+		pos.x += 96.0f;
+		spawnPlane(pos, anim_delay);
+		anim_delay += AnimWait;
 	}
 
-	/*auto start = mPlayer->getPosition();
-	auto dest = start;
-	
-	dest.x += 200.0f;
-	dest.y -= 200.0f;
+	/*if (mPlayer->getY() < mLastPlanePos.y)
+		mLastPlanePos.y = mPlayer->getY();*/
 
+	/*if (mPlayer->getX() > mLastPlanePos.x)
+		mLastPlanePos.x = mPlayer->getX();*/
 
-	while (mMaxHorzPlane <= dest.x)
+	/*if (mLastPlanePos.x <= 0.0f || mLastPlanePos.y >= 0.0f)
+		mLastPlanePos = mPlayer->getPosition();*/
+
+	while (mLastPlanePos.y >= mPlayer->getY())
 	{
-			
-	}*/
-
-	while (mPlaneHolder->getNodes().size() < 5)
-	{
-		float min_x = mPlayer->getX() + 64.0f;
-		float max_x = min_x + 256.0f;
-		float pos_x = glm::linearRand(min_x, max_x);
-
-		float min_y = mPlayer->getY() + 128.0f;
-		float max_y = min_y - 256.0f;
-		float pos_y = glm::linearRand(min_y, max_y);
-
+		float pos_x = mLastPlanePos.x + glm::linearRand(36.0f, 96.0f);
+		float pos_y = mLastPlanePos.y - glm::linearRand(32.0f, 128.0f);
 		spawnPlane({ pos_x, pos_y }, anim_delay);
 		anim_delay += AnimWait;
 	}
@@ -268,6 +270,8 @@ void GameplayScreen::spawnPlanes()
 
 void GameplayScreen::spawnPlane(const glm::vec2& pos, float anim_delay)
 {
+	mLastPlanePos = pos;
+
 	auto plane = std::make_shared<Plane>();
 
 	auto width = PlaneSize.x;

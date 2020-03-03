@@ -14,7 +14,11 @@ namespace hcg001
 		auto getRuby() const { return mRuby; }
 		void setRuby(std::shared_ptr<Scene::Sprite> value) { mRuby = value; }
 
-	public:
+		auto isCrashed() const { return mCrashed; }
+		void setCrashed(bool value) { mCrashed = value; }
+
+	private:
 		std::shared_ptr<Scene::Sprite> mRuby = nullptr;
+		bool mCrashed = false;
 	};
 }

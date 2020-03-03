@@ -55,8 +55,7 @@ namespace hcg001
 		float mMaxY = 0.0f;
 		int mScore = 0;
 		bool mDownslide = false;
-		float mMaxHorzPlane = 0.0f;
-		float mMaxVertPlane = 0.0f;
+		glm::vec2 mLastPlanePos = { 0.0f, 0.0f };
 
 	public:
 		void setGameoverCallback(std::function<void()> value) { mGameoverCallback = value; }
