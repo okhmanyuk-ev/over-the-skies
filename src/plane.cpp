@@ -35,10 +35,5 @@ Plane::Plane()
 
 		middle->setHorizontalMargin(left->getWidth() + right->getWidth());
 		middle->setHorizontalPosition(left->getWidth());
-
-		if (mRuby) 
-		{
-			mRuby->setColor(color);
-		}
 	}));
 }
