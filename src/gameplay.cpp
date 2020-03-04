@@ -197,7 +197,7 @@ void Gameplay::jump(bool powerjump)
 	mVelocity.y = -10.0f;
 
 	if (powerjump)
-		mVelocity.y *= 2.0f;
+		mVelocity.y *= 1.75f;
 }
 
 void Gameplay::downslide()
@@ -215,21 +215,17 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 	mVelocity.x = 3.0f;
 	jump(plane->isPowerjump());
 
-	if (plane->isPowerjump())
+	if (plane->isPowerjump() && plane->isMoving())
+		showRiskLabel(LOCALIZE("RISK_PERFECT"));
+	else if (plane->isPowerjump())
 		showRiskLabel(LOCALIZE("RISK_GREAT"));
 
 	mDownslide = false;
 	spawnCrashParticles(mPlayer->getPosition() + glm::vec2(0.0f, mPlayer->getHeight() * mPlayer->getVerticalPivot()));
-	mScore += 1;
-	mScoreLabel->setText(std::to_string(mScore));
-	runAction(Shared::ActionHelpers::Shake(mScoreLabel, 2.0f, 0.2f));
-
-	if (mScore > PROFILE->getHighScore())
-		PROFILE->setHighScore(mScore);
+	increaseScore(1);
 
 	plane->runAction(Shared::ActionHelpers::MakeSequence(
 		Shared::ActionHelpers::ChangeScale(plane, { 0.0f, 0.0f }, 0.25f, Common::Easing::BackIn),
-	//	Shared::ActionHelpers::Hide(plane, 0.25f),
 		Shared::ActionHelpers::Kill(plane)
 	));
 
@@ -258,12 +254,6 @@ void Gameplay::spawnPlanes()
 		anim_delay += AnimWait;
 	}
 
-	/*if (mPlayer->getY() < mLastPlanePos.y)
-		mLastPlanePos.y = mPlayer->getY();
-
-	if (mPlayer->getX() > mLastPlanePos.x)
-		mLastPlanePos.x = mPlayer->getX();*/
-
 	if (mLastPlanePos.x - mPlayer->getX() > 286.0f)
 		mLastPlanePos.x = mPlayer->getX() + 286.0f;
 
@@ -290,6 +280,16 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		plane->setSize({ 48.0f, 8.0f });
 		plane->setColor(Graphics::Color::Yellow);
 		plane->setPowerjump(true);
+		plane->runAction(Shared::ActionHelpers::RepeatInfinite([this, plane] {
+			float delay = glm::linearRand(0.125f, 0.5f);
+			return Shared::ActionHelpers::Delayed(delay, Shared::ActionHelpers::Execute([this, plane] {
+				auto pos = plane->getPosition();
+				auto half_w = plane->getWidth() / 2.0f;
+				pos.x += glm::linearRand(-half_w, half_w);
+				pos.y += plane->getHeight() * plane->getVerticalPivot();
+				spawnParticle(pos, TEXTURE("textures/star.png"), Graphics::Color::Yellow, { 0.0f, 1.0f });
+			}));
+		}));
 	}
 	else
 	{
@@ -318,6 +318,8 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 
 	if (moving)
 	{
+		plane->setMoving(true);
+
 		const float BasePosition = plane->getX();
 		plane->runAction(Shared::ActionHelpers::RepeatInfinite([plane, BasePosition] {
 			const float Duration = 0.25f;
@@ -332,7 +334,8 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 	}
 }
 
-void Gameplay::spawnParticle(const glm::vec2& pos, std::shared_ptr<Renderer::Texture> texture, const glm::vec3& color)
+void Gameplay::spawnParticle(const glm::vec2& pos, std::shared_ptr<Renderer::Texture> texture,
+	const glm::vec3& color, const glm::vec2& direction)
 {
 	auto particle = std::make_shared<Scene::Actionable<Scene::Sprite>>();
 	particle->setTexture(texture);
@@ -342,7 +345,6 @@ void Gameplay::spawnParticle(const glm::vec2& pos, std::shared_ptr<Renderer::Tex
 	particle->setRotation(glm::radians(glm::linearRand(0.0f, 360.0f)));
 	particle->setColor(color);
 
-	auto direction = glm::normalize(glm::diskRand(1.0f));
 	const float Duration = 1.0f;
 
 	particle->runAction(Shared::ActionHelpers::MakeSequence(
@@ -356,6 +358,12 @@ void Gameplay::spawnParticle(const glm::vec2& pos, std::shared_ptr<Renderer::Tex
 	));
 
 	mParticlesHolder->attach(particle);
+}
+
+void Gameplay::spawnParticle(const glm::vec2& pos, std::shared_ptr<Renderer::Texture> texture, const glm::vec3& color)
+{
+	auto direction = glm::normalize(glm::diskRand(1.0f));
+	spawnParticle(pos, texture, color, direction);
 }
 
 void Gameplay::spawnCrashParticles(const glm::vec2& pos)
@@ -478,4 +486,13 @@ void Gameplay::showRiskLabel(const utf8_string& text)
 	mRiskLabel->runAction(
 		Shared::ActionHelpers::ChangeHorizontalPivot(mRiskLabel, 0.5f, 0.75f, Common::Easing::ElasticOut)
 	);
+}
+
+void Gameplay::increaseScore(int count)
+{
+	mScore += count;
+	mScoreLabel->setText(std::to_string(mScore));
+
+	if (mScore > PROFILE->getHighScore())
+		PROFILE->setHighScore(mScore);
 }

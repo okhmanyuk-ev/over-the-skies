@@ -20,9 +20,13 @@ namespace hcg001
 		bool isPowerjump() const { return mPowerjump; }
 		void setPowerjump(bool value) { mPowerjump = value; }
 
+		bool isMoving() const { return mMoving; }
+		void setMoving(bool value) { mMoving = value; }
+
 	private:
 		std::shared_ptr<Scene::Sprite> mRuby = nullptr;
 		bool mPowerjump = false;
+		bool mMoving = false;
 		bool mCrashed = false;
 	};
 }
