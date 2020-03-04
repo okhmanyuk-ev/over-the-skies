@@ -10,7 +10,6 @@ namespace hcg001
 	class Gameplay : public Scene::Actionable<Screen>
 	{
 	private:
-		const glm::vec2 PlaneSize = { 72.0f, 8.0f };
 		const glm::vec2 PlayerSize = { 18.0f, 18.0f };
 		const float MaxFallVelocity = 20.0f;
 
@@ -29,13 +28,14 @@ namespace hcg001
 		void collide(std::shared_ptr<Plane> plane);
 		void removeFarPlanes();
 		void spawnPlanes();
-		void spawnPlane(const glm::vec2& pos, float anim_delay);
+		void spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby, bool powerjump, bool moving);
 		void spawnParticle(const glm::vec2& pos, std::shared_ptr<Renderer::Texture> texture, const glm::vec3& color = Graphics::Color::White);
 		void spawnCrashParticles(const glm::vec2& pos);
 		void start();
 		void gameover();
 		void setupTrail(Skin skin);
 		void tap();
+		void showRiskLabel(const utf8_string& text);
 
 	private:
 		std::shared_ptr<Scene::Label> mReadyLabel;
@@ -44,6 +44,7 @@ namespace hcg001
 		std::shared_ptr<Scene::Node> mParticlesHolder;
 		std::shared_ptr<Player> mPlayer;
 		std::shared_ptr<Scene::Label> mScoreLabel;
+		std::shared_ptr<Scene::Actionable<Scene::Label>> mRiskLabel = nullptr;
 		Audio::Sound mClickSound = Audio::Sound(Platform::Asset("sounds/click.wav"));
 
 	public:

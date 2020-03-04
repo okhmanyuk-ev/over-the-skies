@@ -1,5 +1,6 @@
 #include "gameplay.h"
 #include "profile.h"
+#include "helpers.h"
 
 using namespace hcg001;
 
@@ -212,7 +213,11 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 {
 	plane->setCrashed(true);
 	mVelocity.x = 3.0f;
-	jump(plane->hasRuby());
+	jump(plane->isPowerjump());
+
+	if (plane->isPowerjump())
+		showRiskLabel(LOCALIZE("RISK_GREAT"));
+
 	mDownslide = false;
 	spawnCrashParticles(mPlayer->getPosition() + glm::vec2(0.0f, mPlayer->getHeight() * mPlayer->getVerticalPivot()));
 	mScore += 1;
@@ -244,12 +249,12 @@ void Gameplay::spawnPlanes()
 	{
 		auto pos = mPlayer->getPosition();
 		pos.y += 96.0f;
-		spawnPlane(pos, anim_delay);
+		spawnPlane(pos, anim_delay, false, false, false);
 		anim_delay += AnimWait;
 
 		pos.y -= 56.0f;
 		pos.x += 96.0f;
-		spawnPlane(pos, anim_delay);
+		spawnPlane(pos, anim_delay, false, false, false);
 		anim_delay += AnimWait;
 	}
 
@@ -264,25 +269,32 @@ void Gameplay::spawnPlanes()
 
 	while (mLastPlanePos.y >= mPlayer->getY())
 	{
+		bool has_ruby = Helpers::Chance(0.05f);
+		bool powerjump = Helpers::Chance(0.1f);
+		bool moving = Helpers::Chance(0.1f);
 		float pos_x = mLastPlanePos.x + glm::linearRand(36.0f, 96.0f);
 		float pos_y = mLastPlanePos.y - glm::linearRand(32.0f, 128.0f);
-		spawnPlane({ pos_x, pos_y }, anim_delay);
+		spawnPlane({ pos_x, pos_y }, anim_delay, has_ruby, powerjump, moving);
 		anim_delay += AnimWait;
 	}
 }
 
-void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay)
+void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby, bool powerjump, bool moving)
 {
 	mLastPlanePos = pos;
 
 	auto plane = std::make_shared<Plane>();
 
-	auto width = PlaneSize.x;
-	auto diff = PlaneSize.x - PlayerSize.x;
-
-	width -= diff * glm::clamp(static_cast<float>(mScore) / 100.0f, 0.0f, 1.0f);
-
-	plane->setSize({ width, PlaneSize.y });
+	if (powerjump)
+	{
+		plane->setSize({ 48.0f, 8.0f });
+		plane->setColor(Graphics::Color::Yellow);
+		plane->setPowerjump(true);
+	}
+	else
+	{
+		plane->setSize({ 64.0f, 8.0f });
+	}
 	plane->setPivot({ 0.5f, 0.5f });
 	plane->setPosition(pos);
 	plane->setScale({ 0.0f, 0.0f });
@@ -292,7 +304,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay)
 
 	mPlaneHolder->attach(plane);
 
-	if (glm::linearRand(0.0f, 1.0f) < 0.05f) // ruby on plane
+	if (has_ruby)
 	{
 		auto ruby = std::make_shared<Scene::Sprite>();
 		ruby->setTexture(TEXTURE("ruby"));
@@ -302,6 +314,21 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay)
 		ruby->setSize({ 18.0f, 18.0f });
 		plane->attach(ruby);
 		plane->setRuby(ruby);
+	}
+
+	if (moving)
+	{
+		const float BasePosition = plane->getX();
+		plane->runAction(Shared::ActionHelpers::RepeatInfinite([plane, BasePosition] {
+			const float Duration = 0.25f;
+			const float Distance = 32.0f;
+			return Shared::ActionHelpers::MakeSequence(
+				Shared::ActionHelpers::ChangeHorizontalPosition(plane, BasePosition + Distance, Duration),
+				Shared::ActionHelpers::ChangeHorizontalPosition(plane, BasePosition, Duration),
+				Shared::ActionHelpers::ChangeHorizontalPosition(plane, BasePosition - Distance, Duration),
+				Shared::ActionHelpers::ChangeHorizontalPosition(plane, BasePosition, Duration)
+			);
+		}));
 	}
 }
 
@@ -344,7 +371,7 @@ void Gameplay::spawnCrashParticles(const glm::vec2& pos)
 
 		const auto Direction = glm::diskRand(1.0f);
 		const float Distance = 48.0f;
-		const float Duration = glm::linearRand(0.25f, 1.0f);
+		const float Duration = glm::linearRand(0.25f, 0.75f);
 
 		particle->runAction(Shared::ActionHelpers::MakeSequence(
 			Shared::ActionHelpers::MakeParallel(
@@ -422,4 +449,33 @@ void Gameplay::tap()
 	}
 	
 	downslide();
+}
+
+void Gameplay::showRiskLabel(const utf8_string& text)
+{
+	if (mRiskLabel != nullptr)
+	{
+		mRiskLabel->runAction(Shared::ActionHelpers::Kill(mRiskLabel));
+	}
+
+	mRiskLabel = std::make_shared<Scene::Actionable<Scene::Label>>();
+	mRiskLabel->setFont(FONT("default"));
+	mRiskLabel->setFontSize(28.0f);
+	mRiskLabel->setText(text);
+	mRiskLabel->setAnchor({ 0.5f, 0.33f });
+	mRiskLabel->setVerticalPivot(0.5f);
+	mRiskLabel->setHorizontalPivot(Helpers::Chance(0.5f) ? 1.0f : 0.0f);
+	mRiskLabel->setAlpha(0.0f);
+	attach(mRiskLabel);
+
+	mRiskLabel->runAction(Shared::ActionHelpers::MakeSequence(
+		Shared::ActionHelpers::Show(mRiskLabel, 0.125f),
+		Shared::ActionHelpers::Wait(1.0f),
+		Shared::ActionHelpers::Hide(mRiskLabel, 0.5f),
+		Shared::ActionHelpers::Kill(mRiskLabel)
+	));
+
+	mRiskLabel->runAction(
+		Shared::ActionHelpers::ChangeHorizontalPivot(mRiskLabel, 0.5f, 0.75f, Common::Easing::ElasticOut)
+	);
 }

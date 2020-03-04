@@ -14,11 +14,15 @@ namespace hcg001
 		auto getRuby() const { return mRuby; }
 		void setRuby(std::shared_ptr<Scene::Sprite> value) { mRuby = value; }
 
-		auto isCrashed() const { return mCrashed; }
+		bool isCrashed() const { return mCrashed; }
 		void setCrashed(bool value) { mCrashed = value; }
+
+		bool isPowerjump() const { return mPowerjump; }
+		void setPowerjump(bool value) { mPowerjump = value; }
 
 	private:
 		std::shared_ptr<Scene::Sprite> mRuby = nullptr;
+		bool mPowerjump = false;
 		bool mCrashed = false;
 	};
 }
