@@ -280,16 +280,17 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		plane->setSize({ 48.0f, 8.0f });
 		plane->setColor(Graphics::Color::Yellow);
 		plane->setPowerjump(true);
-		plane->runAction(Shared::ActionHelpers::RepeatInfinite([this, plane] {
-			float delay = glm::linearRand(0.125f, 0.5f);
-			return Shared::ActionHelpers::Delayed(delay, Shared::ActionHelpers::Execute([this, plane] {
-				auto pos = plane->getPosition();
-				auto half_w = plane->getWidth() / 2.0f;
-				pos.x += glm::linearRand(-half_w, half_w);
-				pos.y += plane->getHeight() * plane->getVerticalPivot();
-				spawnParticle(pos, TEXTURE("textures/star.png"), Graphics::Color::Yellow, { 0.0f, 1.0f });
-			}));
-		}));
+		
+		auto emitter = std::make_shared<Shared::SceneHelpers::Emitter>(mParticlesHolder);
+		emitter->setParticleTexture(TEXTURE("textures/star.png"));
+		emitter->setMinDelay(0.025f);
+		emitter->setMaxDelay(0.1f);
+		emitter->setStretch({ 0.75f, 0.0f });
+		emitter->setPivot({ 0.5f, 0.5f });
+		emitter->setAnchor({ 0.5f, 1.0f });
+		emitter->setDirection({ 0.0f, 1.0f });
+		emitter->setBeginColor({ Graphics::Color::Yellow, 1.0f });
+		plane->attach(emitter);
 	}
 	else
 	{
@@ -332,38 +333,6 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 			);
 		}));
 	}
-}
-
-void Gameplay::spawnParticle(const glm::vec2& pos, std::shared_ptr<Renderer::Texture> texture,
-	const glm::vec3& color, const glm::vec2& direction)
-{
-	auto particle = std::make_shared<Scene::Actionable<Scene::Sprite>>();
-	particle->setTexture(texture);
-	particle->setPosition(pos);
-	particle->setSize({ 12.0f, 12.0f });
-	particle->setPivot({ 0.5f, 0.5f });
-	particle->setRotation(glm::radians(glm::linearRand(0.0f, 360.0f)));
-	particle->setColor(color);
-
-	const float Duration = 1.0f;
-
-	particle->runAction(Shared::ActionHelpers::MakeSequence(
-		Shared::ActionHelpers::MakeParallel(
-			Shared::ActionHelpers::ChangePositionByDirection(particle, direction, 25.0f, Duration),
-			Shared::ActionHelpers::Hide(particle, Duration),
-			Shared::ActionHelpers::ChangeScale(particle, { 0.0f, 0.0f }, Duration),
-			Shared::ActionHelpers::ChangeColor(particle, Graphics::Color::White, Duration)
-		),
-		Shared::ActionHelpers::Kill(particle)
-	));
-
-	mParticlesHolder->attach(particle);
-}
-
-void Gameplay::spawnParticle(const glm::vec2& pos, std::shared_ptr<Renderer::Texture> texture, const glm::vec3& color)
-{
-	auto direction = glm::normalize(glm::diskRand(1.0f));
-	spawnParticle(pos, texture, color, direction);
 }
 
 void Gameplay::spawnCrashParticles(const glm::vec2& pos)
@@ -437,14 +406,15 @@ void Gameplay::setupTrail(Skin skin)
 	}
 	else if (skin == Skin::Snowflake)
 	{
-		mPlayer->runAction(Shared::ActionHelpers::RepeatInfinite([this] {
-			auto delay = glm::linearRand(0.02f, 0.03f);
-			return Shared::ActionHelpers::Delayed(delay, Shared::ActionHelpers::Execute([this] {
-				FRAME->addOne([this] {
-					spawnParticle(mPlayer->getPosition(), TEXTURE("textures/skins/snowflake.png"));
-				});
-			}));
-		}));
+		auto emitter = std::make_shared<Shared::SceneHelpers::Emitter>(mParticlesHolder);
+		emitter->setPivot({ 0.5f, 0.5f });
+		emitter->setAnchor({ 0.5f, 0.5f });
+		emitter->setParticleTexture(TEXTURE("textures/skins/snowflake.png"));
+		emitter->setMinDelay(0.02f);
+		emitter->setMaxDelay(0.03f);
+		emitter->setParticleSize({ 12.0f, 12.0f });
+		emitter->setDistance(24.0f);
+		mPlayer->attach(emitter);
 	}
 }
 

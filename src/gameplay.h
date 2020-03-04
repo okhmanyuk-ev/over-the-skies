@@ -29,12 +29,6 @@ namespace hcg001
 		void removeFarPlanes();
 		void spawnPlanes();
 		void spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby, bool powerjump, bool moving);
-
-		void spawnParticle(const glm::vec2& pos, std::shared_ptr<Renderer::Texture> texture,
-			const glm::vec3& color, const glm::vec2& direction);
-
-		void spawnParticle(const glm::vec2& pos, std::shared_ptr<Renderer::Texture> texture, const glm::vec3& color = Graphics::Color::White);
-
 		void spawnCrashParticles(const glm::vec2& pos);
 		void start();
 		void gameover();
