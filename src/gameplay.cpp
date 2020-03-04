@@ -108,6 +108,13 @@ void Gameplay::update()
 		return;
 	}
 
+	{
+		auto dir = glm::normalize(mVelocity);
+		auto angle = glm::atan(dir.y, dir.x);
+		angle -= glm::radians(30.0f);
+		mPlayer->setRotation(angle);
+	}
+
 	camera(dTime);
 	removeFarPlanes();
 	spawnPlanes();
@@ -198,6 +205,8 @@ void Gameplay::jump(bool powerjump)
 
 	if (powerjump)
 		mVelocity.y *= 1.75f;
+
+	increaseScore((int)glm::abs(mVelocity.y));
 }
 
 void Gameplay::downslide()
@@ -222,7 +231,6 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 
 	mDownslide = false;
 	spawnCrashParticles(mPlayer->getPosition() + glm::vec2(0.0f, mPlayer->getHeight() * mPlayer->getVerticalPivot()));
-	increaseScore(1);
 
 	plane->runAction(Shared::ActionHelpers::MakeSequence(
 		Shared::ActionHelpers::ChangeScale(plane, { 0.0f, 0.0f }, 0.25f, Common::Easing::BackIn),
@@ -274,6 +282,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 	mLastPlanePos = pos;
 
 	auto plane = std::make_shared<Plane>();
+	plane->setSize({ 64.0f, 8.0f });
 
 	if (powerjump)
 	{
@@ -292,10 +301,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		emitter->setBeginColor({ Graphics::Color::Yellow, 1.0f });
 		plane->attach(emitter);
 	}
-	else
-	{
-		plane->setSize({ 64.0f, 8.0f });
-	}
+
 	plane->setPivot({ 0.5f, 0.5f });
 	plane->setPosition(pos);
 	plane->setScale({ 0.0f, 0.0f });
@@ -413,7 +419,7 @@ void Gameplay::setupTrail(Skin skin)
 		emitter->setMinDelay(0.02f);
 		emitter->setMaxDelay(0.03f);
 		emitter->setParticleSize({ 12.0f, 12.0f });
-		emitter->setDistance(24.0f);
+		emitter->setDistance(16.0f);
 		mPlayer->attach(emitter);
 	}
 }
