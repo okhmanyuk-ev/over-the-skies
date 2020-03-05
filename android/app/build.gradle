@@ -5,7 +5,7 @@ android {
     buildToolsVersion '29.0.2'
 
     defaultConfig {
-        applicationId = 'com.skymunge.hcg001'
+        applicationId = 'com.dreamskies.hcg001'
         minSdkVersion 24
         targetSdkVersion 29
     }
