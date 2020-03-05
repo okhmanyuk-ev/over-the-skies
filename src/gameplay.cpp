@@ -38,9 +38,7 @@ Gameplay::Gameplay(Skin skin)
 	// player
 
 	mPlayer = std::make_shared<Player>();
-	mPlayer->setSize(PlayerSize);
-	mPlayer->setPivot({ 0.5f, 0.5f });
-	mPlayer->setAlpha(0.0f);
+	mPlayer->getSprite()->setAlpha(0.0f);
 	mGameField->attach(mPlayer);
 
 	// score label
@@ -55,9 +53,9 @@ Gameplay::Gameplay(Skin skin)
 
 	//
 
-	mPlayer->setTexture(TEXTURE(SkinPath.at(skin)));
+	mPlayer->getSprite()->setTexture(TEXTURE(SkinPath.at(skin)));
 	Common::Actions::Run(Shared::ActionHelpers::Delayed(0.25f, Shared::ActionHelpers::MakeSequence(
-		Shared::ActionHelpers::Show(mPlayer, 0.25f),
+		Shared::ActionHelpers::Show(mPlayer->getSprite(), 0.25f),
 		Shared::ActionHelpers::Execute([this] {
 			spawnPlanes();
 		}))
@@ -65,6 +63,19 @@ Gameplay::Gameplay(Skin skin)
 	mPlayer->setPosition({ PLATFORM->getLogicalWidth() / 2.0f, (-PLATFORM->getLogicalHeight() / 2.0f) - 32.0f });
 	
 	setupTrail(skin);
+
+	// jump particles
+
+	mJumpParticles = std::make_shared<Shared::SceneHelpers::RectangleEmitter>(mParticlesHolder);
+	mJumpParticles->setRunning(false);
+	mJumpParticles->setBeginSize({ 8.0f, 8.0f });
+	mJumpParticles->setStretch({ 1.0f, 0.0f });
+	mJumpParticles->setPivot({ 0.5f, 0.5f });
+	mJumpParticles->setAnchor({ 0.5f, 1.0f });
+	mJumpParticles->setDistance(48.0f);
+	mJumpParticles->setMinDuration(0.25f);
+	mJumpParticles->setMaxDuration(0.75f);
+	mPlayer->attach(mJumpParticles);
 }
 
 void Gameplay::touch(Touch type, const glm::vec2& pos)
@@ -112,7 +123,7 @@ void Gameplay::update()
 		auto dir = glm::normalize(mVelocity);
 		auto angle = glm::atan(dir.y, dir.x);
 		angle -= glm::radians(30.0f);
-		mPlayer->setRotation(angle);
+		mPlayer->getSprite()->setRotation(angle);
 	}
 
 	camera(dTime);
@@ -204,8 +215,13 @@ void Gameplay::jump(bool powerjump)
 	mVelocity.y = -10.0f;
 
 	if (powerjump)
+	{
 		mVelocity.y *= 1.75f;
-
+		mPlayer->getSprite()->setColor(Graphics::Color::Yellow);
+		runAction(Shared::ActionHelpers::Delayed(0.75f, 
+			Shared::ActionHelpers::ChangeColor(mPlayer->getSprite(), Graphics::Color::White, 0.5f)
+		));
+	}
 	increaseScore((int)glm::abs(mVelocity.y));
 }
 
@@ -230,7 +246,8 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 		showRiskLabel(LOCALIZE("RISK_GREAT"));
 
 	mDownslide = false;
-	spawnCrashParticles(mPlayer->getPosition() + glm::vec2(0.0f, mPlayer->getHeight() * mPlayer->getVerticalPivot()));
+	//spawnCrashParticles(mPlayer->getPosition() + glm::vec2(0.0f, mPlayer->getHeight() * mPlayer->getVerticalPivot()));
+	spawnJumpParticles();
 
 	plane->runAction(Shared::ActionHelpers::MakeSequence(
 		Shared::ActionHelpers::ChangeScale(plane, { 0.0f, 0.0f }, 0.25f, Common::Easing::BackIn),
@@ -290,8 +307,8 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		plane->setColor(Graphics::Color::Yellow);
 		plane->setPowerjump(true);
 		
-		auto emitter = std::make_shared<Shared::SceneHelpers::Emitter>(mParticlesHolder);
-		emitter->setParticleTexture(TEXTURE("textures/star.png"));
+		auto emitter = std::make_shared<Shared::SceneHelpers::RectangleEmitter>(mParticlesHolder);
+		emitter->setBeginSize({ 6.0f, 6.0f });
 		emitter->setMinDelay(0.025f);
 		emitter->setMaxDelay(0.1f);
 		emitter->setStretch({ 0.75f, 0.0f });
@@ -341,31 +358,11 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 	}
 }
 
-void Gameplay::spawnCrashParticles(const glm::vec2& pos)
+void Gameplay::spawnJumpParticles()
 {
 	for (int i = 0; i < 16; i++)
 	{
-		auto particle = std::make_shared<Scene::Actionable<Scene::Sprite>>();
-		particle->setTexture(TEXTURE("textures/crash_particle.png"));
-		particle->setPosition(pos);
-		particle->setSize({ 8.0f, 8.0f });
-		particle->setPivot({ 0.5f, 0.5f });
-		particle->setRotation(glm::radians(glm::linearRand(0.0f, 360.0f)));
-
-		const auto Direction = glm::diskRand(1.0f);
-		const float Distance = 48.0f;
-		const float Duration = glm::linearRand(0.25f, 0.75f);
-
-		particle->runAction(Shared::ActionHelpers::MakeSequence(
-			Shared::ActionHelpers::MakeParallel(
-				Shared::ActionHelpers::ChangePosition(particle, particle->getPosition() + (Direction * Distance), Duration, Common::Easing::CubicOut),
-				Shared::ActionHelpers::ChangeScale(particle, { 0.0f, 0.0f }, Duration),
-				Shared::ActionHelpers::Hide(particle, Duration)
-			),
-			Shared::ActionHelpers::Kill(particle)
-		));
-
-		mParticlesHolder->attach(particle);
+		mJumpParticles->emit();
 	}
 }
 
@@ -408,18 +405,23 @@ void Gameplay::setupTrail(Skin skin)
 		trail->setStretch({ 0.9f, 0.9f });
 		trail->setLifetime(0.2f);
 		trail->setNarrowing(true);
+		mPlayer->runAction(Shared::ActionHelpers::ExecuteInfinite([this, trail] {
+			trail->setColor(mPlayer->getSprite()->getColor());
+		}));
 		mPlayer->attach(trail);
 	}
 	else if (skin == Skin::Snowflake)
 	{
-		auto emitter = std::make_shared<Shared::SceneHelpers::Emitter>(mParticlesHolder);
+		auto emitter = std::make_shared<Shared::SceneHelpers::SpriteEmitter>(mParticlesHolder);
 		emitter->setPivot({ 0.5f, 0.5f });
 		emitter->setAnchor({ 0.5f, 0.5f });
-		emitter->setParticleTexture(TEXTURE("textures/skins/snowflake.png"));
-		emitter->setMinDelay(0.02f);
-		emitter->setMaxDelay(0.03f);
-		emitter->setParticleSize({ 12.0f, 12.0f });
+		emitter->setTexture(TEXTURE("textures/skins/snowflake.png"));
+		emitter->setDelay(0.0f);
+		emitter->setBeginSize({ 12.0f, 12.0f });
 		emitter->setDistance(16.0f);
+		mPlayer->runAction(Shared::ActionHelpers::ExecuteInfinite([this, emitter] {
+			emitter->setBeginColor(mPlayer->getSprite()->getColor());
+		}));
 		mPlayer->attach(emitter);
 	}
 }

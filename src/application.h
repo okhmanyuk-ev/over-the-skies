@@ -42,7 +42,7 @@ namespace hcg001
 		std::shared_ptr<Shared::SceneManager> mSceneManager;
 
 	private:
-		Shared::SceneHelpers::SplashScene mSplashScene = Shared::SceneHelpers::SplashScene(TEXTURE("textures/logo.png"));
+	//	Shared::SceneHelpers::SplashScene mSplashScene = Shared::SceneHelpers::SplashScene(TEXTURE("textures/logo.png"));
 		Scene::Scene mGameScene;
 
 	private:
