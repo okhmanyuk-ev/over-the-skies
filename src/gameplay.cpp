@@ -214,14 +214,9 @@ void Gameplay::jump(bool powerjump)
 	AUDIO->play(mClickSound);
 	mVelocity.y = -10.0f;
 
-	if (powerjump)
-	{
+	if (powerjump)	
 		mVelocity.y *= 1.75f;
-		mPlayer->getSprite()->setColor(Graphics::Color::Yellow);
-		runAction(Shared::ActionHelpers::Delayed(0.75f, 
-			Shared::ActionHelpers::ChangeColor(mPlayer->getSprite(), Graphics::Color::White, 0.5f)
-		));
-	}
+
 	increaseScore((int)glm::abs(mVelocity.y));
 }
 
@@ -405,9 +400,6 @@ void Gameplay::setupTrail(Skin skin)
 		trail->setStretch({ 0.9f, 0.9f });
 		trail->setLifetime(0.2f);
 		trail->setNarrowing(true);
-		mPlayer->runAction(Shared::ActionHelpers::ExecuteInfinite([this, trail] {
-			trail->setColor(mPlayer->getSprite()->getColor());
-		}));
 		mPlayer->attach(trail);
 	}
 	else if (skin == Skin::Snowflake)
@@ -419,9 +411,6 @@ void Gameplay::setupTrail(Skin skin)
 		emitter->setDelay(0.0f);
 		emitter->setBeginSize({ 12.0f, 12.0f });
 		emitter->setDistance(16.0f);
-		mPlayer->runAction(Shared::ActionHelpers::ExecuteInfinite([this, emitter] {
-			emitter->setBeginColor(mPlayer->getSprite()->getColor());
-		}));
 		mPlayer->attach(emitter);
 	}
 }
