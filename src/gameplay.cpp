@@ -30,10 +30,15 @@ Gameplay::Gameplay(Skin skin)
 
 	// particles
 
-	mParticlesHolder = std::make_shared<Scene::Node>();
-	mParticlesHolder->setVerticalAnchor(1.0f);
-	mParticlesHolder->setHorizontalStretch(1.0f);
-	mGameField->attach(mParticlesHolder);
+	mRectangleParticlesHolder = std::make_shared<Scene::Node>();
+	mRectangleParticlesHolder->setStretch(1.0f);
+	mGameField->attach(mRectangleParticlesHolder);
+
+	// player particles
+	
+	mPlayerParticlesHolder = std::make_shared<Scene::Node>();
+	mPlayerParticlesHolder->setStretch(1.0f);
+	mGameField->attach(mPlayerParticlesHolder);
 
 	// player
 
@@ -66,7 +71,7 @@ Gameplay::Gameplay(Skin skin)
 
 	// jump particles
 
-	mJumpParticles = std::make_shared<Shared::SceneHelpers::RectangleEmitter>(mParticlesHolder);
+	mJumpParticles = std::make_shared<Shared::SceneHelpers::RectangleEmitter>(mRectangleParticlesHolder);
 	mJumpParticles->setRunning(false);
 	mJumpParticles->setBeginSize({ 8.0f, 8.0f });
 	mJumpParticles->setStretch({ 1.0f, 0.0f });
@@ -214,7 +219,7 @@ void Gameplay::jump(bool powerjump)
 	AUDIO->play(mClickSound);
 	mVelocity.y = -10.0f;
 
-	if (powerjump)	
+	if (powerjump)
 		mVelocity.y *= 1.75f;
 
 	increaseScore((int)glm::abs(mVelocity.y));
@@ -241,7 +246,6 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 		showRiskLabel(LOCALIZE("RISK_GREAT"));
 
 	mDownslide = false;
-	//spawnCrashParticles(mPlayer->getPosition() + glm::vec2(0.0f, mPlayer->getHeight() * mPlayer->getVerticalPivot()));
 	spawnJumpParticles();
 
 	plane->runAction(Shared::ActionHelpers::MakeSequence(
@@ -302,10 +306,9 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		plane->setColor(Graphics::Color::Yellow);
 		plane->setPowerjump(true);
 		
-		auto emitter = std::make_shared<Shared::SceneHelpers::RectangleEmitter>(mParticlesHolder);
+		auto emitter = std::make_shared<Shared::SceneHelpers::RectangleEmitter>(mRectangleParticlesHolder);
 		emitter->setBeginSize({ 6.0f, 6.0f });
-		emitter->setMinDelay(0.025f);
-		emitter->setMaxDelay(0.1f);
+		emitter->setDelay(1.0f / 60.0f);
 		emitter->setStretch({ 0.75f, 0.0f });
 		emitter->setPivot({ 0.5f, 0.5f });
 		emitter->setAnchor({ 0.5f, 1.0f });
@@ -404,11 +407,11 @@ void Gameplay::setupTrail(Skin skin)
 	}
 	else if (skin == Skin::Snowflake)
 	{
-		auto emitter = std::make_shared<Shared::SceneHelpers::SpriteEmitter>(mParticlesHolder);
+		auto emitter = std::make_shared<Shared::SceneHelpers::SpriteEmitter>(mPlayerParticlesHolder);
 		emitter->setPivot({ 0.5f, 0.5f });
 		emitter->setAnchor({ 0.5f, 0.5f });
 		emitter->setTexture(TEXTURE("textures/skins/snowflake.png"));
-		emitter->setDelay(0.0f);
+		emitter->setDelay(1.0f / 60.0f);
 		emitter->setBeginSize({ 12.0f, 12.0f });
 		emitter->setDistance(16.0f);
 		mPlayer->attach(emitter);
