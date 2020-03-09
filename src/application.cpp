@@ -16,7 +16,7 @@ Application::Application() : RichApplication(PROJECT_CODE)
 
 	PLATFORM->initializeBilling({
 		{ "rubies.001", [this] { 
-			PROFILE->setRubies(PROFILE->getRubies() + 200);
+			PROFILE->setRubies(PROFILE->getRubies() + 1000);
 			PROFILE->saveAsync();
 		} }
 	});

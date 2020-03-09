@@ -34,12 +34,6 @@ Gameplay::Gameplay(Skin skin)
 	mRectangleParticlesHolder->setStretch(1.0f);
 	mGameField->attach(mRectangleParticlesHolder);
 
-	// player particles
-	
-	mPlayerParticlesHolder = std::make_shared<Scene::Node>();
-	mPlayerParticlesHolder->setStretch(1.0f);
-	mGameField->attach(mPlayerParticlesHolder);
-
 	// player
 
 	mPlayer = std::make_shared<Player>();
@@ -134,6 +128,8 @@ void Gameplay::update()
 	camera(dTime);
 	removeFarPlanes();
 	spawnPlanes();
+
+	setScore(mMaxY / 100);
 }
 
 void Gameplay::physics(float dTime)
@@ -221,8 +217,6 @@ void Gameplay::jump(bool powerjump)
 
 	if (powerjump)
 		mVelocity.y *= 1.75f;
-
-	increaseScore((int)glm::abs(mVelocity.y));
 }
 
 void Gameplay::downslide()
@@ -407,14 +401,14 @@ void Gameplay::setupTrail(Skin skin)
 	}
 	else if (skin == Skin::Snowflake)
 	{
-		auto emitter = std::make_shared<Shared::SceneHelpers::SpriteEmitter>(mPlayerParticlesHolder);
-		emitter->setPivot({ 0.5f, 0.5f });
-		emitter->setAnchor({ 0.5f, 0.5f });
-		emitter->setTexture(TEXTURE("textures/skins/snowflake.png"));
-		emitter->setDelay(1.0f / 60.0f);
-		emitter->setBeginSize({ 12.0f, 12.0f });
-		emitter->setDistance(16.0f);
-		mPlayer->attach(emitter);
+		auto trail = std::make_shared<Scene::Trail>(mGameField);
+		trail->setColor(Graphics::Color::ToNormalized(193, 255, 255, 127));
+		trail->setAnchor({ 0.5f, 0.5f });
+		trail->setPivot({ 0.5f, 0.5f });
+		trail->setStretch({ 0.9f, 0.9f });
+		trail->setLifetime(0.2f);
+		trail->setNarrowing(true);
+		mPlayer->attach(trail);
 	}
 }
 
@@ -458,9 +452,9 @@ void Gameplay::showRiskLabel(const utf8_string& text)
 	);
 }
 
-void Gameplay::increaseScore(int count)
+void Gameplay::setScore(int count)
 {
-	mScore += count;
+	mScore = count;
 	mScoreLabel->setText(std::to_string(mScore));
 
 	if (mScore > PROFILE->getHighScore())
