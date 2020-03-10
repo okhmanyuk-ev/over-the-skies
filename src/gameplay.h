@@ -35,6 +35,7 @@ namespace hcg001
 		void tap();
 		void showRiskLabel(const utf8_string& text);
 		void setScore(int count);
+		float getDifficulty() const;
 
 	private:
 		std::shared_ptr<Scene::Label> mReadyLabel;

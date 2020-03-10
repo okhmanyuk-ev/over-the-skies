@@ -82,7 +82,7 @@ Sky::Sky()
 	mBloomLayer->attach(mAsteroidsHolder);
 
 	runAction(Shared::ActionHelpers::RepeatInfinite([this] {
-		auto delay = glm::linearRand(5.0f, 20.0f);
+		auto delay = glm::linearRand(10.0f, 20.0f);
 		return Shared::ActionHelpers::Delayed(delay,
 			Shared::ActionHelpers::Insert([this] {
 				auto seq = Shared::ActionHelpers::MakeSequence();
