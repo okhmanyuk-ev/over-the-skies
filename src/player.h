@@ -1,27 +1,51 @@
 #pragma once
 
 #include <shared/all.h>
+#include "skin.h"
 
 namespace hcg001
 {
-	class Player : public Scene::Actionable<Scene::Node>
+	class Player : public Scene::Actionable<Scene::Node>, public Scene::Color
 	{
 	public:
-		Player()
-		{
-			setSize(18.0f);
-			setPivot({ 0.5f, 0.5f });
+		Player(Skin skin);
 
-			mSprite = std::make_shared<Scene::Sprite>(); // we should use sprite as child and rotate only this child
-			mSprite->setStretch(1.0f);
-			mSprite->setAnchor({ 0.5f, 0.5f });
-			mSprite->setPivot({ 0.5f, 0.5f });
-			attach(mSprite);
-		}
+	public:
+		void setSpriteRotation(float value) { mSprite->setRotation(value); }
 
-		auto getSprite() { return mSprite; }
+	protected:
+		void update() override;
 
 	private:
 		std::shared_ptr<Scene::Sprite> mSprite;
+		Skin mSkin;
 	};
+
+	class BallPlayer : public Player
+	{
+	public:
+		BallPlayer(std::weak_ptr<Scene::Node> trailHolder);
+	};
+
+	class SnowflakePlayer : public Player
+	{
+	public:
+		SnowflakePlayer(std::weak_ptr<Scene::Node> trailHolder);
+	};
+
+	class FlamePlayer : public Player
+	{
+	public:
+		FlamePlayer(std::weak_ptr<Scene::Node> trailHolder);
+	};
+
+	inline std::shared_ptr<Player> createPlayer(Skin skin, std::weak_ptr<Scene::Node> trailHolder, std::weak_ptr<Scene::Node> spriteParticlesHolder)
+	{
+		if (skin == Skin::Ball)
+			return std::make_shared<BallPlayer>(trailHolder);
+		else if (skin == Skin::Snowflake)
+			return std::make_shared<SnowflakePlayer>(trailHolder);
+		else if (skin == Skin::Flame)
+			return std::make_shared<FlamePlayer>(spriteParticlesHolder);
+	}
 }

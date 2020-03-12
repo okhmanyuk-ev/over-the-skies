@@ -34,10 +34,14 @@ Gameplay::Gameplay(Skin skin)
 	mRectangleParticlesHolder->setStretch(1.0f);
 	mGameField->attach(mRectangleParticlesHolder);
 
+	mSpriteParticlesHolder = std::make_shared<Scene::Node>();
+	mSpriteParticlesHolder->setStretch(1.0f);
+	mGameField->attach(mSpriteParticlesHolder);
+
 	// player
 
-	mPlayer = std::make_shared<Player>();
-	mPlayer->getSprite()->setAlpha(0.0f);
+	mPlayer = createPlayer(skin, mGameField, mSpriteParticlesHolder);
+	mPlayer->setAlpha(0.0f);
 	mGameField->attach(mPlayer);
 
 	// score label
@@ -52,17 +56,14 @@ Gameplay::Gameplay(Skin skin)
 
 	//
 
-	mPlayer->getSprite()->setTexture(TEXTURE(SkinPath.at(skin)));
 	Common::Actions::Run(Shared::ActionHelpers::Delayed(0.25f, Shared::ActionHelpers::MakeSequence(
-		Shared::ActionHelpers::Show(mPlayer->getSprite(), 0.25f),
+		Shared::ActionHelpers::Show(mPlayer, 0.25f),
 		Shared::ActionHelpers::Execute([this] {
 			spawnPlanes();
 		}))
 	));
 	mPlayer->setPosition({ PLATFORM->getLogicalWidth() / 2.0f, (-PLATFORM->getLogicalHeight() / 2.0f) - 32.0f });
 	
-	setupTrail(skin);
-
 	// jump particles
 
 	mJumpParticles = std::make_shared<Shared::SceneHelpers::RectangleEmitter>(mRectangleParticlesHolder);
@@ -122,7 +123,7 @@ void Gameplay::update()
 		auto dir = glm::normalize(mVelocity);
 		auto angle = glm::atan(dir.y, dir.x);
 		angle -= glm::radians(30.0f);
-		mPlayer->getSprite()->setRotation(angle);
+		mPlayer->setSpriteRotation(angle);
 	}
 
 	camera(dTime);
@@ -392,31 +393,6 @@ void Gameplay::gameover()
 {
 	mGameoverCallback();
 	PROFILE->saveAsync();
-}
-
-void Gameplay::setupTrail(Skin skin)
-{
-	if (skin == Skin::Ball)
-	{
-		auto trail = std::make_shared<Scene::Trail>(mGameField);
-		trail->setAnchor({ 0.5f, 0.5f });
-		trail->setPivot({ 0.5f, 0.5f });
-		trail->setStretch({ 0.9f, 0.9f });
-		trail->setLifetime(0.2f);
-		trail->setNarrowing(true);
-		mPlayer->attach(trail);
-	}
-	else if (skin == Skin::Snowflake)
-	{
-		auto trail = std::make_shared<Scene::Trail>(mGameField);
-		trail->setColor(Graphics::Color::ToNormalized(193, 255, 255, 127));
-		trail->setAnchor({ 0.5f, 0.5f });
-		trail->setPivot({ 0.5f, 0.5f });
-		trail->setStretch({ 0.9f, 0.9f });
-		trail->setLifetime(0.2f);
-		trail->setNarrowing(true);
-		mPlayer->attach(trail);
-	}
 }
 
 void Gameplay::tap()
