@@ -40,8 +40,8 @@ namespace hcg001
 		std::shared_ptr<Scene::Label> mReadyLabel;
 		std::shared_ptr<Scene::Node> mGameField;
 		std::shared_ptr<Scene::Node> mPlaneHolder;
+		std::shared_ptr<Scene::Node> mPlayerTrailHolder;
 		std::shared_ptr<Scene::Node> mRectangleParticlesHolder;
-		std::shared_ptr<Scene::Node> mSpriteParticlesHolder;
 		std::shared_ptr<Player> mPlayer;
 		std::shared_ptr<Scene::Label> mScoreLabel;
 		std::shared_ptr<Scene::Actionable<Scene::Label>> mRiskLabel = nullptr;

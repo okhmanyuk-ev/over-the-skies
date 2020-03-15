@@ -30,20 +30,20 @@ Gameplay::Gameplay(Skin skin)
 
 	// particles
 
+	mPlayerTrailHolder = std::make_shared<Scene::Node>();
+	mPlayerTrailHolder->setStretch(1.0f);
+	mGameField->attach(mPlayerTrailHolder);
+
 	mRectangleParticlesHolder = std::make_shared<Scene::Node>();
 	mRectangleParticlesHolder->setStretch(1.0f);
 	mGameField->attach(mRectangleParticlesHolder);
 
-	mSpriteParticlesHolder = std::make_shared<Scene::Node>();
-	mSpriteParticlesHolder->setStretch(1.0f);
-	mGameField->attach(mSpriteParticlesHolder);
-
 	// player
 
-	mPlayer = createPlayer(skin, mGameField, mSpriteParticlesHolder);
+	mPlayer = createPlayer(skin, mPlayerTrailHolder);
 	mPlayer->setAlpha(0.0f);
 	mGameField->attach(mPlayer);
-
+	
 	// score label
 
 	mScoreLabel = std::make_shared<Scene::Label>();

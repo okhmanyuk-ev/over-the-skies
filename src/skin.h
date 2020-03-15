@@ -9,20 +9,26 @@ namespace hcg001
 	{
 		Ball,
 		Snowflake,
-		Flame
+		Basketball,
+		Football,
+		Vynil
 	};
 
-	const inline int SkinCount = 4;
+	const inline int SkinCount = 5;
 
 	const inline std::map<Skin, std::string> SkinPath = { 
 		{ Skin::Ball, "textures/skins/ball.png" },
 		{ Skin::Snowflake, "textures/skins/snowflake.png" },
-		{ Skin::Flame, "textures/skins/flame.png" },
+		{ Skin::Basketball, "textures/skins/basketball.png" },
+		{ Skin::Football, "textures/skins/football.png" },
+		{ Skin::Vynil, "textures/skins/vynil.png" },
 	};
 
 	const inline std::map<Skin, int> SkinCost = {
 		{ Skin::Ball, 0 },
 		{ Skin::Snowflake, 50 },
-		{ Skin::Flame, 75 },
+		{ Skin::Basketball, 50 },
+		{ Skin::Football, 50 },
+		{ Skin::Vynil, 50 },
 	};
 }

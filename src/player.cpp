@@ -6,17 +6,22 @@ Player::Player(Skin skin) : mSkin(skin)
 {
 	setSize(18.0f);
 	setPivot({ 0.5f, 0.5f });
+}
 
+void Player::makeSprite()
+{
 	mSprite = std::make_shared<Scene::Sprite>(); // we should use sprite as child and rotate only this child
-	mSprite->setTexture(TEXTURE(SkinPath.at(skin)));
+	mSprite->setTexture(TEXTURE(SkinPath.at(mSkin)));
 	mSprite->setStretch(1.0f);
 	mSprite->setAnchor({ 0.5f, 0.5f });
 	mSprite->setPivot({ 0.5f, 0.5f });
+	mSprite->setSampler(Renderer::Sampler::Linear);
 	attach(mSprite);
 }
 
 void Player::update()
 {
+	assert(mSprite != nullptr);
 	Scene::Actionable<Scene::Node>::update();
 	mSprite->setColor(getColor());
 }
@@ -30,23 +35,27 @@ BallPlayer::BallPlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Skin::Ba
 	trail->setLifetime(0.2f);
 	trail->setNarrowing(true);
 	attach(trail);
+
+	makeSprite();
 }
 
 SnowflakePlayer::SnowflakePlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Skin::Snowflake)
 {
 	auto trail = std::make_shared<Scene::Trail>(trailHolder);
-	trail->setColor(Graphics::Color::ToNormalized(193, 255, 255, 127));
+	trail->setColor(Graphics::Color::ToNormalized(193, 255, 255));
 	trail->setAnchor({ 0.5f, 0.5f });
 	trail->setPivot({ 0.5f, 0.5f });
 	trail->setStretch({ 0.9f, 0.9f });
 	trail->setLifetime(0.2f);
 	trail->setNarrowing(true);
 	attach(trail);
+
+	makeSprite();
 }
 
-FlamePlayer::FlamePlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Skin::Flame)
+BasketballPlayer::BasketballPlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Skin::Basketball)
 {
-	auto emitter = std::make_shared<Shared::SceneHelpers::SpriteEmitter>(trailHolder);
+	/*auto emitter = std::make_shared<Shared::SceneHelpers::SpriteEmitter>(trailHolder);
 	emitter->setPivot({ 0.5f, 0.5f });
 	emitter->setAnchor({ 0.5f, 0.5f });
 	emitter->setTexture(TEXTURE("textures/point_light_texture.png"));
@@ -61,5 +70,42 @@ FlamePlayer::FlamePlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Skin::
 	emitter->setBlendMode(Renderer::BlendMode(Renderer::Blend::SrcAlpha, Renderer::Blend::InvSrcAlpha,
 		Renderer::Blend::One, Renderer::Blend::InvSrcAlpha));
 
-	attach(emitter);
+	attach(emitter);*/
+
+	auto trail = std::make_shared<Scene::Trail>(trailHolder);
+	trail->setAnchor({ 0.5f, 0.5f });
+	trail->setPivot({ 0.5f, 0.5f });
+	trail->setStretch({ 0.9f, 0.9f });
+	trail->setLifetime(0.2f);
+	trail->setColor(Graphics::Color::ToNormalized(244, 211, 173));
+	trail->setNarrowing(true);
+	attach(trail);
+
+	makeSprite();
+}
+
+FootballPlayer::FootballPlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Skin::Football)
+{
+	auto trail = std::make_shared<Scene::Trail>(trailHolder);
+	trail->setAnchor({ 0.5f, 0.5f });
+	trail->setPivot({ 0.5f, 0.5f });
+	trail->setStretch({ 0.9f, 0.9f });
+	trail->setLifetime(0.2f);
+	trail->setNarrowing(true);
+	attach(trail);
+
+	makeSprite();
+}
+
+VynilPlayer::VynilPlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Skin::Vynil)
+{
+	auto trail = std::make_shared<Scene::Trail>(trailHolder);
+	trail->setAnchor({ 0.5f, 0.5f });
+	trail->setPivot({ 0.5f, 0.5f });
+	trail->setStretch({ 0.9f, 0.9f });
+	trail->setLifetime(0.2f);
+	trail->setNarrowing(true);
+	attach(trail);
+
+	makeSprite();
 }

@@ -10,6 +10,9 @@ namespace hcg001
 	public:
 		Player(Skin skin);
 
+	protected:
+		void makeSprite();
+
 	public:
 		void setSpriteRotation(float value) { mSprite->setRotation(value); }
 
@@ -17,7 +20,7 @@ namespace hcg001
 		void update() override;
 
 	private:
-		std::shared_ptr<Scene::Sprite> mSprite;
+		std::shared_ptr<Scene::Sprite> mSprite = nullptr;
 		Skin mSkin;
 	};
 
@@ -33,19 +36,37 @@ namespace hcg001
 		SnowflakePlayer(std::weak_ptr<Scene::Node> trailHolder);
 	};
 
-	class FlamePlayer : public Player
+	class BasketballPlayer : public Player
 	{
 	public:
-		FlamePlayer(std::weak_ptr<Scene::Node> trailHolder);
+		BasketballPlayer(std::weak_ptr<Scene::Node> trailHolder);
 	};
 
-	inline std::shared_ptr<Player> createPlayer(Skin skin, std::weak_ptr<Scene::Node> trailHolder, std::weak_ptr<Scene::Node> spriteParticlesHolder)
+	class FootballPlayer : public Player
+	{
+	public:
+		FootballPlayer(std::weak_ptr<Scene::Node> trailHolder);
+	};
+
+	class VynilPlayer : public Player
+	{
+	public:
+		VynilPlayer(std::weak_ptr<Scene::Node> trailHolder);
+	};
+
+	inline std::shared_ptr<Player> createPlayer(Skin skin, std::weak_ptr<Scene::Node> trailHolder)
 	{
 		if (skin == Skin::Ball)
 			return std::make_shared<BallPlayer>(trailHolder);
 		else if (skin == Skin::Snowflake)
 			return std::make_shared<SnowflakePlayer>(trailHolder);
-		else if (skin == Skin::Flame)
-			return std::make_shared<FlamePlayer>(spriteParticlesHolder);
+		else if (skin == Skin::Basketball)
+			return std::make_shared<BasketballPlayer>(trailHolder);
+		else if (skin == Skin::Football)
+			return std::make_shared<FootballPlayer>(trailHolder);
+		else if (skin == Skin::Vynil)
+			return std::make_shared<VynilPlayer>(trailHolder);
+		else
+			assert(false);
 	}
 }
