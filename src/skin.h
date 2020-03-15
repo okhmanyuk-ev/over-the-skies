@@ -26,9 +26,12 @@ namespace hcg001
 
 	const inline std::map<Skin, int> SkinCost = {
 		{ Skin::Ball, 0 },
-		{ Skin::Snowflake, 50 },
-		{ Skin::Basketball, 50 },
+		{ Skin::Snowflake, 10 },
+		{ Skin::Basketball, 25 },
 		{ Skin::Football, 50 },
-		{ Skin::Vynil, 50 },
+		{ Skin::Vynil, 75 },
+		// 100
+		// 150
+		// 200
 	};
 }
