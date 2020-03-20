@@ -30,6 +30,8 @@ Application::Application() : RichApplication(PROJECT_CODE)
 		} }
 	});
 
+	setPayloadWaiting(0.0f);
+
 	CONSOLE->execute("r_vsync 1");
 
 	std::srand((unsigned int)std::time(nullptr));
