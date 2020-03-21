@@ -208,7 +208,8 @@ void Sky::moveSky(const glm::vec2& offset)
 	glm::vec2 stars_delta = { stars_delta_x, stars_delta_y };
 
 	auto moveStars = [](std::shared_ptr<Scene::Node> stars, const glm::vec2& stars_delta) {
-		stars->setAnchor(stars->getAnchor() + stars_delta);
+		auto scale = glm::vec2(360.0f, 640.0f) / stars->getSize();
+		stars->setAnchor(stars->getAnchor() + (stars_delta * scale));
 
 		if (stars->getVerticalAnchor() >= 2.0f)
 			stars->setVerticalAnchor(stars->getVerticalAnchor() - 2.0f);
