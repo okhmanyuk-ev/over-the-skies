@@ -54,18 +54,33 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	const glm::vec2 PlashkaSize = { 74.0f, 96.0f };
 
 	auto makePlashka = [PlashkaSize, current_day](int day) {
-		auto holder = std::make_shared<Scene::Rectangle>();
-		holder->setStretch(1.0f);
-		holder->setMargin(4.0f);
-		holder->setAnchor(0.5f);
-		holder->setPivot(0.5f);
+		auto rect = std::make_shared<Scene::Actionable<Scene::Rectangle>>();
+		rect->setStretch(1.0f);
+		rect->setMargin(4.0f);
+		rect->setAnchor(0.5f);
+		rect->setPivot(0.5f);
 
 		auto color = glm::vec3(Graphics::Color::Hsv::HueGreen, 0.0f, 0.33f);
 
 		if (day <= current_day)
 			color.y = 0.33f;
 
-		holder->setColor(glm::rgbColor(color));
+		rect->setColor(glm::rgbColor(color));
+		
+		if (day == current_day)
+		{
+			rect->runAction(Shared::ActionHelpers::RepeatInfinite([rect] {
+				const auto Color1 = glm::rgbColor(glm::vec3(Graphics::Color::Hsv::HueGreen, 0.0f, 0.33f));
+				const auto Color2 = glm::rgbColor(glm::vec3(Graphics::Color::Hsv::HueGreen, 0.5f, 0.5f));
+				const float Duration = 0.5f;
+				const auto Easing = Common::Easing::QuadraticInOut;
+
+				return Shared::ActionHelpers::MakeSequence(
+					Shared::ActionHelpers::ChangeColor(rect, Color1, Duration, Easing),
+					Shared::ActionHelpers::ChangeColor(rect, Color2, Duration, Easing)
+				);
+			}));
+		}
 
 		auto title = std::make_shared<Scene::Label>();
 		title->setFont(FONT("default"));
@@ -74,14 +89,14 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 		title->setAnchor({ 0.5f, 0.0f });
 		title->setPivot({ 0.5f, 0.0f });
 		title->setY(4.0f);
-		holder->attach(title);
+		rect->attach(title);
 
 		auto img = std::make_shared<Scene::Sprite>();
 		img->setAnchor(0.5f);
 		img->setPivot(0.5f);
 		img->setTexture(TEXTURE("textures/dailyreward_rubies.png"));
 		img->setSize(36.0f);
-		holder->attach(img);
+		rect->attach(img);
 
 		auto value = std::make_shared<Scene::Label>();
 		value->setFont(FONT("default"));
@@ -90,9 +105,9 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 		value->setAnchor({ 0.5f, 1.0f });
 		value->setPivot({ 0.5f, 1.0f });
 		value->setY(-4.0f);
-		holder->attach(value);
+		rect->attach(value);
 
-		return holder;
+		return rect;
 	};
 
 	auto sub_grid1 = Shared::SceneHelpers::MakeHorizontalGrid(PlashkaSize, {
@@ -130,6 +145,6 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	});
 	ok_button->setAnchor(0.5f);
 	ok_button->setPivot(0.5f);
-	ok_button->setSize({ 128.0f, 28.0f });
+	ok_button->setSize({ 128.0f, 32.0f });
 	footer->attach(ok_button);
 }
