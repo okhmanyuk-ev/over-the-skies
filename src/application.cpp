@@ -142,7 +142,7 @@ void Application::frame()
 	if (mNodeEditor)
 		mSceneEditor.show();
 
-	ShowCheatsMenu();
+	ShowCheatsMenu(mSceneManager);
 }
 
 void Application::collectRubyAnim(std::shared_ptr<Scene::Node> ruby)

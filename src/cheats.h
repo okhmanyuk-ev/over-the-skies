@@ -3,10 +3,11 @@
 #include <shared/all.h>
 #include "defines.h"
 #include "profile.h"
+#include "daily_reward_window.h"
 
 namespace hcg001
 {
-	inline void ShowCheatsMenu()
+	inline void ShowCheatsMenu(std::shared_ptr<Shared::SceneManager> scene_manager)
 	{
 #if !defined(BUILD_DEVELOPER)
 		return;
@@ -27,6 +28,12 @@ namespace hcg001
 			if (ImGui::Button("RUBIES +10"))
 			{
 				PROFILE->setRubies(PROFILE->getRubies() + 10);
+			}
+
+			if (ImGui::Button("DAILY REWARD WINDOW"))
+			{
+				auto window = std::make_shared<DailyRewardWindow>(2);
+				scene_manager->pushWindow(window);
 			}
 		}
 
