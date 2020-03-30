@@ -36,9 +36,17 @@ namespace hcg001
 		auto getSkins() const { return mSkins; }
 		void setSkins(std::set<int> value) { mSkins = value; }
 
+		auto getDailyRewardDay() const { return mDailyRewardDay; }
+		void setDailyRewardDay(int value) { mDailyRewardDay = value; }
+
+		auto getDailyRewardTime() const { return mDailyRewardTime; }
+		void setDailyRewardTime(long long value) { mDailyRewardTime = value; }
+
 	private:
 		int mHighScore = 0;
 		int mRubies = 0;
 		std::set<int> mSkins = { 0 };
+		int mDailyRewardDay = 0;
+		long long mDailyRewardTime = 0;
 	};
 }

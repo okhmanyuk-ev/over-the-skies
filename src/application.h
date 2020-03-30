@@ -11,6 +11,7 @@
 #include "skin.h"
 #include "profile.h"
 #include "cheats.h"
+#include "daily_reward_window.h"
 
 namespace hcg001
 {
@@ -26,6 +27,8 @@ namespace hcg001
 		void initialize() override;
 		void frame() override;
 		void collectRubyAnim(std::shared_ptr<Scene::Node> ruby);
+		void addRubies(int count);
+		void tryShowDailyReward();
 
 	private:
 		void event(const Profile::RubiesChangedEvent& e) override;

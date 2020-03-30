@@ -14,7 +14,7 @@ namespace hcg001
 		void placeStarsToHolder(std::shared_ptr<Scene::Node> holder);
 
 	public:
-		void changeColor();
+		void changeColor(float top_hue = -1.0f, float bottom_hue = -1.0f);
 		void moveSky(const glm::vec2& offset);
 
 	protected:

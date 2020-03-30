@@ -1,0 +1,134 @@
+#include "daily_reward_window.h"
+
+using namespace hcg001;
+
+DailyRewardWindow::DailyRewardWindow(int current_day)
+{
+	setCloseOnMissclick(false);
+
+	const auto BaseColor = glm::rgbColor(glm::vec3(210.0f, 0.5f, 1.0f));
+
+	auto rect = std::make_shared<Scene::Rectangle>();
+	rect->setStretch({ 0.75f + 0.125f, -1.0f });
+	rect->setAnchor({ 0.5f, 0.5f });
+	rect->setPivot({ 0.5f, 0.5f });
+	rect->setColor(BaseColor / 12.0f);
+	rect->setTouchable(true);
+	rect->setHeight(298.0f);
+	getContent()->attach(rect);
+
+	auto header = std::make_shared<Scene::Node>();
+	header->setHorizontalStretch(1.0f);
+	header->setHeight(32.0f);
+	rect->attach(header);
+
+	auto footer = std::make_shared<Scene::Node>();
+	footer->setHeight(48.0f);
+	footer->setHorizontalStretch(1.0f);
+	footer->setAnchor({ 0.5f, 1.0f });
+	footer->setPivot({ 0.5f, 1.0f });
+	rect->attach(footer);
+
+	auto content = std::make_shared<Scene::Node>();
+	content->setStretch(1.0f);
+	content->setY(header->getHeight());
+	content->setVerticalMargin(header->getHeight() + footer->getHeight());
+	rect->attach(content);
+
+	// --------
+
+	auto header_bg = std::make_shared<Scene::Rectangle>();
+	header_bg->setStretch(1.0f);
+	header_bg->setColor(BaseColor);
+	header_bg->setAlpha(0.25f);
+	header->attach(header_bg);
+
+	auto title = std::make_shared<Scene::Label>();
+	title->setFont(FONT("default"));
+	title->setFontSize(20.0f);
+	title->setText(LOCALIZE("DAILYREWARD_TITLE"));
+	title->setAnchor({ 0.5f, 0.5f });
+	title->setPivot({ 0.5f, 0.5f });
+	header_bg->attach(title);
+
+	const glm::vec2 PlashkaSize = { 74.0f, 102.0f };
+
+	auto makePlashka = [PlashkaSize, current_day](int day) {
+		auto holder = std::make_shared<Scene::Rectangle>();
+		holder->setStretch(1.0f);
+		holder->setMargin(4.0f);
+		holder->setAnchor(0.5f);
+		holder->setPivot(0.5f);
+
+		auto color = glm::vec3(Graphics::Color::Hsv::HueGreen, 0.0f, 0.33f);
+
+		if (day <= current_day)
+			color.y = 0.33f;
+
+		holder->setColor(glm::rgbColor(color));
+
+		auto title = std::make_shared<Scene::Label>();
+		title->setFont(FONT("default"));
+		title->setFontSize(16.0f);
+		title->setText(LOCALIZE_FMT("DAILYREWARD_DAY", day));
+		title->setAnchor({ 0.5f, 0.0f });
+		title->setPivot({ 0.5f, 0.0f });
+		title->setY(4.0f);
+		holder->attach(title);
+
+		auto img = std::make_shared<Scene::Sprite>();
+		img->setAnchor(0.5f);
+		img->setPivot(0.5f);
+		img->setTexture(TEXTURE("textures/dailyreward_rubies.png"));
+		img->setSize(44.0f);
+		holder->attach(img);
+
+		auto value = std::make_shared<Scene::Label>();
+		value->setFont(FONT("default"));
+		value->setFontSize(16.0f);
+		value->setText(std::to_string(DailyRewardMap.at(day)));
+		value->setAnchor({ 0.5f, 1.0f });
+		value->setPivot({ 0.5f, 1.0f });
+		value->setY(-4.0f);
+		holder->attach(value);
+
+		return holder;
+	};
+
+	auto sub_grid1 = Shared::SceneHelpers::MakeHorizontalGrid(PlashkaSize, {
+		makePlashka(1),
+		makePlashka(2),
+		makePlashka(3),
+		makePlashka(4),
+	});
+	sub_grid1->setAnchor(0.5f);
+	sub_grid1->setPivot(0.5f);
+
+	auto sub_grid2 = Shared::SceneHelpers::MakeHorizontalGrid(PlashkaSize, {
+		makePlashka(5),
+		makePlashka(6),
+		makePlashka(7)
+	});
+	sub_grid2->setAnchor(0.5f);
+	sub_grid2->setPivot(0.5f);
+
+	auto grid = Shared::SceneHelpers::MakeVerticalGrid(sub_grid1->getSize(), {
+		sub_grid1,
+		sub_grid2
+	});
+	grid->setAnchor(0.5f);
+	grid->setPivot(0.5f);
+	content->attach(grid);
+
+	auto ok_button = std::make_shared<Shared::SceneHelpers::FastButton>();
+	ok_button->setColor(BaseColor);
+	ok_button->getLabel()->setText(LOCALIZE("DAILYREWARD_CLAIM"));
+	ok_button->getLabel()->setFontSize(18.0f);
+	ok_button->setClickCallback([this] {
+		getSceneManager()->popWindow(mClaimCallback);
+	});
+	ok_button->setAnchor(0.5f);
+	ok_button->setPivot(0.5f);
+	ok_button->setSize({ 128.0f, 28.0f });
+	footer->attach(ok_button);
+}

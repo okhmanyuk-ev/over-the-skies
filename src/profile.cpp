@@ -20,6 +20,12 @@ void Profile::load()
 
 	if (json.contains("skins"))
 		mSkins = json["skins"].get<std::set<int>>();
+
+	if (json.contains("dailyreward_day"))
+		mDailyRewardDay = json["dailyreward_day"];
+
+	if (json.contains("dailyreward_time"))
+		mDailyRewardTime = json["dailyreward_time"];
 }
 
 void Profile::save()
@@ -28,6 +34,8 @@ void Profile::save()
 	json["highscore"] = mHighScore;
 	json["rubies"] = mRubies;
 	json["skins"] = mSkins;
+	json["dailyreward_day"] = mDailyRewardDay;
+	json["dailyreward_time"] = mDailyRewardTime;
 	auto bson = nlohmann::json::to_bson(json);
 	Platform::Asset::Write(PLATFORM->getAppFolder() + "save.bson", bson.data(), bson.size(), Platform::Asset::Path::Absolute);
 }

@@ -16,8 +16,7 @@ Application::Application() : RichApplication(PROJECT_CODE)
 
 	PLATFORM->initializeBilling({
 		{ "rubies.001", [this] { 
-			PROFILE->setRubies(PROFILE->getRubies() + 1000);
-			PROFILE->saveAsync();
+			addRubies(500);
 		} }
 	});
 
@@ -74,31 +73,6 @@ void Application::initialize()
 	mSky = std::make_shared<Sky>();
 	root->attach(mSky);
 
-	// hud holder
-
-	mHudHolder = std::make_shared<Scene::Node>();
-	mHudHolder->setStretch({ 1.0f, 1.0f });
-	root->attach(mHudHolder);
-
-	// ruby score sprite
-
-	mRubyScore.sprite = std::make_shared<Scene::Sprite>();
-	mRubyScore.sprite->setTexture(TEXTURE("ruby"));
-	mRubyScore.sprite->setPivot({ 0.0f, 0.0f });
-	mRubyScore.sprite->setAnchor({ 0.0f, 0.0f });
-	mRubyScore.sprite->setPosition({ 16.0f, 16.0f });
-	mRubyScore.sprite->setSize({ 24.0f, 24.0f });
-	mHudHolder->attach(mRubyScore.sprite);
-
-	// ruby score label
-	mRubyScore.label = std::make_shared<Scene::Label>();
-	mRubyScore.label->setFont(FONT("default"));
-	mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
-	mRubyScore.label->setAnchor({ 1.0f, 0.5f });
-	mRubyScore.label->setPivot({ 0.0f, 0.5f });
-	mRubyScore.label->setPosition({ 8.0f, 0.0f });
-	mRubyScore.sprite->attach(mRubyScore.label);
-
 	mSceneManager = std::make_shared<Shared::SceneManager>();
 	root->attach(mSceneManager);
 
@@ -121,9 +95,11 @@ void Application::initialize()
 		mSceneManager->switchScreen(gameplay);
 	});
 
-	mSceneManager->switchScreen(main_menu);
+	mSky->changeColor(Graphics::Color::Hsv::HueBlue, Graphics::Color::Hsv::HueRed); 
 
-	mSky->changeColor();
+	mSceneManager->switchScreen(main_menu, [this] {
+		tryShowDailyReward();
+	});
 
 	Common::Actions::Run(Shared::ActionHelpers::RepeatInfinite([this] {
 		return Shared::ActionHelpers::Delayed(10.0f,
@@ -132,6 +108,31 @@ void Application::initialize()
 			})
 		);
 	}));
+
+	// hud holder
+
+	mHudHolder = std::make_shared<Scene::Node>();
+	mHudHolder->setStretch(1.0f);
+	root->attach(mHudHolder);
+
+	// ruby score sprite
+
+	mRubyScore.sprite = std::make_shared<Scene::Sprite>();
+	mRubyScore.sprite->setTexture(TEXTURE("ruby"));
+	mRubyScore.sprite->setPivot({ 0.0f, 0.0f });
+	mRubyScore.sprite->setAnchor({ 0.0f, 0.0f });
+	mRubyScore.sprite->setPosition({ 16.0f, 16.0f });
+	mRubyScore.sprite->setSize({ 24.0f, 24.0f });
+	mHudHolder->attach(mRubyScore.sprite);
+
+	// ruby score label
+	mRubyScore.label = std::make_shared<Scene::Label>();
+	mRubyScore.label->setFont(FONT("default"));
+	mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
+	mRubyScore.label->setAnchor({ 1.0f, 0.5f });
+	mRubyScore.label->setPivot({ 0.0f, 0.5f });
+	mRubyScore.label->setPosition({ 8.0f, 0.0f });
+	mRubyScore.sprite->attach(mRubyScore.label);
 }
 
 void Application::frame()
@@ -163,8 +164,73 @@ void Application::collectRubyAnim(std::shared_ptr<Scene::Node> ruby)
 			Shared::ActionHelpers::ChangeSize(ruby, mRubyScore.sprite->getSize(), MoveDuration, Common::Easing::QuarticInOut)
 		),
 		Shared::ActionHelpers::Kill(ruby),
+		Shared::ActionHelpers::Execute([this] {
+			mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
+		}),
 		Shared::ActionHelpers::Shake(mRubyScore.label, 2.0f, 0.2f)
 	));
+}
+
+void Application::addRubies(int count)
+{
+	PROFILE->increaseRubies(count);
+	PROFILE->saveAsync();
+
+	for (int i = 0; i < count; i++)
+	{
+		if (i > 8)
+			break;
+
+		auto ruby = std::make_shared<Scene::Actionable<Scene::Sprite>>();
+		ruby->setTexture(TEXTURE("ruby"));
+		ruby->setPivot(0.5f);
+		ruby->setAnchor(0.5f);
+		ruby->setSize(24.0f);
+		ruby->setPosition(glm::linearRand(glm::vec2(-64.0f), glm::vec2(64.0f)));
+		ruby->setAlpha(0.0f);
+		ruby->runAction(Shared::ActionHelpers::MakeSequence(
+			Shared::ActionHelpers::Wait(i * (0.125f / 1.25f)),
+			Shared::ActionHelpers::Show(ruby, 0.25f, Common::Easing::CubicIn),
+			Shared::ActionHelpers::Execute([this, ruby] {
+				FRAME->addOne([this, ruby] {
+					collectRubyAnim(ruby);
+				});
+			})
+		));
+		mHudHolder->attach(ruby);
+	}
+}
+
+void Application::tryShowDailyReward()
+{
+	const long long OneDay = 60 * 60 * 24;
+
+	auto now = Clock::SystemNowSeconds();
+
+	auto current_day = PROFILE->getDailyRewardDay();
+	auto delta = now - PROFILE->getDailyRewardTime();
+
+	if (delta < OneDay)
+		return;
+
+	if (delta < OneDay * 2)
+		current_day += 1;
+	else
+		current_day = 1;
+
+	current_day = glm::min(current_day, 7);
+
+	auto window = std::make_shared<DailyRewardWindow>(current_day);
+	window->setClaimCallback([this, current_day, now] {
+		auto rubies_count = DailyRewardWindow::DailyRewardMap.at(current_day);
+		
+		PROFILE->setDailyRewardTime(now);
+		PROFILE->setDailyRewardDay(current_day);
+		PROFILE->saveAsync();
+
+		addRubies(rubies_count);
+	});
+	mSceneManager->pushWindow(window);
 }
 
 void Application::event(const Profile::RubiesChangedEvent& e)
@@ -172,5 +238,5 @@ void Application::event(const Profile::RubiesChangedEvent& e)
 	if (!isInitialized())
 		return;
 
-	mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
+	//mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
 }
