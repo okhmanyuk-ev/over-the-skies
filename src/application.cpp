@@ -113,7 +113,7 @@ void Application::initialize()
 
 	mHudHolder = std::make_shared<Scene::Node>();
 	mHudHolder->setStretch(1.0f);
-	root->attach(mHudHolder);
+	mSceneManager->getWindowHolder()->attach(mHudHolder); // after screens, before windows
 
 	// ruby score sprite
 

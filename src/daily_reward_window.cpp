@@ -14,12 +14,12 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	rect->setPivot({ 0.5f, 0.5f });
 	rect->setColor(BaseColor / 12.0f);
 	rect->setTouchable(true);
-	rect->setHeight(298.0f);
+	rect->setHeight(286.0f);
 	getContent()->attach(rect);
 
 	auto header = std::make_shared<Scene::Node>();
 	header->setHorizontalStretch(1.0f);
-	header->setHeight(32.0f);
+	header->setHeight(36.0f);
 	rect->attach(header);
 
 	auto footer = std::make_shared<Scene::Node>();
@@ -51,7 +51,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	title->setPivot({ 0.5f, 0.5f });
 	header_bg->attach(title);
 
-	const glm::vec2 PlashkaSize = { 74.0f, 102.0f };
+	const glm::vec2 PlashkaSize = { 74.0f, 96.0f };
 
 	auto makePlashka = [PlashkaSize, current_day](int day) {
 		auto holder = std::make_shared<Scene::Rectangle>();
@@ -80,7 +80,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 		img->setAnchor(0.5f);
 		img->setPivot(0.5f);
 		img->setTexture(TEXTURE("textures/dailyreward_rubies.png"));
-		img->setSize(44.0f);
+		img->setSize(36.0f);
 		holder->attach(img);
 
 		auto value = std::make_shared<Scene::Label>();
@@ -118,6 +118,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	});
 	grid->setAnchor(0.5f);
 	grid->setPivot(0.5f);
+	grid->setY(4.0f);
 	content->attach(grid);
 
 	auto ok_button = std::make_shared<Shared::SceneHelpers::FastButton>();
