@@ -176,6 +176,9 @@ void Application::addRubies(int count)
 	PROFILE->increaseRubies(count);
 	PROFILE->saveAsync();
 
+	if (!isInitialized())
+		return;
+
 	for (int i = 0; i < count; i++)
 	{
 		if (i > 8)
