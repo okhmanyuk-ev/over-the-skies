@@ -1,7 +1,7 @@
 package com.dreamskies.hcg001;
 
 import android.os.Bundle;
-import com.skymunge.sky.SkyActivity;
+import com.dreamskies.sky.SkyActivity;
 
 public class MainActivity extends SkyActivity {
     @Override
