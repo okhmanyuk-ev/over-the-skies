@@ -104,6 +104,9 @@ MainMenu::MainMenu()
 
 		if (mScrollbox->isTouching())
 			return;
+		
+		if (glm::length(mScrollbox->getSpeed()) >= 2.0f)
+			return;
 
 		auto slot_projected = mScrollbox->project(mScrollbox->getSize() / 2.0f);
 		float distance = 99999.0f;
@@ -174,6 +177,7 @@ void MainMenu::refresh()
 	mScrollbox->setPivot({ 0.5f, 0.5f });
 	mScrollbox->setHorizontalStretch(1.0f);
 	mScrollbox->setHeight(ItemSize + ScrollPadding);
+	mScrollbox->setInertiaFriction(0.1f);
 
 	mItems = createScrollItems();
 	
