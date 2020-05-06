@@ -140,10 +140,6 @@ void Application::initialize()
 void Application::frame()
 {
 	mGameScene.frame();
-
-	if (mNodeEditor)
-		mSceneEditor.show();
-
 	ShowCheatsMenu(mSceneManager);
 }
 
