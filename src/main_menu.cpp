@@ -108,6 +108,9 @@ MainMenu::MainMenu()
 		if (glm::length(mScrollbox->getSpeed()) >= 2.0f)
 			return;
 
+		if (!mScrollbox->isTransformReady())
+			return;
+
 		auto slot_projected = mScrollbox->project(mScrollbox->getSize() / 2.0f);
 		float distance = 99999.0f;
 		std::shared_ptr<Scene::Node> nearest = nullptr;
@@ -227,6 +230,9 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 		item->attach(image);
 
 		image->runAction(Shared::ActionHelpers::ExecuteInfinite([this, image, SkinSize, SkinSizeChoosed] {
+			if (!mScrollbox->isTransformReady())
+				return;
+
 			auto skin_projected = image->project(image->getSize() / 2.0f);
 			auto slot_projected = mScrollbox->project(mScrollbox->getSize() / 2.0f);
 			auto distance = glm::distance(skin_projected, slot_projected) / PLATFORM->getScale();
@@ -247,6 +253,9 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 		image->attach(footer);
 
 		auto hideFarNode = [this, item](auto node) {
+			if (!mScrollbox->isTransformReady())
+				return;
+			
 			auto item_projected = item->project(item->getSize() / 2.0f);
 			auto slot_projected = mScrollbox->project(mScrollbox->getSize() / 2.0f);
 			auto distance = glm::distance(item_projected, slot_projected) / PLATFORM->getScale();

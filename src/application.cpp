@@ -8,7 +8,7 @@ Application::Application() : RichApplication(PROJECT_CODE)
 	PLATFORM->resize(360, 640);
 	RENDERER->setVsync(true);
 #if !defined(PLATFORM_MOBILE)
-	PLATFORM->rescale(1.25f);
+	PLATFORM->rescale(1.5f);
 #endif
 
 	ENGINE->addSystem<Profile>(std::make_shared<Profile>());
