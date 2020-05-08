@@ -1,5 +1,5 @@
 #include "../src/application.h"
-#include <Platform/system_ios.h>
+#include <platform/system_ios.h>
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 

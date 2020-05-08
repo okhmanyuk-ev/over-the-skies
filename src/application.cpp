@@ -25,10 +25,10 @@ Application::Application() : RichApplication(PROJECT_CODE)
 	});
 
 	addLoadingTasks({
-		{ "fonts", [this] {
+		{ "fonts", [] {
 			PRECACHE_FONT_ALIAS("fonts/sansation.ttf", "default");
 		} },
-		{ "textures", [this] {
+		{ "textures", [] {
 			PRECACHE_TEXTURE_ALIAS("textures/ruby.png", "ruby");
 		} }
 	});
