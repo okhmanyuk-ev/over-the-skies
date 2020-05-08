@@ -10,7 +10,7 @@ MainMenu::MainMenu()
 	title->setFont(FONT("default"));
 	title->setFontSize(34.0f);
 	title->setAnchor({ 0.5f, 0.25f });
-	title->setPivot({ 0.5f, 0.5f });
+	title->setPivot(0.5f);
 	title->setText(LOCALIZE("MAIN_MENU_TITLE"));
 	attach(title);
 
@@ -29,7 +29,7 @@ MainMenu::MainMenu()
 	});
 	play_button->setSize(ButtonSize);
 	play_button->setAnchor({ -0.5f, 0.75f });
-	play_button->setPivot({ 0.5f, 0.5f });
+	play_button->setPivot(0.5f);
 	attach(play_button);
 
 	auto unlock_button = std::make_shared<Shared::SceneHelpers::FastButton>();
@@ -55,7 +55,7 @@ MainMenu::MainMenu()
 	});
 	unlock_button->setSize(ButtonSize);
 	unlock_button->setAnchor({ 1.5f, 0.75f });
-	unlock_button->setPivot({ 0.5f, 0.5f });
+	unlock_button->setPivot(0.5f);
 	attach(unlock_button);
 
 	runAction(Shared::ActionHelpers::ExecuteInfinite([this, play_button, unlock_button] {
@@ -176,8 +176,8 @@ void MainMenu::refresh()
 
 	mScrollbox = std::make_shared<Scene::Scrollbox>();
 	mScrollbox->setSensitivity({ 1.0f, 0.0f });
-	mScrollbox->setAnchor({ 0.5f, 0.5f });
-	mScrollbox->setPivot({ 0.5f, 0.5f });
+	mScrollbox->setAnchor(0.5f);
+	mScrollbox->setPivot(0.5f);
 	mScrollbox->setHorizontalStretch(1.0f);
 	mScrollbox->setHeight(ItemSize + ScrollPadding);
 	mScrollbox->setInertiaFriction(0.1f);
@@ -187,8 +187,8 @@ void MainMenu::refresh()
 	auto cell_size = glm::vec2({ SlotWidth, ItemSize });
 	auto grid = Shared::SceneHelpers::MakeHorizontalGrid(cell_size, mItems);
 
-	grid->setAnchor({ 0.5f, 0.5f });
-	grid->setPivot({ 0.5f, 0.5f });
+	grid->setAnchor(0.5f);
+	grid->setPivot(0.5f);
 
 	mScrollbox->getContent()->setWidth(grid->getWidth() + ItemSize);
 	mScrollbox->getContent()->setHeight(mScrollbox->getHeight());
@@ -197,8 +197,8 @@ void MainMenu::refresh()
 
 	auto bounding = mScrollbox->getBounding();
 
-	bounding->setAnchor({ 0.5f, 0.5f });
-	bounding->setPivot({ 0.5f, 0.5 });
+	bounding->setAnchor(0.5f);
+	bounding->setPivot(0.5f);
 	bounding->setVerticalStretch(1.0f);
 	bounding->setWidth(SlotWidth);
 
@@ -215,9 +215,9 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 	for (const auto& [skin, path] : SkinPath)
 	{
 		auto item = std::make_shared<Scene::Clickable<Scene::Node>>();
-		item->setStretch({ 1.0f, 1.0f });
-		item->setPivot({ 0.5f, 0.5f });
-		item->setAnchor({ 0.5f, 0.5f });
+		item->setStretch(1.0f);
+		item->setPivot(0.5f);
+		item->setAnchor(0.5f);
 		item->setTouchMask(1 << 1);
 		result.push_back(item);
 
@@ -225,8 +225,8 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 		image->setTexture(TEXTURE(path));
 		image->setSampler(Renderer::Sampler::Linear);
 		image->setSize({ SkinSize, SkinSize });
-		image->setAnchor({ 0.5f, 0.5f });
-		image->setPivot({ 0.5f, 0.5f });
+		image->setAnchor(0.5f);
+		image->setPivot(0.5f);
 		item->attach(image);
 
 		image->runAction(Shared::ActionHelpers::ExecuteInfinite([this, image, SkinSize, SkinSizeChoosed] {
@@ -237,7 +237,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			auto slot_projected = mScrollbox->project(mScrollbox->getSize() / 2.0f);
 			auto distance = glm::distance(skin_projected, slot_projected) / PLATFORM->getScale();
 			auto size = glm::lerp(SkinSize, SkinSizeChoosed, glm::smoothstep(ItemSize, 0.0f, distance));
-			image->setSize({ size, size });
+			image->setSize(size);
 		}));
 
 		item->setClickCallback([this, item] {

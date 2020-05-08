@@ -11,9 +11,9 @@ namespace hcg001
 		{
 			setEnabled(false);
 			setInteractions(false);
-			setStretch({ 1.0f, 1.0f });
-			setAnchor({ 0.5f, 0.5f });
-			setPivot({ 0.5f, 0.5f });
+			setStretch(1.0f);
+			setAnchor(0.5f);
+			setPivot(0.5f);
 			setAlpha(0.0f);
 		}
 
