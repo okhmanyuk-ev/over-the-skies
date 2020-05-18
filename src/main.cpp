@@ -1,9 +1,6 @@
 #include "application.h"
 
-#if !defined(PLATFORM_IOS)
-int main(int argc, char* argv[])
+void sky_main()
 {
     hcg001::Application().run();
-    return 0;
 }
-#endif
