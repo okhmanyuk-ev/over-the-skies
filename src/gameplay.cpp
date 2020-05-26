@@ -360,10 +360,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 
 void Gameplay::spawnJumpParticles()
 {
-	for (int i = 0; i < 16; i++)
-	{
-		mJumpParticles->emit();
-	}
+	mJumpParticles->emit(16);
 }
 
 void Gameplay::removeFarPlanes()
