@@ -40,6 +40,11 @@ Application::Application() : RichApplication(PROJECT_CODE)
 	CONSOLE->registerCVar("g_node_editor", { "bool" }, CVAR_GETTER_BOOL(mNodeEditor), CVAR_SETTER_BOOL(mNodeEditor));
 
 	STATS->setAlignment(Shared::StatsSystem::Align::BottomRight);
+
+#if !defined(BUILD_DEVELOPER)
+	CONSOLE_DEVICE->setEnabled(false);
+	STATS->setEnabled(false);
+#endif
 }
 
 Application::~Application()
@@ -61,9 +66,6 @@ void Application::initialize()
 #if defined(BUILD_DEVELOPER)
 	CONSOLE->execute("hud_show_fps 1");
 	CONSOLE->execute("hud_show_drawcalls 1");
-#else
-	CONSOLE_DEVICE->setEnabled(false);
-	STATS->setEnabled(false);
 #endif
 
 	Scene::Debug::Font = FONT("default");
