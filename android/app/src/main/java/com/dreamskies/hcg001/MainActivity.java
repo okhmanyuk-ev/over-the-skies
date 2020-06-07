@@ -2,6 +2,7 @@ package com.dreamskies.hcg001;
 
 import android.os.Bundle;
 import com.dreamskies.sky.SkyActivity;
+import com.facebook.FacebookSdk;
 
 public class MainActivity extends SkyActivity {    
 	static {

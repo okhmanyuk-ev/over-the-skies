@@ -23,4 +23,5 @@ dependencies {
     api files('../../sky/lib/fmod/android/fmod.jar')
     implementation 'com.android.billingclient:billing:2.1.0'
     implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
+    implementation 'com.facebook.android:facebook-android-sdk:5.0.1'
 }
