@@ -18,6 +18,10 @@ android {
             path '../../CMakeLists.txt'
         }
     }
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
 }
 dependencies {
     api files('../../sky/lib/fmod/android/fmod.jar')
