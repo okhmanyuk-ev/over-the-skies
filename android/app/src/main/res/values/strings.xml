@@ -2,5 +2,4 @@
 <resources>
     <string name="app_name">Over The Sky</string>
     <string name="facebook_app_id">644621113036513</string>
-    <string name="fb_login_protocol_scheme">fb644621113036513</string>
 </resources>
