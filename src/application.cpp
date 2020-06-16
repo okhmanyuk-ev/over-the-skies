@@ -45,11 +45,14 @@ Application::Application() : RichApplication(PROJECT_CODE)
 	CONSOLE_DEVICE->setEnabled(false);
 	STATS->setEnabled(false);
 #endif
+
+	ENGINE->addSystem<Shared::SceneManager>(std::make_shared<Shared::SceneManager>());
 }
 
 Application::~Application()
 {
 	PROFILE->save();
+	ENGINE->removeSystem<Shared::SceneManager>();
 }
 
 void Application::loading(const std::string& stage, float progress)
@@ -77,18 +80,17 @@ void Application::initialize()
 	mSky = std::make_shared<Sky>();
 	root->attach(mSky);
 
-	mSceneManager = std::make_shared<Shared::SceneManager>();
-	root->attach(mSceneManager);
+	root->attach(SCENE_MANAGER);
 
 	auto main_menu = std::make_shared<MainMenu>();
 	main_menu->setStartCallback([this, main_menu] {
 		auto gameplay = std::make_shared<Gameplay>(main_menu->getChoosedSkin());
-		gameplay->setGameoverCallback([this, main_menu, gameplay] {
+		gameplay->setGameoverCallback([main_menu, gameplay] {
 			auto gameover_screen = std::make_shared<GameoverMenu>(gameplay->getScore());
-			gameover_screen->setClickCallback([this, main_menu] {
-				mSceneManager->switchScreen(main_menu);
+			gameover_screen->setClickCallback([main_menu] {
+				SCENE_MANAGER->switchScreen(main_menu);
 			});
-			mSceneManager->switchScreen(gameover_screen);
+			SCENE_MANAGER->switchScreen(gameover_screen);
 		});
 		gameplay->setRubyCallback([this](auto ruby) {
 			collectRubyAnim(ruby);
@@ -96,12 +98,12 @@ void Application::initialize()
 		gameplay->setMoveSkyCallback([this](auto offset) {
 			mSky->moveSky(offset);
 		});
-		mSceneManager->switchScreen(gameplay);
+		SCENE_MANAGER->switchScreen(gameplay);
 	});
 
 	mSky->changeColor(Graphics::Color::Hsv::HueBlue, Graphics::Color::Hsv::HueRed); 
 
-	mSceneManager->switchScreen(main_menu, [this] {
+	SCENE_MANAGER->switchScreen(main_menu, [this] {
 		tryShowDailyReward();
 	});
 
@@ -117,7 +119,7 @@ void Application::initialize()
 
 	mHudHolder = std::make_shared<Scene::Node>();
 	mHudHolder->setStretch(1.0f);
-	mSceneManager->getWindowHolder()->attach(mHudHolder); // after screens, before windows
+	SCENE_MANAGER->getWindowHolder()->attach(mHudHolder); // after screens, before windows
 
 	// ruby score sprite
 
@@ -142,7 +144,7 @@ void Application::initialize()
 void Application::frame()
 {
 	mGameScene.frame();
-	ShowCheatsMenu(mSceneManager);
+	ShowCheatsMenu();
 }
 
 void Application::collectRubyAnim(std::shared_ptr<Scene::Node> ruby)
@@ -233,7 +235,7 @@ void Application::tryShowDailyReward()
 
 		addRubies(rubies_count);
 	});
-	mSceneManager->pushWindow(window);
+	SCENE_MANAGER->pushWindow(window);
 }
 
 void Application::event(const Profile::RubiesChangedEvent& e)

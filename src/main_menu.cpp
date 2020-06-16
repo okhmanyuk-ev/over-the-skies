@@ -49,9 +49,9 @@ MainMenu::MainMenu()
 		auto buy_skin_menu = std::make_shared<BuySkinMenu>(mChoosedSkin);
 		buy_skin_menu->setExitCallback([this] {
 			refresh();
-			getSceneManager()->switchScreen(shared_from_this());
+			SCENE_MANAGER->switchScreen(shared_from_this());
 		});
-		getSceneManager()->switchScreen(buy_skin_menu);
+		SCENE_MANAGER->switchScreen(buy_skin_menu);
 	});
 	unlock_button->setSize(ButtonSize);
 	unlock_button->setAnchor({ 1.5f, 0.75f });

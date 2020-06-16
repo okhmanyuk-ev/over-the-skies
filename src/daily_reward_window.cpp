@@ -141,7 +141,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	ok_button->getLabel()->setText(LOCALIZE("DAILYREWARD_CLAIM"));
 	ok_button->getLabel()->setFontSize(18.0f);
 	ok_button->setClickCallback([this] {
-		getSceneManager()->popWindow(mClaimCallback);
+		SCENE_MANAGER->popWindow(mClaimCallback);
 	});
 	ok_button->setAnchor(0.5f);
 	ok_button->setPivot(0.5f);

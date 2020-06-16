@@ -42,8 +42,6 @@ namespace hcg001
 			std::shared_ptr<Scene::Label> label;
 		} mRubyScore;
 		
-		std::shared_ptr<Shared::SceneManager> mSceneManager;
-
 	private:
 	//	Shared::SceneHelpers::SplashScene mSplashScene = Shared::SceneHelpers::SplashScene(TEXTURE("textures/logo.png"));
 		Scene::Scene mGameScene;

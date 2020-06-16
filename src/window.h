@@ -17,7 +17,7 @@ namespace hcg001
 				if (getState() != State::Opened)
 					return;
 
-				getSceneManager()->popWindow();
+				SCENE_MANAGER->popWindow();
 			});
 
 			mFadeRect = std::make_shared<Scene::Rectangle>();

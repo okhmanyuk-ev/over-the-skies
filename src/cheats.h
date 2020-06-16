@@ -7,7 +7,7 @@
 
 namespace hcg001
 {
-	inline void ShowCheatsMenu(std::shared_ptr<Shared::SceneManager> scene_manager)
+	inline void ShowCheatsMenu()
 	{
 #if !defined(BUILD_DEVELOPER)
 		return;
@@ -33,7 +33,7 @@ namespace hcg001
 			if (ImGui::Button("DAILY REWARD WINDOW"))
 			{
 				auto window = std::make_shared<DailyRewardWindow>(2);
-				scene_manager->pushWindow(window);
+				SCENE_MANAGER->pushWindow(window);
 			}
 		}
 
