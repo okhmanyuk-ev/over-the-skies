@@ -18,6 +18,7 @@ MainMenu::MainMenu()
 	const glm::vec2 ButtonSize = { 192.0f, 48.0f };
 
 	auto play_button = std::make_shared<Shared::SceneHelpers::FastButton>();
+	play_button->setRounding(0.5f);
 	play_button->getLabel()->setFontSize(ButtonLabelFontSize);
 	play_button->getLabel()->setText(LOCALIZE("MAIN_MENU_PLAY"));
 	play_button->setClickCallback([this] {
@@ -33,6 +34,7 @@ MainMenu::MainMenu()
 	attach(play_button);
 
 	auto unlock_button = std::make_shared<Shared::SceneHelpers::FastButton>();
+	unlock_button->setRounding(0.5f);
 	unlock_button->getLabel()->setFontSize(ButtonLabelFontSize);
 	unlock_button->getLabel()->setText(LOCALIZE("MAIN_MENU_UNLOCK"));
 	unlock_button->setClickCallback([this, ButtonLabelFontSize, unlock_button] {
@@ -153,6 +155,7 @@ MainMenu::MainMenu()
 	}));
 
 	auto purchase_button = std::make_shared<Shared::SceneHelpers::FastButton>();
+	purchase_button->setRounding(0.5f);
 	purchase_button->getLabel()->setText(LOCALIZE("MAIN_MENU_PURCHASE_RUBIES"));
 	purchase_button->getLabel()->setFontSize(14.0f);
 	purchase_button->setSize({ 86.0f, 28.0f });

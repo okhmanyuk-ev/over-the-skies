@@ -37,7 +37,12 @@ Application::Application() : RichApplication(PROJECT_CODE)
 
 	std::srand((unsigned int)std::time(nullptr));
 
-	CONSOLE->registerCVar("g_node_editor", { "bool" }, CVAR_GETTER_BOOL(mNodeEditor), CVAR_SETTER_BOOL(mNodeEditor));
+	CONSOLE->registerCVar("g_editor", { "bool" }, CVAR_GETTER_BOOL_FUNC(mSceneEditor.isEnabled),
+		CVAR_SETTER_BOOL_FUNC(mSceneEditor.setEnabled));
+
+	mGameScene.setInteractTestCallback([](const auto& pos) {
+		return !ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow | ImGuiHoveredFlags_AllowWhenBlockedByPopup);
+	});
 
 	STATS->setAlignment(Shared::StatsSystem::Align::BottomRight);
 

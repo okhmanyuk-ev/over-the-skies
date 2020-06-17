@@ -4,7 +4,7 @@
 
 namespace hcg001
 {	
-	class Plane : public Scene::Actionable<Scene::Node>, public Scene::Color
+	class Plane : public Scene::Actionable<Scene::Rectangle>
 	{
 	public:
 		Plane();

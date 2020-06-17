@@ -47,9 +47,6 @@ namespace hcg001
 		Scene::Scene mGameScene;
 
 	private:
-		bool mNodeEditor = false;
-
-	private:
 		Shared::SceneEditor mSceneEditor = Shared::SceneEditor(mGameScene);
 	};
 }
