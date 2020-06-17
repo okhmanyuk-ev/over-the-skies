@@ -71,8 +71,6 @@ void Application::initialize()
 	CONSOLE->execute("hud_show_drawcalls 1");
 #endif
 
-	Scene::Debug::Font = FONT("default");
-
 	auto root = mGameScene.getRoot();
 
 	// sky
