@@ -4,7 +4,7 @@
 
 namespace hcg001::Helpers
 {
-	const float ButtonRounding = 0.33;
+	const float ButtonRounding = 0.33f;
 
 	inline bool Chance(float normalized_percent)
 	{
