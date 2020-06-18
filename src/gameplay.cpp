@@ -75,7 +75,6 @@ Gameplay::Gameplay(Skin skin)
 	mJumpParticles->setDistance(48.0f);
 	mJumpParticles->setMinDuration(0.25f);
 	mJumpParticles->setMaxDuration(0.75f);
-	mJumpParticles->setRounding(0.5f);
 	mPlayer->attach(mJumpParticles);
 }
 
@@ -312,7 +311,6 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		emitter->setAnchor({ 0.5f, 1.0f });
 		emitter->setDirection({ 0.0f, 1.0f });
 		emitter->setBeginColor({ Graphics::Color::Yellow, 1.0f });
-		emitter->setRounding(0.5f);
 		plane->attach(emitter);
 	}
 

@@ -1,5 +1,6 @@
 #include "buy_skin_menu.h"
 #include "profile.h"
+#include "helpers.h"
 
 using namespace hcg001;
 
@@ -23,7 +24,7 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	attach(mImage);
 
 	mBuyButton = std::make_shared<Shared::SceneHelpers::FastButton>();
-	mBuyButton->setRounding(0.5f);
+	mBuyButton->setRounding(Helpers::ButtonRounding);
 	mBuyButton->getLabel()->setText(LOCALIZE("BUY_SKIN_BUY"));
 	mBuyButton->getLabel()->setFontSize(20.0f);
 	mBuyButton->setClickCallback([this, skin] {
@@ -41,7 +42,7 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	attach(mBuyButton);
 
 	mCancelButton = std::make_shared<Shared::SceneHelpers::FastButton>();
-	mCancelButton->setRounding(0.5f);
+	mCancelButton->setRounding(Helpers::ButtonRounding);
 	mCancelButton->getLabel()->setFontSize(20.0f);
 	mCancelButton->getLabel()->setText(LOCALIZE("BUY_SKIN_CANCEL"));
 	mCancelButton->setClickCallback([this] {

@@ -1,4 +1,5 @@
 #include "daily_reward_window.h"
+#include "helpers.h"
 
 using namespace hcg001;
 
