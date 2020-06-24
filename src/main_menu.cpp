@@ -300,7 +300,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			// ruby
 
 			auto ruby = std::make_shared<Scene::Actionable<Scene::Sprite>>();
-			ruby->setTexture(TEXTURE("ruby"));
+			ruby->setTexture(TEXTURE("textures/ruby.png"));
 			ruby->setSize({ 16.0f, 16.0f });
 			ruby->setAnchor({ 1.0f, 0.5f });
 			ruby->setPivot({ 0.0f, 0.5f });

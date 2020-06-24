@@ -16,6 +16,7 @@
 namespace hcg001
 {
 	class Application : public Shared::RichApplication,
+		public Common::FrameSystem::Frameable,
 		public Common::EventSystem::Listenable<Profile::RubiesChangedEvent>
 	{
 	public:
@@ -23,8 +24,7 @@ namespace hcg001
 		~Application();
 
 	private:
-		void loading(const std::string& stage, float progress) override;
-		void initialize() override;
+		void initialize();
 		void frame() override;
 		void collectRubyAnim(std::shared_ptr<Scene::Node> ruby);
 		void addRubies(int count);

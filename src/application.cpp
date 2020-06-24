@@ -24,16 +24,7 @@ Application::Application() : RichApplication(PROJECT_CODE)
 		} }
 	});
 
-	addLoadingTasks({
-		{ "fonts", [] {
-			PRECACHE_FONT_ALIAS("fonts/sansation.ttf", "default");
-		} },
-		{ "textures", [] {
-			PRECACHE_TEXTURE_ALIAS("textures/ruby.png", "ruby");
-		} }
-	});
-
-	setPayloadWaiting(0.0f);
+	PRECACHE_FONT_ALIAS("fonts/sansation.ttf", "default");
 
 	std::srand((unsigned int)std::time(nullptr));
 
@@ -52,21 +43,14 @@ Application::Application() : RichApplication(PROJECT_CODE)
 #endif
 
 	ENGINE->addSystem<Shared::SceneManager>(std::make_shared<Shared::SceneManager>());
+
+	initialize();
 }
 
 Application::~Application()
 {
 	PROFILE->save();
 	ENGINE->removeSystem<Shared::SceneManager>();
-}
-
-void Application::loading(const std::string& stage, float progress)
-{
-	//mSplashScene.updateProgress(progress);
-	//mSplashScene.frame();
-#if defined BUILD_DEVELOPER
-	RichApplication::loading(stage, progress);
-#endif
 }
 
 void Application::initialize()
@@ -127,7 +111,7 @@ void Application::initialize()
 	// ruby score sprite
 
 	mRubyScore.sprite = std::make_shared<Scene::Sprite>();
-	mRubyScore.sprite->setTexture(TEXTURE("ruby"));
+	mRubyScore.sprite->setTexture(TEXTURE("textures/ruby.png"));
 	mRubyScore.sprite->setPivot({ 0.0f, 0.0f });
 	mRubyScore.sprite->setAnchor({ 0.0f, 0.0f });
 	mRubyScore.sprite->setPosition({ 16.0f, 16.0f });
@@ -181,16 +165,13 @@ void Application::addRubies(int count)
 	PROFILE->increaseRubies(count);
 	PROFILE->saveAsync();
 
-	if (!isInitialized())
-		return;
-
 	for (int i = 0; i < count; i++)
 	{
 		if (i > 8)
 			break;
 
 		auto ruby = std::make_shared<Scene::Actionable<Scene::Sprite>>();
-		ruby->setTexture(TEXTURE("ruby"));
+		ruby->setTexture(TEXTURE("textures/ruby.png"));
 		ruby->setPivot(0.5f);
 		ruby->setAnchor(0.5f);
 		ruby->setSize(24.0f);
@@ -243,8 +224,5 @@ void Application::tryShowDailyReward()
 
 void Application::event(const Profile::RubiesChangedEvent& e)
 {
-	if (!isInitialized())
-		return;
-
 	//mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
 }

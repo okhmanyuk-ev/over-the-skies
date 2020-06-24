@@ -326,7 +326,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 	if (has_ruby)
 	{
 		auto ruby = std::make_shared<Scene::Sprite>();
-		ruby->setTexture(TEXTURE("ruby"));
+		ruby->setTexture(TEXTURE("textures/ruby.png"));
 		ruby->setPivot({ 0.5f, 1.0f });
 		ruby->setAnchor({ 0.5f, 0.0f });
 		ruby->setPosition({ 0.0f, -4.0f });
