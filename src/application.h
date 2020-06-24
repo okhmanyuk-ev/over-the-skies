@@ -43,7 +43,6 @@ namespace hcg001
 		} mRubyScore;
 		
 	private:
-	//	Shared::SceneHelpers::SplashScene mSplashScene = Shared::SceneHelpers::SplashScene(TEXTURE("textures/logo.png"));
 		Scene::Scene mGameScene;
 
 	private:

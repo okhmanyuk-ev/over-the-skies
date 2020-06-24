@@ -37,14 +37,17 @@ Application::Application() : RichApplication(PROJECT_CODE)
 
 	STATS->setAlignment(Shared::StatsSystem::Align::BottomRight);
 
-#if !defined(BUILD_DEVELOPER)
+#if defined(BUILD_DEVELOPER)
+	CONSOLE->execute("hud_show_fps 1");
+	CONSOLE->execute("hud_show_drawcalls 1");
+#else
 	CONSOLE_DEVICE->setEnabled(false);
 	STATS->setEnabled(false);
 #endif
 
-	ENGINE->addSystem<Shared::SceneManager>(std::make_shared<Shared::SceneManager>());
-
-	initialize();
+	FRAME->addOne([this] {
+		initialize();
+	});
 }
 
 Application::~Application()
@@ -55,11 +58,6 @@ Application::~Application()
 
 void Application::initialize()
 {
-#if defined(BUILD_DEVELOPER)
-	CONSOLE->execute("hud_show_fps 1");
-	CONSOLE->execute("hud_show_drawcalls 1");
-#endif
-
 	auto root = mGameScene.getRoot();
 
 	// sky
@@ -67,6 +65,7 @@ void Application::initialize()
 	mSky = std::make_shared<Sky>();
 	root->attach(mSky);
 
+	ENGINE->addSystem<Shared::SceneManager>(std::make_shared<Shared::SceneManager>());
 	root->attach(SCENE_MANAGER);
 
 	auto main_menu = std::make_shared<MainMenu>();
