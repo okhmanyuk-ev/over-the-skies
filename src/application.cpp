@@ -231,10 +231,9 @@ void Application::event(const Profile::RubiesChangedEvent& e)
 
 void Application::adaptToScreen(std::shared_ptr<Scene::Node> node)
 {
-	glm::vec2 target = { 360.0f, 640.0f };
 	glm::vec2 size = { (float)PLATFORM->getLogicalWidth(), (float)PLATFORM->getLogicalHeight() };
+	glm::vec2 dimensions = { 360.0f, 640.0f };
 
-	auto scale = size / target;
-
+	auto scale = size / dimensions;
 	node->setScale(glm::min(scale.x, scale.y));
 }

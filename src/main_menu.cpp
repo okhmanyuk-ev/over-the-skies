@@ -122,7 +122,7 @@ MainMenu::MainMenu()
 		{
 			nearest = mScrollTarget;
 			auto nearest_projected = nearest->project(nearest->getSize() / 2.0f);
-			distance = glm::distance(slot_projected, nearest_projected) / PLATFORM->getScale();
+			distance = glm::distance(slot_projected, nearest_projected);
 
 			if (distance <= SlotWidth / 2.0f)
 				mScrollTarget = nullptr;
@@ -133,7 +133,7 @@ MainMenu::MainMenu()
 			{
 				auto node = mItems.at(i);
 				auto node_projected = node->project(node->getSize() / 2.0f);
-				auto d = glm::distance(slot_projected, node_projected) / PLATFORM->getScale();
+				auto d = glm::distance(slot_projected, node_projected);
 
 				if (distance <= d)
 					continue;
@@ -239,7 +239,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 
 			auto skin_projected = image->project(image->getSize() / 2.0f);
 			auto slot_projected = mScrollbox->project(mScrollbox->getSize() / 2.0f);
-			auto distance = glm::distance(skin_projected, slot_projected) / PLATFORM->getScale();
+			auto distance = glm::distance(skin_projected, slot_projected);
 			auto size = glm::lerp(SkinSize, SkinSizeChoosed, glm::smoothstep(ItemSize, 0.0f, distance));
 			image->setSize(size);
 		}));
@@ -262,7 +262,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			
 			auto item_projected = item->project(item->getSize() / 2.0f);
 			auto slot_projected = mScrollbox->project(mScrollbox->getSize() / 2.0f);
-			auto distance = glm::distance(item_projected, slot_projected) / PLATFORM->getScale();
+			auto distance = glm::distance(item_projected, slot_projected);
 			auto alpha = glm::smoothstep(ItemSize, ItemSize / 2.0f, distance);
 			node->setAlpha(alpha);
 		};

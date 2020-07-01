@@ -38,11 +38,24 @@ Gameplay::Gameplay(Skin skin)
 	mRectangleParticlesHolder->setStretch(1.0f);
 	mGameField->attach(mRectangleParticlesHolder);
 
-	// player
-
 	mPlayer = createPlayer(skin, mPlayerTrailHolder);
 	mPlayer->setAlpha(0.0f);
-	mGameField->attach(mPlayer);
+
+	runAction(Shared::ActionHelpers::Delayed([this] { return !isTransformReady(); },
+		Shared::ActionHelpers::MakeSequence(
+			Shared::ActionHelpers::Execute([this, skin] {
+				mPlayer->setPosition({ getWidth() / 2.0f, (-getHeight() / 2.0f) - 32.0f });
+				mGameField->attach(mPlayer);
+			}),
+			Shared::ActionHelpers::Wait([this] { return !mPlayer->isTransformReady(); }),
+			Shared::ActionHelpers::Delayed(0.25f, Shared::ActionHelpers::MakeSequence(
+				Shared::ActionHelpers::Show(mPlayer, 0.25f),
+				Shared::ActionHelpers::Execute([this] {
+					spawnPlanes();
+				}))
+			)
+		)
+	));
 	
 	// score label
 
@@ -53,16 +66,6 @@ Gameplay::Gameplay(Skin skin)
 	mScoreLabel->setPosition({ -16.0f, 16.0f });
 	mScoreLabel->setText("0");
 	attach(mScoreLabel);
-
-	//
-
-	Common::Actions::Run(Shared::ActionHelpers::Delayed(0.25f, Shared::ActionHelpers::MakeSequence(
-		Shared::ActionHelpers::Show(mPlayer, 0.25f),
-		Shared::ActionHelpers::Execute([this] {
-			spawnPlanes();
-		}))
-	));
-	mPlayer->setPosition({ PLATFORM->getLogicalWidth() / 2.0f, (-PLATFORM->getLogicalHeight() / 2.0f) - 32.0f });
 	
 	// jump particles
 
@@ -199,8 +202,8 @@ void Gameplay::camera(float dTime)
 
 	auto pos = mGameField->getPosition();
 	glm::vec2 target;
-	target.x = -mPlayer->getX() + (PLATFORM->getLogicalWidth() * 0.33f);
-	target.y = mMaxY - (PLATFORM->getLogicalHeight() * 0.66f);
+	target.x = -mPlayer->getX() + (getWidth() * 0.33f);
+	target.y = mMaxY - (getHeight() * 0.66f);
 
 	if (target.y < 0.0f)
 		target.y = 0.0f;

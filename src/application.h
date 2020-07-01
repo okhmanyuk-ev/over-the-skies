@@ -12,6 +12,7 @@
 #include "profile.h"
 #include "cheats.h"
 #include "daily_reward_window.h"
+#include "helpers.h"
 
 namespace hcg001
 {
