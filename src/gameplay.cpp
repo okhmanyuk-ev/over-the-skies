@@ -116,7 +116,9 @@ void Gameplay::update()
 		mPhysTimeAccumulator = 0.0f;
 	}
 
-	if (mPlayer->project(mPlayer->getSize() / 2.0f).y >= PLATFORM->getHeight())
+	auto projected_player_pos = unproject(mPlayer->project(mPlayer->getSize() / 2.0f));
+
+	if (projected_player_pos.y >= getHeight())
 	{
 		gameover();
 		return;
@@ -376,9 +378,9 @@ void Gameplay::removeFarPlanes()
 
 	for (const auto plane : planes)
 	{
-		auto projected_plane_pos = plane->project(plane->getSize() / 2.0f);
+		auto projected_plane_pos = unproject(plane->project(plane->getSize() / 2.0f));
 
-		if (projected_plane_pos.y > PLATFORM->getHeight())
+		if (projected_plane_pos.y > getHeight())
 		{
 			mPlaneHolder->detach(plane);
 		}
