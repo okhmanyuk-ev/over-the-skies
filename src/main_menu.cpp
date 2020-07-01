@@ -70,7 +70,7 @@ MainMenu::MainMenu()
 		
 		auto locked = PROFILE->isSkinLocked(mChoosedSkin);
 
-		const float Duration = 0.25f;
+		const float Duration = 0.33f;
 
 		if (mPlayButtonVisible && locked)
 		{
