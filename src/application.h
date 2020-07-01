@@ -29,6 +29,7 @@ namespace hcg001
 		void collectRubyAnim(std::shared_ptr<Scene::Node> ruby);
 		void addRubies(int count);
 		void tryShowDailyReward();
+		void adaptToScreen(std::shared_ptr<Scene::Node> node);
 
 	private:
 		void event(const Profile::RubiesChangedEvent& e) override;

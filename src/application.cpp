@@ -132,6 +132,7 @@ void Application::initialize()
 void Application::frame()
 {
 	mGameScene.frame();
+	adaptToScreen(mGameScene.getRoot());
 	ShowCheatsMenu();
 }
 
@@ -226,4 +227,14 @@ void Application::tryShowDailyReward()
 void Application::event(const Profile::RubiesChangedEvent& e)
 {
 	//mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
+}
+
+void Application::adaptToScreen(std::shared_ptr<Scene::Node> node)
+{
+	glm::vec2 target = { 360.0f, 640.0f };
+	glm::vec2 size = { (float)PLATFORM->getLogicalWidth(), (float)PLATFORM->getLogicalHeight() };
+
+	auto scale = size / target;
+
+	node->setScale(glm::min(scale.x, scale.y));
 }
