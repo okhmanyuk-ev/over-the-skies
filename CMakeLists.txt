@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.8.0)
 project(hcg001)
 
+set(PRODUCT_NAME "Over The Sky")
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -37,11 +39,19 @@ elseif(APPLE)
         ios/*.h
     )
 
+    source_group("all" FILES ${IOS_SRC})
+
     set(RESOURCES
         ios/Main.storyboard
         ios/LaunchScreen.storyboard
+        ios/Images.xcassets
         assets
     )
+
+    set(OBJC_SOURCES
+        src/application.cpp
+    )
+    set_source_files_properties(${OBJC_SOURCES} PROPERTIES COMPILE_FLAGS "-x objective-c++ -fembed-bitcode")
 
     add_executable(${PROJECT_NAME} 
         ${ALL_SRC}
@@ -56,14 +66,26 @@ elseif(APPLE)
         XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "69RWHMDZA7"
         XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.dreamskies.${PROJECT_NAME}"
         XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2"
+        XCODE_ATTRIBUTE_ENABLE_BITCODE "NO"
+        XCODE_ATTRIBUTE_INSTALL_PATH "/Applications"
+        XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME "AppIcon"
+        XCODE_ATTRIBUTE_PRODUCT_NAME "${PRODUCT_NAME}"
+        XCODE_ATTRIBUTE_FRAMEWORK_SEARCH_PATHS "ios/frameworks"
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/ios/Info.plist
     )
+
+#    target_link_libraries(${PROJECT_NAME}
+#        "-framework FBSDKCoreKit"
+#        "-framework FBSDKLoginKit"
+#        "-framework FBSDKShareKit"
+#    )
+    
 elseif(ANDROID)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")
 
-    add_library(${PROJECT_NAME} SHARED
-        ${ALL_SRC}
-    )
+	add_library(${PROJECT_NAME} SHARED
+		${ALL_SRC}
+	)
 endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC src)
