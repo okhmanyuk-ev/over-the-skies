@@ -37,6 +37,8 @@ Application::Application() : RichApplication(PROJECT_CODE)
 
 	STATS->setAlignment(Shared::StatsSystem::Align::BottomRight);
 
+	Scene::Sprite::DefaultSampler = Renderer::Sampler::Linear;
+
 #if defined(BUILD_DEVELOPER)
 	CONSOLE->execute("hud_show_fps 1");
 	CONSOLE->execute("hud_show_drawcalls 1");

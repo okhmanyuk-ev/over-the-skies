@@ -295,10 +295,14 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 	mLastPlanePos = pos;
 
 	auto plane = std::make_shared<Plane>();
-	plane->setSize({ 64.0f, 8.0f });
-
-	if (powerjump)
+	if (!powerjump)
 	{
+		plane->setTexture(TEXTURE("textures/plane.png"));
+		plane->setSize({ 64.0f, 8.0f });
+	}
+	else
+	{
+		plane->setTexture(TEXTURE("textures/plane_small.png"));
 		plane->setSize({ 48.0f, 8.0f });
 		plane->setColor(Graphics::Color::Yellow);
 		plane->setPowerjump(true);
@@ -307,16 +311,16 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		emitter->setBeginSize({ 6.0f, 6.0f });
 		emitter->setDelay(1.0f / 60.0f);
 		emitter->setStretch({ 0.75f, 0.0f });
-		emitter->setPivot({ 0.5f, 0.5f });
+		emitter->setPivot(0.5f);
 		emitter->setAnchor({ 0.5f, 1.0f });
 		emitter->setDirection({ 0.0f, 1.0f });
 		emitter->setBeginColor({ Graphics::Color::Yellow, 1.0f });
 		plane->attach(emitter);
 	}
 
-	plane->setPivot({ 0.5f, 0.5f });
+	plane->setPivot(0.5f);
 	plane->setPosition(pos);
-	plane->setScale({ 0.0f, 0.0f });
+	plane->setScale(0.0f);
 	plane->runAction(Shared::ActionHelpers::Delayed(anim_delay,
 		Shared::ActionHelpers::ChangeScale(plane, { 1.0f, 1.0f }, 0.5f / 1.25f, Common::Easing::BackOut)
 	));
@@ -330,7 +334,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		ruby->setPivot({ 0.5f, 1.0f });
 		ruby->setAnchor({ 0.5f, 0.0f });
 		ruby->setPosition({ 0.0f, -4.0f });
-		ruby->setSize({ 18.0f, 18.0f });
+		ruby->setSize(18.0f);
 		plane->attach(ruby);
 		plane->setRuby(ruby);
 	}

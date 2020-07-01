@@ -162,8 +162,8 @@ void Sky::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
 			Shared::ActionHelpers::Execute([holder] {
 				auto size = glm::linearRand(4.0f, 6.0f);
 				
-				auto star = std::make_shared<Scene::Actionable<Scene::Rectangle>>();
-				star->setRounding(0.5f);
+				auto star = std::make_shared<Scene::Actionable<Scene::Sprite>>();
+				star->setTexture(TEXTURE("textures/background_star.png"));
 				star->setAnchor(glm::linearRand(glm::vec2(0.0f), glm::vec2(1.0f)));
 				star->setPivot(0.5f);
 				star->setSize(size);
