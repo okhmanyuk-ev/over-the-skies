@@ -49,11 +49,16 @@ Gameplay::Gameplay(Skin skin)
 			}),
 			Shared::ActionHelpers::Wait([this] { return !mPlayer->isTransformReady(); }),
 			Shared::ActionHelpers::Delayed(0.25f, Shared::ActionHelpers::MakeSequence(
-				Shared::ActionHelpers::Show(mPlayer, 0.25f),
 				Shared::ActionHelpers::Execute([this] {
 					spawnPlanes();
-				}))
-			)
+				}),
+				Shared::ActionHelpers::Delayed(0.25f,
+					Shared::ActionHelpers::Show(mPlayer, 0.25f)
+				),
+				Shared::ActionHelpers::Execute([this] {
+					mCanStart = true;
+				})
+			))
 		)
 	));
 	
@@ -403,6 +408,9 @@ void Gameplay::gameover()
 
 void Gameplay::tap()
 {
+	if (!mCanStart)
+		return;
+
 	if (!mReady)
 	{
 		start();

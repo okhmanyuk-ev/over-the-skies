@@ -59,6 +59,7 @@ namespace hcg001
 		int mScore = 0;
 		bool mDownslide = false;
 		glm::vec2 mLastPlanePos = { 0.0f, 0.0f };
+		bool mCanStart = false;
 
 	public:
 		using MoveSkyCallback = std::function<void(const glm::vec2&)>;
