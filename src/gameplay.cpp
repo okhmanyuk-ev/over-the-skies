@@ -67,8 +67,8 @@ Gameplay::Gameplay(Skin skin)
 	mScoreLabel = std::make_shared<Scene::Label>();
 	mScoreLabel->setFont(FONT("default"));
 	mScoreLabel->setAnchor({ 1.0f, 0.0f });
-	mScoreLabel->setPivot({ 1.0f, 0.0f });
-	mScoreLabel->setPosition({ -16.0f, 16.0f });
+	mScoreLabel->setPivot({ 1.0f, 0.5f });
+	mScoreLabel->setPosition({ -16.0f, 44.0f });
 	mScoreLabel->setText("0");
 	attach(mScoreLabel);
 	

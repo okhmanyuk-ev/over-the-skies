@@ -113,10 +113,9 @@ void Application::initialize()
 
 	mRubyScore.sprite = std::make_shared<Scene::Sprite>();
 	mRubyScore.sprite->setTexture(TEXTURE("textures/ruby.png"));
-	mRubyScore.sprite->setPivot({ 0.0f, 0.0f });
-	mRubyScore.sprite->setAnchor({ 0.0f, 0.0f });
-	mRubyScore.sprite->setPosition({ 16.0f, 16.0f });
-	mRubyScore.sprite->setSize({ 24.0f, 24.0f });
+	mRubyScore.sprite->setPivot({ 0.0f, 0.5f });
+	mRubyScore.sprite->setPosition({ 16.0f, 44.0f });
+	mRubyScore.sprite->setSize(24.0f);
 	mHudHolder->attach(mRubyScore.sprite);
 
 	// ruby score label
