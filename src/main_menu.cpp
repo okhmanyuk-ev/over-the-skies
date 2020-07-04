@@ -155,6 +155,7 @@ MainMenu::MainMenu()
 		mDecideButtons = distance <= 32.0f && mScrollTarget == nullptr;
 	}));
 
+#if !defined(PLATFORM_IOS)
 	auto purchase_button = std::make_shared<Shared::SceneHelpers::FastButton>();
 	purchase_button->setRounding(Helpers::ButtonRounding);
 	purchase_button->getLabel()->setText(LOCALIZE("MAIN_MENU_PURCHASE_RUBIES"));
@@ -166,6 +167,7 @@ MainMenu::MainMenu()
 		PLATFORM->purchase("rubies.001");
 	});
 	attach(purchase_button);
+#endif
 }
 
 void MainMenu::refresh()
