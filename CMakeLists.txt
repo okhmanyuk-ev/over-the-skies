@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.8.0)
 project(hcg001)
 
-set(PRODUCT_NAME "Over The Sky")
+set(PRODUCT_NAME "Over The Skies")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -42,8 +42,6 @@ elseif(APPLE)
     source_group("all" FILES ${IOS_SRC})
 
     set(RESOURCES
-        ios/Main.storyboard
-        ios/LaunchScreen.storyboard
         ios/Images.xcassets
         assets
     )
