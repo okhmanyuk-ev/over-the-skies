@@ -80,9 +80,6 @@ void Application::initialize()
 			});
 			SCENE_MANAGER->switchScreen(gameover_screen);
 		});
-		gameplay->setRubyCallback([this](auto ruby) {
-			collectRubyAnim(ruby);
-		});
 		gameplay->setMoveSkyCallback([this](auto offset) {
 			mSky->moveSky(offset);
 		});
@@ -103,29 +100,10 @@ void Application::initialize()
 		);
 	}));
 
-	// hud holder
+	// hud
 
-	mHudHolder = std::make_shared<Scene::Node>();
-	mHudHolder->setStretch(1.0f);
-	SCENE_MANAGER->getWindowHolder()->attach(mHudHolder); // after screens, before windows
-
-	// ruby score sprite
-
-	mRubyScore.sprite = std::make_shared<Scene::Sprite>();
-	mRubyScore.sprite->setTexture(TEXTURE("textures/ruby.png"));
-	mRubyScore.sprite->setPivot({ 0.0f, 0.5f });
-	mRubyScore.sprite->setPosition({ 16.0f, 24.0f + PLATFORM->getSafeAreaTopMargin() });
-	mRubyScore.sprite->setSize(24.0f);
-	mHudHolder->attach(mRubyScore.sprite);
-
-	// ruby score label
-	mRubyScore.label = std::make_shared<Scene::Label>();
-	mRubyScore.label->setFont(FONT("default"));
-	mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
-	mRubyScore.label->setAnchor({ 1.0f, 0.5f });
-	mRubyScore.label->setPivot({ 0.0f, 0.5f });
-	mRubyScore.label->setPosition({ 8.0f, 0.0f });
-	mRubyScore.sprite->attach(mRubyScore.label);
+	Helpers::gHud = std::make_shared<Hud>();
+	SCENE_MANAGER->getWindowHolder()->attach(Helpers::gHud); // after screens, before windows
 }
 
 void Application::frame()
@@ -133,32 +111,6 @@ void Application::frame()
 	mGameScene.frame();
 	adaptToScreen(mGameScene.getRoot());
 	ShowCheatsMenu();
-}
-
-void Application::collectRubyAnim(std::shared_ptr<Scene::Node> ruby)
-{
-	auto pos = mHudHolder->unproject(ruby->project({ 0.0f, 0.0f }));
-	ruby->setAnchor({ 0.0f, 0.0f });
-	ruby->setPivot({ 0.0f, 0.0f });
-	ruby->setPosition(pos);
-	ruby->getParent()->detach(ruby);
-	mHudHolder->attach(ruby);
-
-	auto dest_pos = mHudHolder->unproject(mRubyScore.sprite->project({ 0.0f, 0.0f }));
-
-	const float MoveDuration = 0.75f;
-
-	Common::Actions::Run(Shared::ActionHelpers::MakeSequence(
-		Shared::ActionHelpers::MakeParallel(
-			Shared::ActionHelpers::ChangePosition(ruby, dest_pos, MoveDuration, Common::Easing::QuarticInOut),
-			Shared::ActionHelpers::ChangeSize(ruby, mRubyScore.sprite->getSize(), MoveDuration, Common::Easing::QuarticInOut)
-		),
-		Shared::ActionHelpers::Kill(ruby),
-		Shared::ActionHelpers::Execute([this] {
-			mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
-		}),
-		Shared::ActionHelpers::Shake(mRubyScore.label, 2.0f, 0.2f)
-	));
 }
 
 void Application::addRubies(int count)
@@ -183,11 +135,11 @@ void Application::addRubies(int count)
 			Shared::ActionHelpers::Show(ruby, 0.25f, Common::Easing::CubicIn),
 			Shared::ActionHelpers::Execute([this, ruby] {
 				FRAME->addOne([this, ruby] {
-					collectRubyAnim(ruby);
+					Helpers::gHud->collectRubyAnim(ruby);
 				});
 			})
 		));
-		mHudHolder->attach(ruby);
+		Helpers::gHud->attach(ruby);
 	}
 }
 
@@ -221,11 +173,6 @@ void Application::tryShowDailyReward()
 		addRubies(rubies_count);
 	});
 	SCENE_MANAGER->pushWindow(window);
-}
-
-void Application::event(const Profile::RubiesChangedEvent& e)
-{
-	//mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
 }
 
 void Application::adaptToScreen(std::shared_ptr<Scene::Node> node)

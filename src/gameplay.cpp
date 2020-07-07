@@ -62,15 +62,20 @@ Gameplay::Gameplay(Skin skin)
 		)
 	));
 	
+	// hud
+
+	auto hud = std::make_shared<Shared::SceneHelpers::Hud>();
+	attach(hud);
+
 	// score label
 
 	mScoreLabel = std::make_shared<Scene::Label>();
 	mScoreLabel->setFont(FONT("default"));
 	mScoreLabel->setAnchor({ 1.0f, 0.0f });
 	mScoreLabel->setPivot({ 1.0f, 0.5f });
-	mScoreLabel->setPosition({ -16.0f, 24.0f + PLATFORM->getSafeAreaTopMargin() });
+	mScoreLabel->setPosition({ -16.0f, 24.0f });
 	mScoreLabel->setText("0");
-	attach(mScoreLabel);
+	hud->attach(mScoreLabel);
 	
 	// jump particles
 
@@ -263,7 +268,7 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 	if (plane->hasRuby())
 	{
 		PROFILE->increaseRubies(1);
-		mRubyCallback(plane->getRuby());
+		Helpers::gHud->collectRubyAnim(plane->getRuby());
 	}
 }
 

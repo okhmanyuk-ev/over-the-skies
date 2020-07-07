@@ -1,10 +1,13 @@
 #pragma once
 
-#include <Shared/all.h>
+#include <shared/all.h>
+#include "hud.h"
 
 namespace hcg001::Helpers
 {
 	const float ButtonRounding = 0.33f;
+
+	inline std::shared_ptr<Hud> gHud = nullptr;
 
 	inline bool Chance(float normalized_percent)
 	{

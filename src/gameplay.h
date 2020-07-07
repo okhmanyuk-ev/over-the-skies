@@ -66,12 +66,10 @@ namespace hcg001
 
 	public:
 		void setGameoverCallback(std::function<void()> value) { mGameoverCallback = value; }
-		void setRubyCallback(std::function<void(std::shared_ptr<Scene::Node>)> value) { mRubyCallback = value; }
 		void setMoveSkyCallback(MoveSkyCallback value) { mMoveSkyCallback = value; }
 
 	private:
 		std::function<void()> mGameoverCallback = nullptr;
-		std::function<void(std::shared_ptr<Scene::Node>)> mRubyCallback = nullptr;
 		MoveSkyCallback mMoveSkyCallback = nullptr;
 	};
 }
