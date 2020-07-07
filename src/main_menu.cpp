@@ -161,7 +161,7 @@ MainMenu::MainMenu()
 	purchase_button->getLabel()->setText(LOCALIZE("MAIN_MENU_PURCHASE_RUBIES"));
 	purchase_button->getLabel()->setFontSize(14.0f);
 	purchase_button->setSize({ 86.0f, 28.0f });
-	purchase_button->setPosition({ 108.0f, 48.0f });
+	purchase_button->setPosition({ 108.0f, 24.0f + PLATFORM->getSafeAreaTopMargin() });
 	purchase_button->setPivot({ 0.0f, 0.5f });
 	purchase_button->setClickCallback([] {
 		PLATFORM->purchase("rubies.001");
