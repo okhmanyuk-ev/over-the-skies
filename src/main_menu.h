@@ -3,6 +3,7 @@
 #include "screen.h"
 #include "skin.h"
 #include "buy_skin_menu.h"
+#include <common/timestep_fixer.h>
 
 namespace hcg001
 {
@@ -23,6 +24,7 @@ namespace hcg001
 
 	private:
 		void refresh();
+		void menuPhysics(float dTime);
 		std::vector<std::shared_ptr<Scene::Node>> createScrollItems();
 
 	private:
@@ -34,5 +36,6 @@ namespace hcg001
 		bool mDecideButtons = false;
 		bool mButtonsAnimating = false;
 		bool mPlayButtonVisible = false;
+		Common::TimestepFixer mTimestepFixer;
 	};
 }

@@ -89,6 +89,11 @@ Gameplay::Gameplay(Skin skin)
 	mJumpParticles->setMinDuration(0.25f);
 	mJumpParticles->setMaxDuration(0.75f);
 	mPlayer->attach(mJumpParticles);
+
+	mTimestepFixer.setTimestep(1.0f / 120.0f);
+	mTimestepFixer.setCallback([this](float dTime) {
+		physics(dTime);
+	});
 }
 
 void Gameplay::touch(Touch type, const glm::vec2& pos)
@@ -108,23 +113,7 @@ void Gameplay::update()
 	if (!mReady)
 		return;
 
-	float dTime = Clock::ToSeconds(FRAME->getTimeDelta());
-
-	mPhysTimeAccumulator += dTime;
-
-	const float PhysTimeStep = 1.0f / 120.0f;
-
-	while (mPhysTimeAccumulator >= PhysTimeStep)
-	{
-		physics(PhysTimeStep);
-		mPhysTimeAccumulator -= PhysTimeStep;
-	}
-
-	if (mPhysTimeAccumulator > 0.0f)
-	{
-		physics(mPhysTimeAccumulator);
-		mPhysTimeAccumulator = 0.0f;
-	}
+	mTimestepFixer.execute();
 
 	auto projected_player_pos = unproject(mPlayer->project(mPlayer->getSize() / 2.0f));
 
@@ -141,7 +130,8 @@ void Gameplay::update()
 		mPlayer->setSpriteRotation(angle);
 	}
 
-	camera(dTime);
+	auto dTime = Clock::ToSeconds(FRAME->getTimeDelta());
+	camera(dTime); // TODO: maybe inside TimestepFixer?
 	removeFarPlanes();
 	spawnPlanes();
 

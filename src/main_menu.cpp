@@ -101,58 +101,13 @@ MainMenu::MainMenu()
 
 	refresh();
 
+	mTimestepFixer.setTimestep(1.0f / 120.0f);
+	mTimestepFixer.setCallback([this](float dTime) {
+		menuPhysics(dTime);
+	});
+
 	runAction(Shared::ActionHelpers::ExecuteInfinite([this] {
-		if (!mScrollbox)
-			return;
-
-		if (mScrollbox->isTouching())
-			return;
-		
-		if (glm::length(mScrollbox->getSpeed()) >= 2.0f)
-			return;
-
-		if (!mScrollbox->isTransformReady())
-			return;
-
-		auto slot_projected = unproject(mScrollbox->project(mScrollbox->getSize() / 2.0f));
-		float distance = 99999.0f;
-		std::shared_ptr<Scene::Node> nearest = nullptr;
-
-		if (mScrollTarget)
-		{
-			nearest = mScrollTarget;
-			auto nearest_projected = unproject(nearest->project(nearest->getSize() / 2.0f));
-			distance = glm::distance(slot_projected, nearest_projected);
-
-			if (distance <= SlotWidth / 2.0f)
-				mScrollTarget = nullptr;
-		}
-		else
-		{
-			for (int i = 0; i < mItems.size(); i++)
-			{
-				auto node = mItems.at(i);
-				auto node_projected = unproject(node->project(node->getSize() / 2.0f));
-				auto d = glm::distance(slot_projected, node_projected);
-
-				if (distance <= d)
-					continue;
-
-				distance = d;
-				nearest = node;
-				mChoosedSkin = static_cast<Skin>(i);
-			}
-		}
-
-		auto nearest_projected = unproject(nearest->project(nearest->getSize() / 2.0f));
-		auto offset = distance * Clock::ToSeconds(FRAME->getTimeDelta()) * 10.0f;
-
-		if (nearest_projected.x < slot_projected.x)
-			mScrollbox->getContent()->setX(mScrollbox->getContent()->getX() + offset);
-		else
-			mScrollbox->getContent()->setX(mScrollbox->getContent()->getX() - offset);
-
-		mDecideButtons = distance <= 32.0f && mScrollTarget == nullptr;
+		mTimestepFixer.execute();
 	}));
 
 #if !defined(PLATFORM_IOS)
@@ -193,16 +148,16 @@ void MainMenu::refresh()
 
 	mItems = createScrollItems();
 	
-	auto cell_size = glm::vec2({ SlotWidth, ItemSize });
-	auto grid = Shared::SceneHelpers::MakeHorizontalGrid(cell_size, mItems);
+	auto row = Shared::SceneHelpers::MakeHorizontalGrid({ SlotWidth, ItemSize }, mItems);
+	row->setAnchor(0.5f);
+	row->setPivot(0.5f);
 
-	grid->setAnchor(0.5f);
-	grid->setPivot(0.5f);
+	auto content = mScrollbox->getContent();
 
-	mScrollbox->getContent()->setWidth(grid->getWidth() + ItemSize);
-	mScrollbox->getContent()->setHeight(mScrollbox->getHeight());
-	mScrollbox->getContent()->setX(content_x);
-	mScrollbox->getContent()->attach(grid);
+	content->setWidth(row->getWidth() + ItemSize);
+	content->setHeight(mScrollbox->getHeight());
+	content->setX(content_x);
+	content->attach(row);
 
 	auto bounding = mScrollbox->getBounding();
 
@@ -339,4 +294,59 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 	}
 
 	return result;
+}
+
+void MainMenu::menuPhysics(float dTime)
+{
+	if (!mScrollbox)
+		return;
+
+	if (mScrollbox->isTouching())
+		return;
+		
+	if (glm::length(mScrollbox->getSpeed()) >= 2.0f)
+		return;
+
+	if (!mScrollbox->isTransformReady())
+		return;
+
+	auto slot_projected = unproject(mScrollbox->project(mScrollbox->getSize() / 2.0f));
+	float distance = 99999.0f;
+	std::shared_ptr<Scene::Node> nearest = nullptr;
+
+	if (mScrollTarget)
+	{
+		nearest = mScrollTarget;
+		auto nearest_projected = unproject(nearest->project(nearest->getSize() / 2.0f));
+		distance = glm::distance(slot_projected, nearest_projected);
+
+		if (distance <= SlotWidth / 2.0f)
+			mScrollTarget = nullptr;
+	}
+	else
+	{
+		for (int i = 0; i < mItems.size(); i++)
+		{
+			auto node = mItems.at(i);
+			auto node_projected = unproject(node->project(node->getSize() / 2.0f));
+			auto d = glm::distance(slot_projected, node_projected);
+
+			if (distance <= d)
+				continue;
+
+			distance = d;
+			nearest = node;
+			mChoosedSkin = static_cast<Skin>(i);
+		}
+	}
+
+	auto nearest_projected = unproject(nearest->project(nearest->getSize() / 2.0f));
+	auto offset = distance * dTime * 10.0f;
+
+	if (nearest_projected.x < slot_projected.x)
+		mScrollbox->getContent()->setX(mScrollbox->getContent()->getX() + offset);
+	else
+		mScrollbox->getContent()->setX(mScrollbox->getContent()->getX() - offset);
+
+	mDecideButtons = distance <= 32.0f && mScrollTarget == nullptr;
 }

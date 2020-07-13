@@ -4,6 +4,7 @@
 #include "plane.h"
 #include "player.h"
 #include "skin.h"
+#include <common/timestep_fixer.h>
 
 namespace hcg001
 {
@@ -53,7 +54,7 @@ namespace hcg001
 
 	private:
 		bool mReady = false;
-		float mPhysTimeAccumulator = 0.0f;
+		Common::TimestepFixer mTimestepFixer;
 		glm::vec2 mVelocity = { 0.0f, 0.0f };
 		float mMaxY = 0.0f;
 		int mScore = 0;
