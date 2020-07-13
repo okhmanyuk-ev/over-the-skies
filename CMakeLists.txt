@@ -73,11 +73,11 @@ elseif(APPLE)
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/ios/Info.plist
     )
 
-#    target_link_libraries(${PROJECT_NAME}
-#        "-framework FBSDKCoreKit"
-#        "-framework FBSDKLoginKit"
-#        "-framework FBSDKShareKit"
-#    )
+    target_link_libraries(${PROJECT_NAME}
+        "-framework FBSDKCoreKit"
+        "-framework FBSDKLoginKit"
+        "-framework FBSDKShareKit"
+    )
     
 elseif(ANDROID)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")

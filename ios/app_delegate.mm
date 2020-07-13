@@ -1,5 +1,5 @@
 #import <platform/system_ios.h>
-//#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 @interface AppDelegate : SkyDelegate
 
@@ -10,7 +10,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-//    [[FBSDKApplicationDelegate sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
+    [[FBSDKApplicationDelegate sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
     return [super application: application didFinishLaunchingWithOptions:launchOptions];
 }
 
@@ -31,7 +31,7 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-//    [FBSDKAppEvents activateApp];
+    [FBSDKAppEvents activateApp];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
