@@ -343,10 +343,12 @@ void MainMenu::menuPhysics(float dTime)
 	auto nearest_projected = unproject(nearest->project(nearest->getSize() / 2.0f));
 	auto offset = distance * dTime * 10.0f;
 
+	auto content = mScrollbox->getContent();
+
 	if (nearest_projected.x < slot_projected.x)
-		mScrollbox->getContent()->setX(mScrollbox->getContent()->getX() + offset);
+		content->setX(content->getX() + offset);
 	else
-		mScrollbox->getContent()->setX(mScrollbox->getContent()->getX() - offset);
+		content->setX(content->getX() - offset);
 
 	mDecideButtons = distance <= 32.0f && mScrollTarget == nullptr;
 }
