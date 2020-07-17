@@ -46,7 +46,6 @@ namespace hcg001
 		std::shared_ptr<Player> mPlayer;
 		std::shared_ptr<Scene::Label> mScoreLabel;
 		std::shared_ptr<Scene::Actionable<Scene::Label>> mRiskLabel = nullptr;
-		Audio::Sound mClickSound = Audio::Sound(Platform::Asset("sounds/click.wav"));
 		std::shared_ptr<Shared::SceneHelpers::RectangleEmitter> mJumpParticles;
 
 	public:

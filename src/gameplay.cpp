@@ -220,7 +220,7 @@ void Gameplay::camera(float dTime)
 
 void Gameplay::jump(bool powerjump)
 {
-	AUDIO->play(mClickSound);
+	AUDIO->play(SOUND("sounds/click.wav"));
 	mVelocity.y = -10.0f;
 
 	if (powerjump)
