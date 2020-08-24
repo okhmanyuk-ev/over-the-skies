@@ -1,23 +1,21 @@
 #pragma once
 
 #include <shared/all.h>
-
 #include "skin.h"
 
 #define PROFILE ENGINE->getSystem<hcg001::Profile>()
 
 namespace hcg001
 {
-	class Profile
+	class Profile : public Shared::Profile
 	{
 	public:
 		struct RubiesChangedEvent { };
 
-	public:
-		void load();
-		void save();
-		void saveAsync();
-		void clear();
+	protected:
+		void read(const nlohmann::json& json) override;
+		void write(nlohmann::json& json) override;
+		void makeDefault() override;
 
 	public:
 		bool isSkinLocked(int value) const { return mSkins.count(value) == 0; }

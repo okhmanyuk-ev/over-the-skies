@@ -1,7 +1,6 @@
 #pragma once
 
 #include <shared/all.h>
-#include "defines.h"
 #include "main_menu.h"
 #include "gameplay.h"
 #include "gameover_menu.h"

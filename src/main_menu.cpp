@@ -1,5 +1,4 @@
 #include "main_menu.h"
-#include "defines.h"
 #include "profile.h"
 #include "helpers.h"
 

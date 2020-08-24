@@ -2,16 +2,8 @@
 
 using namespace hcg001;
 
-void Profile::load()
+void Profile::read(const nlohmann::json& json)
 {
-	auto path = PLATFORM->getAppFolder() + "save.bson";
-
-	if (!Platform::Asset::Exists(path, Platform::Asset::Path::Absolute))
-		return;
-
-	auto json_file = Platform::Asset(path, Platform::Asset::Path::Absolute);
-	auto json = nlohmann::json::from_bson(std::string((char*)json_file.getMemory(), json_file.getSize()));
-
 	if (json.contains("highscore"))
 		mHighScore = json["highscore"];
 
@@ -28,30 +20,20 @@ void Profile::load()
 		mDailyRewardTime = json["dailyreward_time"];
 }
 
-void Profile::save()
+void Profile::write(nlohmann::json& json)
 {
-	auto json = nlohmann::json();
 	json["highscore"] = mHighScore;
 	json["rubies"] = mRubies;
 	json["skins"] = mSkins;
 	json["dailyreward_day"] = mDailyRewardDay;
 	json["dailyreward_time"] = mDailyRewardTime;
-	auto bson = nlohmann::json::to_bson(json);
-	Platform::Asset::Write(PLATFORM->getAppFolder() + "save.bson", bson.data(), bson.size(), Platform::Asset::Path::Absolute);
 }
 
-void Profile::clear()
+void Profile::makeDefault()
 {
 	mHighScore = 0;
 	setRubies(0);
 	mSkins = { 0 };
-}
-
-void Profile::saveAsync()
-{
-	TASK->addTask([this] {
-		save();
-	});
 }
 
 void Profile::setRubies(int value)

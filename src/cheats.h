@@ -1,7 +1,6 @@
 #pragma once
 
 #include <shared/all.h>
-#include "defines.h"
 #include "profile.h"
 #include "daily_reward_window.h"
 

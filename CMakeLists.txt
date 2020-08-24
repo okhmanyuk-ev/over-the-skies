@@ -8,6 +8,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # main
 
+if(BUILD_DEVELOPER)
+	add_definitions(-DBUILD_DEVELOPER)
+endif()
+
+add_definitions(-DPROJECT_NAME="${PROJECT_NAME}")
+add_definitions(-DPRODUCT_NAME="${PRODUCT_NAME}")
+
 file(GLOB MAIN_SRC
 	src/*.cpp
 	src/*.h

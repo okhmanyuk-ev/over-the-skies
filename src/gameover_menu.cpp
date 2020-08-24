@@ -1,5 +1,4 @@
 #include "gameover_menu.h"
-#include "defines.h"
 #include "profile.h"
 
 using namespace hcg001;

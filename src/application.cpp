@@ -2,9 +2,9 @@
 
 using namespace hcg001;
 
-Application::Application() : RichApplication(PROJECT_CODE)
+Application::Application() : RichApplication(PROJECT_NAME)
 {
-	PLATFORM->setTitle(PROJECT_NAME);
+	PLATFORM->setTitle(PRODUCT_NAME);
 	PLATFORM->resize(360, 640);
 	RENDERER->setVsync(true);
 #if !defined(PLATFORM_MOBILE)
