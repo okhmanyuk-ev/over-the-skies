@@ -16,7 +16,7 @@
 
 namespace hcg001
 {
-	class Application : public Shared::RichApplication,
+	class Application : public Shared::Application,
 		public Common::FrameSystem::Frameable
 	{
 	public:
@@ -29,14 +29,5 @@ namespace hcg001
 		void addRubies(int count);
 		void tryShowDailyReward();
 		void adaptToScreen(std::shared_ptr<Scene::Node> node);
-
-	private:
-		std::shared_ptr<Sky> mSky;
-		
-	private:
-		Scene::Scene mGameScene;
-
-	private:
-		Shared::SceneEditor mSceneEditor = Shared::SceneEditor(mGameScene);
 	};
 }

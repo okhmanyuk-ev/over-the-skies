@@ -2,7 +2,7 @@
 
 using namespace hcg001;
 
-Application::Application() : RichApplication(PROJECT_NAME)
+Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Flag::Scene })
 {
 	PLATFORM->setTitle(PRODUCT_NAME);
 	PLATFORM->resize(360, 640);
@@ -12,10 +12,6 @@ Application::Application() : RichApplication(PROJECT_NAME)
 #endif
 
 	ENGINE->addSystem<Profile>(std::make_shared<Profile>());
-
-	LOCALIZATION->loadDicrionaries("localization");
-	LOCALIZATION->setLanguage(Shared::LocalizationSystem::Language::English);
-
 	PROFILE->load();
 
 	PLATFORM->initializeBilling({
@@ -25,15 +21,6 @@ Application::Application() : RichApplication(PROJECT_NAME)
 	});
 
 	PRECACHE_FONT_ALIAS("fonts/sansation.ttf", "default");
-
-	std::srand((unsigned int)std::time(nullptr));
-
-	CONSOLE->registerCVar("g_editor", { "bool" }, CVAR_GETTER_BOOL_FUNC(mSceneEditor.isEnabled),
-		CVAR_SETTER_BOOL_FUNC(mSceneEditor.setEnabled));
-
-	mGameScene.setInteractTestCallback([](const auto& pos) {
-		return !ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow | ImGuiHoveredFlags_AllowWhenBlockedByPopup);
-	});
 
 	STATS->setAlignment(Shared::StatsSystem::Align::BottomRight);
 
@@ -55,23 +42,17 @@ Application::Application() : RichApplication(PROJECT_NAME)
 Application::~Application()
 {
 	PROFILE->save();
-	ENGINE->removeSystem<Shared::SceneManager>();
 }
 
 void Application::initialize()
 {
-	auto root = mGameScene.getRoot();
+	auto root = mScene->getRoot();
 
-	// sky
-
-	mSky = std::make_shared<Sky>();
-	root->attach(mSky);
-
-	ENGINE->addSystem<Shared::SceneManager>(std::make_shared<Shared::SceneManager>());
-	root->attach(SCENE_MANAGER);
+	auto sky = std::make_shared<Sky>();
+	root->attach(sky, 0);
 
 	auto main_menu = std::make_shared<MainMenu>();
-	main_menu->setStartCallback([this, main_menu] {
+	main_menu->setStartCallback([sky, main_menu] {
 		auto gameplay = std::make_shared<Gameplay>(main_menu->getChoosedSkin());
 		gameplay->setGameoverCallback([main_menu, gameplay] {
 			auto gameover_screen = std::make_shared<GameoverMenu>(gameplay->getScore());
@@ -80,22 +61,22 @@ void Application::initialize()
 			});
 			SCENE_MANAGER->switchScreen(gameover_screen);
 		});
-		gameplay->setMoveSkyCallback([this](auto offset) {
-			mSky->moveSky(offset);
+		gameplay->setMoveSkyCallback([sky](auto offset) {
+			sky->moveSky(offset);
 		});
 		SCENE_MANAGER->switchScreen(gameplay);
 	});
 
-	mSky->changeColor(Graphics::Color::Hsv::HueBlue, Graphics::Color::Hsv::HueRed); 
+	sky->changeColor(Graphics::Color::Hsv::HueBlue, Graphics::Color::Hsv::HueRed);
 
 	SCENE_MANAGER->switchScreen(main_menu, [this] {
 		tryShowDailyReward();
 	});
 
-	Common::Actions::Run(Shared::ActionHelpers::RepeatInfinite([this] {
+	Common::Actions::Run(Shared::ActionHelpers::RepeatInfinite([sky] {
 		return Shared::ActionHelpers::Delayed(10.0f,
-			Shared::ActionHelpers::Execute([this] {
-				mSky->changeColor();
+			Shared::ActionHelpers::Execute([sky] {
+				sky->changeColor();
 			})
 		);
 	}));
@@ -108,8 +89,7 @@ void Application::initialize()
 
 void Application::frame()
 {
-	mGameScene.frame();
-	adaptToScreen(mGameScene.getRoot());
+	adaptToScreen(mScene->getRoot());
 	ShowCheatsMenu();
 }
 
