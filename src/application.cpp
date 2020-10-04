@@ -49,7 +49,7 @@ void Application::initialize()
 	auto root = mScene->getRoot();
 
 	auto sky = std::make_shared<Sky>();
-	root->attach(sky, 0);
+	root->attach(sky, Scene::Node::AttachDirection::Front);
 
 	auto main_menu = std::make_shared<MainMenu>();
 	main_menu->setStartCallback([sky, main_menu] {
