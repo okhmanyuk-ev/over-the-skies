@@ -109,11 +109,10 @@ MainMenu::MainMenu()
 		mTimestepFixer.execute();
 	}));
 
-#if !defined(PLATFORM_IOS)
 	auto hud = std::make_shared<Shared::SceneHelpers::Hud>();
 	attach(hud);
 
-	auto purchase_button = std::make_shared<Shared::SceneHelpers::FastButton>();
+	/*auto purchase_button = std::make_shared<Shared::SceneHelpers::FastButton>();
 	purchase_button->setRounding(Helpers::ButtonRounding);
 	purchase_button->getLabel()->setText(LOCALIZE("MAIN_MENU_PURCHASE_RUBIES"));
 	purchase_button->getLabel()->setFontSize(14.0f);
@@ -123,8 +122,7 @@ MainMenu::MainMenu()
 	purchase_button->setClickCallback([] {
 		PLATFORM->purchase("rubies.001");
 	});
-	hud->attach(purchase_button);
-#endif
+	hud->attach(purchase_button);*/
 }
 
 void MainMenu::refresh()
