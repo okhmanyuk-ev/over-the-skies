@@ -9,7 +9,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 
 	const auto BaseColor = glm::rgbColor(glm::vec3(210.0f, 0.5f, 1.0f));
 
-	auto rect = std::make_shared<Scene::Clippable<Scene::Rectangle>>();
+	auto rect = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
 	rect->setRounding(8.0f);
 	rect->setAbsoluteRounding(true);
 	rect->setStretch({ 0.75f + 0.125f, -1.0f });
