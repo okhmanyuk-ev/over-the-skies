@@ -70,6 +70,7 @@ MainMenu::MainMenu()
 		auto locked = PROFILE->isSkinLocked(mChoosedSkin);
 
 		const float Duration = 0.33f;
+		const auto EasingFunction = Common::Easing::ExponentialOut;
 
 		if (mPlayButtonVisible && locked)
 		{
@@ -78,8 +79,8 @@ MainMenu::MainMenu()
 			
 			runAction(Shared::ActionHelpers::MakeSequence(
 				Shared::ActionHelpers::MakeParallel(
-					Shared::ActionHelpers::ChangeHorizontalAnchor(play_button, -0.5f, Duration, Common::Easing::BackOut),
-					Shared::ActionHelpers::ChangeHorizontalAnchor(unlock_button, 0.5f, Duration, Common::Easing::BackOut)
+					Shared::ActionHelpers::ChangeHorizontalAnchor(play_button, -0.5f, Duration, EasingFunction),
+					Shared::ActionHelpers::ChangeHorizontalAnchor(unlock_button, 0.5f, Duration, EasingFunction)
 				),
 				Shared::ActionHelpers::Execute([this] { mButtonsAnimating = false; })
 			));
@@ -90,8 +91,8 @@ MainMenu::MainMenu()
 			mButtonsAnimating = true;
 			runAction(Shared::ActionHelpers::MakeSequence(
 				Shared::ActionHelpers::MakeParallel(
-					Shared::ActionHelpers::ChangeHorizontalAnchor(play_button, 0.5f, Duration, Common::Easing::BackOut),
-					Shared::ActionHelpers::ChangeHorizontalAnchor(unlock_button, 1.5f, Duration, Common::Easing::BackOut)
+					Shared::ActionHelpers::ChangeHorizontalAnchor(play_button, 0.5f, Duration, EasingFunction),
+					Shared::ActionHelpers::ChangeHorizontalAnchor(unlock_button, 1.5f, Duration, EasingFunction)
 				),
 				Shared::ActionHelpers::Execute([this] { mButtonsAnimating = false; })
 			));

@@ -58,6 +58,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 
 	auto makePlashka = [PlashkaSize, current_day](int day) {
 		auto rect = std::make_shared<Scene::Actionable<Scene::Rectangle>>();
+		rect->setBatchGroup("plashka_rect");
 		rect->setRounding(4.0f);
 		rect->setAbsoluteRounding(true);
 		rect->setStretch(1.0f);
@@ -97,6 +98,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 		rect->attach(title);
 
 		auto img = std::make_shared<Scene::Sprite>();
+		img->setBatchGroup("plashka_img");
 		img->setAnchor(0.5f);
 		img->setPivot(0.5f);
 		img->setTexture(TEXTURE("textures/dailyreward_rubies.png"));
