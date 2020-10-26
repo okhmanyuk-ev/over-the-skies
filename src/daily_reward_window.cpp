@@ -9,10 +9,12 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 
 	const auto BaseColor = glm::rgbColor(glm::vec3(210.0f, 0.5f, 1.0f));
 
-	auto rect = std::make_shared<Scene::Rectangle>();
+	auto rect = std::make_shared<Scene::Clippable<Scene::Rectangle>>();
+	rect->setRounding(8.0f);
+	rect->setAbsoluteRounding(true);
 	rect->setStretch({ 0.75f + 0.125f, -1.0f });
-	rect->setAnchor({ 0.5f, 0.5f });
-	rect->setPivot({ 0.5f, 0.5f });
+	rect->setAnchor(0.5f);
+	rect->setPivot(0.5f);
 	rect->setColor(BaseColor / 12.0f);
 	rect->setTouchable(true);
 	rect->setHeight(286.0f);
@@ -56,6 +58,8 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 
 	auto makePlashka = [PlashkaSize, current_day](int day) {
 		auto rect = std::make_shared<Scene::Actionable<Scene::Rectangle>>();
+		rect->setRounding(4.0f);
+		rect->setAbsoluteRounding(true);
 		rect->setStretch(1.0f);
 		rect->setMargin(4.0f);
 		rect->setAnchor(0.5f);
@@ -138,6 +142,8 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	content->attach(grid);
 
 	auto ok_button = std::make_shared<Shared::SceneHelpers::FastButton>();
+	ok_button->setRounding(4.0f);
+	ok_button->setAbsoluteRounding(true);
 	ok_button->setColor(BaseColor);
 	ok_button->getLabel()->setText(LOCALIZE("DAILYREWARD_CLAIM"));
 	ok_button->getLabel()->setFontSize(18.0f);
