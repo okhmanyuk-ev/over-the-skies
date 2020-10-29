@@ -302,11 +302,13 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 	auto plane = std::make_shared<Plane>();
 	if (!powerjump)
 	{
+		plane->setBatchGroup("plane");
 		plane->setTexture(TEXTURE("textures/plane.png"));
 		plane->setSize({ 64.0f, 8.0f });
 	}
 	else
 	{
+		plane->setBatchGroup("plane_small");
 		plane->setTexture(TEXTURE("textures/plane_small.png"));
 		plane->setSize({ 48.0f, 8.0f });
 		plane->setColor(Graphics::Color::Yellow);
@@ -335,6 +337,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 	if (has_ruby)
 	{
 		auto ruby = std::make_shared<Scene::Sprite>();
+		ruby->setBatchGroup("plane_ruby");
 		ruby->setTexture(TEXTURE("textures/ruby.png"));
 		ruby->setPivot({ 0.5f, 1.0f });
 		ruby->setAnchor({ 0.5f, 0.0f });

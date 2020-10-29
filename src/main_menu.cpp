@@ -176,7 +176,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 
 	for (const auto& [skin, path] : SkinPath)
 	{
-		auto item = std::make_shared<Scene::Clickable<Scene::Node>>();
+		auto item = std::make_shared<Scene::Cullable<Scene::Clickable<Scene::Node>>>();
 		item->setStretch(1.0f);
 		item->setPivot(0.5f);
 		item->setAnchor(0.5f);
@@ -184,6 +184,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 		result.push_back(item);
 
 		auto image = std::make_shared<Scene::Actionable<Scene::Sprite>>();
+		image->setBatchGroup("main_menu_item_image");
 		image->setTexture(TEXTURE(path));
 		image->setSampler(Renderer::Sampler::Linear);
 		image->setSize({ SkinSize, SkinSize });
@@ -232,6 +233,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			// padlock
 
 			auto padlock = std::make_shared<Scene::Sprite>();
+			padlock->setBatchGroup("main_menu_item_padlock");
 			padlock->setTexture(TEXTURE("textures/padlock.png"));
 			padlock->setScale({ 0.04f, 0.04f });
 			padlock->setAnchor({ 0.5f, 0.0f });

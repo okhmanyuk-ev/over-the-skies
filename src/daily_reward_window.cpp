@@ -10,7 +10,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	const auto BaseColor = glm::rgbColor(glm::vec3(210.0f, 0.5f, 1.0f));
 
 	auto rect = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
-	rect->setRounding(14.0f);
+	rect->setRounding(12.0f);
 	rect->setAbsoluteRounding(true);
 	rect->setSize({ 314.0f, 286.0f });
 	rect->setAnchor(0.5f);
@@ -58,7 +58,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	auto makePlashka = [PlashkaSize, current_day](int day) {
 		auto rect = std::make_shared<Scene::Actionable<Scene::Rectangle>>();
 		rect->setBatchGroup("plashka_rect");
-		rect->setRounding(6.0f);
+		rect->setRounding(4.0f);
 		rect->setAbsoluteRounding(true);
 		rect->setStretch(1.0f);
 		rect->setMargin(4.0f);
