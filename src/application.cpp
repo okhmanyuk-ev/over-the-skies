@@ -34,7 +34,7 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 	STATS->setEnabled(false);
 #endif
 
-	makeAtlases();
+	CACHE->makeAtlases();
 
 	FRAME->addOne([this] {
 		initialize();
@@ -44,17 +44,6 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 Application::~Application()
 {
 	PROFILE->save();
-}
-
-void Application::makeAtlases()
-{
-	CACHE->makeAtlas("skins", {
-		{ "textures/skins/ball.png" },
-		{ "textures/skins/basketball.png" },
-		{ "textures/skins/football.png" },
-		{ "textures/skins/snowflake.png" },
-		{ "textures/skins/vynil.png" }
-	});
 }
 
 void Application::initialize()

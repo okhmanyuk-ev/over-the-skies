@@ -1,0 +1,9 @@
+{
+    "skins": [
+		"textures/skins/ball.png",
+		"textures/skins/basketball.png",
+		"textures/skins/football.png",
+		"textures/skins/snowflake.png",
+		"textures/skins/vynil.png"
+    ]
+}

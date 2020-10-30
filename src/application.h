@@ -24,7 +24,6 @@ namespace hcg001
 		~Application();
 
 	private:
-		void makeAtlases();
 		void initialize();
 		void frame() override;
 		void addRubies(int count);
