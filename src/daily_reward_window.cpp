@@ -8,16 +8,21 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	setCloseOnMissclick(false);
 
 	const auto BaseColor = glm::rgbColor(glm::vec3(210.0f, 0.5f, 1.0f));
-
+	
 	auto rect = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
 	rect->setRounding(12.0f);
 	rect->setAbsoluteRounding(true);
 	rect->setSize({ 314.0f, 286.0f });
 	rect->setAnchor(0.5f);
 	rect->setPivot(0.5f);
-	rect->setColor(BaseColor / 12.0f);
 	rect->setTouchable(true);
+	//rect->setColor(BaseColor / 12.0f);
+	rect->setDrawOnlyStencil(true);
 	getContent()->attach(rect);
+
+	auto blur = std::make_shared<Scene::Blur>();
+	blur->setStretch(1.0f);
+	rect->attach(blur);
 
 	auto header = std::make_shared<Scene::Node>();
 	header->setHorizontalStretch(1.0f);
@@ -49,8 +54,8 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	title->setFont(FONT("default"));
 	title->setFontSize(20.0f);
 	title->setText(LOCALIZE("DAILYREWARD_TITLE"));
-	title->setAnchor({ 0.5f, 0.5f });
-	title->setPivot({ 0.5f, 0.5f });
+	title->setAnchor(0.5f);
+	title->setPivot(0.5f);
 	header_bg->attach(title);
 
 	const glm::vec2 PlashkaSize = { 74.0f, 96.0f };
@@ -64,8 +69,9 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 		rect->setMargin(4.0f);
 		rect->setAnchor(0.5f);
 		rect->setPivot(0.5f);
+		rect->setAlpha(0.66f);
 
-		auto color = glm::vec3(Graphics::Color::Hsv::HueGreen, 0.0f, 0.33f);
+		auto color = glm::vec3(Graphics::Color::Hsv::HueGreen, 0.0f, 0.5f);
 
 		if (day <= current_day)
 			color.y = 0.33f;
@@ -75,7 +81,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 		if (day == current_day)
 		{
 			rect->runAction(Shared::ActionHelpers::RepeatInfinite([rect] {
-				const auto Color1 = glm::rgbColor(glm::vec3(Graphics::Color::Hsv::HueGreen, 0.0f, 0.33f));
+				const auto Color1 = glm::rgbColor(glm::vec3(Graphics::Color::Hsv::HueGreen, 0.0f, 0.5f));
 				const auto Color2 = glm::rgbColor(glm::vec3(Graphics::Color::Hsv::HueGreen, 0.5f, 0.5f));
 				const float Duration = 0.5f;
 				const auto Easing = Common::Easing::QuadraticInOut;
