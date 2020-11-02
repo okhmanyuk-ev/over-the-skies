@@ -16,12 +16,14 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	rect->setAnchor(0.5f);
 	rect->setPivot(0.5f);
 	rect->setTouchable(true);
-	//rect->setColor(BaseColor / 12.0f);
+	rect->setColor(BaseColor / 12.0f);
 	rect->setDrawOnlyStencil(true);
 	getContent()->attach(rect);
 
 	auto blur = std::make_shared<Scene::Blur>();
 	blur->setStretch(1.0f);
+	blur->setRadius(32);
+	blur->getSprite()->setColor(Graphics::Color::Gray);
 	rect->attach(blur);
 
 	auto header = std::make_shared<Scene::Node>();
@@ -60,9 +62,9 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 
 	const glm::vec2 PlashkaSize = { 74.0f, 96.0f };
 
-	auto makePlashka = [PlashkaSize, current_day](int day) {
+	auto makePlashka = [this, PlashkaSize, current_day](int day) {
 		auto rect = std::make_shared<Scene::Actionable<Scene::Rectangle>>();
-		rect->setBatchGroup("plashka_rect");
+		rect->setBatchGroup(fmt::format("plashka_rect_{}", (size_t)this));
 		rect->setRounding(4.0f);
 		rect->setAbsoluteRounding(true);
 		rect->setStretch(1.0f);
@@ -103,7 +105,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 		rect->attach(title);
 
 		auto img = std::make_shared<Scene::Sprite>();
-		img->setBatchGroup("plashka_img");
+		rect->setBatchGroup(fmt::format("plashka_img{}", (size_t)this));
 		img->setAnchor(0.5f);
 		img->setPivot(0.5f);
 		img->setTexture(TEXTURE("textures/dailyreward_rubies.png"));
