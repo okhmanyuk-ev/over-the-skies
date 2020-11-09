@@ -17,14 +17,14 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	rect->setPivot(0.5f);
 	rect->setTouchable(true);
 	rect->setColor(BaseColor / 12.0f);
-	rect->setDrawOnlyStencil(true);
+	//rect->setDrawOnlyStencil(true);
 	getContent()->attach(rect);
 
-	auto blur = std::make_shared<Scene::Blur>();
+	/*auto blur = std::make_shared<Scene::Blur>();
 	blur->setStretch(1.0f);
 	blur->setRadius(32);
 	blur->getSprite()->setColor(Graphics::Color::Gray);
-	rect->attach(blur);
+	rect->attach(blur);*/
 
 	auto header = std::make_shared<Scene::Node>();
 	header->setHorizontalStretch(1.0f);

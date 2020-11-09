@@ -22,11 +22,6 @@ namespace hcg001
 
 			getBackshadeColor()->setColor({ Graphics::Color::Black, 0.0f });
 	
-			mBlur = std::make_shared<Scene::Blur>();
-			mBlur->setStretch(1.0f);
-			mBlur->setRadius(32);
-			attach(mBlur);
-
 			mContent = std::make_shared<Scene::Node>();
 			mContent->setStretch(1.0f);
 			mContent->setAnchor({ 0.5f, -0.5f });
@@ -48,7 +43,7 @@ namespace hcg001
 		std::unique_ptr<Common::Actions::Action> createOpenAction() override
 		{
 			return Shared::ActionHelpers::MakeParallel(
-		//		Shared::ActionHelpers::ChangeAlpha(getBackshadeColor(), 0.5f, 0.5f, Common::Easing::CubicOut),
+				Shared::ActionHelpers::ChangeAlpha(getBackshadeColor(), 0.5f, 0.5f, Common::Easing::CubicOut),
 				Shared::ActionHelpers::ChangeVerticalAnchor(mContent, 0.5f, 0.5f, Common::Easing::CubicOut)
 			);
 		};
@@ -56,7 +51,7 @@ namespace hcg001
 		std::unique_ptr<Common::Actions::Action> createCloseAction() override
 		{
 			return Shared::ActionHelpers::MakeParallel(
-		//		Shared::ActionHelpers::ChangeAlpha(getBackshadeColor(), 0.0f, 0.5f, Common::Easing::CubicIn),
+				Shared::ActionHelpers::ChangeAlpha(getBackshadeColor(), 0.0f, 0.5f, Common::Easing::CubicIn),
 				Shared::ActionHelpers::ChangeVerticalAnchor(mContent, -0.5f, 0.5f, Common::Easing::CubicIn)
 			);
 		};
@@ -69,7 +64,6 @@ namespace hcg001
 
 	private:
 		std::shared_ptr<Scene::Node> mContent;
-		std::shared_ptr<Scene::Blur> mBlur;
 		bool mCloseOnMissclick = true;
 	};
 }
