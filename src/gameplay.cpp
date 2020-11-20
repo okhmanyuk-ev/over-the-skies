@@ -79,7 +79,8 @@ Gameplay::Gameplay(Skin skin)
 	
 	// jump particles
 
-	mJumpParticles = std::make_shared<Shared::SceneHelpers::RectangleEmitter>(mRectangleParticlesHolder);
+	mJumpParticles = std::make_shared<Shared::SceneHelpers::RectangleEmitter>();
+	mJumpParticles->setHolder(mRectangleParticlesHolder);
 	mJumpParticles->setRunning(false);
 	mJumpParticles->setBeginSize({ 8.0f, 8.0f });
 	mJumpParticles->setStretch({ 1.0f, 0.0f });
@@ -314,7 +315,8 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		plane->setColor(Graphics::Color::Yellow);
 		plane->setPowerjump(true);
 		
-		auto emitter = std::make_shared<Shared::SceneHelpers::RectangleEmitter>(mRectangleParticlesHolder);
+		auto emitter = std::make_shared<Shared::SceneHelpers::RectangleEmitter>();
+		emitter->setHolder(mRectangleParticlesHolder);
 		emitter->setBeginSize({ 6.0f, 6.0f });
 		emitter->setDelay(1.0f / 60.0f);
 		emitter->setStretch({ 0.75f, 0.0f });

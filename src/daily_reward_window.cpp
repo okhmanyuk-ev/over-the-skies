@@ -105,7 +105,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 		rect->attach(title);
 
 		auto img = std::make_shared<Scene::Sprite>();
-		rect->setBatchGroup(fmt::format("plashka_img{}", (size_t)this));
+		img->setBatchGroup(fmt::format("plashka_img_{}", (size_t)this));
 		img->setAnchor(0.5f);
 		img->setPivot(0.5f);
 		img->setTexture(TEXTURE("textures/dailyreward_rubies.png"));
