@@ -1,6 +1,7 @@
 #include "main_menu.h"
 #include "profile.h"
 #include "helpers.h"
+#include "shop_window.h"
 
 using namespace hcg001;
 
@@ -113,17 +114,16 @@ MainMenu::MainMenu()
 	auto hud = std::make_shared<Shared::SceneHelpers::Hud>();
 	attach(hud);
 
-	/*auto purchase_button = std::make_shared<Shared::SceneHelpers::FastButton>();
-	purchase_button->setRounding(Helpers::ButtonRounding);
-	purchase_button->getLabel()->setText(LOCALIZE("MAIN_MENU_PURCHASE_RUBIES"));
-	purchase_button->getLabel()->setFontSize(14.0f);
-	purchase_button->setSize({ 86.0f, 28.0f });
-	purchase_button->setPosition({ 108.0f, 24.0f });
-	purchase_button->setPivot({ 0.0f, 0.5f });
-	purchase_button->setClickCallback([] {
-		PLATFORM->purchase("rubies.001");
+	auto shop_button = std::make_shared<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>();
+	shop_button->setTexture(TEXTURE("textures/shop.png"));
+	shop_button->setAdaptSize({ 86.0f, 28.0f });
+	shop_button->setPosition({ 108.0f, 24.0f });
+	shop_button->setPivot({ 0.0f, 0.5f });
+	shop_button->setClickCallback([] {
+		auto window = std::make_shared<ShopWindow>();
+		SCENE_MANAGER->pushWindow(window);
 	});
-	hud->attach(purchase_button);*/
+	hud->attach(shop_button);
 }
 
 void MainMenu::refresh()
