@@ -48,7 +48,7 @@ Application::~Application()
 
 void Application::initialize()
 {
-	auto root = mScene->getRoot();
+	auto root = getScene()->getRoot();
 
 	auto sky = std::make_shared<Sky>();
 	root->attach(sky, Scene::Node::AttachDirection::Front);
@@ -91,7 +91,7 @@ void Application::initialize()
 
 void Application::frame()
 {
-	adaptToScreen(mScene->getRoot());
+	adaptToScreen(getScene()->getRoot());
 	ShowCheatsMenu();
 }
 
