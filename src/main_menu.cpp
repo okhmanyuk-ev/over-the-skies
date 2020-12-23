@@ -196,8 +196,8 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			if (!mScrollbox->isTransformReady())
 				return;
 
-			auto skin_projected = unproject(image->project(image->getSize() / 2.0f));
-			auto slot_projected = unproject(mScrollbox->project(mScrollbox->getSize() / 2.0f));
+			auto skin_projected = unproject(image->project(image->getAbsoluteSize() / 2.0f));
+			auto slot_projected = unproject(mScrollbox->project(mScrollbox->getAbsoluteSize() / 2.0f));
 			auto distance = glm::distance(skin_projected, slot_projected);
 			auto size = glm::lerp(SkinSize, SkinSizeChoosed, glm::smoothstep(ItemSize, 0.0f, distance));
 			image->setSize(size);
@@ -219,8 +219,8 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			if (!mScrollbox->isTransformReady())
 				return;
 			
-			auto item_projected = unproject(item->project(item->getSize() / 2.0f));
-			auto slot_projected = unproject(mScrollbox->project(mScrollbox->getSize() / 2.0f));
+			auto item_projected = unproject(item->project(item->getAbsoluteSize() / 2.0f));
+			auto slot_projected = unproject(mScrollbox->project(mScrollbox->getAbsoluteSize() / 2.0f));
 			auto distance = glm::distance(item_projected, slot_projected);
 			auto alpha = glm::smoothstep(ItemSize, ItemSize / 2.0f, distance);
 			node->setAlpha(alpha);
@@ -310,14 +310,14 @@ void MainMenu::menuPhysics(float dTime)
 	if (!mScrollbox->isTransformReady())
 		return;
 
-	auto slot_projected = unproject(mScrollbox->project(mScrollbox->getSize() / 2.0f));
+	auto slot_projected = unproject(mScrollbox->project(mScrollbox->getAbsoluteSize() / 2.0f));
 	float distance = 99999.0f;
 	std::shared_ptr<Scene::Node> nearest = nullptr;
 
 	if (mScrollTarget)
 	{
 		nearest = mScrollTarget;
-		auto nearest_projected = unproject(nearest->project(nearest->getSize() / 2.0f));
+		auto nearest_projected = unproject(nearest->project(nearest->getAbsoluteSize() / 2.0f));
 		distance = glm::distance(slot_projected, nearest_projected);
 
 		if (distance <= SlotWidth / 2.0f)
@@ -328,7 +328,7 @@ void MainMenu::menuPhysics(float dTime)
 		for (int i = 0; i < mItems.size(); i++)
 		{
 			auto node = mItems.at(i);
-			auto node_projected = unproject(node->project(node->getSize() / 2.0f));
+			auto node_projected = unproject(node->project(node->getAbsoluteSize() / 2.0f));
 			auto d = glm::distance(slot_projected, node_projected);
 
 			if (distance <= d)
@@ -340,7 +340,7 @@ void MainMenu::menuPhysics(float dTime)
 		}
 	}
 
-	auto nearest_projected = unproject(nearest->project(nearest->getSize() / 2.0f));
+	auto nearest_projected = unproject(nearest->project(nearest->getAbsoluteSize() / 2.0f));
 	auto offset = distance * dTime * 10.0f;
 
 	auto content = mScrollbox->getContent();

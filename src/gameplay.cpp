@@ -44,7 +44,7 @@ Gameplay::Gameplay(Skin skin)
 	runAction(Shared::ActionHelpers::Delayed([this] { return !isTransformReady(); },
 		Shared::ActionHelpers::MakeSequence(
 			Shared::ActionHelpers::Execute([this, skin] {
-				mPlayer->setPosition({ getWidth() / 2.0f, (-getHeight() / 2.0f) - 32.0f });
+				mPlayer->setPosition({ getAbsoluteWidth() / 2.0f, (-getAbsoluteHeight() / 2.0f) - 32.0f });
 				mGameField->attach(mPlayer);
 			}),
 			Shared::ActionHelpers::Wait([this] { return !mPlayer->isTransformReady(); }),
@@ -116,9 +116,9 @@ void Gameplay::update()
 
 	mTimestepFixer.execute();
 
-	auto projected_player_pos = unproject(mPlayer->project(mPlayer->getSize() / 2.0f));
+	auto projected_player_pos = unproject(mPlayer->project(mPlayer->getAbsoluteSize() / 2.0f));
 
-	if (projected_player_pos.y >= getHeight())
+	if (projected_player_pos.y >= getAbsoluteHeight())
 	{
 		gameover();
 		return;
@@ -205,8 +205,8 @@ void Gameplay::camera(float dTime)
 
 	auto pos = mGameField->getPosition();
 	glm::vec2 target;
-	target.x = -mPlayer->getX() + (getWidth() * 0.33f);
-	target.y = mMaxY - (getHeight() * 0.66f);
+	target.x = -mPlayer->getX() + (getAbsoluteWidth() * 0.33f);
+	target.y = mMaxY - (getAbsoluteHeight() * 0.66f);
 
 	if (target.y < 0.0f)
 		target.y = 0.0f;
@@ -383,9 +383,9 @@ void Gameplay::removeFarPlanes()
 
 	for (const auto plane : planes)
 	{
-		auto projected_plane_pos = unproject(plane->project(plane->getSize() / 2.0f));
+		auto projected_plane_pos = unproject(plane->project(plane->getAbsoluteSize() / 2.0f));
 
-		if (projected_plane_pos.y > getHeight())
+		if (projected_plane_pos.y > getAbsoluteHeight())
 		{
 			mPlaneHolder->detach(plane);
 		}
