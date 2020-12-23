@@ -14,8 +14,8 @@ namespace hcg001
 	protected:	
 		void onLeaveBegin() override;
 		
-		std::unique_ptr<Common::Actions::Action> createEnterAction() override;
-		std::unique_ptr<Common::Actions::Action> createLeaveAction() override;
+		std::unique_ptr<Actions::Action> createEnterAction() override;
+		std::unique_ptr<Actions::Action> createLeaveAction() override;
 
 	private:
 		std::shared_ptr<Scene::Label> mTitle = nullptr;

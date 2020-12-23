@@ -60,7 +60,7 @@ void BuySkinMenu::onLeaveBegin()
 	setInteractions(false);
 }
 
-std::unique_ptr<Common::Actions::Action> BuySkinMenu::createEnterAction()
+std::unique_ptr<Actions::Action> BuySkinMenu::createEnterAction()
 {
 	const float Duration = 0.25f;
 
@@ -78,7 +78,7 @@ std::unique_ptr<Common::Actions::Action> BuySkinMenu::createEnterAction()
 	);
 }
 
-std::unique_ptr<Common::Actions::Action> BuySkinMenu::createLeaveAction()
+std::unique_ptr<Actions::Action> BuySkinMenu::createLeaveAction()
 {
 	const float Duration = 0.25f;
 

@@ -157,7 +157,7 @@ void Sky::spawnAsteroid(float speed, float normalized_spread)
 
 void Sky::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
 {
-	Common::Actions::Run(Shared::ActionHelpers::RepeatInfinite([holder] {
+	Actions::Run(Shared::ActionHelpers::RepeatInfinite([holder] {
 		return Shared::ActionHelpers::MakeSequence(
 			Shared::ActionHelpers::Execute([holder] {
 				auto size = glm::linearRand(4.0f, 6.0f);

@@ -38,7 +38,7 @@ void Hud::collectRubyAnim(std::shared_ptr<Scene::Node> ruby)
 
 	const float MoveDuration = 0.75f;
 
-	Common::Actions::Run(Shared::ActionHelpers::MakeSequence(
+	Actions::Run(Shared::ActionHelpers::MakeSequence(
 		Shared::ActionHelpers::MakeParallel(
 			Shared::ActionHelpers::ChangePosition(ruby, dest_pos, MoveDuration, Common::Easing::QuarticInOut),
 			Shared::ActionHelpers::ChangeSize(ruby, mRubyScore.sprite->getAbsoluteSize(), MoveDuration, Common::Easing::QuarticInOut)

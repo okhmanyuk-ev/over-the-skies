@@ -49,12 +49,12 @@ namespace hcg001
 			setInteractions(true);
 		}
 
-		std::unique_ptr<Common::Actions::Action> createEnterAction() override
+		std::unique_ptr<Actions::Action> createEnterAction() override
 		{
 			return Shared::ActionHelpers::Show(shared_from_this(), 0.25f);
 		};
 
-		std::unique_ptr<Common::Actions::Action> createLeaveAction() override
+		std::unique_ptr<Actions::Action> createLeaveAction() override
 		{
 			return Shared::ActionHelpers::Hide(shared_from_this(), 0.25f);
 		};

@@ -75,7 +75,7 @@ void Application::initialize()
 		tryShowDailyReward();
 	});
 
-	Common::Actions::Run(Shared::ActionHelpers::RepeatInfinite([sky] {
+	Actions::Run(Shared::ActionHelpers::RepeatInfinite([sky] {
 		return Shared::ActionHelpers::Delayed(10.0f,
 			Shared::ActionHelpers::Execute([sky] {
 				sky->changeColor();

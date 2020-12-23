@@ -40,7 +40,7 @@ namespace hcg001
 			mContent->setInteractions(false);
 		}
 
-		std::unique_ptr<Common::Actions::Action> createOpenAction() override
+		std::unique_ptr<Actions::Action> createOpenAction() override
 		{
 			return Shared::ActionHelpers::MakeParallel(
 				Shared::ActionHelpers::ChangeAlpha(getBackshadeColor(), 0.5f, 0.5f, Common::Easing::CubicOut),
@@ -48,7 +48,7 @@ namespace hcg001
 			);
 		};
 
-		std::unique_ptr<Common::Actions::Action> createCloseAction() override
+		std::unique_ptr<Actions::Action> createCloseAction() override
 		{
 			return Shared::ActionHelpers::MakeParallel(
 				Shared::ActionHelpers::ChangeAlpha(getBackshadeColor(), 0.0f, 0.5f, Common::Easing::CubicIn),

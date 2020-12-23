@@ -64,7 +64,7 @@ GameoverMenu::GameoverMenu(int score)
 	tap_label->setAlpha(0.0f);
 	attach(tap_label);
 
-	Common::Actions::Run(
+	Actions::Run(
 		Shared::ActionHelpers::RepeatInfinite([this, tap_label]() -> Shared::ActionHelpers::Action {
 			if (getState() != State::Entered)
 				return nullptr;
