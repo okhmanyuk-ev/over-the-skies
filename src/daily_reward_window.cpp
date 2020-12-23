@@ -141,7 +141,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	sub_grid2->setAnchor(0.5f);
 	sub_grid2->setPivot(0.5f);
 
-	auto grid = Shared::SceneHelpers::MakeVerticalGrid(sub_grid1->getAbsoluteSize(), {
+	auto grid = Shared::SceneHelpers::MakeVerticalGrid(sub_grid1->getSize(), {
 		sub_grid1,
 		sub_grid2
 	});
