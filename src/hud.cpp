@@ -40,8 +40,8 @@ void Hud::collectRubyAnim(std::shared_ptr<Scene::Node> ruby)
 
 	Actions::Run(Actions::Factory::MakeSequence(
 		Actions::Factory::MakeParallel(
-			Actions::Factory::ChangePosition(ruby, dest_pos, MoveDuration, Common::Easing::QuarticInOut),
-			Actions::Factory::ChangeSize(ruby, mRubyScore.sprite->getAbsoluteSize(), MoveDuration, Common::Easing::QuarticInOut)
+			Actions::Factory::ChangePosition(ruby, dest_pos, MoveDuration, Easing::QuarticInOut),
+			Actions::Factory::ChangeSize(ruby, mRubyScore.sprite->getAbsoluteSize(), MoveDuration, Easing::QuarticInOut)
 		),
 		Actions::Factory::Kill(ruby),
 		Actions::Factory::Execute([this] {

@@ -65,14 +65,14 @@ std::unique_ptr<Actions::Action> BuySkinMenu::createEnterAction()
 	const float Duration = 0.25f;
 
 	return Actions::Factory::MakeParallel(
-		Actions::Factory::ChangeHorizontalAnchor(mTitle, 0.5f, Duration, Common::Easing::CubicOut),
+		Actions::Factory::ChangeHorizontalAnchor(mTitle, 0.5f, Duration, Easing::CubicOut),
 		Actions::Factory::Delayed(Duration / 2.0f,
-			Actions::Factory::ChangeHorizontalAnchor(mImage, 0.5f, Duration, Common::Easing::CubicOut)
+			Actions::Factory::ChangeHorizontalAnchor(mImage, 0.5f, Duration, Easing::CubicOut)
 		),
 		Actions::Factory::Delayed(Duration,
 			Actions::Factory::MakeParallel(
-				Actions::Factory::ChangeVerticalAnchor(mBuyButton, 0.75f, Duration, Common::Easing::CubicOut),
-				Actions::Factory::ChangeVerticalAnchor(mCancelButton, 0.75f, Duration, Common::Easing::CubicOut)
+				Actions::Factory::ChangeVerticalAnchor(mBuyButton, 0.75f, Duration, Easing::CubicOut),
+				Actions::Factory::ChangeVerticalAnchor(mCancelButton, 0.75f, Duration, Easing::CubicOut)
 			)
 		)
 	);
@@ -84,14 +84,14 @@ std::unique_ptr<Actions::Action> BuySkinMenu::createLeaveAction()
 
 	return Actions::Factory::MakeParallel(
 		Actions::Factory::MakeParallel(
-			Actions::Factory::ChangeVerticalAnchor(mBuyButton, 1.25f, Duration, Common::Easing::CubicIn),
-			Actions::Factory::ChangeVerticalAnchor(mCancelButton, 1.25f, Duration, Common::Easing::CubicIn)
+			Actions::Factory::ChangeVerticalAnchor(mBuyButton, 1.25f, Duration, Easing::CubicIn),
+			Actions::Factory::ChangeVerticalAnchor(mCancelButton, 1.25f, Duration, Easing::CubicIn)
 		),
 		Actions::Factory::Delayed(Duration / 2.0f,
-			Actions::Factory::ChangeHorizontalAnchor(mImage, 1.5f, Duration, Common::Easing::CubicIn)
+			Actions::Factory::ChangeHorizontalAnchor(mImage, 1.5f, Duration, Easing::CubicIn)
 		),
 		Actions::Factory::Delayed(Duration,
-			Actions::Factory::ChangeHorizontalAnchor(mTitle, -0.5f, Duration, Common::Easing::CubicIn)
+			Actions::Factory::ChangeHorizontalAnchor(mTitle, -0.5f, Duration, Easing::CubicIn)
 		)
 	);
 }

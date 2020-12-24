@@ -114,7 +114,7 @@ void Application::addRubies(int count)
 		ruby->setAlpha(0.0f);
 		ruby->runAction(Actions::Factory::MakeSequence(
 			Actions::Factory::Wait(i * (0.125f / 1.25f)),
-			Actions::Factory::Show(ruby, 0.25f, Common::Easing::CubicIn),
+			Actions::Factory::Show(ruby, 0.25f, Easing::CubicIn),
 			Actions::Factory::Execute([this, ruby] {
 				FRAME->addOne([this, ruby] {
 					Helpers::gHud->collectRubyAnim(ruby);

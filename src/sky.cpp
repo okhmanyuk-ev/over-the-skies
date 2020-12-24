@@ -121,8 +121,8 @@ void Sky::changeColor(float top_hue, float bottom_hue)
 
 	const float ChangeDuration = 2.5f;
 
-	runAction(Actions::Factory::ChangeColor(mTopColor, top, ChangeDuration, Common::Easing::QuadraticInOut));
-	runAction(Actions::Factory::ChangeColor(mBottomColor, bottom, ChangeDuration, Common::Easing::QuadraticInOut));
+	runAction(Actions::Factory::ChangeColor(mTopColor, top, ChangeDuration, Easing::QuadraticInOut));
+	runAction(Actions::Factory::ChangeColor(mBottomColor, bottom, ChangeDuration, Easing::QuadraticInOut));
 }
 
 void Sky::update()
@@ -178,13 +178,13 @@ void Sky::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
 
 				star->runAction(Actions::Factory::MakeSequence(
 					Actions::Factory::MakeParallel(
-						Actions::Factory::ChangeScale(star, { 1.0f, 1.0f }, ShowDuration, Common::Easing::QuadraticOut),
-						Actions::Factory::ChangeAlpha(star, StarAlpha, ShowDuration, Common::Easing::QuadraticOut)
+						Actions::Factory::ChangeScale(star, { 1.0f, 1.0f }, ShowDuration, Easing::QuadraticOut),
+						Actions::Factory::ChangeAlpha(star, StarAlpha, ShowDuration, Easing::QuadraticOut)
 					),
 					Actions::Factory::Delayed(HoldDuration,
 						Actions::Factory::MakeParallel(
-							Actions::Factory::ChangeScale(star, { 0.0f, 0.0f }, ShowDuration, Common::Easing::QuadraticIn),
-							Actions::Factory::Hide(star, ShowDuration, Common::Easing::QuadraticIn)
+							Actions::Factory::ChangeScale(star, { 0.0f, 0.0f }, ShowDuration, Easing::QuadraticIn),
+							Actions::Factory::Hide(star, ShowDuration, Easing::QuadraticIn)
 						)
 					),
 					Actions::Factory::Kill(star)

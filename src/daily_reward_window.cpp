@@ -86,7 +86,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 				const auto Color1 = glm::rgbColor(glm::vec3(Graphics::Color::Hsv::HueGreen, 0.0f, 0.5f));
 				const auto Color2 = glm::rgbColor(glm::vec3(Graphics::Color::Hsv::HueGreen, 0.5f, 0.5f));
 				const float Duration = 0.5f;
-				const auto Easing = Common::Easing::QuadraticInOut;
+				const auto Easing = Easing::QuadraticInOut;
 
 				return Actions::Factory::MakeSequence(
 					Actions::Factory::ChangeColor(rect, Color1, Duration, Easing),

@@ -43,16 +43,16 @@ namespace hcg001
 		std::unique_ptr<Actions::Action> createOpenAction() override
 		{
 			return Actions::Factory::MakeParallel(
-				Actions::Factory::ChangeAlpha(getBackshadeColor(), 0.5f, 0.5f, Common::Easing::CubicOut),
-				Actions::Factory::ChangeVerticalAnchor(mContent, 0.5f, 0.5f, Common::Easing::CubicOut)
+				Actions::Factory::ChangeAlpha(getBackshadeColor(), 0.5f, 0.5f, Easing::CubicOut),
+				Actions::Factory::ChangeVerticalAnchor(mContent, 0.5f, 0.5f, Easing::CubicOut)
 			);
 		};
 
 		std::unique_ptr<Actions::Action> createCloseAction() override
 		{
 			return Actions::Factory::MakeParallel(
-				Actions::Factory::ChangeAlpha(getBackshadeColor(), 0.0f, 0.5f, Common::Easing::CubicIn),
-				Actions::Factory::ChangeVerticalAnchor(mContent, -0.5f, 0.5f, Common::Easing::CubicIn)
+				Actions::Factory::ChangeAlpha(getBackshadeColor(), 0.0f, 0.5f, Easing::CubicIn),
+				Actions::Factory::ChangeVerticalAnchor(mContent, -0.5f, 0.5f, Easing::CubicIn)
 			);
 		};
 

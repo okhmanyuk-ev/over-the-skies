@@ -252,7 +252,7 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 	spawnJumpParticles();
 
 	plane->runAction(Actions::Factory::MakeSequence(
-		Actions::Factory::ChangeScale(plane, { 0.0f, 0.0f }, 0.25f, Common::Easing::BackIn),
+		Actions::Factory::ChangeScale(plane, { 0.0f, 0.0f }, 0.25f, Easing::BackIn),
 		Actions::Factory::Kill(plane)
 	));
 
@@ -331,7 +331,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 	plane->setPosition(pos);
 	plane->setScale(0.0f);
 	plane->runAction(Actions::Factory::Delayed(anim_delay,
-		Actions::Factory::ChangeScale(plane, { 1.0f, 1.0f }, 0.5f / 1.25f, Common::Easing::BackOut)
+		Actions::Factory::ChangeScale(plane, { 1.0f, 1.0f }, 0.5f / 1.25f, Easing::BackOut)
 	));
 
 	mPlaneHolder->attach(plane);
@@ -445,7 +445,7 @@ void Gameplay::showRiskLabel(const utf8_string& text)
 	));
 
 	mRiskLabel->runAction(
-		Actions::Factory::ChangeHorizontalPivot(mRiskLabel, 0.5f, 0.75f, Common::Easing::ElasticOut)
+		Actions::Factory::ChangeHorizontalPivot(mRiskLabel, 0.5f, 0.75f, Easing::ElasticOut)
 	);
 }
 

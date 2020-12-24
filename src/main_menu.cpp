@@ -71,7 +71,7 @@ MainMenu::MainMenu()
 		auto locked = PROFILE->isSkinLocked(mChoosedSkin);
 
 		const float Duration = 0.33f;
-		const auto EasingFunction = Common::Easing::ExponentialOut;
+		const auto EasingFunction = Easing::ExponentialOut;
 
 		if (mPlayButtonVisible && locked)
 		{
