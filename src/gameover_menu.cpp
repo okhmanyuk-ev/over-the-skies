@@ -65,13 +65,13 @@ GameoverMenu::GameoverMenu(int score)
 	attach(tap_label);
 
 	Actions::Run(
-		Shared::ActionHelpers::RepeatInfinite([this, tap_label]() -> Shared::ActionHelpers::Action {
+		Actions::Factory::RepeatInfinite([this, tap_label]() -> Actions::Factory::UAction {
 			if (getState() != State::Entered)
 				return nullptr;
 
-			return Shared::ActionHelpers::MakeSequence(
-				Shared::ActionHelpers::Show(tap_label, 0.75f),
-				Shared::ActionHelpers::Hide(tap_label, 0.75f)
+			return Actions::Factory::MakeSequence(
+				Actions::Factory::Show(tap_label, 0.75f),
+				Actions::Factory::Hide(tap_label, 0.75f)
 			);
 		})
 	);

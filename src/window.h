@@ -42,17 +42,17 @@ namespace hcg001
 
 		std::unique_ptr<Actions::Action> createOpenAction() override
 		{
-			return Shared::ActionHelpers::MakeParallel(
-				Shared::ActionHelpers::ChangeAlpha(getBackshadeColor(), 0.5f, 0.5f, Common::Easing::CubicOut),
-				Shared::ActionHelpers::ChangeVerticalAnchor(mContent, 0.5f, 0.5f, Common::Easing::CubicOut)
+			return Actions::Factory::MakeParallel(
+				Actions::Factory::ChangeAlpha(getBackshadeColor(), 0.5f, 0.5f, Common::Easing::CubicOut),
+				Actions::Factory::ChangeVerticalAnchor(mContent, 0.5f, 0.5f, Common::Easing::CubicOut)
 			);
 		};
 
 		std::unique_ptr<Actions::Action> createCloseAction() override
 		{
-			return Shared::ActionHelpers::MakeParallel(
-				Shared::ActionHelpers::ChangeAlpha(getBackshadeColor(), 0.0f, 0.5f, Common::Easing::CubicIn),
-				Shared::ActionHelpers::ChangeVerticalAnchor(mContent, -0.5f, 0.5f, Common::Easing::CubicIn)
+			return Actions::Factory::MakeParallel(
+				Actions::Factory::ChangeAlpha(getBackshadeColor(), 0.0f, 0.5f, Common::Easing::CubicIn),
+				Actions::Factory::ChangeVerticalAnchor(mContent, -0.5f, 0.5f, Common::Easing::CubicIn)
 			);
 		};
 

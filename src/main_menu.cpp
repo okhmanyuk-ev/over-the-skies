@@ -61,7 +61,7 @@ MainMenu::MainMenu()
 	unlock_button->setPivot(0.5f);
 	attach(unlock_button);
 
-	runAction(Shared::ActionHelpers::ExecuteInfinite([this, play_button, unlock_button] {
+	runAction(Actions::Factory::ExecuteInfinite([this, play_button, unlock_button] {
 		if (!mDecideButtons)
 			return;
 
@@ -78,24 +78,24 @@ MainMenu::MainMenu()
 			mPlayButtonVisible = false;
 			mButtonsAnimating = true;
 			
-			runAction(Shared::ActionHelpers::MakeSequence(
-				Shared::ActionHelpers::MakeParallel(
-					Shared::ActionHelpers::ChangeHorizontalAnchor(play_button, -0.5f, Duration, EasingFunction),
-					Shared::ActionHelpers::ChangeHorizontalAnchor(unlock_button, 0.5f, Duration, EasingFunction)
+			runAction(Actions::Factory::MakeSequence(
+				Actions::Factory::MakeParallel(
+					Actions::Factory::ChangeHorizontalAnchor(play_button, -0.5f, Duration, EasingFunction),
+					Actions::Factory::ChangeHorizontalAnchor(unlock_button, 0.5f, Duration, EasingFunction)
 				),
-				Shared::ActionHelpers::Execute([this] { mButtonsAnimating = false; })
+				Actions::Factory::Execute([this] { mButtonsAnimating = false; })
 			));
 		}
 		else if (!mPlayButtonVisible && !locked)
 		{
 			mPlayButtonVisible = true;
 			mButtonsAnimating = true;
-			runAction(Shared::ActionHelpers::MakeSequence(
-				Shared::ActionHelpers::MakeParallel(
-					Shared::ActionHelpers::ChangeHorizontalAnchor(play_button, 0.5f, Duration, EasingFunction),
-					Shared::ActionHelpers::ChangeHorizontalAnchor(unlock_button, 1.5f, Duration, EasingFunction)
+			runAction(Actions::Factory::MakeSequence(
+				Actions::Factory::MakeParallel(
+					Actions::Factory::ChangeHorizontalAnchor(play_button, 0.5f, Duration, EasingFunction),
+					Actions::Factory::ChangeHorizontalAnchor(unlock_button, 1.5f, Duration, EasingFunction)
 				),
-				Shared::ActionHelpers::Execute([this] { mButtonsAnimating = false; })
+				Actions::Factory::Execute([this] { mButtonsAnimating = false; })
 			));
 		}
 	}));
@@ -107,7 +107,7 @@ MainMenu::MainMenu()
 		menuPhysics(dTime);
 	});
 
-	runAction(Shared::ActionHelpers::ExecuteInfinite([this] {
+	runAction(Actions::Factory::ExecuteInfinite([this] {
 		mTimestepFixer.execute();
 	}));
 
@@ -192,7 +192,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 		image->setPivot(0.5f);
 		item->attach(image);
 
-		image->runAction(Shared::ActionHelpers::ExecuteInfinite([this, image, SkinSize, SkinSizeChoosed] {
+		image->runAction(Actions::Factory::ExecuteInfinite([this, image, SkinSize, SkinSizeChoosed] {
 			if (!mScrollbox->isTransformReady())
 				return;
 
@@ -253,7 +253,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			price->setPivot({ 0.0f, 0.5f });
 			footer->attach(price);
 
-			price->runAction(Shared::ActionHelpers::ExecuteInfinite([hideFarNode, price] {
+			price->runAction(Actions::Factory::ExecuteInfinite([hideFarNode, price] {
 				hideFarNode(price);
 			}));
 
@@ -267,11 +267,11 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			ruby->setPosition({ PriceRubyPadding, 0.0f });
 			price->attach(ruby);
 
-			ruby->runAction(Shared::ActionHelpers::ExecuteInfinite([hideFarNode, ruby] {
+			ruby->runAction(Actions::Factory::ExecuteInfinite([hideFarNode, ruby] {
 				hideFarNode(ruby);
 			}));
 
-			footer->runAction(Shared::ActionHelpers::ExecuteInfinite([footer, price, ruby, PriceRubyPadding] {
+			footer->runAction(Actions::Factory::ExecuteInfinite([footer, price, ruby, PriceRubyPadding] {
 				footer->setWidth(price->getWidth() + ruby->getWidth() + PriceRubyPadding);
 			}));
 		}
@@ -287,7 +287,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			name->setPivot({ 0.5f, 0.5f });
 			footer->attach(name);
 
-			name->runAction(Shared::ActionHelpers::ExecuteInfinite([hideFarNode, name] {
+			name->runAction(Actions::Factory::ExecuteInfinite([hideFarNode, name] {
 				hideFarNode(name);
 			}));
 		}

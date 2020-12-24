@@ -10,7 +10,7 @@ Sky::Sky()
 	mTopColor->setColor(Graphics::Color::Black);
 	mBottomColor->setColor(Graphics::Color::Black);
 
-	runAction(Shared::ActionHelpers::ExecuteInfinite([this] {
+	runAction(Actions::Factory::ExecuteInfinite([this] {
 		auto top = mTopColor->getColor() * 255.0f;
 		auto bottom = mBottomColor->getColor() * 255.0f;
 
@@ -81,19 +81,19 @@ Sky::Sky()
 	mAsteroidsHolder->setStretch({ 1.0f, 1.0f });
 	mBloomLayer->attach(mAsteroidsHolder);
 
-	runAction(Shared::ActionHelpers::RepeatInfinite([this] {
+	runAction(Actions::Factory::RepeatInfinite([this] {
 		auto delay = glm::linearRand(10.0f, 20.0f);
-		return Shared::ActionHelpers::Delayed(delay,
-			Shared::ActionHelpers::Insert([this] {
-				auto seq = Shared::ActionHelpers::MakeSequence();
+		return Actions::Factory::Delayed(delay,
+			Actions::Factory::Insert([this] {
+				auto seq = Actions::Factory::MakeSequence();
 				auto global_spread = glm::linearRand(0.0f, 1.0f);
 				auto speed = glm::linearRand(256.0f + 128.0f, 512.0f + 256.0f);
 				auto count = glm::linearRand(1, 3);
 				for (int i = 0; i < count; i++)
 				{
 					auto local_spread = glm::linearRand(-0.125f, 0.125f);
-					seq->add(Shared::ActionHelpers::Delayed(glm::linearRand(0.0f, 0.25f), 
-						Shared::ActionHelpers::Execute([this, speed, global_spread, local_spread] {
+					seq->add(Actions::Factory::Delayed(glm::linearRand(0.0f, 0.25f),
+						Actions::Factory::Execute([this, speed, global_spread, local_spread] {
 							spawnAsteroid(speed, global_spread + local_spread);
 						})
 					));
@@ -121,8 +121,8 @@ void Sky::changeColor(float top_hue, float bottom_hue)
 
 	const float ChangeDuration = 2.5f;
 
-	runAction(Shared::ActionHelpers::ChangeColor(mTopColor, top, ChangeDuration, Common::Easing::QuadraticInOut));
-	runAction(Shared::ActionHelpers::ChangeColor(mBottomColor, bottom, ChangeDuration, Common::Easing::QuadraticInOut));
+	runAction(Actions::Factory::ChangeColor(mTopColor, top, ChangeDuration, Common::Easing::QuadraticInOut));
+	runAction(Actions::Factory::ChangeColor(mBottomColor, bottom, ChangeDuration, Common::Easing::QuadraticInOut));
 }
 
 void Sky::update()
@@ -147,9 +147,9 @@ void Sky::spawnAsteroid(float speed, float normalized_spread)
 	const float Duration = 5.0f;
 	const glm::vec2 Direction = { -0.75f, 1.0f };
 
-	asteroid->runAction(Shared::ActionHelpers::MakeSequence(
-		Shared::ActionHelpers::ChangePositionByDirection(asteroid, Direction, speed, Duration),
-		Shared::ActionHelpers::Kill(asteroid)
+	asteroid->runAction(Actions::Factory::MakeSequence(
+		Actions::Factory::ChangePositionByDirection(asteroid, Direction, speed, Duration),
+		Actions::Factory::Kill(asteroid)
 	));
 
 	mAsteroidsHolder->attach(asteroid);
@@ -157,9 +157,9 @@ void Sky::spawnAsteroid(float speed, float normalized_spread)
 
 void Sky::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
 {
-	Actions::Run(Shared::ActionHelpers::RepeatInfinite([holder] {
-		return Shared::ActionHelpers::MakeSequence(
-			Shared::ActionHelpers::Execute([holder] {
+	Actions::Run(Actions::Factory::RepeatInfinite([holder] {
+		return Actions::Factory::MakeSequence(
+			Actions::Factory::Execute([holder] {
 				auto size = glm::linearRand(4.0f, 6.0f);
 				
 				auto star = std::make_shared<Scene::Actionable<Scene::Sprite>>();
@@ -176,21 +176,21 @@ void Sky::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
 				const float HoldDuration = 0.5f;
 				const float StarAlpha = 0.75f;
 
-				star->runAction(Shared::ActionHelpers::MakeSequence(
-					Shared::ActionHelpers::MakeParallel(
-						Shared::ActionHelpers::ChangeScale(star, { 1.0f, 1.0f }, ShowDuration, Common::Easing::QuadraticOut),
-						Shared::ActionHelpers::ChangeAlpha(star, StarAlpha, ShowDuration, Common::Easing::QuadraticOut)
+				star->runAction(Actions::Factory::MakeSequence(
+					Actions::Factory::MakeParallel(
+						Actions::Factory::ChangeScale(star, { 1.0f, 1.0f }, ShowDuration, Common::Easing::QuadraticOut),
+						Actions::Factory::ChangeAlpha(star, StarAlpha, ShowDuration, Common::Easing::QuadraticOut)
 					),
-					Shared::ActionHelpers::Delayed(HoldDuration,
-						Shared::ActionHelpers::MakeParallel(
-							Shared::ActionHelpers::ChangeScale(star, { 0.0f, 0.0f }, ShowDuration, Common::Easing::QuadraticIn),
-							Shared::ActionHelpers::Hide(star, ShowDuration, Common::Easing::QuadraticIn)
+					Actions::Factory::Delayed(HoldDuration,
+						Actions::Factory::MakeParallel(
+							Actions::Factory::ChangeScale(star, { 0.0f, 0.0f }, ShowDuration, Common::Easing::QuadraticIn),
+							Actions::Factory::Hide(star, ShowDuration, Common::Easing::QuadraticIn)
 						)
 					),
-					Shared::ActionHelpers::Kill(star)
+					Actions::Factory::Kill(star)
 				));
 			}),
-			Shared::ActionHelpers::Wait(0.25f)
+			Actions::Factory::Wait(0.25f)
 		);
 	}));
 }

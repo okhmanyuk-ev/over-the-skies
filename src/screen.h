@@ -51,12 +51,12 @@ namespace hcg001
 
 		std::unique_ptr<Actions::Action> createEnterAction() override
 		{
-			return Shared::ActionHelpers::Show(shared_from_this(), 0.25f);
+			return Actions::Factory::Show(shared_from_this(), 0.25f);
 		};
 
 		std::unique_ptr<Actions::Action> createLeaveAction() override
 		{
-			return Shared::ActionHelpers::Hide(shared_from_this(), 0.25f);
+			return Actions::Factory::Hide(shared_from_this(), 0.25f);
 		};
 	};
 }

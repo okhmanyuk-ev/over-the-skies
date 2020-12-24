@@ -38,15 +38,15 @@ void Hud::collectRubyAnim(std::shared_ptr<Scene::Node> ruby)
 
 	const float MoveDuration = 0.75f;
 
-	Actions::Run(Shared::ActionHelpers::MakeSequence(
-		Shared::ActionHelpers::MakeParallel(
-			Shared::ActionHelpers::ChangePosition(ruby, dest_pos, MoveDuration, Common::Easing::QuarticInOut),
-			Shared::ActionHelpers::ChangeSize(ruby, mRubyScore.sprite->getAbsoluteSize(), MoveDuration, Common::Easing::QuarticInOut)
+	Actions::Run(Actions::Factory::MakeSequence(
+		Actions::Factory::MakeParallel(
+			Actions::Factory::ChangePosition(ruby, dest_pos, MoveDuration, Common::Easing::QuarticInOut),
+			Actions::Factory::ChangeSize(ruby, mRubyScore.sprite->getAbsoluteSize(), MoveDuration, Common::Easing::QuarticInOut)
 		),
-		Shared::ActionHelpers::Kill(ruby),
-		Shared::ActionHelpers::Execute([this] {
+		Actions::Factory::Kill(ruby),
+		Actions::Factory::Execute([this] {
 			mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
 		}),
-		Shared::ActionHelpers::Shake(mRubyScore.label, 2.0f, 0.2f)
+		Actions::Factory::Shake(mRubyScore.label, 2.0f, 0.2f)
 	));
 }

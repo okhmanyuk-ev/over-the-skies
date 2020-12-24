@@ -64,15 +64,15 @@ std::unique_ptr<Actions::Action> BuySkinMenu::createEnterAction()
 {
 	const float Duration = 0.25f;
 
-	return Shared::ActionHelpers::MakeParallel(
-		Shared::ActionHelpers::ChangeHorizontalAnchor(mTitle, 0.5f, Duration, Common::Easing::CubicOut),
-		Shared::ActionHelpers::Delayed(Duration / 2.0f,
-			Shared::ActionHelpers::ChangeHorizontalAnchor(mImage, 0.5f, Duration, Common::Easing::CubicOut)
+	return Actions::Factory::MakeParallel(
+		Actions::Factory::ChangeHorizontalAnchor(mTitle, 0.5f, Duration, Common::Easing::CubicOut),
+		Actions::Factory::Delayed(Duration / 2.0f,
+			Actions::Factory::ChangeHorizontalAnchor(mImage, 0.5f, Duration, Common::Easing::CubicOut)
 		),
-		Shared::ActionHelpers::Delayed(Duration,
-			Shared::ActionHelpers::MakeParallel(
-				Shared::ActionHelpers::ChangeVerticalAnchor(mBuyButton, 0.75f, Duration, Common::Easing::CubicOut),
-				Shared::ActionHelpers::ChangeVerticalAnchor(mCancelButton, 0.75f, Duration, Common::Easing::CubicOut)
+		Actions::Factory::Delayed(Duration,
+			Actions::Factory::MakeParallel(
+				Actions::Factory::ChangeVerticalAnchor(mBuyButton, 0.75f, Duration, Common::Easing::CubicOut),
+				Actions::Factory::ChangeVerticalAnchor(mCancelButton, 0.75f, Duration, Common::Easing::CubicOut)
 			)
 		)
 	);
@@ -82,16 +82,16 @@ std::unique_ptr<Actions::Action> BuySkinMenu::createLeaveAction()
 {
 	const float Duration = 0.25f;
 
-	return Shared::ActionHelpers::MakeParallel(
-		Shared::ActionHelpers::MakeParallel(
-			Shared::ActionHelpers::ChangeVerticalAnchor(mBuyButton, 1.25f, Duration, Common::Easing::CubicIn),
-			Shared::ActionHelpers::ChangeVerticalAnchor(mCancelButton, 1.25f, Duration, Common::Easing::CubicIn)
+	return Actions::Factory::MakeParallel(
+		Actions::Factory::MakeParallel(
+			Actions::Factory::ChangeVerticalAnchor(mBuyButton, 1.25f, Duration, Common::Easing::CubicIn),
+			Actions::Factory::ChangeVerticalAnchor(mCancelButton, 1.25f, Duration, Common::Easing::CubicIn)
 		),
-		Shared::ActionHelpers::Delayed(Duration / 2.0f,
-			Shared::ActionHelpers::ChangeHorizontalAnchor(mImage, 1.5f, Duration, Common::Easing::CubicIn)
+		Actions::Factory::Delayed(Duration / 2.0f,
+			Actions::Factory::ChangeHorizontalAnchor(mImage, 1.5f, Duration, Common::Easing::CubicIn)
 		),
-		Shared::ActionHelpers::Delayed(Duration,
-			Shared::ActionHelpers::ChangeHorizontalAnchor(mTitle, -0.5f, Duration, Common::Easing::CubicIn)
+		Actions::Factory::Delayed(Duration,
+			Actions::Factory::ChangeHorizontalAnchor(mTitle, -0.5f, Duration, Common::Easing::CubicIn)
 		)
 	);
 }

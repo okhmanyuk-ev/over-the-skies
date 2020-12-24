@@ -75,9 +75,9 @@ void Application::initialize()
 		tryShowDailyReward();
 	});
 
-	Actions::Run(Shared::ActionHelpers::RepeatInfinite([sky] {
-		return Shared::ActionHelpers::Delayed(10.0f,
-			Shared::ActionHelpers::Execute([sky] {
+	Actions::Run(Actions::Factory::RepeatInfinite([sky] {
+		return Actions::Factory::Delayed(10.0f,
+			Actions::Factory::Execute([sky] {
 				sky->changeColor();
 			})
 		);
@@ -112,10 +112,10 @@ void Application::addRubies(int count)
 		ruby->setSize(24.0f);
 		ruby->setPosition(glm::linearRand(glm::vec2(-64.0f), glm::vec2(64.0f)));
 		ruby->setAlpha(0.0f);
-		ruby->runAction(Shared::ActionHelpers::MakeSequence(
-			Shared::ActionHelpers::Wait(i * (0.125f / 1.25f)),
-			Shared::ActionHelpers::Show(ruby, 0.25f, Common::Easing::CubicIn),
-			Shared::ActionHelpers::Execute([this, ruby] {
+		ruby->runAction(Actions::Factory::MakeSequence(
+			Actions::Factory::Wait(i * (0.125f / 1.25f)),
+			Actions::Factory::Show(ruby, 0.25f, Common::Easing::CubicIn),
+			Actions::Factory::Execute([this, ruby] {
 				FRAME->addOne([this, ruby] {
 					Helpers::gHud->collectRubyAnim(ruby);
 				});
