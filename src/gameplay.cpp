@@ -402,8 +402,14 @@ void Gameplay::start()
 
 void Gameplay::gameover()
 {
+	mReady = false;
 	mGameoverCallback();
 	PROFILE->saveAsync();
+
+	CLIENT->sendEvent("gameover", {
+		{ "score", std::to_string(getScore()) },
+		{ "rubies", std::to_string(PROFILE->getRubies()) }
+	});
 }
 
 void Gameplay::tap()
