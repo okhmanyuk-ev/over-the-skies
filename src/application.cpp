@@ -46,6 +46,7 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 
 Application::~Application()
 {
+	ENGINE->removeSystem<Shared::Client>();
 	PROFILE->save();
 }
 
