@@ -2,7 +2,7 @@
 
 using namespace hcg001;
 
-Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Flag::Scene })
+Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Flag::Scene, Flag::Network })
 {
 	PLATFORM->setTitle(PRODUCT_NAME);
 	PLATFORM->resize(360, 640);
@@ -10,6 +10,9 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 #if !defined(PLATFORM_MOBILE)
 	PLATFORM->rescale(1.5f);
 #endif
+
+	auto server_address = Network::Address("127.0.0.1:1337");
+	ENGINE->addSystem<Shared::Client>(std::make_shared<Shared::Client>(server_address));
 
 	ENGINE->addSystem<Profile>(std::make_shared<Profile>());
 	PROFILE->load();
