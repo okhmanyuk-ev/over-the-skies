@@ -3,9 +3,9 @@
 
 using namespace hcg001;
 
-Client::Client() : Shared::Networking::Client({ "127.0.0.1:1337" })
+Client::Client() : Shared::Networking::Client({ "192.168.0.106:1337" })
 {
-	mEvents["print"] = [](auto& params) {
+	mEvents["print"] = [](const auto& params) {
 		auto text = params.at("text");
 		EVENT->emit(Helpers::PrintEvent({ text }));
 	};
