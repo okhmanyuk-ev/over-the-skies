@@ -1,18 +1,6 @@
 #pragma once
 
 #include <shared/all.h>
-#include "main_menu.h"
-#include "gameplay.h"
-#include "gameover_menu.h"
-#include "sky.h"
-#include "player.h"
-#include "plane.h"
-#include "skin.h"
-#include "profile.h"
-#include "cheats.h"
-#include "daily_reward_window.h"
-#include "helpers.h"
-#include "hud.h"
 
 namespace hcg001
 {

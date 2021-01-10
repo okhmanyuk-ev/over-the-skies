@@ -1,4 +1,17 @@
 #include "application.h"
+#include "main_menu.h"
+#include "gameplay.h"
+#include "gameover_menu.h"
+#include "sky.h"
+#include "player.h"
+#include "plane.h"
+#include "skin.h"
+#include "profile.h"
+#include "cheats.h"
+#include "daily_reward_window.h"
+#include "helpers.h"
+#include "hud.h"
+#include "client.h"
 
 using namespace hcg001;
 
@@ -11,9 +24,7 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 	PLATFORM->rescale(1.5f);
 #endif
 
-	auto server_address = Network::Address("127.0.0.1:1337");
-	ENGINE->addSystem<Shared::Client>(std::make_shared<Shared::Client>(server_address));
-
+	ENGINE->addSystem<Client>(std::make_shared<Client>());
 	ENGINE->addSystem<Profile>(std::make_shared<Profile>());
 	PROFILE->load();
 
@@ -46,7 +57,7 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 
 Application::~Application()
 {
-	ENGINE->removeSystem<Shared::Client>();
+	ENGINE->removeSystem<Client>();
 	PROFILE->save();
 }
 

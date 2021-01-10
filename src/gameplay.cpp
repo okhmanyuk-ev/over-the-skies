@@ -1,6 +1,7 @@
 #include "gameplay.h"
 #include "profile.h"
 #include "helpers.h"
+#include "client.h"
 
 using namespace hcg001;
 

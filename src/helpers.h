@@ -3,8 +3,6 @@
 #include <shared/all.h>
 #include "hud.h"
 
-#define CLIENT ENGINE->getSystem<Shared::Client>()
-
 namespace hcg001::Helpers
 {
 	const float ButtonRounding = 0.33f;
