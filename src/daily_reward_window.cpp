@@ -7,8 +7,6 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 {
 	setCloseOnMissclick(false);
 
-	const auto BaseColor = glm::rgbColor(glm::vec3(210.0f, 0.5f, 1.0f));
-	
 	auto rect = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
 	rect->setRounding(12.0f);
 	rect->setAbsoluteRounding(true);
@@ -16,7 +14,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	rect->setAnchor(0.5f);
 	rect->setPivot(0.5f);
 	rect->setTouchable(true);
-	rect->setColor(BaseColor / 12.0f);
+	rect->setColor(Helpers::BaseWindowColor / 12.0f);
 	//rect->setDrawOnlyStencil(true);
 	getContent()->attach(rect);
 
@@ -48,7 +46,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 
 	auto header_bg = std::make_shared<Scene::Rectangle>();
 	header_bg->setStretch(1.0f);
-	header_bg->setColor(BaseColor);
+	header_bg->setColor(Helpers::BaseWindowColor);
 	header_bg->setAlpha(0.25f);
 	header->attach(header_bg);
 
@@ -153,7 +151,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	auto ok_button = std::make_shared<Shared::SceneHelpers::FastButton>();
 	ok_button->setRounding(6.0f);
 	ok_button->setAbsoluteRounding(true);
-	ok_button->setColor(BaseColor);
+	ok_button->setColor(Helpers::BaseWindowColor);
 	ok_button->getLabel()->setText(LOCALIZE("DAILYREWARD_CLAIM"));
 	ok_button->getLabel()->setFontSize(18.0f);
 	ok_button->setClickCallback([this] {

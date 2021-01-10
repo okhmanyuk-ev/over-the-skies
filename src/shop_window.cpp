@@ -1,11 +1,10 @@
 #include "shop_window.h"
+#include "helpers.h"
 
 using namespace hcg001;
 
 ShopWindow::ShopWindow()
-{
-	const auto BaseColor = glm::rgbColor(glm::vec3(210.0f, 0.5f, 1.0f));
-	
+{	
 	auto rect = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
 	rect->setRounding(12.0f);
 	rect->setAbsoluteRounding(true);
@@ -13,7 +12,7 @@ ShopWindow::ShopWindow()
 	rect->setAnchor(0.5f);
 	rect->setPivot(0.5f);
 	rect->setTouchable(true);
-	rect->setColor(BaseColor / 12.0f);
+	rect->setColor(Helpers::BaseWindowColor / 12.0f);
 	getContent()->attach(rect);
 
 	auto header = std::make_shared<Scene::Node>();
@@ -38,7 +37,7 @@ ShopWindow::ShopWindow()
 
 	auto header_bg = std::make_shared<Scene::Rectangle>();
 	header_bg->setStretch(1.0f);
-	header_bg->setColor(BaseColor);
+	header_bg->setColor(Helpers::BaseWindowColor);
 	header_bg->setAlpha(0.25f);
 	header->attach(header_bg);
 
@@ -66,7 +65,7 @@ ShopWindow::ShopWindow()
 	auto buy_button = std::make_shared<Shared::SceneHelpers::FastButton>();
 	buy_button->setRounding(6.0f);
 	buy_button->setAbsoluteRounding(true);
-	buy_button->setColor(BaseColor);
+	buy_button->setColor(Helpers::BaseWindowColor);
 	buy_button->getLabel()->setText(LOCALIZE("SHOP_WINDOW_BUY"));
 	buy_button->getLabel()->setFontSize(18.0f);
 	buy_button->setClickCallback([this] {

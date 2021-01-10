@@ -7,10 +7,12 @@ namespace hcg001::Helpers
 {
 	const float ButtonRounding = 0.33f;
 
+	const auto BaseWindowColor = glm::rgbColor(glm::vec3(210.0f, 0.5f, 1.0f));
+
 	inline std::shared_ptr<Hud> gHud = nullptr;
 
-	inline bool Chance(float normalized_percent)
+	struct PrintEvent
 	{
-		return glm::linearRand(0.0f, 1.0f) <= normalized_percent;
-	}
+		std::string text;
+	};
 }

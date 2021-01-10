@@ -1,11 +1,13 @@
 #include "client.h"
+#include "helpers.h"
 
 using namespace hcg001;
 
 Client::Client() : Shared::Networking::Client({ "127.0.0.1:1337" })
 {
 	mEvents["print"] = [](auto& params) {
-		LOG(params.at("text"));
+		auto text = params.at("text");
+		EVENT->emit(Helpers::PrintEvent({ text }));
 	};
 }
 

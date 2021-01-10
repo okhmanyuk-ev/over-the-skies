@@ -1,11 +1,13 @@
 #pragma once
 
 #include <shared/all.h>
+#include "helpers.h"
 
 namespace hcg001
 {
 	class Application : public Shared::Application,
-		public Common::FrameSystem::Frameable
+		public Common::FrameSystem::Frameable,
+		public Common::Event::Listenable<Helpers::PrintEvent>
 	{
 	public:
 		Application();
@@ -17,5 +19,8 @@ namespace hcg001
 		void addRubies(int count);
 		void tryShowDailyReward();
 		void adaptToScreen(std::shared_ptr<Scene::Node> node);
+
+	private:
+		void onEvent(const Helpers::PrintEvent& e) override;
 	};
 }

@@ -180,3 +180,41 @@ void Application::adaptToScreen(std::shared_ptr<Scene::Node> node)
 	auto scale = size / dimensions;
 	node->setScale(glm::min(scale.x, scale.y));
 }
+
+void Application::onEvent(const Helpers::PrintEvent& e)
+{
+	auto root = getScene()->getRoot();
+
+	auto rect = std::make_shared<Scene::Actionable<Scene::ClippableStencil<Scene::Rectangle>>>();
+	rect->setTouchable(true);
+	rect->setSize({ 264.0f, 42.0f });
+	rect->setAlpha(0.25f);
+	rect->setRounding(12.0f);
+	rect->setAbsoluteRounding(true);
+	rect->setAnchor({ -0.5f, 0.125f });
+	rect->setPivot(0.5f);
+	rect->setMargin({ 0.0f, -18.0f });
+	rect->runAction(Actions::Factory::MakeSequence(
+		Actions::Factory::ChangeHorizontalAnchor(rect, 0.5f, 0.5f, Easing::CubicOut),
+		Actions::Factory::Wait(3.0f),
+		Actions::Factory::ChangeHorizontalAnchor(rect, 1.5f, 0.5f, Easing::CubicIn),
+		Actions::Factory::Kill(rect)
+	));
+	root->attach(rect);
+
+	auto label = std::make_shared<Scene::Label>();
+	label->setFont(FONT("default"));
+	label->setFontSize(16.0f);
+	label->setText(e.text);
+	label->setMultiline(true);
+	label->setMultilineAlign(Graphics::TextMesh::Align::Center);
+	label->setStretch({ 1.0f, 0.0f });
+	label->setHorizontalMargin(-rect->getVerticalMargin());
+	label->setPivot(0.5f);
+	label->setAnchor(0.5f);
+	rect->attach(label);
+
+	rect->runAction(Actions::Factory::ExecuteInfinite([rect, label] {
+		rect->setHeight(label->getHeight());
+	}));
+}

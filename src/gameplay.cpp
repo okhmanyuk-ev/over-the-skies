@@ -287,9 +287,9 @@ void Gameplay::spawnPlanes()
 
 	while (mLastPlanePos.y >= mPlayer->getY())
 	{
-		bool has_ruby = Helpers::Chance(0.05f);
-		bool powerjump = Helpers::Chance(0.1f);
-		bool moving = Helpers::Chance(0.75f * getDifficulty());
+		bool has_ruby = Common::Helpers::Chance(0.05f);
+		bool powerjump = Common::Helpers::Chance(0.1f);
+		bool moving = Common::Helpers::Chance(0.75f * getDifficulty());
 		float pos_x = mLastPlanePos.x + glm::linearRand(36.0f, 96.0f);
 		float pos_y = mLastPlanePos.y - glm::linearRand(32.0f, 128.0f);
 		spawnPlane({ pos_x, pos_y }, anim_delay, has_ruby, powerjump, moving);
@@ -355,7 +355,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		plane->setMoving(true);
 
 		const float Center = plane->getX();
-		bool side = Helpers::Chance(0.5f);
+		bool side = Common::Helpers::Chance(0.5f);
 		plane->runAction(Actions::Factory::RepeatInfinite([plane, Center, side] {
 			const float Duration = 0.25f;
 			const float Distance = 32.0f;
@@ -443,7 +443,7 @@ void Gameplay::showRiskLabel(const utf8_string& text)
 	mRiskLabel->setText(text);
 	mRiskLabel->setAnchor({ 0.5f, 0.33f });
 	mRiskLabel->setVerticalPivot(0.5f);
-	mRiskLabel->setHorizontalPivot(Helpers::Chance(0.5f) ? 1.0f : 0.0f);
+	mRiskLabel->setHorizontalPivot(Common::Helpers::Chance(0.5f) ? 1.0f : 0.0f);
 	mRiskLabel->setAlpha(0.0f);
 	attach(mRiskLabel);
 
