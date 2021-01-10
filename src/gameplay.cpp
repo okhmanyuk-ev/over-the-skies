@@ -402,7 +402,10 @@ void Gameplay::start()
 
 void Gameplay::gameover()
 {
-	mReady = false;
+	if (mGameovered)
+		return;
+
+	mGameovered = true;
 	mGameoverCallback();
 	PROFILE->saveAsync();
 
