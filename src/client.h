@@ -13,5 +13,8 @@ namespace hcg001
 
 	protected:
 		void onEvent(const std::string& name, const std::map<std::string, std::string>& params) override;
+
+	private:
+		std::map<std::string, std::function<void(std::map<std::string, std::string>)>> mEvents;
 	};
 }
