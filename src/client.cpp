@@ -23,6 +23,53 @@ Channel::Channel()
 		}
 		mEvents.at(name)(params);
 	});
+	addMessageReader("file", [this](Common::BitBuffer& buf) {
+		auto path = Common::BufferHelpers::ReadString(buf);
+		auto file_size = buf.readBitsVar();
+		auto frag_offset = buf.readBitsVar();
+		auto frag_size = buf.readBitsVar();
+
+		if (mFiles.count(path) == 0)
+		{
+			mFiles[path].first = 0;
+			mFiles[path].second.setSize(file_size);
+		}
+
+		auto& [progress, file_buf] = mFiles[path];
+
+		if (file_buf.getSize() != file_size)
+		{
+			LOG("file: bad file size");
+			return;
+		}
+
+		if (frag_offset + frag_size > file_buf.getSize())
+		{
+			LOG("file: bad fragment");
+			return;
+		}
+
+		for (uint32_t i = frag_offset; i < frag_offset + frag_size; i++)
+		{
+			((uint8_t*)file_buf.getMemory())[i] = buf.read<uint8_t>();
+		}
+
+		progress += frag_size;
+
+		GAME_STATS(path, std::to_string(int((float)progress / (float)file_size * 100.0f)) + "%%");
+
+		//LOG("path: " + path +
+		//	", file_size: " + Common::Helpers::BytesToNiceString(file_size) +
+		//	", frag_offset: " + std::to_string(frag_offset) +
+		//	", frag_size: " + Common::Helpers::BytesToNiceString(frag_size));
+
+		if (progress == file_size)
+		{
+			Platform::Asset::Write(path, file_buf.getMemory(), file_buf.getSize());
+			mFiles.erase(path);
+			LOG(path + " saved");
+		}
+	});
 
 	mEvents["print"] = [](const auto& params) {
 		auto text = params.at("text");

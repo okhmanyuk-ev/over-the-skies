@@ -16,6 +16,7 @@ namespace hcg001
 
 	private:
 		std::map<std::string, std::function<void(std::map<std::string, std::string>)>> mEvents;
+		std::map<std::string, std::pair<size_t/*progress*/, Common::BitBuffer>> mFiles;
 	};
 
 	class Client : public Shared::Networking::Client
