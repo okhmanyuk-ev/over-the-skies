@@ -56,7 +56,7 @@ Channel::Channel()
 
 		progress += frag_size;
 
-		GAME_STATS(path, Common::Helpers::BytesToNiceString(progress) + "/" + Common::Helpers::BytesToNiceString(file_size));
+		STATS_INDICATE_GROUP("net", path, Common::Helpers::BytesToNiceString(progress) + "/" + Common::Helpers::BytesToNiceString(file_size));
 
 		if (progress == file_size)
 		{
