@@ -63,9 +63,6 @@ Channel::Channel()
 			Platform::Asset::Write(path, file_buf.getMemory(), file_buf.getSize(), Platform::Asset::Storage::Bundle);
 			mFiles.erase(path);
 			LOG(path + " saved");
-            auto asd = Platform::Asset("cs_assault.bsp");
-            auto a1sd = Platform::Asset("cs_assault.bsp");
-            
 		}
 	});
 
