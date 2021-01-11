@@ -56,12 +56,7 @@ Channel::Channel()
 
 		progress += frag_size;
 
-		GAME_STATS(path, std::to_string(int((float)progress / (float)file_size * 100.0f)) + "%%");
-
-		//LOG("path: " + path +
-		//	", file_size: " + Common::Helpers::BytesToNiceString(file_size) +
-		//	", frag_offset: " + std::to_string(frag_offset) +
-		//	", frag_size: " + Common::Helpers::BytesToNiceString(frag_size));
+		GAME_STATS(path, Common::Helpers::BytesToNiceString(progress) + "/" + Common::Helpers::BytesToNiceString(file_size));
 
 		if (progress == file_size)
 		{
