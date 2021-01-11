@@ -31,11 +31,11 @@ Channel::Channel()
 
 		if (mFiles.count(path) == 0)
 		{
-			mFiles[path].first = 0;
-			mFiles[path].second.setSize(file_size);
+			mFiles[path].buf.setSize(file_size);
 		}
 
-		auto& [progress, file_buf] = mFiles[path];
+        auto& progress = mFiles[path].progress;
+        auto& file_buf = mFiles[path].buf;
 
 		if (file_buf.getSize() != file_size)
 		{
@@ -63,6 +63,9 @@ Channel::Channel()
 			Platform::Asset::Write(path, file_buf.getMemory(), file_buf.getSize());
 			mFiles.erase(path);
 			LOG(path + " saved");
+            auto asd = Platform::Asset("cs_assault.bsp");
+            auto a1sd = Platform::Asset("cs_assault.bsp");
+            
 		}
 	});
 
