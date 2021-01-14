@@ -70,6 +70,8 @@ Channel::Channel()
 		auto text = params.at("text");
 		EVENT->emit(Helpers::PrintEvent({ text }));
 	};
+    
+    sendEvent("device_id", { { "id", PLATFORM->getDeviceId() } });
 }
 
 void Channel::sendEvent(const std::string& name, const std::map<std::string, std::string>& params)
@@ -90,7 +92,7 @@ void Channel::sendEvent(const std::string& name, const std::map<std::string, std
 
 Client::Client() : Shared::NetworkingUDP::Client({ "192.168.0.106:1337" })
 {
-	//
+    //
 }
 
 std::shared_ptr<Shared::NetworkingUDP::Channel> Client::createChannel()
