@@ -71,7 +71,7 @@ Channel::Channel()
 		EVENT->emit(Helpers::PrintEvent({ text }));
 	};
     
-    sendEvent("device_id", { { "value", PLATFORM->getDeviceId() } });
+    sendEvent("uuid", { { "value", PLATFORM->getUUID() } });
 }
 
 void Channel::sendEvent(const std::string& name, const std::map<std::string, std::string>& params)
