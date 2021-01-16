@@ -6,17 +6,15 @@
 
 namespace hcg001
 {
-	class Channel : public Shared::NetworkingUDP::Channel
+	class Channel : public Shared::NetworkingUDP::SimpleChannel
 	{
 	public:
 		Channel();
 
-	public:
-		void sendEvent(const std::string& name, const std::map<std::string, std::string>& params);
+	private:
+		void readFileMessage(Common::BitBuffer& buf);
 
 	private:
-		std::map<std::string, std::function<void(std::map<std::string, std::string>)>> mEvents;
-
 		struct FileDef
 		{
 			size_t progress = 0;
