@@ -24,6 +24,7 @@ namespace hcg001
 
 	protected:
 		void onOpenBegin() override;
+		void onOpenEnd() override;
 		void onCloseBegin() override;
 
 	private:
@@ -32,5 +33,7 @@ namespace hcg001
 	private:
 		std::shared_ptr<Helpers::Label> mLabel;
 		ChangeTextCallback mChangeTextCallback;
+		std::shared_ptr<Shared::SceneHelpers::FastButton> mApplyButton;
+		std::shared_ptr<Shared::SceneHelpers::FastButton> mCancelButton;
 	};
 }

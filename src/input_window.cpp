@@ -19,36 +19,36 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 	mLabel->setText(text);
 	getContent()->attach(mLabel);
 
-	runAction(Actions::Factory::Delayed(2.0f, Actions::Factory::Execute([this] {
-		auto ok_button = std::make_shared<Shared::SceneHelpers::FastButton>();
-		ok_button->setRounding(6.0f);
-		ok_button->setAbsoluteRounding(true);
-		ok_button->getLabel()->setText(LOCALIZE("INPUT_WINDOW_APPLY"));
-		ok_button->getLabel()->setFontSize(18.0f);
-		ok_button->setClickCallback([this] {
-			mChangeTextCallback(mLabel->getText());
-			SCENE_MANAGER->popWindow();
-		});
-		ok_button->setAnchor({ 0.5f, 0.85f });
-		ok_button->setPivot(0.5f);
-		ok_button->setSize({ 96.0f, 36.0f });
-		ok_button->setX(-56.0f);
-		getContent()->attach(ok_button);
+	mApplyButton = std::make_shared<Shared::SceneHelpers::FastButton>();
+	mApplyButton->setRounding(6.0f);
+	mApplyButton->setAbsoluteRounding(true);
+	mApplyButton->getLabel()->setText(LOCALIZE("INPUT_WINDOW_APPLY"));
+	mApplyButton->getLabel()->setFontSize(18.0f);
+	mApplyButton->setClickCallback([this] {
+		mChangeTextCallback(mLabel->getText());
+		SCENE_MANAGER->popWindow();
+	});
+	mApplyButton->setAnchor({ 0.5f, 0.85f });
+	mApplyButton->setPivot(0.5f);
+	mApplyButton->setSize({ 96.0f, 36.0f });
+	mApplyButton->setX(-56.0f);
+	mApplyButton->setVisible(false);
+	getContent()->attach(mApplyButton);
 
-		auto cancel_button = std::make_shared<Shared::SceneHelpers::FastButton>();
-		cancel_button->setRounding(6.0f);
-		cancel_button->setAbsoluteRounding(true);
-		cancel_button->getLabel()->setText(LOCALIZE("INPUT_WINDOW_CANCEL"));
-		cancel_button->getLabel()->setFontSize(18.0f);
-		cancel_button->setClickCallback([this] {
-			SCENE_MANAGER->popWindow();
-		});
-		cancel_button->setAnchor({ 0.5f, 0.85f });
-		cancel_button->setPivot(0.5f);
-		cancel_button->setSize({ 96.0f, 36.0f });
-		cancel_button->setX(56.0f);
-		getContent()->attach(cancel_button);
-	})));
+	mCancelButton = std::make_shared<Shared::SceneHelpers::FastButton>();
+	mCancelButton->setRounding(6.0f);
+	mCancelButton->setAbsoluteRounding(true);
+	mCancelButton->getLabel()->setText(LOCALIZE("INPUT_WINDOW_CANCEL"));
+	mCancelButton->getLabel()->setFontSize(18.0f);
+	mCancelButton->setClickCallback([this] {
+		SCENE_MANAGER->popWindow();
+	});
+	mCancelButton->setAnchor({ 0.5f, 0.85f });
+	mCancelButton->setPivot(0.5f);
+	mCancelButton->setSize({ 96.0f, 36.0f });
+	mCancelButton->setX(56.0f);
+	mCancelButton->setVisible(false);
+	getContent()->attach(mCancelButton);
 }
 
 void InputWindow::onEvent(const Platform::System::VirtualKeyboardTextChanged& e)
@@ -98,12 +98,20 @@ void InputWindow::onEvent(const Platform::Input::Keyboard::Event& e)
 
 void InputWindow::onOpenBegin()
 {
-	Window::onOpenBegin();
+	Scene::Actionable<Window>::onOpenBegin();
 
 	assert(StackCount == 0);
 	StackCount += 1;
 	PLATFORM->showVirtualKeyboard();
 	PLATFORM->setVirtualKeyboardText(mLabel->getText().cpp_str());
+}
+
+void InputWindow::onOpenEnd()
+{
+	Scene::Actionable<Window>::onOpenEnd();
+
+	mApplyButton->setVisible(true);
+	mCancelButton->setVisible(true);
 }
 
 void InputWindow::onCloseBegin()
@@ -112,5 +120,8 @@ void InputWindow::onCloseBegin()
 	StackCount -= 1;
 	assert(StackCount == 0);
 
-	Window::onCloseBegin();
+	mApplyButton->setVisible(false);
+	mCancelButton->setVisible(false);
+
+	Scene::Actionable<Window>::onCloseBegin();
 }
