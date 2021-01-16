@@ -2,6 +2,7 @@
 #include "profile.h"
 #include "helpers.h"
 #include "shop_window.h"
+#include "social_window.h"
 
 using namespace hcg001;
 
@@ -120,7 +121,8 @@ MainMenu::MainMenu()
 	shop_button->setPosition({ 108.0f, 24.0f });
 	shop_button->setPivot({ 0.0f, 0.5f });
 	shop_button->setClickCallback([] {
-		auto window = std::make_shared<ShopWindow>();
+		//auto window = std::make_shared<ShopWindow>();
+		auto window = std::make_shared<SocialWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
 	hud->attach(shop_button);
