@@ -106,6 +106,7 @@ void Application::initialize()
 
 void Application::frame()
 {
+	GAME_STATS("keyboard", (int)PLATFORM->isVirtualKeyboardOpened());
 	adaptToScreen(getScene()->getRoot());
 	ShowCheatsMenu();
 }

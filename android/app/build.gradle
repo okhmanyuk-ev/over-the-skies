@@ -13,6 +13,16 @@ android {
         main.assets.srcDirs += '../../assets'
         main.java.srcDirs += '../../sky/src/Platform/java/'
     }
+    buildTypes {
+        release { }
+        debug {
+            externalNativeBuild {
+                cmake {
+                    arguments "-DBUILD_DEVELOPER=TRUE"
+                }
+            }
+        }
+    }
     externalNativeBuild {
         cmake {
             path '../../CMakeLists.txt'

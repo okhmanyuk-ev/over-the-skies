@@ -43,7 +43,7 @@ namespace hcg001
 		std::unique_ptr<Actions::Action> createOpenAction() override
 		{
 			return Actions::Factory::MakeParallel(
-				Actions::Factory::ChangeAlpha(getBackshadeColor(), 0.5f, 0.5f, Easing::CubicOut),
+				Actions::Factory::ChangeAlpha(getBackshadeColor(), mFadeAlpha, 0.5f, Easing::CubicOut),
 				Actions::Factory::ChangeVerticalAnchor(mContent, 0.5f, 0.5f, Easing::CubicOut)
 			);
 		};
@@ -62,8 +62,13 @@ namespace hcg001
 		auto getCloseOnMissclick() const { return mCloseOnMissclick; }
 		void setCloseOnMissclick(bool value) { mCloseOnMissclick = value; }
 
+	public:
+		auto getFadeAlpha() const { return mFadeAlpha; }
+		void setFadeAlpha(float value) { mFadeAlpha = value; }
+
 	private:
 		std::shared_ptr<Scene::Node> mContent;
 		bool mCloseOnMissclick = true;
+		float mFadeAlpha = 0.5f;
 	};
 }

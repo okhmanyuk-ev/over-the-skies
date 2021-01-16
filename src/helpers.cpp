@@ -1,4 +1,5 @@
 #include "helpers.h"
+#include "input_window.h"
 
 using namespace hcg001::Helpers;
 
@@ -11,23 +12,16 @@ Label::Label()
 TextInputField::TextInputField()
 {
 	setClickCallback([this] {
-		PLATFORM->showVirtualKeyboard();
-		PLATFORM->setVirtualKeyboardText(mLabel->getText().cpp_str());
+		auto text = mLabel->getText();
+		auto callback = [this](auto text) {
+			mLabel->setText(text);
+		};
+		auto input_window = std::make_shared<InputWindow>(text, callback);
+		SCENE_MANAGER->pushWindow(input_window);
 	});
 
 	mLabel = std::make_shared<Label>();
 	mLabel->setAnchor(0.5f);
 	mLabel->setPivot(0.5f);
 	attach(mLabel);
-}
-
-void TextInputField::onEvent(const Shared::TouchEmulator::Event& e)
-{
-	if (PLATFORM->isVirtualKeyboardOpened())
-		PLATFORM->hideVirtualKeyboard();
-}
-
-void TextInputField::onEvent(const Platform::System::VirtualKeyboardTextChanged& e)
-{
-	mLabel->setText(e.text);
 }

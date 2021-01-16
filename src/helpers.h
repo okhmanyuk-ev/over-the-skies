@@ -23,16 +23,10 @@ namespace hcg001::Helpers
 		Label();
 	};
 
-	class TextInputField : public Scene::Clickable<Scene::Node>,
-		public Common::Event::Listenable<Shared::TouchEmulator::Event>,
-		public Common::Event::Listenable<Platform::System::VirtualKeyboardTextChanged>
+	class TextInputField : public Scene::Clickable<Scene::Node>
 	{
 	public:
 		TextInputField();
-
-	private:
-		void onEvent(const Shared::TouchEmulator::Event& e) override;
-		void onEvent(const Platform::System::VirtualKeyboardTextChanged& e) override;
 
 	public:
 		auto getLabel() const { return mLabel; }
