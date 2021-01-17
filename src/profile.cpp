@@ -18,6 +18,12 @@ void Profile::read(const nlohmann::json& json)
 
 	if (json.contains("dailyreward_time"))
 		mDailyRewardTime = json["dailyreward_time"];
+
+	if (json.contains("nickname"))
+	{
+		auto nickname = json["nickname"].get<std::vector<utf8_string::value_type>>();
+		mNickName.assign(nickname.begin(), nickname.end());
+	}
 }
 
 void Profile::write(nlohmann::json& json)
@@ -27,6 +33,7 @@ void Profile::write(nlohmann::json& json)
 	json["skins"] = mSkins;
 	json["dailyreward_day"] = mDailyRewardDay;
 	json["dailyreward_time"] = mDailyRewardTime;
+	json["nickname"] = mNickName;
 }
 
 void Profile::makeDefault()
@@ -34,6 +41,7 @@ void Profile::makeDefault()
 	mHighScore = 0;
 	setRubies(0);
 	mSkins = { 0 };
+	mNickName = "Guest";
 }
 
 void Profile::setRubies(int value)

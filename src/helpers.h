@@ -3,6 +3,7 @@
 #include <shared/all.h>
 #include "hud.h"
 #include "client.h"
+#include "profile.h"
 
 namespace hcg001::Helpers
 {
@@ -15,6 +16,11 @@ namespace hcg001::Helpers
 	struct PrintEvent
 	{
 		std::string text;
+	};
+
+	struct HighscoresEvent
+	{
+		std::vector<int> uids;
 	};
 
 	class Label : public Scene::Label

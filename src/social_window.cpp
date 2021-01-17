@@ -73,25 +73,18 @@ SocialWindow::SocialWindow()
 	nickname_field->setColor(Helpers::BaseWindowColor / 24.0f);
 	content->attach(nickname_field);
 
-	auto nickname_field_input = std::make_shared<Helpers::TextInputField>();
-	nickname_field_input->setAnchor(0.5f);
-	nickname_field_input->setPivot(0.5f);
-	nickname_field_input->setStretch(1.0f);
-	nickname_field_input->getLabel()->setText("guest");
-	nickname_field->attach(nickname_field_input);
+	mNicknameInputField = std::make_shared<Helpers::TextInputField>();
+	mNicknameInputField->setAnchor(0.5f);
+	mNicknameInputField->setPivot(0.5f);
+	mNicknameInputField->setStretch(1.0f);
+	mNicknameInputField->getLabel()->setText(PROFILE->getNickName());
+	nickname_field->attach(mNicknameInputField);
+}
 
-	auto nickname_field2 = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
-	nickname_field2->setPosition({ 128.0f, 98.0f });
-	nickname_field2->setSize({ 174.0f, 24.0f });
-	nickname_field2->setRounding(0.5f);
-	nickname_field2->setPivot({ 0.0f, 0.5f });
-	nickname_field2->setColor(Helpers::BaseWindowColor / 24.0f);
-	content->attach(nickname_field2);
+void SocialWindow::onCloseBegin()
+{
+	Scene::Actionable<Window>::onCloseBegin();
 
-	auto nickname_field_input2 = std::make_shared<Helpers::TextInputField>();
-	nickname_field_input2->setAnchor(0.5f);
-	nickname_field_input2->setPivot(0.5f);
-	nickname_field_input2->setStretch(1.0f);
-	nickname_field_input2->getLabel()->setText("guest");
-	nickname_field2->attach(nickname_field_input2);
+	PROFILE->setNickName(mNicknameInputField->getLabel()->getText());
+	PROFILE->save();
 }

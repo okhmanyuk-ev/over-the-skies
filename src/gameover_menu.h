@@ -1,14 +1,21 @@
 #pragma once
 
 #include "screen.h"
-#include "profile.h"
+#include "helpers.h"
 
 namespace hcg001
 {
-	class GameoverMenu : public Scene::Clickable<Screen>
+	class GameoverMenu : public Scene::Clickable<Screen>,
+		public Common::Event::Listenable<Helpers::HighscoresEvent>
 	{
 	public:
 		GameoverMenu(int score);
+
+	private:
+		void onEvent(const Helpers::HighscoresEvent& e) override;
+
+	protected:
+		void onEnterBegin() override;
 
 	private:
 		std::shared_ptr<Scene::Label> mScoreLabel = std::make_shared<Scene::Label>();

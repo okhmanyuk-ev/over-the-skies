@@ -12,9 +12,11 @@ namespace hcg001
 	public:
 		struct RubiesChangedEvent { };
 
-	protected:
+	public:
 		void read(const nlohmann::json& json) override;
 		void write(nlohmann::json& json) override;
+
+	protected:
 		void makeDefault() override;
 
 	public:
@@ -40,11 +42,15 @@ namespace hcg001
 		auto getDailyRewardTime() const { return mDailyRewardTime; }
 		void setDailyRewardTime(long long value) { mDailyRewardTime = value; }
 
+		auto getNickName() const { return mNickName; }
+		void setNickName(const utf8_string& value) { mNickName = value; }
+
 	private:
 		int mHighScore = 0;
 		int mRubies = 0;
 		std::set<int> mSkins = { 0 };
 		int mDailyRewardDay = 0;
 		long long mDailyRewardTime = 0;
+		utf8_string mNickName = "Guest";
 	};
 }

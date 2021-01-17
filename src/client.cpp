@@ -8,12 +8,55 @@ using namespace hcg001;
 Channel::Channel()
 {
 	addMessageReader("file", [this](auto& buf) { readFileMessage(buf);	});
+
 	addEventCallback("print", [](const auto& params) {
 		auto text = params.at("text");
 		EVENT->emit(Helpers::PrintEvent({ text }));
 	});
+
+	addEventCallback("highscores", [](const auto& params) {
+		auto json = nlohmann::json::parse(params.at("json"));
+		auto uids = json.get<std::vector<int>>();
+		EVENT->emit(Helpers::HighscoresEvent({ uids }));
+	});
     
-    sendEvent("auth", { { "uuid", PLATFORM->getUUID() } });
+	auth();
+	commit();
+}
+
+void Channel::auth()
+{
+#if defined(PLATFORM_WINDOWS)
+	auto platform = "win";
+#elif defined(PLATFORM_IOS)
+	auto platform = "ios";
+#elif defined(PLATFORM_ANDROID)
+	auto platform = "android";
+#endif
+	sendEvent("auth", {
+		{ "platform", platform },
+		{ "uuid", PLATFORM->getUUID() } 
+	});
+}
+
+void Channel::commit()
+{
+	nlohmann::json profile;
+	PROFILE->write(profile);
+
+	auto dump = profile.dump();
+
+	if (mPrevProfileDump == dump)
+		return;
+
+	mPrevProfileDump = dump;
+
+	sendEvent("commit", { { "profile", dump,  } });
+}
+
+void Channel::requestHighscores()
+{
+	sendEvent("request_highscores");
 }
 
 void Channel::readFileMessage(Common::BitBuffer& buf)
@@ -72,10 +115,18 @@ std::shared_ptr<Shared::NetworkingUDP::Channel> Client::createChannel()
 	return std::make_shared<hcg001::Channel>();
 }
 
-void Client::sendEvent(const std::string& name, const std::map<std::string, std::string>& params)
+void Client::commit()
 {
 	if (!isConnected())
 		return;
 
-	getMyChannel()->sendEvent(name, params);
+	getMyChannel()->commit();
+}
+
+void Client::requestHighscores()
+{
+	if (!isConnected())
+		return;
+
+	getMyChannel()->requestHighscores();
 }

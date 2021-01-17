@@ -1,5 +1,4 @@
 #include "gameover_menu.h"
-#include "profile.h"
 
 using namespace hcg001;
 
@@ -75,4 +74,21 @@ GameoverMenu::GameoverMenu(int score)
 			);
 		})
 	);
+}
+
+void GameoverMenu::onEvent(const Helpers::HighscoresEvent& e)
+{
+	LOG("highscores begin");
+	for (int i = 0; i < e.uids.size(); i++)
+	{
+		LOG(std::to_string(i) + ") " + std::to_string(e.uids.at(i)));
+	}
+	LOG("highscores end");
+}
+
+void GameoverMenu::onEnterBegin()
+{
+	Scene::Clickable<Screen>::onEnterBegin();
+
+	CLIENT->requestHighscores();
 }

@@ -57,8 +57,8 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 
 Application::~Application()
 {
-	ENGINE->removeSystem<Client>();
 	PROFILE->save();
+	ENGINE->removeSystem<Client>();
 }
 
 void Application::initialize()
@@ -84,19 +84,24 @@ void Application::initialize()
 		SCENE_MANAGER->switchScreen(gameplay);
 	});
 
-	sky->changeColor(Graphics::Color::Hsv::HueBlue, Graphics::Color::Hsv::HueRed);
+	Actions::Run(Actions::Factory::MakeSequence(
+		Actions::Factory::WaitOneFrame(),
+		Actions::Factory::Wait(1.0f),
+		Actions::Factory::Execute([sky] {
+			sky->changeColor(Graphics::Color::Hsv::HueBlue, Graphics::Color::Hsv::HueRed);
+		}),
+		Actions::Factory::RepeatInfinite([sky] {
+			return Actions::Factory::Delayed(10.0f,
+				Actions::Factory::Execute([sky] {
+					sky->changeColor();
+				})
+			);
+		})	
+	));
 
 	SCENE_MANAGER->switchScreen(main_menu, [this] {
 		tryShowDailyReward();
 	});
-
-	Actions::Run(Actions::Factory::RepeatInfinite([sky] {
-		return Actions::Factory::Delayed(10.0f,
-			Actions::Factory::Execute([sky] {
-				sky->changeColor();
-			})
-		);
-	}));
 
 	// hud
 
@@ -106,7 +111,6 @@ void Application::initialize()
 
 void Application::frame()
 {
-	GAME_STATS("keyboard", (int)PLATFORM->isVirtualKeyboardOpened());
 	adaptToScreen(getScene()->getRoot());
 	ShowCheatsMenu();
 }
@@ -218,4 +222,9 @@ void Application::onEvent(const Helpers::PrintEvent& e)
 	rect->runAction(Actions::Factory::ExecuteInfinite([rect, label] {
 		rect->setHeight(label->getHeight());
 	}));
+}
+
+void Application::onEvent(const Shared::Profile::ProfileSavedEvent& e)
+{
+	CLIENT->commit();
 }

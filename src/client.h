@@ -11,6 +11,11 @@ namespace hcg001
 	public:
 		Channel();
 
+	public:
+		void auth();
+		void commit();
+		void requestHighscores();
+
 	private:
 		void readFileMessage(Common::BitBuffer& buf);
 
@@ -21,6 +26,9 @@ namespace hcg001
 			Common::BitBuffer buf;
 		};
 		std::map<std::string, FileDef> mFiles;
+
+	private:
+		std::string mPrevProfileDump;
 	};
 
 	class Client : public Shared::NetworkingUDP::Client
@@ -32,7 +40,8 @@ namespace hcg001
 		std::shared_ptr<Shared::NetworkingUDP::Channel> createChannel() override;
 
 	public:
-		void sendEvent(const std::string& name, const std::map<std::string, std::string>& params);
+		void commit();
+		void requestHighscores();
 
 	private:
 		auto getMyChannel() const { return std::dynamic_pointer_cast<Channel>(getChannel()); }
