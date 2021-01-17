@@ -18,8 +18,9 @@ namespace hcg001
 		void onEnterBegin() override;
 
 	private:
-		std::shared_ptr<Scene::Label> mScoreLabel = std::make_shared<Scene::Label>();
-		std::shared_ptr<Scene::Label> mHighScoreLabel = std::make_shared<Scene::Label>();
-		std::shared_ptr<Scene::Label> mRubyScoreLabel = std::make_shared<Scene::Label>();
+		std::shared_ptr<Scene::Label> mScoreLabel;
+		std::shared_ptr<Scene::Label> mHighScoreLabel;
+		std::shared_ptr<Scene::Label> mRubyScoreLabel;
+		std::shared_ptr<Scene::Rectangle> mHighscoresRect;
 	};
 }

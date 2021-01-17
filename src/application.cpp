@@ -86,7 +86,7 @@ void Application::initialize()
 
 	Actions::Run(Actions::Factory::MakeSequence(
 		Actions::Factory::WaitOneFrame(),
-		Actions::Factory::Wait(1.0f),
+		Actions::Factory::Wait(0.5f),
 		Actions::Factory::Execute([sky] {
 			sky->changeColor(Graphics::Color::Hsv::HueBlue, Graphics::Color::Hsv::HueRed);
 		}),

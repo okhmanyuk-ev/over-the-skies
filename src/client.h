@@ -15,6 +15,7 @@ namespace hcg001
 		void auth();
 		void commit();
 		void requestHighscores();
+		void requestProfile(int uid);
 
 	private:
 		void readFileMessage(Common::BitBuffer& buf);
@@ -34,6 +35,9 @@ namespace hcg001
 	class Client : public Shared::NetworkingUDP::Client
 	{
 	public:
+		static inline std::map<int/*id*/, nlohmann::json> Profiles;
+
+	public:
 		Client();
 
 	protected:
@@ -42,6 +46,7 @@ namespace hcg001
 	public:
 		void commit();
 		void requestHighscores();
+		void requestProfile(int uid);
 
 	private:
 		auto getMyChannel() const { return std::dynamic_pointer_cast<Channel>(getChannel()); }

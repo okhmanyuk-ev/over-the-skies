@@ -23,6 +23,11 @@ namespace hcg001::Helpers
 		std::vector<int> uids;
 	};
 
+	struct ProfileReceived
+	{
+		int uid;
+	};
+
 	class Label : public Scene::Label
 	{
 	public:

@@ -19,6 +19,13 @@ Channel::Channel()
         auto uids = json.get<std::vector<int>>();
 		EVENT->emit(Helpers::HighscoresEvent({ uids }));
 	});
+
+	addEventCallback("profile", [](const auto& params) {
+		auto uid = std::stoi(params.at("uid"));
+		auto dump = params.at("json");
+		Client::Profiles[uid] = nlohmann::json::parse(dump);
+		EVENT->emit(Helpers::ProfileReceived({ uid }));
+	});
     
 	auth();
 	commit();
@@ -57,6 +64,13 @@ void Channel::commit()
 void Channel::requestHighscores()
 {
 	sendEvent("request_highscores");
+}
+
+void Channel::requestProfile(int uid)
+{
+	sendEvent("request_profile", {
+		{ "uid", std::to_string(uid) }
+	});
 }
 
 void Channel::readFileMessage(Common::BitBuffer& buf)
@@ -129,4 +143,12 @@ void Client::requestHighscores()
 		return;
 
 	getMyChannel()->requestHighscores();
+}
+
+void Client::requestProfile(int uid)
+{
+	if (!isConnected())
+		return;
+
+	getMyChannel()->requestProfile(uid);
 }

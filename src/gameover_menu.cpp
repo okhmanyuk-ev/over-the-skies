@@ -6,6 +6,7 @@ GameoverMenu::GameoverMenu(int score)
 {
 	// score label
 
+	mScoreLabel = std::make_shared<Scene::Label>();
 	mScoreLabel->setFont(FONT("default"));
 	mScoreLabel->setFontSize(56.0f);
 	mScoreLabel->setAnchor({ 0.5f, 0.25f });
@@ -26,6 +27,7 @@ GameoverMenu::GameoverMenu(int score)
 
 	// highscore label
 
+	mHighScoreLabel = std::make_shared<Scene::Label>();
 	mHighScoreLabel->setFont(FONT("default"));
 	mHighScoreLabel->setFontSize(28.0f);
 	mHighScoreLabel->setAnchor({ 1.0f, 0.5f });
@@ -46,6 +48,7 @@ GameoverMenu::GameoverMenu(int score)
 
 	// rubies label
 
+	mRubyScoreLabel = std::make_shared<Scene::Label>();
 	mRubyScoreLabel->setFont(FONT("default"));
 	mRubyScoreLabel->setFontSize(28.0f);
 	mRubyScoreLabel->setAnchor({ 1.0f, 0.5f });
@@ -74,16 +77,49 @@ GameoverMenu::GameoverMenu(int score)
 			);
 		})
 	);
+
+	mHighscoresRect = std::make_shared<Scene::Rectangle>();
+	mHighscoresRect->setAbsoluteRounding(true);
+	mHighscoresRect->setRounding(16.0f);
+	mHighscoresRect->setSize({ 256.0f, 128.0f });
+	mHighscoresRect->setAnchor(0.5f);
+	mHighscoresRect->setPivot(0.5f);
+	mHighscoresRect->setAlpha(0.25f);
+	mHighscoresRect->setY(64.0f);
+	attach(mHighscoresRect);
 }
 
 void GameoverMenu::onEvent(const Helpers::HighscoresEvent& e)
 {
-	LOG("highscores begin");
+	std::vector<std::shared_ptr<Scene::Node>> items;
+
 	for (int i = 0; i < e.uids.size(); i++)
 	{
-		LOG(std::to_string(i) + ") " + std::to_string(e.uids.at(i)));
+		auto uid = e.uids.at(i);
+
+		CLIENT->requestProfile(uid);
+
+		auto label = std::make_shared<Scene::Actionable<Helpers::Label>>();
+		label->setText(std::to_string(i) + ") " + std::to_string(uid));
+		label->setAnchor(0.5f);
+		label->setPivot(0.5f);
+		items.push_back(label);
+
+		auto wait_func = [uid] { 
+			return Client::Profiles.count(uid) == 0; 
+		};
+
+		label->runAction(Actions::Factory::Delayed(wait_func, Actions::Factory::Execute([uid, label] {
+			auto name_chars = Client::Profiles.at(uid).at("nickname");
+			auto name = utf8_string(name_chars.begin(), name_chars.end());
+			label->setText(name);
+		})));
 	}
-	LOG("highscores end");
+
+	glm::vec2 cell_size = { mHighscoresRect->getWidth(), 32.0f };
+	auto grid = Shared::SceneHelpers::MakeVerticalGrid(cell_size, items);
+
+	mHighscoresRect->attach(grid);
 }
 
 void GameoverMenu::onEnterBegin()
