@@ -33,7 +33,7 @@ void Profile::write(nlohmann::json& json)
 	json["skins"] = mSkins;
 	json["dailyreward_day"] = mDailyRewardDay;
 	json["dailyreward_time"] = mDailyRewardTime;
-	json["nickname"] = mNickName;
+	json["nickname"] = std::vector<utf8_string::value_type>(mNickName.begin(), mNickName.end());
 }
 
 void Profile::makeDefault()

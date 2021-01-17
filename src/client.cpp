@@ -15,8 +15,8 @@ Channel::Channel()
 	});
 
 	addEventCallback("highscores", [](const auto& params) {
-		auto json = nlohmann::json::parse(params.at("json"));
-		auto uids = json.get<std::vector<int>>();
+		nlohmann::json json = nlohmann::json::parse(params.at("json"));
+        auto uids = json.get<std::vector<int>>();
 		EVENT->emit(Helpers::HighscoresEvent({ uids }));
 	});
     
