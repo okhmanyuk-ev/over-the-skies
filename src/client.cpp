@@ -29,6 +29,7 @@ Channel::Channel()
     
 	auth();
 	commit();
+	requestHighscores();
 }
 
 void Channel::auth()

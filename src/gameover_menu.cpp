@@ -78,7 +78,7 @@ GameoverMenu::GameoverMenu(int score)
 		})
 	);
 
-	mHighscoresRect = std::make_shared<Scene::Rectangle>();
+	/*mHighscoresRect = std::make_shared<Scene::Rectangle>();
 	mHighscoresRect->setAbsoluteRounding(true);
 	mHighscoresRect->setRounding(16.0f);
 	mHighscoresRect->setSize({ 256.0f, 128.0f });
@@ -86,12 +86,12 @@ GameoverMenu::GameoverMenu(int score)
 	mHighscoresRect->setPivot(0.5f);
 	mHighscoresRect->setAlpha(0.25f);
 	mHighscoresRect->setY(64.0f);
-	attach(mHighscoresRect);
+	attach(mHighscoresRect);*/
 }
 
 void GameoverMenu::onEvent(const Helpers::HighscoresEvent& e)
 {
-	std::vector<std::shared_ptr<Scene::Node>> items;
+	/*std::vector<std::shared_ptr<Scene::Node>> items;
 
 	for (int i = 0; i < e.uids.size(); i++)
 	{
@@ -119,12 +119,12 @@ void GameoverMenu::onEvent(const Helpers::HighscoresEvent& e)
 	glm::vec2 cell_size = { mHighscoresRect->getWidth(), 32.0f };
 	auto grid = Shared::SceneHelpers::MakeVerticalGrid(cell_size, items);
 
-	mHighscoresRect->attach(grid);
+	mHighscoresRect->attach(grid);*/
 }
 
 void GameoverMenu::onEnterBegin()
 {
 	Scene::Clickable<Screen>::onEnterBegin();
 
-	CLIENT->requestHighscores();
+	//CLIENT->requestHighscores();
 }

@@ -3,6 +3,7 @@
 #include "helpers.h"
 #include "shop_window.h"
 #include "social_window.h"
+#include "social_panel.h"
 
 using namespace hcg001;
 
@@ -31,8 +32,9 @@ MainMenu::MainMenu()
 			mStartCallback();
 	});
 	play_button->setSize(ButtonSize);
-	play_button->setAnchor({ -0.5f, 0.75f });
+	play_button->setAnchor({ -0.5f, 0.5f });
 	play_button->setPivot(0.5f);
+	play_button->setPosition({ 0.0f, 224.0f });
 	attach(play_button);
 
 	auto unlock_button = std::make_shared<Shared::SceneHelpers::FastButton>();
@@ -58,8 +60,10 @@ MainMenu::MainMenu()
 		SCENE_MANAGER->switchScreen(buy_skin_menu);
 	});
 	unlock_button->setSize(ButtonSize);
-	unlock_button->setAnchor({ 1.5f, 0.75f });
+	unlock_button->setAnchor({ 1.5f, 0.5f });
 	unlock_button->setPivot(0.5f);
+	unlock_button->setPosition({ 0.0f, 224.0f });
+
 	attach(unlock_button);
 
 	runAction(Actions::Factory::ExecuteInfinite([this, play_button, unlock_button] {
@@ -126,6 +130,12 @@ MainMenu::MainMenu()
 		SCENE_MANAGER->pushWindow(window);
 	});
 	hud->attach(shop_button);
+
+	auto social_panel = std::make_shared<SocialPanel>();
+	social_panel->setAnchor(0.5f);
+	social_panel->setPivot(0.5f);
+	social_panel->setPosition({ 0.0f, -48.0f });
+	attach(social_panel);
 }
 
 void MainMenu::refresh()
@@ -142,6 +152,7 @@ void MainMenu::refresh()
 	mScrollbox->setSensitivity({ 1.0f, 0.0f });
 	mScrollbox->setAnchor(0.5f);
 	mScrollbox->setPivot(0.5f);
+	mScrollbox->setPosition({ 0.0f, 96.0f });
 	mScrollbox->setHorizontalStretch(1.0f);
 	mScrollbox->setHeight(ItemSize + ScrollPadding);
 	mScrollbox->setInertiaFriction(0.1f);
