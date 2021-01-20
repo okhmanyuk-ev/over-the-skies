@@ -5,7 +5,7 @@
 
 namespace hcg001
 {
-	class SocialPanel : public Scene::Rectangle,
+	class SocialPanel : public Scene::Node,
 		public Common::Event::Listenable<Helpers::HighscoresEvent>
 	{
 	public:
@@ -15,6 +15,8 @@ namespace hcg001
 		void onEvent(const Helpers::HighscoresEvent& e) override;
 
 	private:
+		std::shared_ptr<Scene::ClippableStencil<Scene::Rectangle>> mRect;
+		std::shared_ptr<Scene::Scrollbox> mScrollbox;
 		std::shared_ptr<Scene::Node> mGrid;
 	};
 }

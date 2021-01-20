@@ -354,14 +354,12 @@ void MainMenu::menuPhysics(float dTime)
 	}
 
 	auto nearest_projected = unproject(nearest->project(nearest->getAbsoluteSize() / 2.0f));
-	auto offset = distance * dTime * 10.0f;
-
-	auto content = mScrollbox->getContent();
-
+	auto offset = distance * dTime * 10.0f / mScrollbox->getHorizontalScrollBoundSize();
+	
 	if (nearest_projected.x < slot_projected.x)
-		content->setX(content->getX() + offset);
+		mScrollbox->setHorizontalScrollPosition(mScrollbox->getHorizontalScrollPosition() - offset);
 	else
-		content->setX(content->getX() - offset);
+		mScrollbox->setHorizontalScrollPosition(mScrollbox->getHorizontalScrollPosition() + offset);
 
 	mDecideButtons = distance <= 32.0f && mScrollTarget == nullptr;
 }
