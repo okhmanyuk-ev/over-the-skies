@@ -28,6 +28,8 @@ MainMenu::MainMenu()
 		if (PROFILE->isSkinLocked(mChoosedSkin))
 			return;
 
+		PROFILE->setCurrentSkin(mChoosedSkin);
+
 		if (mStartCallback)
 			mStartCallback();
 	});
@@ -107,13 +109,8 @@ MainMenu::MainMenu()
 
 	refresh();
 
-	mTimestepFixer.setTimestep(1.0f / 120.0f);
-	mTimestepFixer.setCallback([this](float dTime) {
-		menuPhysics(dTime);
-	});
-
 	runAction(Actions::Factory::ExecuteInfinite([this] {
-		mTimestepFixer.execute();
+		menuPhysics(Clock::ToSeconds(FRAME->getTimeDelta()));
 	}));
 
 	auto hud = std::make_shared<Shared::SceneHelpers::Hud>();
@@ -140,11 +137,11 @@ MainMenu::MainMenu()
 
 void MainMenu::refresh()
 {
-	float content_x = 0.0f;
+	glm::vec2 prev_scroll_pos = { 0.0f, 0.0f };
 
 	if (mScrollbox)
 	{
-		content_x = mScrollbox->getContent()->getX();
+		prev_scroll_pos = mScrollbox->getScrollPosition();
 		detach(mScrollbox);
 	}
 
@@ -156,6 +153,7 @@ void MainMenu::refresh()
 	mScrollbox->setHorizontalStretch(1.0f);
 	mScrollbox->setHeight(ItemSize + ScrollPadding);
 	mScrollbox->setInertiaFriction(0.1f);
+	mScrollbox->setScrollPosition(prev_scroll_pos);
 
 	mItems = createScrollItems();
 	
@@ -167,7 +165,6 @@ void MainMenu::refresh()
 
 	content->setWidth(row->getWidth() + ItemSize);
 	content->setHeight(mScrollbox->getHeight());
-	content->setX(content_x);
 	content->attach(row);
 
 	auto bounding = mScrollbox->getBounding();
@@ -304,6 +301,9 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 				hideFarNode(name);
 			}));
 		}
+
+		if (PROFILE->getCurrentSkin() == skin)
+			mScrollTarget = item;
 	}
 
 	return result;

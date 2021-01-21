@@ -39,9 +39,20 @@ SocialPanel::SocialPanel()
 	personal_button->setAlpha(0.5f);
 	attach(personal_button);
 
-	Actions::Run(Actions::Factory::ExecuteInfinite([this] {
-		auto pos = mScrollbox->getScrollPosition();
-		GAME_STATS("scroll", std::to_string(pos.x) + " " + std::to_string(pos.y));
+	/*Actions::Run(Actions::Factory::ExecuteInfinite([this] {
+		auto overscroll = mScrollbox->mOverscroll;
+		GAME_STATS("overscroll", std::to_string(overscroll.x) + " " + std::to_string(overscroll.y));
+		auto scroll_pos = mScrollbox->getScrollPosition();
+		GAME_STATS("scroll_pos", std::to_string(scroll_pos.x) + " " + std::to_string(scroll_pos.y));
+	}));*/
+
+	runAction(Actions::Factory::RepeatInfinite([this] {
+		return Actions::Factory::MakeSequence(
+			Actions::Factory::Wait(1.0f),
+			Actions::Factory::ChangeVerticalScrollPosition(mScrollbox, 1.0f, 3.0f, Easing::CubicInOut),
+			Actions::Factory::Wait(1.0f),
+			Actions::Factory::ChangeVerticalScrollPosition(mScrollbox, 0.0f, 3.0f, Easing::CubicInOut)
+		);
 	}));
 }
 
@@ -58,7 +69,7 @@ void SocialPanel::onEvent(const Helpers::HighscoresEvent& e)
 
 	bool grayed_line = true;
 
-	for (int j = 0; j < 10; j++)
+	for (int j = 0; j < 5; j++)
 	{
 		for (int i = 0; i < e.uids.size(); i++)
 		{
@@ -107,9 +118,17 @@ void SocialPanel::onEvent(const Helpers::HighscoresEvent& e)
 			skin_img->setAnchor(0.5f);
 			skin_img->setPivot(0.5f);
 			skin_img->runAction(Actions::Factory::Delayed(wait_profile_callback, Actions::Factory::Execute([skin_img, uid] {
-				//auto score = Client::Profiles.at(uid).at("highscore").get<int>();
-				//score_label->setText(std::to_string(score));
-				skin_img->setTexture(TEXTURE(SkinPath.at(Skin::Football)));
+				const auto& profile = Client::Profiles.at(uid);
+
+				if (!profile.contains("current_skin"))
+					return;
+
+				auto skin_int = profile.at("current_skin").get<int>();
+
+				if (skin_int >= SkinCount)
+					return;
+
+				skin_img->setTexture(TEXTURE(SkinPath.at((Skin)skin_int)));
 			})));
 
 			auto h_grid = Shared::SceneHelpers::MakeHorizontalGrid(VerticalGridItemSize.y, {

@@ -5,7 +5,7 @@
 
 using namespace hcg001;
 
-Gameplay::Gameplay(Skin skin)
+Gameplay::Gameplay()
 {
 	setTouchable(true);
 
@@ -39,12 +39,12 @@ Gameplay::Gameplay(Skin skin)
 	mRectangleParticlesHolder->setStretch(1.0f);
 	mGameField->attach(mRectangleParticlesHolder);
 
-	mPlayer = createPlayer(skin, mPlayerTrailHolder);
+	mPlayer = createPlayer(PROFILE->getCurrentSkin(), mPlayerTrailHolder);
 	mPlayer->setAlpha(0.0f);
 
 	runAction(Actions::Factory::Delayed([this] { return !isTransformReady(); },
 		Actions::Factory::MakeSequence(
-			Actions::Factory::Execute([this, skin] {
+			Actions::Factory::Execute([this] {
 				mPlayer->setPosition({ getAbsoluteWidth() / 2.0f, (-getAbsoluteHeight() / 2.0f) - 32.0f });
 				mGameField->attach(mPlayer);
 			}),

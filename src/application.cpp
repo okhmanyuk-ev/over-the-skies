@@ -70,7 +70,7 @@ void Application::initialize()
 
 	auto main_menu = std::make_shared<MainMenu>();
 	main_menu->setStartCallback([sky, main_menu] {
-		auto gameplay = std::make_shared<Gameplay>(main_menu->getChoosedSkin());
+		auto gameplay = std::make_shared<Gameplay>();
 		gameplay->setGameoverCallback([main_menu, gameplay] {
 			auto gameover_screen = std::make_shared<GameoverMenu>(gameplay->getScore());
 			gameover_screen->setClickCallback([main_menu] {

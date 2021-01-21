@@ -33,6 +33,9 @@ namespace hcg001
 		int getRubies() const { return mRubies; }
 		void setRubies(int value);
 
+		auto getCurrentSkin() const { return mCurrentSkin; }
+		void setCurrentSkin(Skin value) { mCurrentSkin = value; }
+
 		auto getSkins() const { return mSkins; }
 		void setSkins(std::set<int> value) { mSkins = value; }
 
@@ -48,6 +51,7 @@ namespace hcg001
 	private:
 		int mHighScore = 0;
 		int mRubies = 0;
+		Skin mCurrentSkin = Skin::Ball;
 		std::set<int> mSkins = { 0 };
 		int mDailyRewardDay = 0;
 		long long mDailyRewardTime = 0;

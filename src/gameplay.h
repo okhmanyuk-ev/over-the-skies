@@ -14,7 +14,7 @@ namespace hcg001
 		const float MaxFallVelocity = 20.0f;
 
 	public:
-		Gameplay(Skin skin);
+		Gameplay();
 
 	protected:
 		void touch(Touch type, const glm::vec2& pos) override;

@@ -19,7 +19,6 @@ namespace hcg001
 		MainMenu();
 
 	public:
-		auto getChoosedSkin() const { return mChoosedSkin; }
 		void setStartCallback(std::function<void()> value) { mStartCallback = value; }
 
 	private:
@@ -36,6 +35,5 @@ namespace hcg001
 		bool mDecideButtons = false;
 		bool mButtonsAnimating = false;
 		bool mPlayButtonVisible = false;
-		Common::TimestepFixer mTimestepFixer;
 	};
 }
