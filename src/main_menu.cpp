@@ -2,7 +2,7 @@
 #include "profile.h"
 #include "helpers.h"
 #include "shop_window.h"
-#include "social_window.h"
+#include "options_window.h"
 #include "social_panel.h"
 
 using namespace hcg001;
@@ -122,11 +122,22 @@ MainMenu::MainMenu()
 	shop_button->setPosition({ 108.0f, 24.0f });
 	shop_button->setPivot({ 0.0f, 0.5f });
 	shop_button->setClickCallback([] {
-		//auto window = std::make_shared<ShopWindow>();
-		auto window = std::make_shared<SocialWindow>();
+		auto window = std::make_shared<ShopWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
 	hud->attach(shop_button);
+
+	auto options_button = std::make_shared<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>();
+	options_button->setTexture(TEXTURE("textures/options.png"));
+	options_button->setAdaptSize({ 24.0f, 24.0f });
+	options_button->setPosition({ -16.0f, 24.0f });
+	options_button->setAnchor({ 1.0f, 0.0f });
+	options_button->setPivot({ 1.0f, 0.5f });
+	options_button->setClickCallback([] {
+		auto window = std::make_shared<OptionsWindow>();
+		SCENE_MANAGER->pushWindow(window);
+	});
+	hud->attach(options_button);
 
 	auto social_panel = std::make_shared<SocialPanel>();
 	social_panel->setAnchor(0.5f);

@@ -6,10 +6,10 @@
 
 namespace hcg001
 {
-	class SocialWindow : public Scene::Actionable<Window>
+	class OptionsWindow : public Scene::Actionable<Window>
 	{
 	public:
-		SocialWindow();
+		OptionsWindow();
 
 	protected:
 		void onCloseBegin() override;

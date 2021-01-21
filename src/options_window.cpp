@@ -1,14 +1,14 @@
-#include "social_window.h"
+#include "options_window.h"
 #include "helpers.h"
 
 using namespace hcg001;
 
-SocialWindow::SocialWindow()
+OptionsWindow::OptionsWindow()
 {
 	auto rect = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
 	rect->setRounding(12.0f);
 	rect->setAbsoluteRounding(true);
-	rect->setSize({ 314.0f, 286.0f });
+	rect->setSize({ 314.0f, 128.0f });
 	rect->setAnchor(0.5f);
 	rect->setPivot(0.5f);
 	rect->setTouchable(true);
@@ -21,7 +21,7 @@ SocialWindow::SocialWindow()
 	rect->attach(header);
 
 	auto footer = std::make_shared<Scene::Node>();
-	footer->setHeight(48.0f);
+	footer->setHeight(44.0f);
 	footer->setHorizontalStretch(1.0f);
 	footer->setAnchor({ 0.5f, 1.0f });
 	footer->setPivot({ 0.5f, 1.0f });
@@ -33,18 +33,6 @@ SocialWindow::SocialWindow()
 	content->setVerticalMargin(header->getHeight() + footer->getHeight());
 	rect->attach(content);
 
-	auto block = std::make_shared<Shared::SceneHelpers::Backshaded<Helpers::Label>>();
-	block->setAnchor(0.5f);
-	block->setPivot(0.5f);
-	block->getBackshadeColor()->setColor(Graphics::Color::Black);
-	block->getBackshadeColor()->setAlpha(0.5f);
-	block->setText("SOCIAL_WINDOW_SERVER_UNAVAILABLE");
-	//rect->attach(block);
-
-	runAction(Actions::Factory::ExecuteInfinite([block] {
-	//	block->setEnabled(!CLIENT->isConnected());
-	}));
-
 	auto header_bg = std::make_shared<Scene::Rectangle>();
 	header_bg->setStretch(1.0f);
 	header_bg->setColor(Helpers::BaseWindowColor);
@@ -53,23 +41,25 @@ SocialWindow::SocialWindow()
 
 	auto title = std::make_shared<Helpers::Label>();
 	title->setFontSize(20.0f);
-	title->setText(LOCALIZE("SOCIAL_WINDOW_TITLE"));
+	title->setText(LOCALIZE("OPTIONS_WINDOW_TITLE"));
 	title->setAnchor(0.5f);
 	title->setPivot(0.5f);
 	header_bg->attach(title);
 
 	auto nickname_label = std::make_shared<Helpers::Label>();
-	nickname_label->setPosition({ 16.0f, 18.0f });
-	nickname_label->setAnchor({ 0.0f, 0.0f });
+	nickname_label->setFontSize(16.0f);
+	nickname_label->setPosition({ 16.0f, 0.0f });
+	nickname_label->setAnchor({ 0.0f, 0.5f });
 	nickname_label->setPivot({ 0.0f, 0.5f });
-	nickname_label->setText(LOCALIZE("SOCIAL_WINDOW_NICKNAME"));
+	nickname_label->setText(LOCALIZE("OPTIONS_WINDOW_NICKNAME"));
 	content->attach(nickname_label);
 
 	auto nickname_field = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
-	nickname_field->setPosition({ 128.0f, 18.0f });
+	nickname_field->setPosition({ 128.0f, 0.0f });
 	nickname_field->setSize({ 174.0f, 24.0f });
 	nickname_field->setRounding(0.5f);
 	nickname_field->setPivot({ 0.0f, 0.5f });
+	nickname_field->setAnchor({ 0.0f, 0.5f });
 	nickname_field->setColor(Helpers::BaseWindowColor / 24.0f);
 	content->attach(nickname_field);
 
@@ -79,9 +69,23 @@ SocialWindow::SocialWindow()
 	mNicknameInputField->setStretch(1.0f);
 	mNicknameInputField->getLabel()->setText(PROFILE->getNickName());
 	nickname_field->attach(mNicknameInputField);
+
+	auto ok_button = std::make_shared<Shared::SceneHelpers::FastButton>();
+	ok_button->setRounding(6.0f);
+	ok_button->setAbsoluteRounding(true);
+	ok_button->setColor(Helpers::BaseWindowColor);
+	ok_button->getLabel()->setText(LOCALIZE("OPTIONS_WINDOW_OK"));
+	ok_button->getLabel()->setFontSize(18.0f);
+	ok_button->setClickCallback([] {
+		SCENE_MANAGER->popWindow();
+	});
+	ok_button->setAnchor(0.5f);
+	ok_button->setPivot(0.5f);
+	ok_button->setSize({ 128.0f, 28.0f });
+	footer->attach(ok_button);
 }
 
-void SocialWindow::onCloseBegin()
+void OptionsWindow::onCloseBegin()
 {
 	Scene::Actionable<Window>::onCloseBegin();
 

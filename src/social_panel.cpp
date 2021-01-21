@@ -71,13 +71,6 @@ SocialPanel::SocialPanel()
 	refresh_button->setAlpha(0.25f);
 	attach(refresh_button);
 
-	/*Actions::Run(Actions::Factory::ExecuteInfinite([this] {
-		auto overscroll = mScrollbox->mOverscroll;
-		GAME_STATS("overscroll", std::to_string(overscroll.x) + " " + std::to_string(overscroll.y));
-		auto scroll_pos = mScrollbox->getScrollPosition();
-		GAME_STATS("scroll_pos", std::to_string(scroll_pos.x) + " " + std::to_string(scroll_pos.y));
-	}));*/
-
 	runAction(Actions::Factory::RepeatInfinite([this] {
 		return Actions::Factory::MakeSequence(
 			Actions::Factory::Wait(1.0f),

@@ -73,6 +73,7 @@ void Channel::commit()
 	// update profile in map
 	mProfiles.erase(mUID);
 	mProfiles.insert({ mUID, PROFILE });
+	EVENT->emit(Helpers::ProfileReceived({ mUID }));
 }
 
 void Channel::requestHighscores()
