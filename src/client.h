@@ -55,6 +55,9 @@ namespace hcg001
 		std::shared_ptr<Shared::NetworkingUDP::Channel> createChannel() override;
 
 	public:
+		void frame() override;
+
+	public:
 		void commit();
 		void requestHighscores();
 		void requestProfile(int uid);
