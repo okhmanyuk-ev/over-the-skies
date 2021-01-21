@@ -90,6 +90,11 @@ void Channel::requestProfile(int uid)
 	});
 }
 
+void Channel::clearProfiles()
+{
+	mProfiles.clear();
+}
+
 void Channel::readFileMessage(Common::BitBuffer& buf)
 {
 	auto path = Common::BufferHelpers::ReadString(buf);
@@ -185,4 +190,12 @@ const Channel::ProfilesMap& Client::getProfiles() const
 { 
 	assert(isConnected());
 	return getMyChannel()->getProfiles(); 
+}
+
+void Client::clearProfiles()
+{
+	if (!isConnected())
+		return; 
+
+	getMyChannel()->clearProfiles();
 }

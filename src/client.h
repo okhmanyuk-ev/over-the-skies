@@ -20,6 +20,7 @@ namespace hcg001
 		void commit();
 		void requestHighscores();
 		void requestProfile(int uid);
+		void clearProfiles();
 
 	private:
 		void readFileMessage(Common::BitBuffer& buf);
@@ -63,5 +64,6 @@ namespace hcg001
 
 	public:
 		const Channel::ProfilesMap&  getProfiles() const;
+		void clearProfiles();
 	};
 }

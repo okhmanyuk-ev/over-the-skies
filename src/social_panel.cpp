@@ -22,32 +22,52 @@ SocialPanel::SocialPanel()
 	mScrollbox->getBounding()->setPivot(0.5f);
 	mRect->attach(mScrollbox);
 
-	auto top_button = std::make_shared<Helpers::Label>();
-	top_button->setText("ALL"); // TODO: localize
-	top_button->setFontSize(14.0f);
-	top_button->setAnchor({ 0.0f, 0.0f });
-	top_button->setPivot({ 0.5f, 1.0f });
-	top_button->setPosition({ 32.0f, -4.0f });
-	attach(top_button);
+	auto table_number_header = std::make_shared<Helpers::Label>();
+	table_number_header->setText(LOCALIZE("#"));
+	table_number_header->setFontSize(12.0f);
+	table_number_header->setAnchor({ 0.0f, 0.0f });
+	table_number_header->setPivot({ 0.5f, 1.0f });
+	table_number_header->setPosition({ 16.0f, -4.0f });
+	table_number_header->setAlpha(0.5f);
+	attach(table_number_header);
 
-	auto personal_button = std::make_shared<Helpers::Label>();
-	personal_button->setText("PERSONAL"); // TODO: localize
-	personal_button->setFontSize(14.0f);
-	personal_button->setAnchor({ 0.0f, 0.0f });
-	personal_button->setPivot({ 0.5f, 1.0f });
-	personal_button->setPosition({ 96.0f, -4.0f });
-	personal_button->setAlpha(0.5f);
-	attach(personal_button);
+	auto table_name_header = std::make_shared<Helpers::Label>();
+	table_name_header->setText(LOCALIZE("NAME"));
+	table_name_header->setFontSize(12.0f);
+	table_name_header->setAnchor({ 0.0f, 0.0f });
+	table_name_header->setPivot({ 0.5f, 1.0f });
+	table_name_header->setPosition({ 32.0f + (96.0f / 2.0f), -4.0f });
+	table_name_header->setAlpha(0.5f);
+	attach(table_name_header);
+
+	auto table_score_header = std::make_shared<Helpers::Label>();
+	table_score_header->setText(LOCALIZE("SCORE"));
+	table_score_header->setFontSize(12.0f);
+	table_score_header->setAnchor({ 0.0f, 0.0f });
+	table_score_header->setPivot({ 0.5f, 1.0f });
+	table_score_header->setPosition({ 32.0f + 96.0f + (64.0f / 2.0f), -4.0f });
+	table_score_header->setAlpha(0.5f);
+	attach(table_score_header);
+
+	auto table_skin_header = std::make_shared<Helpers::Label>();
+	table_skin_header->setText(LOCALIZE("SKIN"));
+	table_skin_header->setFontSize(12.0f);
+	table_skin_header->setAnchor({ 0.0f, 0.0f });
+	table_skin_header->setPivot({ 0.5f, 1.0f });
+	table_skin_header->setPosition({ 32.0f + 96.0f + 64.0f + (64.0f / 2.0f), -4.0f });
+	table_skin_header->setAlpha(0.5f);
+	attach(table_skin_header);
 
 	auto refresh_button = std::make_shared<Scene::Clickable<Helpers::Label>>();
 	refresh_button->setClickCallback([this] {
+		CLIENT->clearProfiles();
 		refresh();
 	});
 	refresh_button->setText("refresh"); // TODO: localize
 	refresh_button->setFontSize(12.0f);
-	refresh_button->setAnchor({ 1.0f, 0.0f });
-	refresh_button->setPivot({ 1.0f, 1.0f });
-	refresh_button->setPosition({ 0.0f, -4.0f });
+	refresh_button->setAnchor({ 1.0f, 1.0f });
+	refresh_button->setPivot({ 1.0f, 0.0f });
+	refresh_button->setPosition({ 0.0f, 4.0f });
 	refresh_button->setAlpha(0.25f);
 	attach(refresh_button);
 
@@ -133,7 +153,7 @@ void SocialPanel::refresh()
 				{ 32.0f, count_label },
 				{ 96.0f, nickname_scissor },
 				{ 64.0f, score_label },
-				{ 16.0f, skin_img },
+				{ 64.0f, skin_img },
 			});
 
 			if (grayed_line)
