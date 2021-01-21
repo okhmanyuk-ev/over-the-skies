@@ -193,6 +193,17 @@ const Channel::ProfilesMap& Client::getProfiles() const
 	return getMyChannel()->getProfiles(); 
 }
 
+bool Client::hasProfile(int uid)
+{
+	return getProfiles().count(uid) > 0;
+}
+
+Channel::ProfilePtr Client::getProfile(int uid)
+{
+	assert(hasProfile(uid));
+	return getProfiles().at(uid);
+}
+
 void Client::clearProfiles()
 {
 	if (!isConnected())

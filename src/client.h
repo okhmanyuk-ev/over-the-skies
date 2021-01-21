@@ -10,7 +10,8 @@ namespace hcg001
 	class Channel : public Shared::NetworkingUDP::SimpleChannel
 	{
 	public:
-		using ProfilesMap = std::map<int/*id*/, std::shared_ptr<const Profile>>;
+		using ProfilePtr = std::shared_ptr<const Profile>;
+		using ProfilesMap = std::map<int/*id*/, ProfilePtr>;
 
 	public:
 		Channel();
@@ -64,6 +65,8 @@ namespace hcg001
 
 	public:
 		const Channel::ProfilesMap&  getProfiles() const;
+		bool hasProfile(int uid);
+		Channel::ProfilePtr getProfile(int uid);
 		void clearProfiles();
 	};
 }

@@ -45,4 +45,51 @@ namespace hcg001::Helpers
 	private:
 		std::shared_ptr<Label> mLabel;
 	};
+
+	template <class T> class ProfileListenable : public T, public Common::Event::Listenable<ProfileReceived>
+	{
+	public:
+		using ProfileCallback = std::function<void(Channel::ProfilePtr)>;
+
+	private:
+		void onEvent(const ProfileReceived& e) override
+		{
+			if (e.uid != mProfileUID)
+				return;
+
+			mFirstCalled = true;
+
+			if (mProfileCallback)
+				mProfileCallback(CLIENT->getProfile(mProfileUID));
+		}
+
+	protected:
+		void update() override
+		{
+			T::update();
+			
+			if (mFirstCalled)
+				return;
+			
+			mFirstCalled = true;
+
+			if (!CLIENT->hasProfile(mProfileUID))
+				return;
+
+			if (mProfileCallback)
+				mProfileCallback(CLIENT->getProfile(mProfileUID));
+		}
+
+	public:
+		auto getProfileUID() const { return mProfileUID; }
+		void setProfileUID(int value) { mProfileUID = value; }
+		
+		auto getProfileCallback() const { return mProfileCallback; }
+		void setProfileCallback(ProfileCallback value) { mProfileCallback = value; }
+
+	private:
+		int mProfileUID = 0;
+		ProfileCallback mProfileCallback;
+		bool mFirstCalled = false;
+	};
 }
