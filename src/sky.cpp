@@ -41,8 +41,8 @@ Sky::Sky()
 	CONSOLE->registerCVar("r_bloom_glow_intensity", { "float" }, CVAR_GETTER_FLOAT_FUNC(mBloomLayer->getGlowIntensity),
 		CVAR_SETTER_FLOAT_FUNC(mBloomLayer->setGlowIntensity));
 
-	CONSOLE->registerCVar("r_bloom_downscale_factor", { "float" }, CVAR_GETTER_INT_FUNC(mBloomLayer->getDownscaleFactor),
-		CVAR_SETTER_INT_FUNC(mBloomLayer->setDownscaleFactor));
+	CONSOLE->registerCVar("r_bloom_downscale_factor", { "float" }, CVAR_GETTER_FLOAT_FUNC(mBloomLayer->getDownscaleFactor),
+		CVAR_SETTER_FLOAT_FUNC(mBloomLayer->setDownscaleFactor));
 
 	// stars holder
 

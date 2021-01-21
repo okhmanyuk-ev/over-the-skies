@@ -137,7 +137,7 @@ void Gameplay::update()
 	removeFarPlanes();
 	spawnPlanes();
 
-	setScore(mMaxY / 100);
+	setScore(int(mMaxY / 100.0f));
 
 	GAME_STATS("difficulty", getDifficulty());
 }

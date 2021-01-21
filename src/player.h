@@ -67,6 +67,9 @@ namespace hcg001
 		else if (skin == Skin::Vynil)
 			return std::make_shared<VynilPlayer>(trailHolder);
 		else
+		{
 			assert(false);
+			return std::make_shared<BallPlayer>(trailHolder); // ball
+		}
 	}
 }
