@@ -9,6 +9,11 @@ Channel::Channel()
 {
 	addMessageReader("file", [this](auto& buf) { readFileMessage(buf);	});
 
+	addEventCallback("authorized", [this](const auto& params) {
+		mUID = std::stoi(params.at("uid"));
+		LOG("authorized (uid: " + std::to_string(mUID) + ")");
+	});
+
 	addEventCallback("print", [](const auto& params) {
 		auto text = params.at("text");
 		EVENT->emit(Helpers::PrintEvent({ text }));
@@ -20,10 +25,14 @@ Channel::Channel()
 		EVENT->emit(Helpers::HighscoresEvent({ uids }));
 	});
 
-	addEventCallback("profile", [](const auto& params) {
+	addEventCallback("profile", [this](const auto& params) {
 		auto uid = std::stoi(params.at("uid"));
 		auto dump = params.at("json");
-		Client::Profiles[uid] = nlohmann::json::parse(dump);
+		auto json = nlohmann::json::parse(dump);
+		auto profile = std::make_shared<Profile>();
+		profile->read(json);
+		mProfiles.erase(uid);
+		mProfiles.insert({ uid, profile });
 		EVENT->emit(Helpers::ProfileReceived({ uid }));
 	});
     
@@ -60,6 +69,10 @@ void Channel::commit()
 	mPrevProfileDump = dump;
 
 	sendEvent("commit", { { "profile", dump,  } });
+
+	// update profile in map
+	mProfiles.erase(mUID);
+	mProfiles.insert({ mUID, PROFILE });
 }
 
 void Channel::requestHighscores()
@@ -69,6 +82,9 @@ void Channel::requestHighscores()
 
 void Channel::requestProfile(int uid)
 {
+	if (mProfiles.count(uid) > 0)
+		mProfiles.erase(uid);
+
 	sendEvent("request_profile", {
 		{ "uid", std::to_string(uid) }
 	});
@@ -152,4 +168,21 @@ void Client::requestProfile(int uid)
 		return;
 
 	getMyChannel()->requestProfile(uid);
+}
+
+void Client::requireProfile(int uid)
+{
+	if (!isConnected())
+		return;
+
+	if (getProfiles().count(uid) > 0)
+		return;
+
+	requestProfile(uid);
+}
+
+const Channel::ProfilesMap& Client::getProfiles() const 
+{ 
+	assert(isConnected());
+	return getMyChannel()->getProfiles(); 
 }

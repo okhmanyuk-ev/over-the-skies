@@ -39,6 +39,18 @@ SocialPanel::SocialPanel()
 	personal_button->setAlpha(0.5f);
 	attach(personal_button);
 
+	auto refresh_button = std::make_shared<Scene::Clickable<Helpers::Label>>();
+	refresh_button->setClickCallback([this] {
+		refresh();
+	});
+	refresh_button->setText("refresh"); // TODO: localize
+	refresh_button->setFontSize(12.0f);
+	refresh_button->setAnchor({ 1.0f, 0.0f });
+	refresh_button->setPivot({ 1.0f, 1.0f });
+	refresh_button->setPosition({ 0.0f, -4.0f });
+	refresh_button->setAlpha(0.25f);
+	attach(refresh_button);
+
 	/*Actions::Run(Actions::Factory::ExecuteInfinite([this] {
 		auto overscroll = mScrollbox->mOverscroll;
 		GAME_STATS("overscroll", std::to_string(overscroll.x) + " " + std::to_string(overscroll.y));
@@ -56,7 +68,7 @@ SocialPanel::SocialPanel()
 	}));
 }
 
-void SocialPanel::onEvent(const Helpers::HighscoresEvent& e)
+void SocialPanel::refresh()
 {
 	if (mGrid)
 	{
@@ -71,15 +83,14 @@ void SocialPanel::onEvent(const Helpers::HighscoresEvent& e)
 
 	for (int j = 0; j < 5; j++)
 	{
-		for (int i = 0; i < e.uids.size(); i++)
+		for (int i = 0; i < mHighscores.uids.size(); i++)
 		{
-			auto uid = e.uids.at(i);
+			auto uid = mHighscores.uids.at(i);
 
-			if (Client::Profiles.count(uid) == 0)
-				CLIENT->requestProfile(uid);
+			CLIENT->requireProfile(uid);
 
 			auto wait_profile_callback = [uid] {
-				return Client::Profiles.count(uid) == 0;
+				return CLIENT->getProfiles().count(uid) == 0;
 			};
 
 			const float LabelFontSize = 13.0f;
@@ -98,9 +109,7 @@ void SocialPanel::onEvent(const Helpers::HighscoresEvent& e)
 			nickname_label->setPivot({ 0.0f, 0.5f });
 			nickname_label->setFontSize(LabelFontSize);
 			nickname_label->runAction(Actions::Factory::Delayed(wait_profile_callback, Actions::Factory::Execute([nickname_label, uid] {
-				auto nickname_bytes = Client::Profiles.at(uid).at("nickname").get<std::vector<int>>();
-				auto nickname = utf8_string(nickname_bytes.begin(), nickname_bytes.end());
-				nickname_label->setText(nickname);
+				nickname_label->setText(CLIENT->getProfiles().at(uid)->getNickName());
 			})));
 			nickname_scissor->attach(nickname_label);
 
@@ -109,8 +118,7 @@ void SocialPanel::onEvent(const Helpers::HighscoresEvent& e)
 			score_label->setPivot(0.5f);
 			score_label->setFontSize(LabelFontSize);
 			score_label->runAction(Actions::Factory::Delayed(wait_profile_callback, Actions::Factory::Execute([score_label, uid] {
-				auto score = Client::Profiles.at(uid).at("highscore").get<int>();
-				score_label->setText(std::to_string(score));
+				score_label->setText(std::to_string(CLIENT->getProfiles().at(uid)->getHighScore()));
 			})));
 
 			auto skin_img = std::make_shared<Scene::Actionable<Shared::SceneHelpers::Adaptive<Scene::Sprite>>>();
@@ -118,17 +126,7 @@ void SocialPanel::onEvent(const Helpers::HighscoresEvent& e)
 			skin_img->setAnchor(0.5f);
 			skin_img->setPivot(0.5f);
 			skin_img->runAction(Actions::Factory::Delayed(wait_profile_callback, Actions::Factory::Execute([skin_img, uid] {
-				const auto& profile = Client::Profiles.at(uid);
-
-				if (!profile.contains("current_skin"))
-					return;
-
-				auto skin_int = profile.at("current_skin").get<int>();
-
-				if (skin_int >= SkinCount)
-					return;
-
-				skin_img->setTexture(TEXTURE(SkinPath.at((Skin)skin_int)));
+				skin_img->setTexture(TEXTURE(SkinPath.at(CLIENT->getProfiles().at(uid)->getCurrentSkin())));
 			})));
 
 			auto h_grid = Shared::SceneHelpers::MakeHorizontalGrid(VerticalGridItemSize.y, {
@@ -161,4 +159,10 @@ void SocialPanel::onEvent(const Helpers::HighscoresEvent& e)
 
 	mScrollbox->getContent()->setSize(mGrid->getSize());
 	mScrollbox->getContent()->attach(mGrid);
+}
+
+void SocialPanel::onEvent(const Helpers::HighscoresEvent& e)
+{
+	mHighscores = e;
+	refresh();
 }

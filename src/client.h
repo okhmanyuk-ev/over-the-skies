@@ -1,6 +1,7 @@
 #pragma once
 
 #include <shared/all.h>
+#include "profile.h"
 
 #define CLIENT ENGINE->getSystem<hcg001::Client>()
 
@@ -8,6 +9,9 @@ namespace hcg001
 {
 	class Channel : public Shared::NetworkingUDP::SimpleChannel
 	{
+	public:
+		using ProfilesMap = std::map<int/*id*/, std::shared_ptr<const Profile>>;
+
 	public:
 		Channel();
 
@@ -20,6 +24,12 @@ namespace hcg001
 	private:
 		void readFileMessage(Common::BitBuffer& buf);
 
+	public:
+		const auto& getProfiles() const { return mProfiles; }
+
+	private:
+		int mUID = 0;
+
 	private:
 		struct FileDef
 		{
@@ -28,15 +38,14 @@ namespace hcg001
 		};
 		std::map<std::string, FileDef> mFiles;
 
+		ProfilesMap mProfiles;
+
 	private:
 		std::string mPrevProfileDump;
 	};
 
 	class Client : public Shared::NetworkingUDP::Client
 	{
-	public:
-		static inline std::map<int/*id*/, nlohmann::json> Profiles;
-
 	public:
 		Client();
 
@@ -47,8 +56,12 @@ namespace hcg001
 		void commit();
 		void requestHighscores();
 		void requestProfile(int uid);
+		void requireProfile(int uid);
 
 	private:
 		auto getMyChannel() const { return std::dynamic_pointer_cast<Channel>(getChannel()); }
+
+	public:
+		const Channel::ProfilesMap&  getProfiles() const;
 	};
 }

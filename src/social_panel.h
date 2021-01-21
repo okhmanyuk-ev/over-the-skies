@@ -12,11 +12,16 @@ namespace hcg001
 		SocialPanel();
 
 	private:
+		void refresh();
+
+	private:
 		void onEvent(const Helpers::HighscoresEvent& e) override;
 
 	private:
 		std::shared_ptr<Scene::ClippableStencil<Scene::Rectangle>> mRect;
 		std::shared_ptr<Scene::Scrollbox> mScrollbox;
 		std::shared_ptr<Scene::Node> mGrid;
+
+		Helpers::HighscoresEvent mHighscores;
 	};
 }
