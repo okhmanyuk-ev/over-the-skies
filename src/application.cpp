@@ -86,7 +86,7 @@ void Application::initialize()
 
 	Actions::Run(Actions::Factory::MakeSequence(
 		Actions::Factory::WaitOneFrame(),
-		Actions::Factory::Wait(0.5f),
+		Actions::Factory::Wait(0.25f),
 		Actions::Factory::Execute([sky] {
 			sky->changeColor(Graphics::Color::Hsv::HueBlue, Graphics::Color::Hsv::HueRed);
 		}),
@@ -99,9 +99,14 @@ void Application::initialize()
 		})	
 	));
 
-	SCENE_MANAGER->switchScreen(main_menu, [this] {
-		tryShowDailyReward();
-	});
+	Actions::Run(Actions::Factory::MakeSequence(
+		Actions::Factory::WaitOneFrame(),
+		Actions::Factory::Execute([this, main_menu] {
+			SCENE_MANAGER->switchScreen(main_menu, [this] {
+				tryShowDailyReward();
+			});
+		})
+	));
 
 	// hud
 
