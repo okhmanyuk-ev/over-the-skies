@@ -7,8 +7,6 @@
 
 namespace hcg001::Helpers
 {
-	const float ButtonRounding = 0.33f;
-
 	const auto BaseWindowColor = glm::rgbColor(glm::vec3(210.0f, 0.5f, 1.0f));
 
 	inline std::shared_ptr<Hud> gHud = nullptr;
@@ -32,6 +30,12 @@ namespace hcg001::Helpers
 	{
 	public:
 		Label();
+	};
+
+	class RectangleButton : public Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::RectangleButton>
+	{
+	public:
+		RectangleButton();
 	};
 
 	class TextInputField : public Scene::Clickable<Scene::Node>

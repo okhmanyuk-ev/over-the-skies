@@ -23,8 +23,7 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	mImage->setSize({ 96.0f, 96.0f });
 	attach(mImage);
 
-	mBuyButton = std::make_shared<Shared::SceneHelpers::FastButton>();
-	mBuyButton->setRounding(Helpers::ButtonRounding);
+	mBuyButton = std::make_shared<Helpers::RectangleButton>();
 	mBuyButton->getLabel()->setText(LOCALIZE("BUY_SKIN_BUY"));
 	mBuyButton->getLabel()->setFontSize(20.0f);
 	mBuyButton->setClickCallback([this, skin] {
@@ -41,8 +40,7 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	mBuyButton->setPosition({ -8.0f, 0.0f });
 	attach(mBuyButton);
 
-	mCancelButton = std::make_shared<Shared::SceneHelpers::FastButton>();
-	mCancelButton->setRounding(Helpers::ButtonRounding);
+	mCancelButton = std::make_shared<Helpers::RectangleButton>();
 	mCancelButton->getLabel()->setFontSize(20.0f);
 	mCancelButton->getLabel()->setText(LOCALIZE("BUY_SKIN_CANCEL"));
 	mCancelButton->setClickCallback([this] {

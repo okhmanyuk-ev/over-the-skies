@@ -20,8 +20,7 @@ MainMenu::MainMenu()
 	const float ButtonLabelFontSize = 20.0f;
 	const glm::vec2 ButtonSize = { 192.0f, 48.0f };
 
-	auto play_button = std::make_shared<Shared::SceneHelpers::FastButton>();
-	play_button->setRounding(Helpers::ButtonRounding);
+	auto play_button = std::make_shared<Helpers::RectangleButton>();
 	play_button->getLabel()->setFontSize(ButtonLabelFontSize);
 	play_button->getLabel()->setText(LOCALIZE("MAIN_MENU_PLAY"));
 	play_button->setClickCallback([this] {
@@ -39,8 +38,7 @@ MainMenu::MainMenu()
 	play_button->setPosition({ 0.0f, 224.0f });
 	attach(play_button);
 
-	auto unlock_button = std::make_shared<Shared::SceneHelpers::FastButton>();
-	unlock_button->setRounding(Helpers::ButtonRounding);
+	auto unlock_button = std::make_shared<Helpers::RectangleButton>();
 	unlock_button->getLabel()->setFontSize(ButtonLabelFontSize);
 	unlock_button->getLabel()->setText(LOCALIZE("MAIN_MENU_UNLOCK"));
 	unlock_button->setClickCallback([this, ButtonLabelFontSize, unlock_button] {
@@ -116,7 +114,7 @@ MainMenu::MainMenu()
 	auto hud = std::make_shared<Shared::SceneHelpers::Hud>();
 	attach(hud);
 
-	auto shop_button = std::make_shared<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>();
+	auto shop_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
 	shop_button->setTexture(TEXTURE("textures/shop.png"));
 	shop_button->setAdaptSize({ 86.0f, 28.0f });
 	shop_button->setPosition({ 108.0f, 24.0f });
@@ -127,7 +125,7 @@ MainMenu::MainMenu()
 	});
 	hud->attach(shop_button);
 
-	auto options_button = std::make_shared<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>();
+	auto options_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
 	options_button->setTexture(TEXTURE("textures/options.png"));
 	options_button->setAdaptSize({ 24.0f, 24.0f });
 	options_button->setPosition({ -16.0f, 24.0f });

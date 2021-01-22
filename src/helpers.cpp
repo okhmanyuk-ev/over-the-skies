@@ -9,6 +9,12 @@ Label::Label()
 	setFontSize(18.0f);
 }
 
+RectangleButton::RectangleButton()
+{
+	setHighlightEnabled(false);
+	setRounding(0.5f);
+}
+
 TextInputField::TextInputField()
 {
 	setClickCallback([this] {

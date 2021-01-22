@@ -70,9 +70,7 @@ OptionsWindow::OptionsWindow()
 	mNicknameInputField->getLabel()->setText(PROFILE->getNickName());
 	nickname_field->attach(mNicknameInputField);
 
-	auto ok_button = std::make_shared<Shared::SceneHelpers::FastButton>();
-	ok_button->setRounding(6.0f);
-	ok_button->setAbsoluteRounding(true);
+	auto ok_button = std::make_shared<Helpers::RectangleButton>();
 	ok_button->setColor(Helpers::BaseWindowColor);
 	ok_button->getLabel()->setText(LOCALIZE("OPTIONS_WINDOW_OK"));
 	ok_button->getLabel()->setFontSize(18.0f);

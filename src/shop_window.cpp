@@ -62,9 +62,7 @@ ShopWindow::ShopWindow()
 	});
 	header_bg->attach(close_button);
 
-	auto buy_button = std::make_shared<Shared::SceneHelpers::FastButton>();
-	buy_button->setRounding(6.0f);
-	buy_button->setAbsoluteRounding(true);
+	auto buy_button = std::make_shared<Helpers::RectangleButton>();
 	buy_button->setColor(Helpers::BaseWindowColor);
 	buy_button->getLabel()->setText(LOCALIZE("SHOP_WINDOW_BUY"));
 	buy_button->getLabel()->setFontSize(18.0f);

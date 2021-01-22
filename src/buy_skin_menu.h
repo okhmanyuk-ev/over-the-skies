@@ -3,6 +3,7 @@
 #include <shared/all.h>
 #include "screen.h"
 #include "skin.h"
+#include "helpers.h"
 
 namespace hcg001
 {
@@ -20,8 +21,8 @@ namespace hcg001
 	private:
 		std::shared_ptr<Scene::Label> mTitle = nullptr;
 		std::shared_ptr<Scene::Sprite> mImage = nullptr;
-		std::shared_ptr<Shared::SceneHelpers::FastButton> mBuyButton = nullptr;
-		std::shared_ptr<Shared::SceneHelpers::FastButton> mCancelButton = nullptr;
+		std::shared_ptr<Helpers::RectangleButton> mBuyButton = nullptr;
+		std::shared_ptr<Helpers::RectangleButton> mCancelButton = nullptr;
 
 	public:
 		void setExitCallback(std::function<void()> value) { mExitCallback = value; }

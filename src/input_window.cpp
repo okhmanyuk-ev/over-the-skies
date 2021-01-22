@@ -19,9 +19,7 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 	mLabel->setText(text);
 	getContent()->attach(mLabel);
 
-	mApplyButton = std::make_shared<Shared::SceneHelpers::FastButton>();
-	mApplyButton->setRounding(6.0f);
-	mApplyButton->setAbsoluteRounding(true);
+	mApplyButton = std::make_shared<Helpers::RectangleButton>();
 	mApplyButton->getLabel()->setText(LOCALIZE("INPUT_WINDOW_APPLY"));
 	mApplyButton->getLabel()->setFontSize(18.0f);
 	mApplyButton->setClickCallback([this] {
@@ -35,9 +33,7 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 	mApplyButton->setVisible(false);
 	getContent()->attach(mApplyButton);
 
-	mCancelButton = std::make_shared<Shared::SceneHelpers::FastButton>();
-	mCancelButton->setRounding(6.0f);
-	mCancelButton->setAbsoluteRounding(true);
+	mCancelButton = std::make_shared<Helpers::RectangleButton>();
 	mCancelButton->getLabel()->setText(LOCALIZE("INPUT_WINDOW_CANCEL"));
 	mCancelButton->getLabel()->setFontSize(18.0f);
 	mCancelButton->setClickCallback([this] {
