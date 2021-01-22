@@ -130,7 +130,7 @@ void Application::addRubies(int count)
 		if (i > 8)
 			break;
 
-		auto ruby = std::make_shared<Scene::Actionable<Scene::Sprite>>();
+		auto ruby = std::make_shared<Scene::Sprite>();
 		ruby->setTexture(TEXTURE("textures/ruby.png"));
 		ruby->setPivot(0.5f);
 		ruby->setAnchor(0.5f);
@@ -195,7 +195,7 @@ void Application::onEvent(const Helpers::PrintEvent& e)
 {
 	auto root = getScene()->getRoot();
 
-	auto rect = std::make_shared<Scene::Actionable<Scene::ClippableStencil<Scene::Rectangle>>>();
+	auto rect = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
 	rect->setTouchable(true);
 	rect->setSize({ 264.0f, 42.0f });
 	rect->setAlpha(0.25f);

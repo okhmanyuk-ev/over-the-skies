@@ -5,7 +5,7 @@
 
 namespace hcg001
 {
-	class DailyRewardWindow : public Scene::Actionable<Window>
+	class DailyRewardWindow : public Window
 	{
 	public:
 		const static inline std::map<int, int> DailyRewardMap = {

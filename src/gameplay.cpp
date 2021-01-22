@@ -100,7 +100,7 @@ Gameplay::Gameplay()
 
 void Gameplay::touch(Touch type, const glm::vec2& pos)
 {
-	Scene::Actionable<Screen>::touch(type, pos);
+	Screen::touch(type, pos);
 
 	if (type != Touch::Begin)
 		return;
@@ -110,7 +110,7 @@ void Gameplay::touch(Touch type, const glm::vec2& pos)
 
 void Gameplay::update()
 {
-	Scene::Actionable<Screen>::update();
+	Screen::update();
 
 	if (!mReady)
 		return;
@@ -432,7 +432,7 @@ void Gameplay::showRiskLabel(const utf8_string& text)
 		mRiskLabel->runAction(Actions::Factory::Kill(mRiskLabel));
 	}
 
-	mRiskLabel = std::make_shared<Scene::Actionable<Scene::Label>>();
+	mRiskLabel = std::make_shared<Scene::Label>();
 	mRiskLabel->setFont(FONT("default"));
 	mRiskLabel->setFontSize(28.0f);
 	mRiskLabel->setText(text);

@@ -6,7 +6,7 @@
 
 namespace hcg001
 {
-	class BuySkinMenu : public Scene::Actionable<Shared::SceneManager::Screen>
+	class BuySkinMenu : public Shared::SceneManager::Screen
 	{
 	public:
 		BuySkinMenu(Skin skin);

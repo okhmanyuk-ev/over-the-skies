@@ -98,7 +98,7 @@ void InputWindow::onEvent(const Platform::Input::Keyboard::Event& e)
 
 void InputWindow::onOpenBegin()
 {
-	Scene::Actionable<Window>::onOpenBegin();
+	Window::onOpenBegin();
 
 	assert(StackCount == 0);
 	StackCount += 1;
@@ -108,7 +108,7 @@ void InputWindow::onOpenBegin()
 
 void InputWindow::onOpenEnd()
 {
-	Scene::Actionable<Window>::onOpenEnd();
+	Window::onOpenEnd();
 
 	mApplyButton->setVisible(true);
 	mCancelButton->setVisible(true);
@@ -123,5 +123,5 @@ void InputWindow::onCloseBegin()
 	mApplyButton->setVisible(false);
 	mCancelButton->setVisible(false);
 
-	Scene::Actionable<Window>::onCloseBegin();
+	Window::onCloseBegin();
 }

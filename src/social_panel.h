@@ -5,7 +5,7 @@
 
 namespace hcg001
 {
-	class SocialPanel : public Scene::Actionable<Scene::Node>,
+	class SocialPanel : public Scene::Node,
 		public Common::Event::Listenable<Helpers::HighscoresEvent>
 	{
 	public:

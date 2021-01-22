@@ -99,7 +99,7 @@ void GameoverMenu::onEvent(const Helpers::HighscoresEvent& e)
 
 		CLIENT->requestProfile(uid);
 
-		auto label = std::make_shared<Scene::Actionable<Helpers::Label>>();
+		auto label = std::make_shared<Helpers::Label>();
 		label->setText(std::to_string(i) + ") " + std::to_string(uid));
 		label->setAnchor(0.5f);
 		label->setPivot(0.5f);

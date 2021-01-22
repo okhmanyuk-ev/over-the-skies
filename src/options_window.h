@@ -6,7 +6,7 @@
 
 namespace hcg001
 {
-	class OptionsWindow : public Scene::Actionable<Window>
+	class OptionsWindow : public Window
 	{
 	public:
 		OptionsWindow();

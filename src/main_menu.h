@@ -7,7 +7,7 @@
 
 namespace hcg001
 {
-	class MainMenu : public Scene::Actionable<Screen>
+	class MainMenu : public Screen
 	{
 	private:
 		const float ItemSize = 96.0f;

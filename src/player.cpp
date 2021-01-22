@@ -22,7 +22,7 @@ void Player::makeSprite()
 void Player::update()
 {
 	assert(mSprite != nullptr);
-	Scene::Actionable<Scene::Node>::update();
+	Scene::Node::update();
 	mSprite->setColor(getColor());
 }
 

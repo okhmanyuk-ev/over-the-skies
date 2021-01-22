@@ -61,7 +61,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	const glm::vec2 PlashkaSize = { 74.0f, 96.0f };
 
 	auto makePlashka = [this, PlashkaSize, current_day](int day) {
-		auto rect = std::make_shared<Scene::Actionable<Scene::Rectangle>>();
+		auto rect = std::make_shared<Scene::Rectangle>();
 		rect->setBatchGroup(fmt::format("plashka_rect_{}", (size_t)this));
 		rect->setRounding(4.0f);
 		rect->setAbsoluteRounding(true);

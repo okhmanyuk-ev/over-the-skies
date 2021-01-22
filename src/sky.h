@@ -4,7 +4,7 @@
 
 namespace hcg001
 {
-	class Sky : public Scene::Actionable<Scene::Rectangle>
+	class Sky : public Scene::Rectangle
 	{
 	public:
 		Sky();

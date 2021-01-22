@@ -87,7 +87,7 @@ OptionsWindow::OptionsWindow()
 
 void OptionsWindow::onCloseBegin()
 {
-	Scene::Actionable<Window>::onCloseBegin();
+	Window::onCloseBegin();
 
 	PROFILE->setNickName(mNicknameInputField->getLabel()->getText());
 	PROFILE->save();

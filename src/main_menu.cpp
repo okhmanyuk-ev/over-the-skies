@@ -204,7 +204,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 		item->setTouchMask(1 << 1);
 		result.push_back(item);
 
-		auto image = std::make_shared<Scene::Actionable<Scene::Sprite>>();
+		auto image = std::make_shared<Scene::Sprite>();
 		image->setBatchGroup("main_menu_item_image");
 		image->setTexture(TEXTURE(path));
 		image->setSampler(Renderer::Sampler::Linear);
@@ -230,7 +230,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 
 		// footer
 
-		auto footer = std::make_shared<Scene::Actionable<Scene::Node>>();
+		auto footer = std::make_shared<Scene::Node>();
 		footer->setAnchor({ 0.5f, 1.0f });
 		footer->setPivot({ 0.5f, 0.0f });
 		footer->setPosition({ 0.0f, 24.0f });
@@ -266,7 +266,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 
 			const float PriceRubyPadding = 6.0f;
 
-			auto price = std::make_shared<Scene::Actionable<Scene::Label>>();
+			auto price = std::make_shared<Scene::Label>();
 			price->setFont(FONT("default"));
 			price->setFontSize(16.0f);
 			price->setText(std::to_string(SkinCost.at(skin)));
@@ -280,7 +280,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 
 			// ruby
 
-			auto ruby = std::make_shared<Scene::Actionable<Scene::Sprite>>();
+			auto ruby = std::make_shared<Scene::Sprite>();
 			ruby->setTexture(TEXTURE("textures/ruby.png"));
 			ruby->setSize({ 16.0f, 16.0f });
 			ruby->setAnchor({ 1.0f, 0.5f });
@@ -300,7 +300,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 		{
 			// title
 
-			auto name = std::make_shared<Scene::Actionable<Scene::Label>>();
+			auto name = std::make_shared<Scene::Label>();
 			name->setFont(FONT("default"));
 			name->setFontSize(16.0f);
 			name->setText(LOCALIZE("SKIN_NAME_" + std::to_string((int)skin)));

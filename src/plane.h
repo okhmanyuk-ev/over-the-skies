@@ -4,7 +4,7 @@
 
 namespace hcg001
 {	
-	class Plane : public Scene::Actionable<Scene::Sprite>
+	class Plane : public Scene::Sprite
 	{
 	public:
 		Plane();

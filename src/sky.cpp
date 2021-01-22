@@ -127,13 +127,13 @@ void Sky::changeColor(float top_hue, float bottom_hue)
 
 void Sky::update()
 {
-	Scene::Actionable<Scene::Rectangle>::update();
+	Scene::Rectangle::update();
 	setVerticalGradient(mTopColor->getColor(), mBottomColor->getColor());
 }
 
 void Sky::spawnAsteroid(float speed, float normalized_spread)
 {
-	auto asteroid = std::make_shared<Scene::Actionable<Scene::Rectangle>>();
+	auto asteroid = std::make_shared<Scene::Rectangle>();
 	asteroid->setPivot({ 0.5f, 0.5f });
 	asteroid->setAnchor({ 0.25f + normalized_spread, 0.0f });
 	asteroid->setSize(2.0f);
@@ -162,7 +162,7 @@ void Sky::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
 			Actions::Factory::Execute([holder] {
 				auto size = glm::linearRand(4.0f, 6.0f);
 				
-				auto star = std::make_shared<Scene::Actionable<Scene::Sprite>>();
+				auto star = std::make_shared<Scene::Sprite>();
 				star->setTexture(TEXTURE("textures/background_star.png"));
 				star->setAnchor(glm::linearRand(glm::vec2(0.0f), glm::vec2(1.0f)));
 				star->setPivot(0.5f);

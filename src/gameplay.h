@@ -8,7 +8,7 @@
 
 namespace hcg001
 {
-	class Gameplay : public Scene::Actionable<Screen>
+	class Gameplay : public Screen
 	{
 	private:
 		const float MaxFallVelocity = 20.0f;
@@ -45,7 +45,7 @@ namespace hcg001
 		std::shared_ptr<Scene::Node> mRectangleParticlesHolder;
 		std::shared_ptr<Player> mPlayer;
 		std::shared_ptr<Scene::Label> mScoreLabel;
-		std::shared_ptr<Scene::Actionable<Scene::Label>> mRiskLabel = nullptr;
+		std::shared_ptr<Scene::Label> mRiskLabel = nullptr;
 		std::shared_ptr<Shared::SceneHelpers::RectangleEmitter> mJumpParticles;
 
 	public:

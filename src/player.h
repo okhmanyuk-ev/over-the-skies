@@ -5,7 +5,7 @@
 
 namespace hcg001
 {
-	class Player : public Scene::Actionable<Scene::Node>, public Scene::Color
+	class Player : public Scene::Node, public Scene::Color
 	{
 	public:
 		Player(Skin skin);
