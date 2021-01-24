@@ -5,60 +5,134 @@ using namespace hcg001;
 
 SocialPanel::SocialPanel()
 {
-	setSize({ 256.0f, 96.0f });
+	setStretch({ 1.0f, 0.0f });
+	setSize({ 0.0f, 136.0f });
+
+	auto header = std::make_shared<Scene::Node>();
+	header->setStretch({ 1.0f, 0.0f });
+	header->setAnchor({ 0.5f, 0.0f });
+	header->setPivot({ 0.5f, 0.0f });
+	header->setSize({ 0.0f, 16.0f });
+	attach(header);
+
+	auto footer = std::make_shared<Scene::Node>();
+	footer->setStretch({ 1.0f, 0.0f });
+	footer->setAnchor({ 0.5f, 1.0f });
+	footer->setPivot({ 0.5f, 1.0f });
+	footer->setSize({ 0.0f, 24.0f });
+	attach(footer);
+
+	auto body = std::make_shared<Scene::Node>();
+	body->setStretch(1.0f);
+	body->setAnchor({ 0.5f, 0.0f });
+	body->setPivot({ 0.5f, 0.0f });
+	body->setPosition({ 0.0f, header->getHeight() });
+	body->setMargin({ 0.0f, header->getHeight() + footer->getHeight() });
+	attach(body);
+
+	/*auto centerizeTabScrollbox = [this](PageType page) {
+		auto node = mTabButtons.at(page);
+		auto scroll_taget_pos = mTabButtonScrollbox->screenToScrollPosition(node->project({ 0.0f, 0.0f }));
+		mTabButtonScrollbox->runAction(
+			Actions::Factory::ChangeScrollPosition(mTabButtonScrollbox, scroll_taget_pos, 0.5f, Easing::ExponentialOut)
+		);
+	};
+
+	auto score_tab_button = createTabButton(LOCALIZE("SCORE"));
+	score_tab_button->setClickCallback([this] {
+		mPagesManager.showPage(PageType::Scores);
+	});
+
+	auto rubies_tab_button = createTabButton(LOCALIZE("RUBIES"));
+	rubies_tab_button->setClickCallback([this] {
+		mPagesManager.showPage(PageType::Rubies);
+	});
+
+	const glm::vec2 TabItemSize = { 72.0f, footer->getHeight() };
 	
-	mRect = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
-	mRect->setStretch(1.0f);
-	mRect->setAlpha(0.125f);
-	mRect->setAbsoluteRounding(true);
-	mRect->setRounding(8.0f);
-	attach(mRect);
+	auto tab_button_grid = Shared::SceneHelpers::MakeHorizontalGrid(TabItemSize, {
+		score_tab_button,
+		rubies_tab_button
+	});
 
-	mScrollbox = std::make_shared<Scene::Scrollbox>();
-	mScrollbox->setStretch(1.0f);
-	mScrollbox->setSensitivity({ 0.0f, 1.0f });
-	mScrollbox->getBounding()->setStretch(1.0f);
-	mScrollbox->getBounding()->setAnchor(0.5f);
-	mScrollbox->getBounding()->setPivot(0.5f);
-	mRect->attach(mScrollbox);
+	mTabButtons.insert({ PageType::Scores, score_tab_button });
+	mTabButtons.insert({ PageType::Rubies, rubies_tab_button });
+	
+	tab_button_grid->setAnchor(0.5f);
+	tab_button_grid->setPivot(0.5f);
 
-	auto table_number_header = std::make_shared<Helpers::Label>();
-	table_number_header->setText(LOCALIZE("SOCIAL_PANEL_NUM"));
-	table_number_header->setFontSize(12.0f);
-	table_number_header->setAnchor({ 0.0f, 0.0f });
-	table_number_header->setPivot({ 0.5f, 1.0f });
-	table_number_header->setPosition({ 16.0f, -4.0f });
-	table_number_header->setAlpha(0.5f);
-	attach(table_number_header);
+	mTabButtonScrollbox = std::make_shared<Scene::Scrollbox>();
+	mTabButtonScrollbox->setTouchable(false);
+	mTabButtonScrollbox->setStretch(1.0f);
+	//mTabButtonScrollbox->getBounding()->setStretch({ 0.0f, 1.0f });
+	mTabButtonScrollbox->getBounding()->setSize(TabItemSize);
+	mTabButtonScrollbox->getBounding()->setAnchor(0.5f);
+	mTabButtonScrollbox->getBounding()->setPivot(0.5f);
+	mTabButtonScrollbox->getContent()->setSize(tab_button_grid->getSize());
+	mTabButtonScrollbox->getContent()->attach(tab_button_grid);
+	footer->attach(mTabButtonScrollbox);
 
-	auto table_name_header = std::make_shared<Helpers::Label>();
-	table_name_header->setText(LOCALIZE("SOCIAL_PANEL_NAME"));
-	table_name_header->setFontSize(12.0f);
-	table_name_header->setAnchor({ 0.0f, 0.0f });
-	table_name_header->setPivot({ 0.5f, 1.0f });
-	table_name_header->setPosition({ 32.0f + (96.0f / 2.0f), -4.0f });
-	table_name_header->setAlpha(0.5f);
-	attach(table_name_header);
 
-	auto table_score_header = std::make_shared<Helpers::Label>();
-	table_score_header->setText(LOCALIZE("SOCIAL_PANEL_SCORE"));
-	table_score_header->setFontSize(12.0f);
-	table_score_header->setAnchor({ 0.0f, 0.0f });
-	table_score_header->setPivot({ 0.5f, 1.0f });
-	table_score_header->setPosition({ 32.0f + 96.0f + (64.0f / 2.0f), -4.0f });
-	table_score_header->setAlpha(0.5f);
-	attach(table_score_header);
+	auto page1 = std::make_shared<Page>();
+	body->attach(page1);
 
-	auto table_skin_header = std::make_shared<Helpers::Label>();
-	table_skin_header->setText(LOCALIZE("SOCIAL_PANEL_SKIN"));
-	table_skin_header->setFontSize(12.0f);
-	table_skin_header->setAnchor({ 0.0f, 0.0f });
-	table_skin_header->setPivot({ 0.5f, 1.0f });
-	table_skin_header->setPosition({ 32.0f + 96.0f + 64.0f + (64.0f / 2.0f), -4.0f });
-	table_skin_header->setAlpha(0.5f);
-	attach(table_skin_header);
+	auto page2 = std::make_shared<Page>();
+	body->attach(page2);
 
-	auto refresh_button = std::make_shared<Scene::Clickable<Helpers::Label>>();
+	mPagesManager.addPage(PageType::Scores, page1);
+	mPagesManager.addPage(PageType::Rubies, page2);
+	mPagesManager.showPage(PageType::Scores);
+	mPagesManager.setPageChangedCallback([centerizeTabScrollbox](auto from, auto to) {
+		centerizeTabScrollbox((PageType)to);
+	});*/
+
+	auto right_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::Node>>>();
+	right_button->setStretch({ 0.0f, 1.0f }); // use body height
+	right_button->setWidth(48.0f);
+	right_button->setAnchor(0.5f);
+	right_button->setPivot({ 1.0f, 0.5f });
+	right_button->setX(178.0f);
+	right_button->setClickCallback([this] {
+		//mPagesManager.showNextPage();
+	});
+	body->attach(right_button);
+
+	auto right_arrow_img = std::make_shared<Shared::SceneHelpers::Adaptive<Scene::Sprite>>();
+	right_arrow_img->setAdaptSize(24.0f);
+	right_arrow_img->setAnchor(0.5f);
+	right_arrow_img->setPivot(0.5f);
+	right_arrow_img->setTexture(TEXTURE("textures/right_arrow.png"));
+	right_arrow_img->setAlpha(0.25f);
+	right_button->attach(right_arrow_img);
+
+	auto left_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::Node>>>();
+	left_button->setStretch({ 0.0f, 1.0f }); // use body height
+	left_button->setWidth(48.0f);
+	left_button->setAnchor(0.5f);
+	left_button->setPivot({ 0.0f, 0.5f });
+	left_button->setX(-178.0f);
+	left_button->setClickCallback([this] {
+		//mPagesManager.showPrevPage();
+	});
+	body->attach(left_button);
+
+	auto left_arrow_img = std::make_shared<Shared::SceneHelpers::Adaptive<Scene::Sprite>>();
+	left_arrow_img->setAdaptSize(24.0f);
+	left_arrow_img->setAnchor(0.5f);
+	left_arrow_img->setPivot(0.5f);
+	left_arrow_img->setTexture(TEXTURE("textures/right_arrow.png"));
+	left_arrow_img->setAlpha(0.25f);
+	left_arrow_img->setRadialAnchor(0.5f); // flip
+	left_button->attach(left_arrow_img);
+
+
+	auto page = std::make_shared<Page>();
+	body->attach(page);
+
+
+
+
+	/*auto refresh_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Helpers::Label>>>();
 	refresh_button->setClickCallback([this] {
 		CLIENT->clearProfiles();
 		refresh();
@@ -69,19 +143,113 @@ SocialPanel::SocialPanel()
 	refresh_button->setPivot({ 1.0f, 0.0f });
 	refresh_button->setPosition({ 0.0f, 4.0f });
 	refresh_button->setAlpha(0.25f);
-	attach(refresh_button);
+	attach(refresh_button);*/
+}
 
-	runAction(Actions::Factory::RepeatInfinite([this] {
+std::shared_ptr<SocialPanel::TabButton> SocialPanel::createTabButton(const utf8_string& text)
+{
+	auto result = std::make_shared<TabButton>();
+	//result->setSize({ 64.0f, 20.0f });
+	result->setStretch(1.0f);
+	result->setMargin({ 2.0f, 0.0f });
+	result->setAnchor({ 0.5f, 0.5f });
+	result->setPivot({ 0.5f, 0.5f });
+	//result->setRounding(0.5f);
+	result->setAlpha(0.125f);
+	//result->setAlpha(0.0f);
+
+	auto label = std::make_shared<Helpers::Label>();
+	label->setAnchor(0.5f);
+	label->setPivot(0.5f);
+	label->setFontSize(13.0f);
+	label->setText(text);
+	result->attach(label);
+
+	return result;
+}
+
+SocialPanel::Page::Page()
+{
+	setStretch({ 0.0f, 1.0f });
+	setSize({ 256.0f, 0.0f });
+	setPivot(0.5f);
+	setAnchor(0.5f);
+	
+	mBackground = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
+	mBackground->setStretch(1.0f);
+	mBackground->setAlpha(0.125f);
+	mBackground->setAbsoluteRounding(true);
+	mBackground->setRounding(8.0f);
+	attach(mBackground);
+
+	mScrollbox = std::make_shared<Scene::Scrollbox>();
+	mScrollbox->setStretch(1.0f);
+	//mScrollbox->setSensitivity({ 0.0f, 1.0f });
+	mScrollbox->getBounding()->setStretch(1.0f);
+	mScrollbox->getBounding()->setAnchor(0.5f);
+	mScrollbox->getBounding()->setPivot(0.5f);
+	mBackground->attach(mScrollbox);
+
+	/*runAction(Actions::Factory::RepeatInfinite([this] {
 		return Actions::Factory::MakeSequence(
 			Actions::Factory::Wait(1.0f),
 			Actions::Factory::ChangeVerticalScrollPosition(mScrollbox, 1.0f, 3.0f, Easing::CubicInOut),
 			Actions::Factory::Wait(1.0f),
 			Actions::Factory::ChangeVerticalScrollPosition(mScrollbox, 0.0f, 3.0f, Easing::CubicInOut)
 		);
-	}));
+	}));*/
+
+	auto table_headers_holder = std::make_shared<Scene::Node>();
+	table_headers_holder->setStretch({ 1.0f, 0.0f });
+	table_headers_holder->setSize({ 0.0f, 16.0f });
+	table_headers_holder->setAnchor({ 0.5f, 0.0f });
+	table_headers_holder->setPivot({ 0.5f, 1.0f });
+	attach(table_headers_holder);
+
+	auto table_number_header = std::make_shared<Helpers::Label>();
+	table_number_header->setText(LOCALIZE("SOCIAL_PANEL_NUM"));
+	table_number_header->setFontSize(12.0f);
+	table_number_header->setAnchor({ 0.0f, 0.5f });
+	table_number_header->setPivot({ 0.5f, 0.5f });
+	table_number_header->setPosition({ 16.0f, 0.0f });
+	table_number_header->setAlpha(0.5f);
+	table_headers_holder->attach(table_number_header);
+
+	auto table_name_header = std::make_shared<Helpers::Label>();
+	table_name_header->setText(LOCALIZE("SOCIAL_PANEL_NAME"));
+	table_name_header->setFontSize(12.0f);
+	table_name_header->setAnchor({ 0.0f, 0.5f });
+	table_name_header->setPivot({ 0.5f, 0.5f });
+	table_name_header->setPosition({ 32.0f + (96.0f / 2.0f), 0.0f });
+	table_name_header->setAlpha(0.5f);
+	table_headers_holder->attach(table_name_header);
+
+	auto table_score_header = std::make_shared<Helpers::Label>();
+	table_score_header->setText(LOCALIZE("SOCIAL_PANEL_SCORE"));
+	table_score_header->setFontSize(12.0f);
+	table_score_header->setAnchor({ 0.0f, 0.5f });
+	table_score_header->setPivot({ 0.5f, 0.5f });
+	table_score_header->setPosition({ 32.0f + 96.0f + (64.0f / 2.0f), 0.0f });
+	table_score_header->setAlpha(0.5f);
+	table_headers_holder->attach(table_score_header);
+
+	auto table_skin_header = std::make_shared<Helpers::Label>();
+	table_skin_header->setText(LOCALIZE("SOCIAL_PANEL_SKIN"));
+	table_skin_header->setFontSize(12.0f);
+	table_skin_header->setAnchor({ 0.0f, 0.5f });
+	table_skin_header->setPivot({ 0.5f, 0.5f });
+	table_skin_header->setPosition({ 32.0f + 96.0f + 64.0f + (64.0f / 2.0f), 0.0f });
+	table_skin_header->setAlpha(0.5f);
+	table_headers_holder->attach(table_skin_header);
 }
 
-void SocialPanel::refresh()
+void SocialPanel::Page::onEvent(const Helpers::HighscoresEvent& e)
+{
+	mHighscores = e;
+	refresh();
+}
+
+void SocialPanel::Page::refresh()
 {
 	if (mGrid)
 	{
@@ -160,17 +328,15 @@ void SocialPanel::refresh()
 
 			grayed_line = !grayed_line;
 
-			v_items.push_back(h_grid);
+			auto cullable_h_grid = std::make_shared<Scene::Cullable<Scene::Node>>();
+			cullable_h_grid->setSize(VerticalGridItemSize);
+			cullable_h_grid->attach(h_grid);
+
+			v_items.push_back(cullable_h_grid);
 		}
 	}
 
 	mGrid = Shared::SceneHelpers::MakeVerticalGrid(VerticalGridItemSize, v_items);
 	mScrollbox->getContent()->setSize(mGrid->getSize());
 	mScrollbox->getContent()->attach(mGrid);
-}
-
-void SocialPanel::onEvent(const Helpers::HighscoresEvent& e)
-{
-	mHighscores = e;
-	refresh();
 }
