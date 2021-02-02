@@ -144,7 +144,8 @@ void Channel::readFileMessage(Common::BitBuffer& buf)
 
 static bool WantShowChan = false;
 
-Client::Client() : Shared::NetworkingUDP::Client({ "192.168.0.106:1337" })
+Client::Client() : Shared::NetworkingUDP::Client({ "hcg001.ddns.net:27015" })
+
 {
 	CONSOLE->registerCVar("hud_show_chan", "show net channel info", { "bool" },
 		CVAR_GETTER_BOOL(WantShowChan), CVAR_SETTER_BOOL(WantShowChan));
