@@ -14,6 +14,7 @@ MainMenu::MainMenu()
 	title->setFontSize(34.0f);
 	title->setAnchor({ 0.5f, 0.25f });
 	title->setPivot(0.5f);
+	title->setPosition({ 0.0f, -32.0f });
 	title->setText(LOCALIZE("MAIN_MENU_TITLE"));
 	attach(title);
 
@@ -35,7 +36,7 @@ MainMenu::MainMenu()
 	play_button->setSize(ButtonSize);
 	play_button->setAnchor({ -0.5f, 0.5f });
 	play_button->setPivot(0.5f);
-	play_button->setPosition({ 0.0f, 224.0f });
+	play_button->setPosition({ 0.0f, 224.0f - 16.0f });
 	attach(play_button);
 
 	auto unlock_button = std::make_shared<Helpers::RectangleButton>();
@@ -62,7 +63,7 @@ MainMenu::MainMenu()
 	unlock_button->setSize(ButtonSize);
 	unlock_button->setAnchor({ 1.5f, 0.5f });
 	unlock_button->setPivot(0.5f);
-	unlock_button->setPosition({ 0.0f, 224.0f });
+	unlock_button->setPosition({ 0.0f, 224.0f - 16.0f });
 
 	attach(unlock_button);
 
@@ -140,7 +141,7 @@ MainMenu::MainMenu()
 	auto social_panel = std::make_shared<SocialPanel>();
 	social_panel->setAnchor(0.5f);
 	social_panel->setPivot(0.5f);
-	social_panel->setPosition({ 0.0f, -48.0f });
+	social_panel->setPosition({ 0.0f, -48.0f - 16.0f });
 	attach(social_panel);
 }
 
@@ -158,7 +159,7 @@ void MainMenu::refresh()
 	mScrollbox->setSensitivity({ 1.0f, 0.0f });
 	mScrollbox->setAnchor(0.5f);
 	mScrollbox->setPivot(0.5f);
-	mScrollbox->setPosition({ 0.0f, 96.0f });
+	mScrollbox->setPosition({ 0.0f, 84.0f - 16.0f });
 	mScrollbox->setHorizontalStretch(1.0f);
 	mScrollbox->setHeight(ItemSize + ScrollPadding);
 	mScrollbox->setInertiaFriction(0.1f);

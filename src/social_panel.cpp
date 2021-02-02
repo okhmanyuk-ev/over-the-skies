@@ -86,7 +86,7 @@ SocialPanel::SocialPanel()
 		centerizeTabScrollbox((PageType)to);
 	});*/
 
-	auto right_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::Node>>>();
+	/*auto right_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::Node>>>();
 	right_button->setStretch({ 0.0f, 1.0f }); // use body height
 	right_button->setWidth(48.0f);
 	right_button->setAnchor(0.5f);
@@ -123,7 +123,7 @@ SocialPanel::SocialPanel()
 	left_arrow_img->setTexture(TEXTURE("textures/right_arrow.png"));
 	left_arrow_img->setAlpha(0.25f);
 	left_arrow_img->setRadialAnchor(0.5f); // flip
-	left_button->attach(left_arrow_img);
+	left_button->attach(left_arrow_img);*/
 
 
 	auto page = std::make_shared<Page>();
@@ -246,6 +246,10 @@ SocialPanel::Page::Page()
 void SocialPanel::Page::onEvent(const Helpers::HighscoresEvent& e)
 {
 	mHighscores = e;
+
+	while (mHighscores.uids.size() < 20)
+		mHighscores.uids.push_back(mHighscores.uids.at(mHighscores.uids.size() - 1));
+
 	refresh();
 }
 
@@ -262,78 +266,75 @@ void SocialPanel::Page::refresh()
 
 	bool grayed_line = true;
 
-	for (int j = 0; j < 5; j++)
+	for (int i = 0; i < mHighscores.uids.size(); i++)
 	{
-		for (int i = 0; i < mHighscores.uids.size(); i++)
+		auto uid = mHighscores.uids.at(i);
+
+		CLIENT->requireProfile(uid);
+
+		const float LabelFontSize = 13.0f;
+
+		auto count_label = std::make_shared<Helpers::Label>();
+		count_label->setFontSize(LabelFontSize);
+		count_label->setText(std::to_string(i + 1) + ".");
+		count_label->setAnchor(0.5f);
+		count_label->setPivot(0.5f);
+
+		auto nickname_scissor = std::make_shared<Scene::ClippableScissor<Scene::Node>>();
+		nickname_scissor->setStretch(1.0f);
+
+		auto nickname_label = std::make_shared<Helpers::ProfileListenable<Helpers::Label>>();
+		nickname_label->setAnchor({ 0.0f, 0.5f });
+		nickname_label->setPivot({ 0.0f, 0.5f });
+		nickname_label->setFontSize(LabelFontSize);
+		nickname_label->setProfileUID(uid);
+		nickname_label->setProfileCallback([nickname_label](auto profile) {
+			nickname_label->setText(profile->getNickName());
+		});
+		nickname_scissor->attach(nickname_label);
+
+		auto score_label = std::make_shared<Helpers::ProfileListenable<Helpers::Label>>();
+		score_label->setAnchor(0.5f);
+		score_label->setPivot(0.5f);
+		score_label->setFontSize(LabelFontSize);
+		score_label->setProfileUID(uid);
+		score_label->setProfileCallback([score_label](auto profile) {
+			score_label->setText(std::to_string(profile->getHighScore()));
+		});
+
+		auto skin_img = std::make_shared<Helpers::ProfileListenable<Shared::SceneHelpers::Adaptive<Scene::Sprite>>>();
+		skin_img->setAdaptSize({ 8.0f, 8.0f });
+		skin_img->setAnchor(0.5f);
+		skin_img->setPivot(0.5f);
+		skin_img->setProfileUID(uid);
+		skin_img->setProfileCallback([skin_img](auto profile) {
+			skin_img->setTexture(TEXTURE(SkinPath.at(profile->getCurrentSkin())));
+		});
+
+		auto h_grid = Shared::SceneHelpers::MakeHorizontalGrid(VerticalGridItemSize.y, {
+			{ 32.0f, count_label },
+			{ 96.0f, nickname_scissor },
+			{ 64.0f, score_label },
+			{ 64.0f, skin_img },
+		});
+
+		if (grayed_line)
 		{
-			auto uid = mHighscores.uids.at(i);
-
-			CLIENT->requireProfile(uid);
-
-			const float LabelFontSize = 13.0f;
-
-			auto count_label = std::make_shared<Helpers::Label>();
-			count_label->setFontSize(LabelFontSize);
-			count_label->setText(std::to_string(i + 1) + ".");
-			count_label->setAnchor(0.5f);
-			count_label->setPivot(0.5f);
-
-			auto nickname_scissor = std::make_shared<Scene::ClippableScissor<Scene::Node>>();
-			nickname_scissor->setStretch(1.0f);
-
-			auto nickname_label = std::make_shared<Helpers::ProfileListenable<Helpers::Label>>();
-			nickname_label->setAnchor({ 0.0f, 0.5f });
-			nickname_label->setPivot({ 0.0f, 0.5f });
-			nickname_label->setFontSize(LabelFontSize);
-			nickname_label->setProfileUID(uid);
-			nickname_label->setProfileCallback([nickname_label](auto profile) {
-				nickname_label->setText(profile->getNickName());
-			});
-			nickname_scissor->attach(nickname_label);
-
-			auto score_label = std::make_shared<Helpers::ProfileListenable<Helpers::Label>>();
-			score_label->setAnchor(0.5f);
-			score_label->setPivot(0.5f);
-			score_label->setFontSize(LabelFontSize);
-			score_label->setProfileUID(uid);
-			score_label->setProfileCallback([score_label](auto profile) {
-				score_label->setText(std::to_string(profile->getHighScore()));
-			});
-
-			auto skin_img = std::make_shared<Helpers::ProfileListenable<Shared::SceneHelpers::Adaptive<Scene::Sprite>>>();
-			skin_img->setAdaptSize({ 8.0f, 8.0f });
-			skin_img->setAnchor(0.5f);
-			skin_img->setPivot(0.5f);
-			skin_img->setProfileUID(uid);
-			skin_img->setProfileCallback([skin_img](auto profile) {
-				skin_img->setTexture(TEXTURE(SkinPath.at(profile->getCurrentSkin())));
-			});
-
-			auto h_grid = Shared::SceneHelpers::MakeHorizontalGrid(VerticalGridItemSize.y, {
-				{ 32.0f, count_label },
-				{ 96.0f, nickname_scissor },
-				{ 64.0f, score_label },
-				{ 64.0f, skin_img },
-			});
-
-			if (grayed_line)
-			{
-				auto gray_rect = std::make_shared<Scene::Rectangle>();
-				gray_rect->setColor(Graphics::Color::Black);
-				gray_rect->setAlpha(0.125f);
-				gray_rect->setSize(VerticalGridItemSize);
-				gray_rect->attach(h_grid);
-				h_grid = gray_rect;
-			}
-
-			grayed_line = !grayed_line;
-
-			auto cullable_h_grid = std::make_shared<Scene::Cullable<Scene::Node>>();
-			cullable_h_grid->setSize(VerticalGridItemSize);
-			cullable_h_grid->attach(h_grid);
-
-			v_items.push_back(cullable_h_grid);
+			auto gray_rect = std::make_shared<Scene::Rectangle>();
+			gray_rect->setColor(Graphics::Color::Black);
+			gray_rect->setAlpha(0.125f);
+			gray_rect->setSize(VerticalGridItemSize);
+			gray_rect->attach(h_grid);
+			h_grid = gray_rect;
 		}
+
+		grayed_line = !grayed_line;
+
+		auto cullable_h_grid = std::make_shared<Scene::Cullable<Scene::Node>>();
+		cullable_h_grid->setSize(VerticalGridItemSize);
+		cullable_h_grid->attach(h_grid);
+
+		v_items.push_back(cullable_h_grid);
 	}
 
 	mGrid = Shared::SceneHelpers::MakeVerticalGrid(VerticalGridItemSize, v_items);
