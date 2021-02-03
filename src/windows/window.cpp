@@ -86,7 +86,7 @@ StandardWindow::StandardWindow()
 	header_bg->attach(mTitle);
 
 	auto close_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Shared::SceneHelpers::Adaptive<Scene::Sprite>>>>();
-	close_button->setTexture(TEXTURE("textures/close.png"));
+	close_button->setTexture(TEXTURE("textures/close2.png"));
 	close_button->setAdaptSize(22.0f);
 	close_button->setAnchor({ 1.0f, 0.5f });
 	close_button->setPivot(0.5f);
