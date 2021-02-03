@@ -6,6 +6,7 @@
 #include "windows/options_window.h"
 #include "windows/highscores_window.h"
 #include "windows/guilds_window.h"
+#include "windows/global_chat_window.h"
 
 using namespace hcg001;
 
@@ -161,6 +162,17 @@ MainMenu::MainMenu()
 		SCENE_MANAGER->pushWindow(window);
 	});
 	hud->attach(guilds_button);
+
+	auto global_chat_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
+	global_chat_button->setTexture(TEXTURE("textures/chat.png"));
+	global_chat_button->setAdaptSize({ 86.0f, 28.0f });
+	global_chat_button->setPosition({ 276.0f, 24.0f });
+	global_chat_button->setPivot({ 0.0f, 0.5f });
+	global_chat_button->setClickCallback([] {
+		auto window = std::make_shared<GlobalChatWindow>();
+		SCENE_MANAGER->pushWindow(window);
+	});
+	hud->attach(global_chat_button);
 
 	auto social_panel = std::make_shared<SocialPanel>();
 	social_panel->setAnchor(0.5f);
