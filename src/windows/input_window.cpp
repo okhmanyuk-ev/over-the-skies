@@ -20,7 +20,7 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 	getContent()->attach(mLabel);
 
 	mApplyButton = std::make_shared<Helpers::RectangleButton>();
-	mApplyButton->getLabel()->setText(LOCALIZE("INPUT_WINDOW_APPLY"));
+	mApplyButton->getLabel()->setText(LOCALIZE("WINDOW_APPLY"));
 	mApplyButton->getLabel()->setFontSize(18.0f);
 	mApplyButton->setClickCallback([this] {
 		mChangeTextCallback(mLabel->getText());
@@ -34,7 +34,7 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 	getContent()->attach(mApplyButton);
 
 	mCancelButton = std::make_shared<Helpers::RectangleButton>();
-	mCancelButton->getLabel()->setText(LOCALIZE("INPUT_WINDOW_CANCEL"));
+	mCancelButton->getLabel()->setText(LOCALIZE("WINDOW_CANCEL"));
 	mCancelButton->getLabel()->setFontSize(18.0f);
 	mCancelButton->setClickCallback([this] {
 		SCENE_MANAGER->popWindow();

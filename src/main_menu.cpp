@@ -1,10 +1,11 @@
 #include "main_menu.h"
 #include "profile.h"
 #include "helpers.h"
+#include "social_panel.h"
 #include "windows/shop_window.h"
 #include "windows/options_window.h"
-#include "social_panel.h"
 #include "windows/highscores_window.h"
+#include "windows/guilds_window.h"
 
 using namespace hcg001;
 
@@ -149,6 +150,17 @@ MainMenu::MainMenu()
 		SCENE_MANAGER->pushWindow(window);
 	});
 	hud->attach(hishscores_button);
+
+	auto guilds_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
+	guilds_button->setTexture(TEXTURE("textures/guilds.png"));
+	guilds_button->setAdaptSize({ 86.0f, 28.0f });
+	guilds_button->setPosition({ 220.0f, 24.0f });
+	guilds_button->setPivot({ 0.0f, 0.5f });
+	guilds_button->setClickCallback([] {
+		auto window = std::make_shared<GuildsWindow>();
+		SCENE_MANAGER->pushWindow(window);
+	});
+	hud->attach(guilds_button);
 
 	auto social_panel = std::make_shared<SocialPanel>();
 	social_panel->setAnchor(0.5f);
