@@ -1,11 +1,10 @@
 #pragma once
 
-#include <shared/all.h>
 #include "window.h"
 
 namespace hcg001
 {
-	class DailyRewardWindow : public Window
+	class DailyRewardWindow : public StandardWindow
 	{
 	public:
 		const static inline std::map<int, int> DailyRewardMap = {

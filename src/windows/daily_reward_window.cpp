@@ -1,62 +1,13 @@
 #include "daily_reward_window.h"
-#include "helpers.h"
 
 using namespace hcg001;
 
 DailyRewardWindow::DailyRewardWindow(int current_day)
 {
+	getBackground()->setSize({ 314.0f, 286.0f });
+	getTitle()->setText(LOCALIZE("DAILYREWARD_TITLE"));
+
 	setCloseOnMissclick(false);
-
-	auto rect = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
-	rect->setRounding(12.0f);
-	rect->setAbsoluteRounding(true);
-	rect->setSize({ 314.0f, 286.0f });
-	rect->setAnchor(0.5f);
-	rect->setPivot(0.5f);
-	rect->setTouchable(true);
-	rect->setColor(Helpers::BaseWindowColor / 12.0f);
-	//rect->setDrawOnlyStencil(true);
-	getContent()->attach(rect);
-
-	/*auto blur = std::make_shared<Scene::Blur>();
-	blur->setStretch(1.0f);
-	blur->setRadius(32);
-	blur->getSprite()->setColor(Graphics::Color::Gray);
-	rect->attach(blur);*/
-
-	auto header = std::make_shared<Scene::Node>();
-	header->setHorizontalStretch(1.0f);
-	header->setHeight(36.0f);
-	rect->attach(header);
-
-	auto footer = std::make_shared<Scene::Node>();
-	footer->setHeight(48.0f);
-	footer->setHorizontalStretch(1.0f);
-	footer->setAnchor({ 0.5f, 1.0f });
-	footer->setPivot({ 0.5f, 1.0f });
-	rect->attach(footer);
-
-	auto content = std::make_shared<Scene::Node>();
-	content->setStretch(1.0f);
-	content->setY(header->getHeight());
-	content->setVerticalMargin(header->getHeight() + footer->getHeight());
-	rect->attach(content);
-
-	// --------
-
-	auto header_bg = std::make_shared<Scene::Rectangle>();
-	header_bg->setStretch(1.0f);
-	header_bg->setColor(Helpers::BaseWindowColor);
-	header_bg->setAlpha(0.25f);
-	header->attach(header_bg);
-
-	auto title = std::make_shared<Scene::Label>();
-	title->setFont(FONT("default"));
-	title->setFontSize(20.0f);
-	title->setText(LOCALIZE("DAILYREWARD_TITLE"));
-	title->setAnchor(0.5f);
-	title->setPivot(0.5f);
-	header_bg->attach(title);
 
 	const glm::vec2 PlashkaSize = { 74.0f, 96.0f };
 
@@ -143,10 +94,10 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 		sub_grid1,
 		sub_grid2
 	});
-	grid->setAnchor(0.5f);
-	grid->setPivot(0.5f);
-	grid->setY(4.0f);
-	content->attach(grid);
+	grid->setAnchor({ 0.5f, 0.0f });
+	grid->setPivot({ 0.5f, 0.0f });
+	grid->setY(8.0f);
+	getBody()->attach(grid);
 
 	auto ok_button = std::make_shared<Helpers::RectangleButton>();
 	ok_button->setColor(Helpers::BaseWindowColor);
@@ -155,8 +106,9 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	ok_button->setClickCallback([this] {
 		SCENE_MANAGER->popWindow(mClaimCallback);
 	});
-	ok_button->setAnchor(0.5f);
+	ok_button->setAnchor({ 0.5f, 1.0f });
 	ok_button->setPivot(0.5f);
 	ok_button->setSize({ 128.0f, 32.0f });
-	footer->attach(ok_button);
+	ok_button->setY(-24.0f);
+	getBody()->attach(ok_button);
 }

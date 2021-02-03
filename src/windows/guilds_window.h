@@ -1,12 +1,10 @@
 #pragma once
 
-#include <shared/all.h>
 #include "window.h"
-#include "helpers.h"
 
 namespace hcg001
 {
-	class GuildsWindow : public Window
+	class GuildsWindow : public StandardWindow
 	{
 	public:
 		GuildsWindow();

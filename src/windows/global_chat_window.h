@@ -6,7 +6,7 @@
 
 namespace hcg001
 {
-	class GlobalChatWindow : public Window
+	class GlobalChatWindow : public StandardWindow
 	{
 	public:
 		GlobalChatWindow();

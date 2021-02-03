@@ -1,60 +1,22 @@
 #pragma once
 
 #include <shared/all.h>
+#include "helpers.h"
 
 namespace hcg001
 {
 	class Window : public Scene::Clickable<Shared::SceneHelpers::Backshaded<Shared::SceneManager::Window>>
 	{
 	public:
-		Window()
-		{
-			setStretch(1.0f);
-			setClickCallback([this] {
-				if (!mCloseOnMissclick)
-					return;
+		Window();
 
-				if (getState() != State::Opened)
-					return;
+	public:
+		void onOpenEnd() override;
+		void onCloseBegin() override;
 
-				SCENE_MANAGER->popWindow();
-			});
-
-			getBackshadeColor()->setColor({ Graphics::Color::Black, 0.0f });
-	
-			mContent = std::make_shared<Scene::Node>();
-			mContent->setStretch(1.0f);
-			mContent->setAnchor({ 0.5f, -0.5f });
-			mContent->setPivot(0.5f);
-			mContent->setInteractions(false);
-			attach(mContent);
-		}
-
-		void onOpenEnd() override
-		{
-			mContent->setInteractions(true);
-		}
-
-		void onCloseBegin() override
-		{
-			mContent->setInteractions(false);
-		}
-
-		std::unique_ptr<Actions::Action> createOpenAction() override
-		{
-			return Actions::Factory::MakeParallel(
-				Actions::Factory::ChangeAlpha(getBackshadeColor(), mFadeAlpha, 0.5f, Easing::CubicOut),
-				Actions::Factory::ChangeVerticalAnchor(mContent, 0.5f, 0.5f, Easing::CubicOut)
-			);
-		};
-
-		std::unique_ptr<Actions::Action> createCloseAction() override
-		{
-			return Actions::Factory::MakeParallel(
-				Actions::Factory::ChangeAlpha(getBackshadeColor(), 0.0f, 0.5f, Easing::CubicIn),
-				Actions::Factory::ChangeVerticalAnchor(mContent, -0.5f, 0.5f, Easing::CubicIn)
-			);
-		};
+	public:
+		std::unique_ptr<Actions::Action> createOpenAction() override;
+		std::unique_ptr<Actions::Action> createCloseAction() override;
 
 	public:
 		auto getContent() { return mContent; }
@@ -70,5 +32,21 @@ namespace hcg001
 		std::shared_ptr<Scene::Node> mContent;
 		bool mCloseOnMissclick = true;
 		float mFadeAlpha = 0.5f;
+	};
+
+	class StandardWindow : public Window
+	{
+	public:
+		StandardWindow();
+
+	public:
+		auto getBackground() const { return mBackground; }
+		auto getBody() const { return mBody; }
+		auto getTitle() const { return mTitle; }
+
+	private:
+		std::shared_ptr<Scene::ClippableStencil<Scene::Rectangle>> mBackground;
+		std::shared_ptr<Scene::Node> mBody;
+		std::shared_ptr<Helpers::Label> mTitle;
 	};
 }

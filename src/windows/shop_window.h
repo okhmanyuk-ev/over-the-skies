@@ -1,11 +1,10 @@
 #pragma once
 
-#include <shared/all.h>
 #include "window.h"
 
 namespace hcg001
 {
-	class ShopWindow : public Window
+	class ShopWindow : public StandardWindow
 	{
 	public:
 		ShopWindow();
