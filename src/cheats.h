@@ -2,7 +2,7 @@
 
 #include <shared/all.h>
 #include "profile.h"
-#include "daily_reward_window.h"
+#include "windows/daily_reward_window.h"
 
 namespace hcg001
 {

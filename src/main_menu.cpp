@@ -1,9 +1,10 @@
 #include "main_menu.h"
 #include "profile.h"
 #include "helpers.h"
-#include "shop_window.h"
-#include "options_window.h"
+#include "windows/shop_window.h"
+#include "windows/options_window.h"
 #include "social_panel.h"
+#include "windows/highscores_window.h"
 
 using namespace hcg001;
 
@@ -137,6 +138,17 @@ MainMenu::MainMenu()
 		SCENE_MANAGER->pushWindow(window);
 	});
 	hud->attach(options_button);
+
+	auto hishscores_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
+	hishscores_button->setTexture(TEXTURE("textures/podium.png"));
+	hishscores_button->setAdaptSize({ 86.0f, 28.0f });
+	hishscores_button->setPosition({ 164.0f, 24.0f });
+	hishscores_button->setPivot({ 0.0f, 0.5f });
+	hishscores_button->setClickCallback([] {
+		auto window = std::make_shared<HighscoresWindow>();
+		SCENE_MANAGER->pushWindow(window);
+	});
+	hud->attach(hishscores_button);
 
 	auto social_panel = std::make_shared<SocialPanel>();
 	social_panel->setAnchor(0.5f);

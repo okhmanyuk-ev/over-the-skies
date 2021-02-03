@@ -20,10 +20,17 @@ file(GLOB MAIN_SRC
 	src/*.h
 )
 
+file(GLOB WINDOWS_SRC
+	src/windows/*.cpp
+	src/windows/*.h
+)
+
 source_group("all" FILES ${MAIN_SRC})
+source_group("windows" FILES ${WINDOWS_SRC})
 
 file(GLOB ALL_SRC
 	${MAIN_SRC}
+	${WINDOWS_SRC}
 )
 
 if(WIN32)

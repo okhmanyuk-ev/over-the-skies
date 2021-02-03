@@ -8,7 +8,7 @@
 #include "skin.h"
 #include "profile.h"
 #include "cheats.h"
-#include "daily_reward_window.h"
+#include "windows/daily_reward_window.h"
 #include "helpers.h"
 #include "hud.h"
 #include "client.h"
