@@ -43,6 +43,11 @@ GlobalChatWindow::GlobalChatWindow()
 	mScrollbox->setScrollOrigin({ 0.0f, 1.0f });
 	mScrollbox->setScrollPosition({ 0.0f, 1.0f });
 	scrollbox_holder->attach(mScrollbox);
+
+	for (int i = 0; i < 10; i++)
+	{
+		addItem(std::to_string(i));
+	}
 }
 
 void GlobalChatWindow::addItem(const utf8_string& text)
@@ -54,8 +59,12 @@ void GlobalChatWindow::addItem(const utf8_string& text)
 
 	auto rect = std::make_shared<Scene::Rectangle>();
 	rect->setStretch(1.0f);
-	rect->setMargin({ 0.0f, 8.0f });
+	rect->setMargin(8.0f);
 	rect->setAlpha(0.25f);
+	rect->setAnchor(0.5f);
+	rect->setPivot(0.5f);
+	rect->setRounding(8.0f);
+	rect->setAbsoluteRounding(true);
 	item->attach(rect);
 
 	auto label = std::make_shared<Helpers::Label>();
@@ -67,7 +76,13 @@ void GlobalChatWindow::addItem(const utf8_string& text)
 	auto index = mItems.size();
 	mItems.insert({ index, item });
 
+	/*auto normalized_item_heght = item->getHeight() / mScrollbox->getVerticalScrollSpaceSize();
+	auto scroll_pos_y = mScrollbox->getVerticalScrollPosition();
+	mScrollbox->setVerticalScrollPosition(scroll_pos_y + (normalized_item_heght));*/
+
 	refreshScrollContent();
+
+
 }
 
 void GlobalChatWindow::refreshScrollContent()
