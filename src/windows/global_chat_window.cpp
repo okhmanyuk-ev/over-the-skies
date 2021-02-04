@@ -44,17 +44,20 @@ GlobalChatWindow::GlobalChatWindow()
 	mScrollbox->setScrollPosition({ 0.0f, 1.0f });
 	scrollbox_holder->attach(mScrollbox);
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		addItem(std::to_string(i));
 	}
+
+	scrollToBack(false);
 }
 
 void GlobalChatWindow::addItem(const utf8_string& text)
 {
-	auto item = std::make_shared<Scene::Node>();
+	auto item = std::make_shared<Scene::Cullable<Scene::Node>>();
 	item->setStretch({ 1.0f, 0.0f });
 	item->setHeight(64.0f);
+	item->setCullTarget(mScrollbox);
 	mScrollbox->getContent()->attach(item);
 
 	auto rect = std::make_shared<Scene::Rectangle>();
@@ -63,7 +66,7 @@ void GlobalChatWindow::addItem(const utf8_string& text)
 	rect->setAlpha(0.25f);
 	rect->setAnchor(0.5f);
 	rect->setPivot(0.5f);
-	rect->setRounding(8.0f);
+	rect->setRounding(16.0f);
 	rect->setAbsoluteRounding(true);
 	item->attach(rect);
 
@@ -73,15 +76,24 @@ void GlobalChatWindow::addItem(const utf8_string& text)
 	label->setPivot(0.5f);
 	rect->attach(label);
 
-	auto index = mItems.size();
-	mItems.insert({ index, item });
-
 	auto old_space = mScrollbox->getVerticalScrollSpaceSize();
 	auto new_space = old_space + item->getHeight();
 	
 	auto scroll_pos_y = mScrollbox->getVerticalScrollPosition();
 	scroll_pos_y /= new_space / old_space;
 	mScrollbox->setVerticalScrollPosition(scroll_pos_y);
+
+	if (!mItems.empty())
+	{
+		auto [index, item] = *mItems.rbegin();
+		if (item->isVisible())
+		{
+			scrollToBack();
+		}
+	}
+
+	auto index = mItems.size();
+	mItems.insert({ index, item });
 
 	refreshScrollContent();
 }
@@ -97,4 +109,12 @@ void GlobalChatWindow::refreshScrollContent()
 	}
 
 	mScrollbox->getContent()->setHeight(height);
+}
+
+void GlobalChatWindow::scrollToBack(bool animated)
+{
+	if (animated)
+		runAction(Actions::Factory::ChangeVerticalScrollPosition(mScrollbox, 1.0f, 0.25f, Easing::CubicOut));
+	else
+		mScrollbox->setVerticalScrollPosition(1.0f);
 }

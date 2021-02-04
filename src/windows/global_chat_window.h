@@ -12,6 +12,7 @@ namespace hcg001
 	private:
 		void addItem(const utf8_string& text);
 		void refreshScrollContent();
+		void scrollToBack(bool animated = true);
 
 	private:
 		std::shared_ptr<Scene::Scrollbox> mScrollbox;
