@@ -43,18 +43,21 @@ GlobalChatWindow::GlobalChatWindow()
 	mScrollbox->setScrollOrigin({ 0.0f, 1.0f });
 	mScrollbox->setScrollPosition({ 0.0f, 1.0f });
 	scrollbox_holder->attach(mScrollbox);
-
-	/*for (int i = 0; i < 100; i++)
-	{
-		addItem(std::to_string(i));
-	}
-
-	scrollToBack(false);*/
 }
 
-void GlobalChatWindow::onEvent(const GlobalChatMessageEvent& e)
+void GlobalChatWindow::onEvent(const Channel::GlobalChatMessageEvent& e)
 {
-	addItem(std::to_string(e.uid) + ": " + e.text);
+	const auto& messages = CLIENT->getGlobalChatMessages();
+	auto msg = messages.at(e.msgid);
+	
+	CLIENT->requireProfile(msg->getUID());
+
+	runAction(Actions::Factory::Delayed([msg] { return !CLIENT->hasProfile(msg->getUID()); },
+		Actions::Factory::Execute([this, msg] {
+			auto profile = CLIENT->getProfile(msg->getUID());
+			addItem(profile->getNickName() + ": " + msg->getText());
+		})
+	));
 }
 
 void GlobalChatWindow::addItem(const utf8_string& text)

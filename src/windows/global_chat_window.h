@@ -5,13 +5,13 @@
 namespace hcg001
 {
 	class GlobalChatWindow : public StandardWindow,
-		public Common::Event::Listenable<GlobalChatMessageEvent>
+		public Common::Event::Listenable<Channel::GlobalChatMessageEvent>
 	{
 	public:
 		GlobalChatWindow();
 
 	private:
-		void onEvent(const GlobalChatMessageEvent& e) override;
+		void onEvent(const Channel::GlobalChatMessageEvent& e) override;
 
 	private:
 		void addItem(const utf8_string& text);

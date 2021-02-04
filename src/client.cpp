@@ -37,9 +37,12 @@ Channel::Channel()
 	});
 
 	addEventCallback("global_chat_message", [this](const auto& params) {
+		auto msgid = std::stoi(params.at("msgid"));
 		auto uid = std::stoi(params.at("uid"));
 		auto text = params.at("text");
-		EVENT->emit(GlobalChatMessageEvent({ uid, text }));
+		auto message = std::make_shared<ChatMessage>(uid, text);
+		mGlobalChatMessages[msgid] = message;
+		EVENT->emit(GlobalChatMessageEvent({ msgid }));
 	});
     
 	auth();
@@ -153,6 +156,15 @@ void Channel::readFileMessage(Common::BitBuffer& buf)
 	}
 }
 
+// channel chat
+
+Channel::ChatMessage::ChatMessage(int uid, const std::string& text) :
+	mUID(uid),
+	mText(text)
+{
+	//
+}
+
 // client
 
 static bool WantShowChan = false;
@@ -227,6 +239,16 @@ void Client::sendChatMessage(const std::string& text)
 		return;
 
 	getMyChannel()->sendChatMessage(text);
+}
+
+const Channel::GlobalChatMessages& Client::getGlobalChatMessages() const
+{
+	assert(isConnected());
+		
+	if (!isConnected())
+		return {};
+
+	return getMyChannel()->getGlobalChatMessages();
 }
 
 const Channel::ProfilesMap& Client::getProfiles() const 
