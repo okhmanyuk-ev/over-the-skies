@@ -76,13 +76,14 @@ void GlobalChatWindow::addItem(const utf8_string& text)
 	auto index = mItems.size();
 	mItems.insert({ index, item });
 
-	/*auto normalized_item_heght = item->getHeight() / mScrollbox->getVerticalScrollSpaceSize();
+	auto old_space = mScrollbox->getVerticalScrollSpaceSize();
+	auto new_space = old_space + item->getHeight();
+	
 	auto scroll_pos_y = mScrollbox->getVerticalScrollPosition();
-	mScrollbox->setVerticalScrollPosition(scroll_pos_y + (normalized_item_heght));*/
+	scroll_pos_y /= new_space / old_space;
+	mScrollbox->setVerticalScrollPosition(scroll_pos_y);
 
 	refreshScrollContent();
-
-
 }
 
 void GlobalChatWindow::refreshScrollContent()
