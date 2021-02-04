@@ -244,10 +244,6 @@ void Client::sendChatMessage(const std::string& text)
 const Channel::GlobalChatMessages& Client::getGlobalChatMessages() const
 {
 	assert(isConnected());
-		
-	if (!isConnected())
-		return {};
-
 	return getMyChannel()->getGlobalChatMessages();
 }
 

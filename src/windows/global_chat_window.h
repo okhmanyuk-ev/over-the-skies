@@ -14,7 +14,7 @@ namespace hcg001
 		void onEvent(const Channel::GlobalChatMessageEvent& e) override;
 
 	private:
-		void addItem(const utf8_string& text);
+		void addMessage(int msgid, std::shared_ptr<Channel::ChatMessage> message);
 		void refreshScrollContent();
 		void scrollToBack(bool animated = true);
 

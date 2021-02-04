@@ -43,24 +43,25 @@ GlobalChatWindow::GlobalChatWindow()
 	mScrollbox->setScrollOrigin({ 0.0f, 1.0f });
 	mScrollbox->setScrollPosition({ 0.0f, 1.0f });
 	scrollbox_holder->attach(mScrollbox);
+
+	if (CLIENT->isConnected())
+	{
+		const auto& messages = CLIENT->getGlobalChatMessages();
+		for (auto [index, msg] : messages)
+		{
+			addMessage(index, msg);
+		}
+	}
 }
 
 void GlobalChatWindow::onEvent(const Channel::GlobalChatMessageEvent& e)
 {
 	const auto& messages = CLIENT->getGlobalChatMessages();
 	auto msg = messages.at(e.msgid);
-	
-	CLIENT->requireProfile(msg->getUID());
-
-	runAction(Actions::Factory::Delayed([msg] { return !CLIENT->hasProfile(msg->getUID()); },
-		Actions::Factory::Execute([this, msg] {
-			auto profile = CLIENT->getProfile(msg->getUID());
-			addItem(profile->getNickName() + ": " + msg->getText());
-		})
-	));
+	addMessage(e.msgid, msg);
 }
 
-void GlobalChatWindow::addItem(const utf8_string& text)
+void GlobalChatWindow::addMessage(int msgid, std::shared_ptr<Channel::ChatMessage> message)
 {
 	auto item = std::make_shared<Scene::Cullable<Scene::Node>>();
 	item->setStretch({ 1.0f, 0.0f });
@@ -77,11 +78,14 @@ void GlobalChatWindow::addItem(const utf8_string& text)
 	rect->setRounding(16.0f);
 	rect->setAbsoluteRounding(true);
 	item->attach(rect);
-
-	auto label = std::make_shared<Helpers::Label>();
-	label->setText(text);
+	
+	auto label = std::make_shared<Helpers::ProfileListenable<Helpers::Label>>();
 	label->setAnchor(0.5f);
 	label->setPivot(0.5f);
+	label->setProfileUID(message->getUID());
+	label->setProfileCallback([label, message](Channel::ProfilePtr profile) {
+		label->setText(profile->getNickName() + ": " + message->getText());
+	});
 	rect->attach(label);
 
 	auto old_space = mScrollbox->getVerticalScrollSpaceSize();
