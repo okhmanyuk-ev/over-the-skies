@@ -7,6 +7,12 @@
 
 namespace hcg001
 {
+	struct GlobalChatMessageEvent
+	{
+		int uid;
+		std::string text;
+	};
+
 	class Channel : public Shared::NetworkingUDP::SimpleChannel
 	{
 	public:
@@ -22,6 +28,7 @@ namespace hcg001
 		void requestHighscores();
 		void requestProfile(int uid);
 		void clearProfiles();
+		void sendChatMessage(const std::string& text);
 
 	private:
 		void readFileMessage(Common::BitBuffer& buf);
@@ -62,6 +69,7 @@ namespace hcg001
 		void requestHighscores();
 		void requestProfile(int uid);
 		void requireProfile(int uid);
+		void sendChatMessage(const std::string& text);
 
 	private:
 		auto getMyChannel() const { return std::dynamic_pointer_cast<Channel>(getChannel()); }

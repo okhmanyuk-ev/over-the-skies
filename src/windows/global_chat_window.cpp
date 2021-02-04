@@ -11,9 +11,9 @@ GlobalChatWindow::GlobalChatWindow()
 
 	auto ok_button = std::make_shared<Helpers::RectangleButton>();
 	ok_button->setColor(Helpers::BaseWindowColor);
-	ok_button->setClickCallback([this] {
-		auto window = std::make_shared<InputWindow>("awdawd", [this](auto str) {
-			addItem(str);
+	ok_button->setClickCallback([] {
+		auto window = std::make_shared<InputWindow>("awdawd", [](auto str) {
+			CLIENT->sendChatMessage(str.cpp_str());
 		});
 		SCENE_MANAGER->pushWindow(window);
 	});
@@ -44,12 +44,17 @@ GlobalChatWindow::GlobalChatWindow()
 	mScrollbox->setScrollPosition({ 0.0f, 1.0f });
 	scrollbox_holder->attach(mScrollbox);
 
-	for (int i = 0; i < 100; i++)
+	/*for (int i = 0; i < 100; i++)
 	{
 		addItem(std::to_string(i));
 	}
 
-	scrollToBack(false);
+	scrollToBack(false);*/
+}
+
+void GlobalChatWindow::onEvent(const GlobalChatMessageEvent& e)
+{
+	addItem(std::to_string(e.uid) + ": " + e.text);
 }
 
 void GlobalChatWindow::addItem(const utf8_string& text)

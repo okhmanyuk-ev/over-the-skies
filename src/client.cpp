@@ -35,6 +35,12 @@ Channel::Channel()
 		mProfiles.insert({ uid, profile });
 		EVENT->emit(Helpers::ProfileReceived({ uid }));
 	});
+
+	addEventCallback("global_chat_message", [this](const auto& params) {
+		auto uid = std::stoi(params.at("uid"));
+		auto text = params.at("text");
+		EVENT->emit(GlobalChatMessageEvent({ uid, text }));
+	});
     
 	auth();
 	commit();
@@ -96,6 +102,13 @@ void Channel::clearProfiles()
 	mProfiles.clear();
 }
 
+void Channel::sendChatMessage(const std::string& text)
+{
+	sendEvent("global_chat_message", {
+		{ "text", text }
+	});
+}
+
 void Channel::readFileMessage(Common::BitBuffer& buf)
 {
 	auto path = Common::BufferHelpers::ReadString(buf);
@@ -144,8 +157,9 @@ void Channel::readFileMessage(Common::BitBuffer& buf)
 
 static bool WantShowChan = false;
 
-Client::Client() : Shared::NetworkingUDP::Client({ "hcg001.ddns.net:27015" })
-
+Client::Client() : 
+	//Shared::NetworkingUDP::Client({ "hcg001.ddns.net:27015" })
+	Shared::NetworkingUDP::Client({ "127.0.0.1:27015" })
 {
 	CONSOLE->registerCVar("hud_show_chan", "show net channel info", { "bool" },
 		CVAR_GETTER_BOOL(WantShowChan), CVAR_SETTER_BOOL(WantShowChan));
@@ -205,6 +219,14 @@ void Client::requireProfile(int uid)
 		return;
 
 	requestProfile(uid);
+}
+
+void Client::sendChatMessage(const std::string& text)
+{
+	if (!isConnected())
+		return;
+
+	getMyChannel()->sendChatMessage(text);
 }
 
 const Channel::ProfilesMap& Client::getProfiles() const 
