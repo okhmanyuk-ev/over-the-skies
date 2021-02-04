@@ -44,6 +44,10 @@ GlobalChatWindow::GlobalChatWindow()
 	mScrollbox->setScrollPosition({ 0.0f, 1.0f });
 	scrollbox_holder->attach(mScrollbox);
 
+	auto scrollbar = std::make_shared<Shared::SceneHelpers::VerticalScrollbar>();
+	scrollbar->setScrollbox(mScrollbox);
+	mScrollbox->attach(scrollbar);
+
 	if (CLIENT->isConnected())
 	{
 		const auto& messages = CLIENT->getGlobalChatMessages();
