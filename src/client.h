@@ -20,7 +20,7 @@ namespace hcg001
 	public:
 		struct GlobalChatMessageEvent
 		{
-			int msgid;
+			int msgid; // TODO: rename to index
 		};
 
 	public:
@@ -40,6 +40,9 @@ namespace hcg001
 	public:
 		const auto& getProfiles() const { return mProfiles; }
 		const auto& getGlobalChatMessages() const { return mGlobalChatMessages; }
+
+	public:
+		auto getUID() const { return mUID; }
 
 	private:
 		int mUID = 0;
@@ -103,5 +106,8 @@ namespace hcg001
 		bool hasProfile(int uid);
 		Channel::ProfilePtr getProfile(int uid);
 		void clearProfiles();
+
+	public:
+		int getUID() const;
 	};
 }

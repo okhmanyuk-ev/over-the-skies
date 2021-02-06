@@ -3,7 +3,6 @@
 echo Choose compiler type:
 echo  - 1. Any
 echo  - 2. Clang
-echo  - 3. GCC
 set /p COMPILER_TYPE=Answer: 
 
 if "%COMPILER_TYPE%" neq "1" (
@@ -32,8 +31,6 @@ if "%COMPILER_TYPE%"=="1" (
 	goto default
 ) else if "%COMPILER_TYPE%"=="2" (
 	goto clang
-) else (
-	goto gcc
 )
 
 :default
@@ -48,14 +45,6 @@ goto end
 mkdir build
 cd build
 cmake .. -DBUILD_DEVELOPER=%BUILD_DEVELOPER% -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
-ninja
-goto end
-
-:gcc
-
-mkdir build
-cd build
-cmake .. -DBUILD_DEVELOPER=%BUILD_DEVELOPER% -G Ninja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
 ninja
 goto end
 

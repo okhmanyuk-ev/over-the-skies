@@ -1,6 +1,7 @@
 #include "global_chat_window.h"
 #include "helpers.h"
 #include "input_window.h"
+#include "cheats.h"
 
 using namespace hcg001;
 
@@ -12,7 +13,7 @@ GlobalChatWindow::GlobalChatWindow()
 	auto ok_button = std::make_shared<Helpers::RectangleButton>();
 	ok_button->setColor(Helpers::BaseWindowColor);
 	ok_button->setClickCallback([] {
-		auto window = std::make_shared<InputWindow>("awdawd", [](auto str) {
+		auto window = std::make_shared<InputWindow>("", [](auto str) {
 			CLIENT->sendChatMessage(str.cpp_str());
 		});
 		SCENE_MANAGER->pushWindow(window);
@@ -48,65 +49,95 @@ GlobalChatWindow::GlobalChatWindow()
 	scrollbar->setScrollbox(mScrollbox);
 	mScrollbox->attach(scrollbar);
 
-	if (CLIENT->isConnected())
-	{
-		/*const auto& messages = CLIENT->getGlobalChatMessages();
-		for (auto [index, msg] : messages)
-		{
-			addMessage(index, msg);
-		}*/
-	}
-
 	runAction(Actions::Factory::ExecuteInfinite([this] {
 		if (getState() != Window::State::Opened)
 			return;
 
+		mScrollVerticalSpace = mScrollbox->getVerticalScrollSpace();
 		refreshMessages();
 	}));
 }
 
 void GlobalChatWindow::onEvent(const Channel::GlobalChatMessageEvent& e)
 {
-	/*const auto& messages = CLIENT->getGlobalChatMessages();
-	auto msg = messages.at(e.msgid);
-	addMessage(e.msgid, msg);*/
-}
+	if (mItems.empty())
+		return;
 
-void GlobalChatWindow::refreshMessages() // TODO: highly refactor names, and body of this function !!
-{
-	if (!CLIENT->isConnected())
+	if (mItems.count(e.msgid) != 0) 
 	{
-		// TODO: clear chat here
+		// some message was updated, remove it now
+		// refreshMessages later will add it again
+		removeMessage(e.msgid);
 		return;
 	}
-	const auto& history = CLIENT->getGlobalChatMessages();
-
-	if (history.empty())
-		return;
-
-	STATS_INDICATE_GROUP("chat", "chat items size", std::to_string(mItems.size()));
-	STATS_INDICATE_GROUP("chat", "chat history size", std::to_string(history.size()));
 
 	if (mScrollbox->isTouching())
 		return;
 
-	// TODO: return if no visible messages here ?
+	if (!mItems.rbegin()->second->isVisible()) // return if we not at the end of list
+		return;
+
+	const auto& history = CLIENT->getGlobalChatMessages();
+	
+	if (e.msgid != history.rbegin()->first) // return if not last message (last message means we receive new message)
+		return;
+
+	// if we are here this means that we receive new message
+	// wait until refreshMessages will add this message
+	// and scroll down with animation
+
+	runAction(Actions::Factory::Delayed([this, e] { return mItems.count(e.msgid) == 0; }, 
+		Actions::Factory::Execute([this] {
+			scrollToBack();
+		})
+	));
+}
+
+void GlobalChatWindow::refreshMessages()
+{
+	if (!CLIENT->isConnected())
+		return;
+	
+	const auto& history = CLIENT->getGlobalChatMessages();
+
+	STATS_INDICATE_GROUP("chat", "chat items size", mItems.size());
+	STATS_INDICATE_GROUP("chat", "chat history size", history.size());
+	STATS_INDICATE_GROUP("chat", "chat watch position", mWatchIndex);
+
+	if (history.empty())
+		return;
+
+	if (mScrollbox->isTouching())
+		return;
 
 	const int TopVisibleInHistory = history.begin()->first;
-	const int BottomVisibleInHistory = history.rbegin()->first; // TODO: rename to PascalCase
+	const int BottomVisibleInHistory = history.rbegin()->first;
 
-	// TODO: try to remove mWatchIndex because we doesnt need it
+	// add first message
 
 	if (mItems.empty())
 	{
 		mWatchIndex = BottomVisibleInHistory;
 		addMessages(mWatchIndex, mWatchIndex);
-		return; // TODO: return maybe can be removed
+		return;
 	}
 
-	//if (mItems.size() > 7)
-	//if (mItems.size() > 1)
-	//	return;
+	const int ItemsTopIndex = mItems.begin()->first;
+	const int ItemsBottomIndex = mItems.rbegin()->first;
+
+	// add removed messages from center
+
+	for (int i = ItemsTopIndex; i <= ItemsBottomIndex; i++)
+	{
+		if (mItems.count(i) > 0)
+			continue;
+
+		if (history.count(i) == 0)
+			continue;
+
+		addMessages(i, i);
+		return;
+	}
 
 	int topVisibleIndex = mWatchIndex;
 	int bottomVisibleIndex = mWatchIndex;
@@ -114,10 +145,7 @@ void GlobalChatWindow::refreshMessages() // TODO: highly refactor names, and bod
 	int topInvisibleCount = 0;
 	int bottomInvisibleCount = 0;
 
-	const int itemsTopIndex = mItems.begin()->first; // TODO: rename to PascalCase
-	const int itemsBottomIndex = mItems.rbegin()->first;
-
-	for (int i = itemsBottomIndex; i >= itemsTopIndex; i--) {
+	for (int i = ItemsBottomIndex; i >= ItemsTopIndex; i--) {
 		if (mItems.count(i) == 0) {
 			continue;
 		}
@@ -129,7 +157,7 @@ void GlobalChatWindow::refreshMessages() // TODO: highly refactor names, and bod
 		break;
 	}
 
-	for (int i = itemsTopIndex; i <= itemsBottomIndex; i++) {
+	for (int i = ItemsTopIndex; i <= ItemsBottomIndex; i++) {
 		if (mItems.count(i) == 0) {
 			continue;
 		}
@@ -143,109 +171,76 @@ void GlobalChatWindow::refreshMessages() // TODO: highly refactor names, and bod
 
 	mWatchIndex = bottomVisibleIndex;
 
-	const int VisibleTolerance = 5;
-	const int AddPayload = 5;
-	const int RemoveTolerance = 10;
-	const int RemovePayload = 5;
+	const int VisibleTolerance = 10;
+	const int AddCount = 20;
+	const int RemoveTolerance = 80;
+	const int RemoveCount = 40;
+
+	assert(AddCount > 0);
+	assert(RemoveCount > 0);
 
 	bool enoughTopMessages = topInvisibleCount - 1 >= VisibleTolerance;
 	bool enoughBottomMessages = bottomInvisibleCount - 1 >= VisibleTolerance;
 
-	if (!enoughTopMessages && itemsTopIndex <= TopVisibleInHistory) {
+	if (!enoughTopMessages && ItemsTopIndex <= TopVisibleInHistory) {
 		enoughTopMessages = true;
 	}
-	if (!enoughBottomMessages && itemsBottomIndex >= BottomVisibleInHistory) {
+	if (!enoughBottomMessages && ItemsBottomIndex >= BottomVisibleInHistory) {
 		enoughBottomMessages = true;
 	}
 
 	if (!enoughTopMessages) {
-		int bottom = itemsTopIndex - 1;
-		int top = bottom - AddPayload;
+		int bottom = ItemsTopIndex - 1;
+		int top = bottom - AddCount + 1;
 		for (int i = bottom; i >= top; i--) {
 			if (history.count(i) == 0) {
 				break;
 			}
-			//if (!GET_CHAT_SYSTEM()->isDummyMessage(history.at(i))) {
+			//if (!isDummyMessage(history.at(i))) {
 			//	continue;
 			//}
 			//top--;
 		}
-		//addMessages(top, bottom, onMessagesAdded);
 		addMessages(top, bottom);
 	}
-	/*else if (!enoughBottomMessages) {
-		int top = itemsBottomIndex + 1;
-		int bottom = top + AddPayload;
+	else if (!enoughBottomMessages) {
+		int top = ItemsBottomIndex + 1;
+		int bottom = top + AddCount - 1;
 		for (int i = top; i <= bottom; i++) {
 			if (history.count(i) == 0) {
 				break;
 			}
-			//if (!GET_CHAT_SYSTEM()->isDummyMessage(history.at(i))) {
+			//if (!isDummyMessage(history.at(i))) {
 			//	continue;
 			//}
 			//bottom++;
 		}
-		//addMessages(top, bottom, onMessagesAdded);
 		addMessages(top, bottom);
-	}*/
+	}
 	else {
-		// messagesLoading = false;
-
 		bool tooManyTopMessages = topInvisibleCount > RemoveTolerance;
 		bool tooManyBottomMessages = bottomInvisibleCount > RemoveTolerance;
 
-		assert(RemoveTolerance > RemovePayload);
+		assert(RemoveTolerance > RemoveCount - 1);
 
-		/*if (tooManyTopMessages) {
-			auto [index, item] = *std::next(mItems.cbegin(), RemovePayload);
-			removeMessages(itemsTopIndex, index);
+		if (tooManyTopMessages) {
+			auto [index, item] = *std::next(mItems.cbegin(), RemoveCount - 1);
+			removeMessages(ItemsTopIndex, index);
 		}
 		else if (tooManyBottomMessages) {
-			auto [index, item] = *std::next(mItems.crbegin(), RemovePayload);
-			removeMessages(index, itemsBottomIndex);
-		}*/
+			auto [index, item] = *std::next(mItems.crbegin(), RemoveCount - 1);
+			removeMessages(index, ItemsBottomIndex);
+		}
 	}
 }
 
 void GlobalChatWindow::addMessage(int msgid, std::shared_ptr<Channel::ChatMessage> message)
 {
-	auto item = std::make_shared<Scene::Cullable<Scene::Node>>();
-	item->setStretch({ 1.0f, 0.0f });
-	item->setHeight(64.0f);
-	item->setCullTarget(mScrollbox);
-	item->setVisible(false);
-	mScrollbox->getContent()->attach(item);
+	auto item = createTextMessage(message, msgid);
 
-	auto rect = std::make_shared<Scene::Rectangle>();
-	rect->setStretch(1.0f);
-	rect->setMargin(8.0f);
-	rect->setAlpha(0.25f);
-	rect->setAnchor(0.5f);
-	rect->setPivot(0.5f);
-	rect->setRounding(8.0f);
-	rect->setAbsoluteRounding(true);
-	item->attach(rect);
+	fixScrollPosition(item->getHeight(), mWatchIndex >= msgid);
 	
-	auto label = std::make_shared<Helpers::ProfileListenable<Helpers::Label>>();
-	label->setAnchor(0.5f);
-	label->setPivot(0.5f);
-	label->setProfileUID(message->getUID());
-	label->setProfileCallback([label, message, msgid](Channel::ProfilePtr profile) {
-		label->setText(utf8_string(std::to_string(msgid)) + ") " + profile->getNickName() + ": " + message->getText());
-	});
-	rect->attach(label);
-
-	fixScrollPosition(item->getHeight());
-
-	/*if (!mItems.empty())
-	{
-		auto [index, item] = *mItems.rbegin();
-		if (item->isVisible())
-		{
-			scrollToBack();
-		}
-	}*/
-
+	assert(mItems.count(msgid) == 0);
 	mItems.insert({ msgid, item });
 
 	refreshScrollContent(); // TODO: executes to many times (we use ranges)
@@ -256,9 +251,8 @@ void GlobalChatWindow::removeMessage(int msgid)
 	assert(mItems.count(msgid) > 0);
 	auto item = mItems.at(msgid);
 
-	if (msgid <= mWatchIndex) 
-		fixScrollPosition(-item->getHeight());
-
+	fixScrollPosition(-item->getHeight(), mWatchIndex >= msgid);
+	
 	mScrollbox->getContent()->detach(item);
 	mItems.erase(msgid);
 
@@ -293,15 +287,25 @@ void GlobalChatWindow::addMessages(int topIndex, int bottomIndex)
 
 	const auto& history = CLIENT->getGlobalChatMessages();
 
+	// check range for profiles
+
+	for (int index = topIndex; index <= bottomIndex; index++)
+	{
+		if (history.count(index) == 0)
+			continue;
+
+		if (CLIENT->hasProfile(history.at(index)->getUID()))
+			continue;
+
+		return; // discard whole range if no profile in some message
+	}
+
 	int count = 0;
 
 	for (int index = topIndex; index <= bottomIndex; index++) 
 	{
 		if (history.count(index) == 0)
 			continue;
-
-		//if (!CLIENT->hasProfile(history.at(index)->getUID()))
-		//	return;
 
 		addMessage(index, history.at(index));
 		count += 1;
@@ -323,12 +327,57 @@ void GlobalChatWindow::removeMessages(int topIndex, int bottomIndex)
 	LOG((std::to_string(count) + " message(s) removed").c_str());
 }
 
-void GlobalChatWindow::fixScrollPosition(float height)
+void GlobalChatWindow::fixScrollPosition(float height, bool inversed)
 {
-	auto old_space = mScrollbox->getVerticalScrollSpaceSize();
+	auto old_space = mScrollVerticalSpace;
 	auto new_space = old_space + height;
 
 	auto scroll_pos_y = mScrollbox->getVerticalScrollPosition();
+	
+	if (inversed)
+		scroll_pos_y = 1.0f - scroll_pos_y;		
+	
 	scroll_pos_y /= new_space / old_space;
+	
+	if (inversed)
+		scroll_pos_y = 1.0f - scroll_pos_y;
+
 	mScrollbox->setVerticalScrollPosition(scroll_pos_y);
+	mScrollVerticalSpace = new_space;
+}
+
+std::shared_ptr<Scene::Node> GlobalChatWindow::createTextMessage(std::shared_ptr<Channel::ChatMessage> msg, int msgid)
+{
+	auto item = std::make_shared<Scene::Cullable<Scene::Node>>();
+	item->setStretch({ 1.0f, 0.0f });
+	item->setHeight(64.0f);
+	item->setCullTarget(mScrollbox);
+	item->setVisible(false);
+	mScrollbox->getContent()->attach(item);
+
+	//auto rect = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>(); // TODO: fix bug with stencil and scrollbar
+	//auto rect = std::make_shared<Scene::ClippableScissor<Scene::Rectangle>>(); // TODO: fix bug with this shit
+	auto rect = std::make_shared<Scene::Rectangle>();
+	rect->setStretch(1.0f);
+	rect->setMargin(8.0f);
+	rect->setAlpha(0.25f);
+	rect->setAnchor(0.5f);
+	rect->setPivot(0.5f);
+	rect->setRounding(8.0f);
+	rect->setAbsoluteRounding(true);
+	item->attach(rect);
+	
+	assert(CLIENT->hasProfile(msg->getUID()));
+	auto profile = CLIENT->getProfile(msg->getUID());
+
+	auto label = std::make_shared<Helpers::Label>();
+	label->setAnchor(0.5f);
+	label->setPivot(0.5f);
+	label->setStretch({ 1.0f, 0.0f });
+	label->setMargin({ 24.0f, 0.0f });
+	label->setMultiline(true);
+	label->setText(profile->getNickName() + ": " + msg->getText());
+	rect->attach(label);
+
+	return item;
 }

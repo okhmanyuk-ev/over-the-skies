@@ -400,7 +400,7 @@ void MainMenu::menuPhysics(float dTime)
 	}
 
 	auto nearest_projected = unproject(nearest->project(nearest->getAbsoluteSize() / 2.0f));
-	auto offset = distance * dTime * 10.0f / mScrollbox->getHorizontalScrollSpaceSize();
+	auto offset = distance * dTime * 10.0f / mScrollbox->getHorizontalScrollSpace();
 	
 	if (nearest_projected.x < slot_projected.x)
 		mScrollbox->setHorizontalScrollPosition(mScrollbox->getHorizontalScrollPosition() - offset);

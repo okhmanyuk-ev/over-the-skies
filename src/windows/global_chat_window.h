@@ -21,11 +21,13 @@ namespace hcg001
 		void scrollToBack(bool animated = true);
 		void addMessages(int topIndex, int bottomIndex);
 		void removeMessages(int topIndex, int bottomIndex);
-		void fixScrollPosition(float height);
+		void fixScrollPosition(float height, bool inversed);
+		std::shared_ptr<Scene::Node> createTextMessage(std::shared_ptr<Channel::ChatMessage> msg, int msgid);
 
 	private:
 		std::shared_ptr<Scene::Scrollbox> mScrollbox;
 		std::map<int, std::shared_ptr<Scene::Node>> mItems;
 		int mWatchIndex = 0;
+		float mScrollVerticalSpace = 0.0f;
 	};
 }

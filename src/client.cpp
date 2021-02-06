@@ -171,7 +171,7 @@ static bool WantShowChan = false;
 
 Client::Client() : 
 	//Shared::NetworkingUDP::Client({ "hcg001.ddns.net:27015" })
-	Shared::NetworkingUDP::Client({ "127.0.0.1:27015" })
+	Shared::NetworkingUDP::Client({ "192.168.0.106:27015" })
 {
 	CONSOLE->registerCVar("hud_show_chan", "show net channel info", { "bool" },
 		CVAR_GETTER_BOOL(WantShowChan), CVAR_SETTER_BOOL(WantShowChan));
@@ -189,10 +189,10 @@ void Client::frame()
 	if (WantShowChan && isConnected())
 	{
 		STATS_INDICATE_GROUP("chan", "in seq", std::to_string(getChannel()->getIncomingSequence()));
-		STATS_INDICATE_GROUP("chan", "in rel_idx", std::to_string(getChannel()->getIncomingReliableIndex()));
+		STATS_INDICATE_GROUP("chan", "in rel idx", std::to_string(getChannel()->getIncomingReliableIndex()));
 	
 		STATS_INDICATE_GROUP("chan", "out seq", std::to_string(getChannel()->getOutgoingSequence()));
-		STATS_INDICATE_GROUP("chan", "out rel_idx", std::to_string(getChannel()->getOutgoingReliableIndex()));
+		STATS_INDICATE_GROUP("chan", "out rel idx", std::to_string(getChannel()->getOutgoingReliableIndex()));
 		
 		STATS_INDICATE_GROUP("chan", "rel queue", std::to_string(getChannel()->getOutgoingReliableQueueSize()));
 	}
@@ -270,4 +270,10 @@ void Client::clearProfiles()
 		return; 
 
 	getMyChannel()->clearProfiles();
+}
+
+int Client::getUID() const
+{
+	assert(isConnected());
+	return getMyChannel()->getUID();
 }
