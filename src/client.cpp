@@ -7,6 +7,8 @@ using namespace hcg001;
 
 Channel::Channel()
 {
+	setShowEventLogs(true);
+
 	addMessageReader("file", [this](auto& buf) { readFileMessage(buf);	});
 
 	addEventCallback("authorized", [this](const auto& params) {
@@ -188,13 +190,11 @@ void Client::frame()
 
 	if (WantShowChan && isConnected())
 	{
-		STATS_INDICATE_GROUP("chan", "in seq", std::to_string(getChannel()->getIncomingSequence()));
-		STATS_INDICATE_GROUP("chan", "in rel idx", std::to_string(getChannel()->getIncomingReliableIndex()));
-	
-		STATS_INDICATE_GROUP("chan", "out seq", std::to_string(getChannel()->getOutgoingSequence()));
-		STATS_INDICATE_GROUP("chan", "out rel idx", std::to_string(getChannel()->getOutgoingReliableIndex()));
-		
-		STATS_INDICATE_GROUP("chan", "rel queue", std::to_string(getChannel()->getOutgoingReliableQueueSize()));
+		STATS_INDICATE_GROUP("chan", "chan hibernation", getChannel()->getHibernation());
+		STATS_INDICATE_GROUP("chan", "chan in seq", getChannel()->getIncomingSequence());
+		STATS_INDICATE_GROUP("chan", "chan out seq", getChannel()->getOutgoingSequence());
+		STATS_INDICATE_GROUP("chan", "chan in rel idx", getChannel()->getIncomingReliableIndex());
+		STATS_INDICATE_GROUP("chan", "chan out rel idx", getChannel()->getOutgoingReliableIndex());
 	}
 }
 
