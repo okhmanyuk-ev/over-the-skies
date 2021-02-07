@@ -118,12 +118,20 @@ void Channel::readFileMessage(Common::BitBuffer& buf)
 {
 	auto path = Common::BufferHelpers::ReadString(buf);
 	auto file_size = buf.readBitsVar();
+	auto file_crc32 = buf.readBitsVar();
 	auto frag_offset = buf.readBitsVar();
 	auto frag_size = buf.readBitsVar();
 
 	if (mFiles.count(path) == 0)
 	{
 		mFiles[path].buf.setSize(file_size);
+		mFiles[path].crc32 = file_crc32;
+	}
+
+	if (mFiles.at(path).crc32 != file_crc32)
+	{
+		LOG("file: bad crc32");
+		return;
 	}
 
 	auto& progress = mFiles[path].progress;
@@ -152,9 +160,18 @@ void Channel::readFileMessage(Common::BitBuffer& buf)
 
 	if (progress == file_size)
 	{
-		Platform::Asset::Write(path, file_buf.getMemory(), file_buf.getSize(), Platform::Asset::Storage::Bundle);
+		auto crc32 = Common::Helpers::crc32(file_buf.getMemory(), file_buf.getSize());
+
+		if (crc32 == file_crc32)
+		{
+			Platform::Asset::Write(path, file_buf.getMemory(), file_buf.getSize(), Platform::Asset::Storage::Bundle);
+			LOG(path + " saved");
+		}
+		else
+		{
+			LOG(path + " not saved (crc32 mismatch)");
+		}
 		mFiles.erase(path);
-		LOG(path + " saved");
 	}
 }
 

@@ -51,6 +51,7 @@ namespace hcg001
 		struct FileDef
 		{
 			size_t progress = 0;
+			uint32_t crc32;
 			Common::BitBuffer buf;
 		};
 		std::map<std::string, FileDef> mFiles;
