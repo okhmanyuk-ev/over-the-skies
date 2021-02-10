@@ -200,9 +200,9 @@ std::shared_ptr<Shared::NetworkingWS::Channel> Client::createChannel()
 	return std::make_shared<hcg001::Channel>();
 }
 
-void Client::frame()
+void Client::onFrame()
 {
-	Shared::NetworkingWS::Client::frame();
+	Shared::NetworkingWS::Client::onFrame();
 }
 
 void Client::commit()

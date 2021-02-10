@@ -87,7 +87,7 @@ namespace hcg001
 		std::shared_ptr<Shared::NetworkingWS::Channel> createChannel() override;
 
 	public:
-		void frame() override;
+		void onFrame() override;
 
 	public:
 		void commit();

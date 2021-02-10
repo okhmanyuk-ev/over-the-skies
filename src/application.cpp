@@ -115,7 +115,7 @@ void Application::initialize()
 	SCENE_MANAGER->getWindowHolder()->attach(Helpers::gHud); // after screens, before windows
 }
 
-void Application::frame()
+void Application::onFrame()
 {
 	adaptToScreen(getScene()->getRoot());
 	ShowCheatsMenu();
