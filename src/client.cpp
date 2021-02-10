@@ -7,9 +7,9 @@ using namespace hcg001;
 
 Channel::Channel()
 {
-	setShowEventLogs(true);
+	//setShowEventLogs(true);
 
-	addMessageReader("file", [this](auto& buf) { readFileMessage(buf);	});
+	//addMessageReader("file", [this](auto& buf) { readFileMessage(buf);	});
 
 	addEventCallback("authorized", [this](const auto& params) {
 		mUID = std::stoi(params.at("uid"));
@@ -47,9 +47,11 @@ Channel::Channel()
 		EVENT->emit(GlobalChatMessageEvent({ msgid }));
 	});
     
-	auth();
-	commit();
-	requestHighscores();
+	FRAME->addOne([this] {
+		auth();
+		commit();
+		requestHighscores();
+	});
 }
 
 void Channel::auth()
@@ -186,33 +188,23 @@ Channel::ChatMessage::ChatMessage(int uid, const std::string& text) :
 
 // client
 
-static bool WantShowChan = false;
-
 Client::Client() : 
 	//Shared::NetworkingUDP::Client({ "hcg001.ddns.net:27015" })
-	Shared::NetworkingUDP::Client({ "192.168.0.106:27015" })
+	//Shared::NetworkingUDP::Client({ "192.168.0.106:27015" })
+	//Shared::NetworkingWS::Client("ws://localhost:27015")
+	Shared::NetworkingWS::Client("ws://hcg001.ddns.net:27015")
 {
-	CONSOLE->registerCVar("hud_show_chan", "show net channel info", { "bool" },
-		CVAR_GETTER_BOOL(WantShowChan), CVAR_SETTER_BOOL(WantShowChan));
+	//
 }
 
-std::shared_ptr<Shared::NetworkingUDP::Channel> Client::createChannel()
+std::shared_ptr<Shared::NetworkingWS::Channel> Client::createChannel()
 {
 	return std::make_shared<hcg001::Channel>();
 }
 
 void Client::frame()
 {
-	Shared::NetworkingUDP::Client::frame();
-
-	if (WantShowChan && isConnected())
-	{
-		STATS_INDICATE_GROUP("chan", "chan hibernation", getChannel()->getHibernation());
-		STATS_INDICATE_GROUP("chan", "chan in seq", getChannel()->getIncomingSequence());
-		STATS_INDICATE_GROUP("chan", "chan out seq", getChannel()->getOutgoingSequence());
-		STATS_INDICATE_GROUP("chan", "chan in rel idx", getChannel()->getIncomingReliableIndex());
-		STATS_INDICATE_GROUP("chan", "chan out rel idx", getChannel()->getOutgoingReliableIndex());
-	}
+	Shared::NetworkingWS::Client::frame();
 }
 
 void Client::commit()

@@ -7,7 +7,7 @@
 
 namespace hcg001
 {
-	class Channel : public Shared::NetworkingUDP::SimpleChannel
+	class Channel : public Shared::NetworkingWS::Channel
 	{
 	public:
 		class ChatMessage;
@@ -78,13 +78,13 @@ namespace hcg001
 		std::string mText;
 	};
 
-	class Client : public Shared::NetworkingUDP::Client
+	class Client : public Shared::NetworkingWS::Client
 	{
 	public:
 		Client();
 
 	protected:
-		std::shared_ptr<Shared::NetworkingUDP::Channel> createChannel() override;
+		std::shared_ptr<Shared::NetworkingWS::Channel> createChannel() override;
 
 	public:
 		void frame() override;
