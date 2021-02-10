@@ -7,9 +7,9 @@ using namespace hcg001;
 
 Channel::Channel()
 {
-	//setShowEventLogs(true);
+	setShowEventLogs(true);
 
-	//addMessageReader("file", [this](auto& buf) { readFileMessage(buf);	});
+	addMessageReader("file", [this](auto& buf) { readFileMessage(buf);	});
 
 	addEventCallback("authorized", [this](const auto& params) {
 		mUID = std::stoi(params.at("uid"));
@@ -189,10 +189,8 @@ Channel::ChatMessage::ChatMessage(int uid, const std::string& text) :
 // client
 
 Client::Client() : 
-	//Shared::NetworkingUDP::Client({ "hcg001.ddns.net:27015" })
-	//Shared::NetworkingUDP::Client({ "192.168.0.106:27015" })
-	//Shared::NetworkingWS::Client("ws://localhost:27015")
-	Shared::NetworkingWS::Client("ws://hcg001.ddns.net:27015")
+	//Shared::NetworkingWS::Client("ws://hcg001.ddns.net:27015")
+	Shared::NetworkingWS::Client("ws://localhost:27015")
 {
 	//
 }

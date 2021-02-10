@@ -7,7 +7,7 @@
 
 namespace hcg001
 {
-	class Channel : public Shared::NetworkingWS::Channel
+	class Channel : public Shared::NetworkingWS::SimpleChannel
 	{
 	public:
 		class ChatMessage;
