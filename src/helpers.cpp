@@ -9,6 +9,16 @@ Label::Label()
 	setFontSize(18.0f);
 }
 
+Button::Button()
+{
+	setRounding(0.5f);
+
+	mLabel = std::make_shared<Label>();
+	mLabel->setAnchor(0.5f);
+	mLabel->setPivot(0.5f);
+	attach(mLabel);
+}
+
 RectangleButton::RectangleButton()
 {
 	setHighlightEnabled(false);

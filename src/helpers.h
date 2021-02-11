@@ -8,6 +8,7 @@
 namespace hcg001::Helpers
 {
 	const auto BaseWindowColor = glm::rgbColor(glm::vec3(210.0f, 0.5f, 1.0f));
+	const auto ButtonColor = glm::rgbColor(glm::vec3(209.0f, 0.5f, 0.38f));
 
 	inline std::shared_ptr<Hud> gHud = nullptr;
 
@@ -32,6 +33,21 @@ namespace hcg001::Helpers
 		Label();
 	};
 
+	class Button : public Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Button<Scene::Rectangle>>
+	{
+	public:
+		Button();
+
+	public:
+		void refresh() override {}
+
+	public:
+		auto getLabel() const { return mLabel; }
+
+	private:
+		std::shared_ptr<Label> mLabel;
+	};	
+	
 	class RectangleButton : public Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::RectangleButton>
 	{
 	public:
