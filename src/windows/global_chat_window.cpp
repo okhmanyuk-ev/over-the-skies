@@ -357,11 +357,12 @@ std::shared_ptr<Scene::Node> GlobalChatWindow::createTextMessage(std::shared_ptr
 	//auto rect = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>(); // TODO: fix bug with stencil and scrollbar
 	//auto rect = std::make_shared<Scene::ClippableScissor<Scene::Rectangle>>(); // TODO: fix bug with this shit
 	auto rect = std::make_shared<Scene::Rectangle>();
-	rect->setStretch(1.0f);
-	rect->setMargin(8.0f);
+	rect->setStretch({ 0.8f, 1.0f });
+	rect->setMargin({ 8.0f, 6.0f });
 	rect->setAlpha(0.25f);
-	rect->setAnchor(0.5f);
-	rect->setPivot(0.5f);
+	rect->setAnchor({ 0.0f, 0.5f });
+	rect->setPivot({ 0.0f, 0.5f });
+	rect->setX(8.0f);
 	rect->setRounding(8.0f);
 	rect->setAbsoluteRounding(true);
 	item->attach(rect);
@@ -370,6 +371,7 @@ std::shared_ptr<Scene::Node> GlobalChatWindow::createTextMessage(std::shared_ptr
 	auto profile = CLIENT->getProfile(msg->getUID());
 
 	auto label = std::make_shared<Helpers::Label>();
+	label->setFontSize(15.0f);
 	label->setAnchor(0.5f);
 	label->setPivot(0.5f);
 	label->setStretch({ 1.0f, 0.0f });
@@ -383,7 +385,13 @@ std::shared_ptr<Scene::Node> GlobalChatWindow::createTextMessage(std::shared_ptr
 	label->updateAbsoluteSize();
 	label->updateTextMesh();
 
-	item->setHeight(label->getAbsoluteHeight() + 32.0f);
+	item->setHeight(label->getAbsoluteHeight() + 24.0f);
+
+	auto text_width = label->getFont()->getStringWidth(label->getText(), label->getFontSize());
+	auto abs_width = label->getAbsoluteWidth();
+
+	if (text_width < abs_width)
+		rect->setHorizontalSize(rect->getHorizontalSize() - (abs_width - text_width));
 
 	return item;
 }
