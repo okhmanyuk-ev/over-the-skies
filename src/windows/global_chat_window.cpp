@@ -350,7 +350,6 @@ std::shared_ptr<Scene::Node> GlobalChatWindow::createTextMessage(std::shared_ptr
 {
 	auto item = std::make_shared<Scene::Cullable<Scene::Node>>();
 	item->setStretch({ 1.0f, 0.0f });
-	item->setHeight(64.0f);
 	item->setCullTarget(mScrollbox);
 	item->setVisible(false);
 	mScrollbox->getContent()->attach(item);
@@ -378,6 +377,13 @@ std::shared_ptr<Scene::Node> GlobalChatWindow::createTextMessage(std::shared_ptr
 	label->setMultiline(true);
 	label->setText(profile->getNickName() + ": " + msg->getText());
 	rect->attach(label);
+
+	item->updateAbsoluteSize();
+	rect->updateAbsoluteSize();
+	label->updateAbsoluteSize();
+	label->updateTextMesh();
+
+	item->setHeight(label->getAbsoluteHeight() + 32.0f);
 
 	return item;
 }
