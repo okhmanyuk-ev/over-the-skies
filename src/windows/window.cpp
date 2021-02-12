@@ -51,7 +51,7 @@ std::unique_ptr<Actions::Action> Window::createCloseAction()
 	);
 };
 
-StandardWindow::StandardWindow()
+StandardWindow::StandardWindow(bool has_close_button)
 {
 	mBackground = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
 	mBackground->setRounding(12.0f);
@@ -85,14 +85,17 @@ StandardWindow::StandardWindow()
 	mTitle->setPivot(0.5f);
 	header_bg->attach(mTitle);
 
-	auto close_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Shared::SceneHelpers::Adaptive<Scene::Sprite>>>>();
-	close_button->setTexture(TEXTURE("textures/close2.png"));
-	close_button->setAdaptSize(22.0f);
-	close_button->setAnchor({ 1.0f, 0.5f });
-	close_button->setPivot(0.5f);
-	close_button->setX(-18.0f);
-	close_button->setClickCallback([] {
-		SCENE_MANAGER->popWindow();
-	});
-	header->attach(close_button);
+	if (has_close_button)
+	{
+		auto close_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Shared::SceneHelpers::Adaptive<Scene::Sprite>>>>();
+		close_button->setTexture(TEXTURE("textures/close2.png"));
+		close_button->setAdaptSize(22.0f);
+		close_button->setAnchor({ 1.0f, 0.5f });
+		close_button->setPivot(0.5f);
+		close_button->setX(-18.0f);
+		close_button->setClickCallback([] {
+			SCENE_MANAGER->popWindow();
+		});
+		header->attach(close_button);
+	}
 }

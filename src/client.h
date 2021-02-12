@@ -23,6 +23,11 @@ namespace hcg001
 			int msgid; // TODO: rename to index
 		};
 
+		struct CreateGuildEvent
+		{
+			std::string status;
+		};
+
 	public:
 		Channel();
 
@@ -33,6 +38,7 @@ namespace hcg001
 		void requestProfile(int uid);
 		void clearProfiles();
 		void sendChatMessage(const std::string& text);
+		void createGuild(const std::string& title);
 
 	private:
 		void readFileMessage(Common::BitBuffer& buf);
@@ -95,6 +101,7 @@ namespace hcg001
 		void requestProfile(int uid);
 		void requireProfile(int uid);
 		void sendChatMessage(const std::string& text);
+		void createGuild(const std::string& title);
 		
 	public:
 		const Channel::GlobalChatMessages& getGlobalChatMessages() const;

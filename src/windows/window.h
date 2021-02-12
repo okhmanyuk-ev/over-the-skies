@@ -37,7 +37,7 @@ namespace hcg001
 	class StandardWindow : public Window
 	{
 	public:
-		StandardWindow();
+		StandardWindow(bool has_close_button = true);
 
 	public:
 		auto getBackground() const { return mBackground; }

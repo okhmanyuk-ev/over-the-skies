@@ -120,6 +120,7 @@ void Application::onFrame()
 	adaptToScreen(getScene()->getRoot());
 	ShowCheatsMenu();
 	GAME_STATS("connected", CLIENT->isConnected());
+	GAME_STATS("event listeners", EVENT->getListenersCount());
 }
 
 void Application::addRubies(int count)

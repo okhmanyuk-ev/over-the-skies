@@ -1,4 +1,5 @@
 #include "guilds_window.h"
+#include "create_guild_window.h"
 
 using namespace hcg001;
 
@@ -7,18 +8,19 @@ GuildsWindow::GuildsWindow()
 	getBackground()->setSize({ 314.0f, 386.0f });
 	getTitle()->setText(LOCALIZE("GUILDS_WINDOW_TITLE"));
 
-	auto ok_button = std::make_shared<Helpers::Button>();
-	ok_button->setColor(Helpers::ButtonColor);
-	ok_button->getLabel()->setText(LOCALIZE("WINDOW_OK"));
-	ok_button->getLabel()->setFontSize(18.0f);
-	ok_button->setClickCallback([] {
-		SCENE_MANAGER->popWindow();
+	auto create_button = std::make_shared<Helpers::Button>();
+	create_button->setColor(Helpers::ButtonColor);
+	create_button->getLabel()->setText(LOCALIZE("CREATE"));
+	create_button->getLabel()->setFontSize(18.0f);
+	create_button->setClickCallback([] {
+		auto window = std::make_shared<CreateGuildWindow>();
+		SCENE_MANAGER->pushWindow(window);
 	});
-	ok_button->setAnchor({ 0.5f, 1.0f });
-	ok_button->setPivot(0.5f);
-	ok_button->setSize({ 128.0f, 28.0f });
-	ok_button->setY(-24.0f);
-	getBody()->attach(ok_button);
+	create_button->setAnchor({ 0.5f, 1.0f });
+	create_button->setPivot(0.5f);
+	create_button->setSize({ 128.0f, 28.0f });
+	create_button->setY(-24.0f);
+	getBody()->attach(create_button);
 
 	auto item = std::make_shared<Item>();
 	item->setAnchor(0.5f);

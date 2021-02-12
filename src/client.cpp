@@ -46,7 +46,12 @@ Channel::Channel()
 		mGlobalChatMessages[msgid] = message;
 		EVENT->emit(GlobalChatMessageEvent({ msgid }));
 	});
-    
+
+	addEventCallback("create_guild", [this](const auto& params) {
+		auto status = params.at("status");
+		EVENT->emit(CreateGuildEvent({ status }));
+	});
+
 	FRAME->addOne([this] {
 		auth();
 		commit();
@@ -113,6 +118,13 @@ void Channel::sendChatMessage(const std::string& text)
 {
 	sendEvent("global_chat_message", {
 		{ "text", text }
+	});
+}
+
+void Channel::createGuild(const std::string& title)
+{
+	sendEvent("create_guild", {
+		{ "title", title }
 	});
 }
 
@@ -246,6 +258,14 @@ void Client::sendChatMessage(const std::string& text)
 		return;
 
 	getMyChannel()->sendChatMessage(text);
+}
+
+void Client::createGuild(const std::string& title)
+{
+	if (!isConnected())
+		return;
+
+	getMyChannel()->createGuild(title);
 }
 
 const Channel::GlobalChatMessages& Client::getGlobalChatMessages() const
