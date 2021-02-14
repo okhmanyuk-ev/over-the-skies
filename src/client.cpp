@@ -52,6 +52,24 @@ Channel::Channel()
 		EVENT->emit(CreateGuildEvent({ status }));
 	});
 
+	addEventCallback("guild_list", [this](const auto& params) {
+		auto dump = params.at("ids");
+		auto json = nlohmann::json::parse(dump);
+		std::vector<int> ids = json;
+		EVENT->emit(GuildListEvent({ ids }));
+	});
+
+	addEventCallback("guild_info", [this](const auto& params) {
+		auto id = std::stoi(params.at("id"));
+		auto dump = params.at("json");
+		auto json = nlohmann::json::parse(dump);
+		auto guild = std::make_shared<Guild>();
+		guild->setJson(json);
+		mGuilds.erase(id);
+		mGuilds.insert({ id, guild });
+		EVENT->emit(GuildInfoReceivedEvent({ id }));
+	});
+
 	FRAME->addOne([this] {
 		auth();
 		commit();
@@ -125,6 +143,23 @@ void Channel::createGuild(const std::string& title)
 {
 	sendEvent("create_guild", {
 		{ "title", title }
+	});
+}
+
+void Channel::requestGuildList()
+{
+	sendEvent("request_guild_list");
+}
+
+void Channel::clearGuilds()
+{
+	mGuilds.clear();
+}
+
+void Channel::requestGuildInfo(int id)
+{
+	sendEvent("request_guild_info", {
+		{ "id", std::to_string(id) }
 	});
 }
 
@@ -268,6 +303,33 @@ void Client::createGuild(const std::string& title)
 	getMyChannel()->createGuild(title);
 }
 
+void Client::requestGuildList()
+{
+	if (!isConnected())
+		return;
+
+	getMyChannel()->requestGuildList();
+}
+
+void Client::requestGuildInfo(int id)
+{
+	if (!isConnected())
+		return;
+
+	getMyChannel()->requestGuildInfo(id);
+}
+
+void Client::requireGuildInfo(int id)
+{
+	if (!isConnected())
+		return;
+
+	if (getGuilds().count(id) > 0)
+		return;
+
+	requestGuildInfo(id);
+}
+
 const Channel::GlobalChatMessages& Client::getGlobalChatMessages() const
 {
 	assert(isConnected());
@@ -297,6 +359,31 @@ void Client::clearProfiles()
 		return; 
 
 	getMyChannel()->clearProfiles();
+}
+
+const Channel::GuildsMap& Client::getGuilds() const
+{
+	assert(isConnected());
+	return getMyChannel()->getGuilds();
+}
+
+bool Client::hasGuild(int uid)
+{
+	return getGuilds().count(uid) > 0;
+}
+
+Channel::GuildPtr Client::getGuild(int uid)
+{
+	assert(hasProfile(uid));
+	return getGuilds().at(uid);
+}
+
+void Client::clearGuilds()
+{
+	if (!isConnected())
+		return;
+
+	getMyChannel()->clearGuilds();
 }
 
 int Client::getUID() const

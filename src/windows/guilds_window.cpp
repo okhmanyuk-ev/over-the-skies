@@ -22,13 +22,40 @@ GuildsWindow::GuildsWindow()
 	create_button->setY(-24.0f);
 	getBody()->attach(create_button);
 
-	auto item = std::make_shared<Item>();
-	item->setAnchor(0.5f);
-	item->setPivot(0.5f);
-	getBody()->attach(item);
+	runAction(Actions::Factory::MakeSequence(
+		Actions::Factory::Wait([this] { return getState() != Window::State::Opened; }),
+		Actions::Factory::Execute([] {
+			CLIENT->requestGuildList();
+		}),
+		Actions::Factory::Breakable(5.0f, 
+			Actions::Factory::WaitEvent<Channel::GuildListEvent>([this](const auto& e) {
+				LOGF("recevied guild list with {} guilds", e.ids.size());
+				createGuildItems(e.ids);
+			})
+		)
+	));
 }
 
-GuildsWindow::Item::Item()
+void GuildsWindow::createGuildItems(const std::vector<int> ids)
+{
+	std::vector<std::shared_ptr<Scene::Node>> items;
+
+	for (auto id : ids)
+	{
+		auto item = std::make_shared<Item>(id);
+		item->setAnchor(0.5f);
+		item->setPivot(0.5f);
+		items.push_back(item);
+	}
+
+	const glm::vec2 ItemSize = { 314.0f, 48.0f };
+
+	auto grid = Shared::SceneHelpers::MakeVerticalGrid(ItemSize, items);
+
+	getBody()->attach(grid);
+}
+
+GuildsWindow::Item::Item(int guildId)
 {
 	setStretch({ 1.0f, 0.0f });
 	setMargin(8.0f);
@@ -37,13 +64,12 @@ GuildsWindow::Item::Item()
 	setAbsoluteRounding(true);
 	setAlpha(0.125f);
 
-	auto title = std::make_shared<Helpers::Label>();
-	title->setAnchor({ 0.0f, 0.5f });
-	title->setPivot({ 0.0f, 0.5f });
-	title->setX(8.0f);
-	title->setText("awdawdawd");
-	title->setFontSize(15.0f);
-	attach(title);
+	mTitle = std::make_shared<Helpers::Label>();
+	mTitle->setAnchor({ 0.0f, 0.5f });
+	mTitle->setPivot({ 0.0f, 0.5f });
+	mTitle->setX(8.0f);
+	mTitle->setFontSize(15.0f);
+	attach(mTitle);
 
 	auto join_button = std::make_shared<Helpers::Button>();
 	join_button->setColor(Helpers::ButtonColor);
@@ -58,4 +84,17 @@ GuildsWindow::Item::Item()
 	join_button->setX(-8.0f);
 	attach(join_button);
 
+	setGuildCallback([this](auto guild_info) {
+		refresh(guild_info);
+	});
+
+	setGuildID(guildId);
+
+	CLIENT->requireGuildInfo(guildId);
 }
+
+void GuildsWindow::Item::refresh(Channel::GuildPtr guild_info)
+{
+	mTitle->setText(guild_info->getJson()["title"].get<std::string>());
+}
+

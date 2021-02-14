@@ -11,11 +11,19 @@ namespace hcg001
 
 	public:
 		GuildsWindow();
+
+	private:
+		void createGuildItems(const std::vector<int> ids);
 	};
 
-	class GuildsWindow::Item : public Scene::Rectangle
+	class GuildsWindow::Item : public Helpers::GuildInfoListenable<Scene::Rectangle>
 	{
 	public:
-		Item();
+		Item(int guildId);
+
+		void refresh(Channel::GuildPtr guild_info);
+
+	private:
+		std::shared_ptr<Helpers::Label> mTitle;
 	};
 }

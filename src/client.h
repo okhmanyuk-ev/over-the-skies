@@ -2,6 +2,7 @@
 
 #include <shared/all.h>
 #include "profile.h"
+#include "guild.h"
 
 #define CLIENT ENGINE->getSystem<hcg001::Client>()
 
@@ -16,6 +17,8 @@ namespace hcg001
 		using ProfilePtr = std::shared_ptr<const Profile>;
 		using ProfilesMap = std::map<int/*id*/, ProfilePtr>;
 		using GlobalChatMessages = std::map<int, std::shared_ptr<ChatMessage>>;
+		using GuildPtr = std::shared_ptr<const Guild>;
+		using GuildsMap = std::map<int/*id*/, GuildPtr>;
 
 	public:
 		struct GlobalChatMessageEvent
@@ -26,6 +29,16 @@ namespace hcg001
 		struct CreateGuildEvent
 		{
 			std::string status;
+		};
+
+		struct GuildListEvent
+		{
+			std::vector<int> ids;
+		};
+
+		struct GuildInfoReceivedEvent
+		{
+			int id;
 		};
 
 	public:
@@ -39,6 +52,9 @@ namespace hcg001
 		void clearProfiles();
 		void sendChatMessage(const std::string& text);
 		void createGuild(const std::string& title);
+		void requestGuildList();
+		void clearGuilds();
+		void requestGuildInfo(int id);
 
 	private:
 		void readFileMessage(Common::BitBuffer& buf);
@@ -46,6 +62,7 @@ namespace hcg001
 	public:
 		const auto& getProfiles() const { return mProfiles; }
 		const auto& getGlobalChatMessages() const { return mGlobalChatMessages; }
+		const auto& getGuilds() const { return mGuilds; }
 
 	public:
 		auto getUID() const { return mUID; }
@@ -65,6 +82,7 @@ namespace hcg001
 	private:
 		ProfilesMap mProfiles;
 		GlobalChatMessages mGlobalChatMessages;
+		GuildsMap mGuilds;
 
 	private:
 		std::string mPrevProfileDump;
@@ -102,6 +120,10 @@ namespace hcg001
 		void requireProfile(int uid);
 		void sendChatMessage(const std::string& text);
 		void createGuild(const std::string& title);
+		void requestGuildList();
+
+		void requestGuildInfo(int id);
+		void requireGuildInfo(int id);
 		
 	public:
 		const Channel::GlobalChatMessages& getGlobalChatMessages() const;
@@ -114,6 +136,11 @@ namespace hcg001
 		bool hasProfile(int uid);
 		Channel::ProfilePtr getProfile(int uid);
 		void clearProfiles();
+
+		const Channel::GuildsMap& getGuilds() const;
+		bool hasGuild(int uid);
+		Channel::GuildPtr getGuild(int uid);
+		void clearGuilds();
 
 	public:
 		int getUID() const;

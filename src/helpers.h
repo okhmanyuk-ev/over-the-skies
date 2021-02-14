@@ -22,7 +22,7 @@ namespace hcg001::Helpers
 		std::vector<int> uids;
 	};
 
-	struct ProfileReceived
+	struct ProfileReceived // TODO: move to client.h
 	{
 		int uid;
 	};
@@ -110,6 +110,53 @@ namespace hcg001::Helpers
 	private:
 		int mProfileUID = 0;
 		ProfileCallback mProfileCallback;
+		bool mFirstCalled = false;
+	};
+
+	template <class T> class GuildInfoListenable : public T, public Common::Event::Listenable<Channel::GuildInfoReceivedEvent>
+	{
+	public:
+		using GuildCallback = std::function<void(Channel::GuildPtr)>;
+
+	private:
+		void onEvent(const Channel::GuildInfoReceivedEvent& e) override
+		{
+			if (e.id != mGuildID)
+				return;
+
+			mFirstCalled = true;
+
+			if (mGuildCallback)
+				mGuildCallback(CLIENT->getGuild(mGuildID));
+		}
+
+	protected:
+		void update() override
+		{
+			T::update();
+			
+			if (mFirstCalled)
+				return;
+			
+			mFirstCalled = true;
+
+			if (!CLIENT->hasGuild(mGuildID))
+				return;
+
+			if (mGuildCallback)
+				mGuildCallback(CLIENT->getGuild(mGuildID));
+		}
+
+	public:
+		auto getGuildID() const { return mGuildID; }
+		void setGuildID(int value) { mGuildID = value; }
+		
+		auto getGuildCallback() const { return mGuildCallback; }
+		void setGuildCallback(GuildCallback value) { mGuildCallback = value; }
+
+	private:
+		int mGuildID = 0;
+		GuildCallback mGuildCallback;
 		bool mFirstCalled = false;
 	};
 }
