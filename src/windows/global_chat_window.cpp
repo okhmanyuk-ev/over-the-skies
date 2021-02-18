@@ -354,19 +354,26 @@ std::shared_ptr<Scene::Node> GlobalChatWindow::createTextMessage(std::shared_ptr
 	item->setVisible(false);
 	mScrollbox->getContent()->attach(item);
 
+	auto holder = std::make_shared<Scene::Node>();
+	holder->setStretch({ 0.8f, 1.0f });
+	holder->setMargin({ 8.0f, 6.0f });
+	holder->setAnchor({ 0.0f, 0.5f });
+	holder->setPivot({ 0.0f, 0.5f });
+	holder->setX(8.0f);
+	item->attach(holder);
+
 	//auto rect = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>(); // TODO: fix bug with stencil and scrollbar
 	//auto rect = std::make_shared<Scene::ClippableScissor<Scene::Rectangle>>(); // TODO: fix bug with this shit
+
 	auto rect = std::make_shared<Scene::Rectangle>();
-	rect->setStretch({ 0.8f, 1.0f });
-	rect->setMargin({ 8.0f, 6.0f });
-	rect->setAlpha(0.25f);
-	rect->setAnchor({ 0.0f, 0.5f });
-	rect->setPivot({ 0.0f, 0.5f });
-	rect->setX(8.0f);
+	rect->setStretch(1.0f);
+	rect->setAnchor(0.5f);
+	rect->setPivot(0.5f);
 	rect->setRounding(8.0f);
 	rect->setAbsoluteRounding(true);
-	item->attach(rect);
-	
+	rect->setAlpha(0.25f);
+	holder->attach(rect);
+
 	assert(CLIENT->hasProfile(msg->getUID()));
 	auto profile = CLIENT->getProfile(msg->getUID());
 
@@ -377,13 +384,15 @@ std::shared_ptr<Scene::Node> GlobalChatWindow::createTextMessage(std::shared_ptr
 	label->setStretch({ 1.0f, 0.0f });
 	label->setMargin({ 24.0f, 0.0f });
 	label->setMultiline(true);
+	label->setAutoRefreshing(false);
 	label->setText(profile->getNickName() + ": " + msg->getText());
 	rect->attach(label);
 
 	item->updateAbsoluteSize();
+	holder->updateAbsoluteSize();
 	rect->updateAbsoluteSize();
 	label->updateAbsoluteSize();
-	label->updateTextMesh();
+	label->refresh();
 
 	item->setHeight(label->getAbsoluteHeight() + 24.0f);
 
@@ -391,7 +400,10 @@ std::shared_ptr<Scene::Node> GlobalChatWindow::createTextMessage(std::shared_ptr
 	auto abs_width = label->getAbsoluteWidth();
 
 	if (text_width < abs_width)
-		rect->setHorizontalSize(rect->getHorizontalSize() - (abs_width - text_width));
+		holder->setHorizontalSize(holder->getHorizontalSize() - (abs_width - text_width));
+
+	rect->setScale(0.0f);
+	rect->runAction(Actions::Factory::ChangeScale(rect, { 1.0f, 1.0f }, 0.25f, Easing::CubicInOut));
 
 	return item;
 }
