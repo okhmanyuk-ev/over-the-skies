@@ -237,7 +237,7 @@ Channel::ChatMessage::ChatMessage(int uid, const std::string& text) :
 
 Client::Client() : 
 	//Shared::NetworkingWS::Client("ws://hcg001.ddns.net:27015")
-	Shared::NetworkingWS::Client("ws://localhost:27015")
+	Shared::NetworkingWS::Client("ws://192.168.0.106:27015")
 {
 	//
 }
