@@ -17,6 +17,12 @@ Button::Button()
 	mLabel = std::make_shared<Label>();
 	mLabel->setAnchor(0.5f);
 	mLabel->setPivot(0.5f);
+	mLabel->runAction(Actions::Factory::ExecuteInfinite([this] {
+		if (!mAdaptiveFontSize)
+			return;
+
+		mLabel->setFontSize(getAbsoluteHeight() * (18.0f / 28.0f));
+	}));
 	attach(mLabel);
 }
 
@@ -41,4 +47,12 @@ TextInputField::TextInputField()
 	mLabel->setAnchor(0.5f);
 	mLabel->setPivot(0.5f);
 	attach(mLabel);
+}
+
+float ::SmoothValueSetup(float src, float dst)
+{
+	auto delta = dst - src;
+	auto dTime = Clock::ToSeconds(FRAME->getTimeDelta());
+	const float speed = 10.0f;
+	return src + (delta * dTime * speed);
 }

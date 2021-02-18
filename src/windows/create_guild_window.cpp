@@ -32,20 +32,8 @@ CreateGuildWindow::CreateGuildWindow()
 	title_input_field->getLabel()->setText("guild_name_here");
 	title_field_bg->attach(title_input_field);
 
-
-
-
-
-
-
-
-
-
-
-
 	auto create_button = std::make_shared<Helpers::Button>();
 	create_button->getLabel()->setText(LOCALIZE("CREATE"));
-	create_button->getLabel()->setFontSize(18.0f);
 	create_button->setClickCallback([title_input_field] {
 		auto window = std::make_shared<ResponseWaitWindow>();
 		SCENE_MANAGER->pushWindow(window);

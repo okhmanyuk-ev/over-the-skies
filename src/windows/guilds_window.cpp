@@ -74,13 +74,12 @@ GuildsWindow::Item::Item(int guildId)
 	auto join_button = std::make_shared<Helpers::Button>();
 	join_button->setColor(Helpers::ButtonColor);
 	join_button->getLabel()->setText(LOCALIZE("JOIN"));
-	join_button->getLabel()->setFontSize(15.0f);
 	join_button->setClickCallback([] {
 		LOG("join button");
 	});
 	join_button->setAnchor({ 1.0f, 0.5f });
 	join_button->setPivot({ 1.0f, 0.5f });
-	join_button->setSize({ 64.0f, 28.0f });
+	join_button->setSize({ 64.0f, 24.0f });
 	join_button->setX(-8.0f);
 	attach(join_button);
 

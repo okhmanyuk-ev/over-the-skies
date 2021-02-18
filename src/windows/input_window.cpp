@@ -42,7 +42,7 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 	runAction(Actions::Factory::ExecuteInfinite([this, label_bg, DefaultWindowHeight, DefaultLabelBgHeight] {
 		auto label_bg_h = DefaultLabelBgHeight;
 		label_bg_h += mLabel->getAbsoluteHeight();
-		label_bg->setHeight(label_bg_h);
+		label_bg->setHeight(Helpers::SmoothValueSetup(label_bg->getHeight(), label_bg_h));
 		
 		auto win_h = DefaultWindowHeight;
 		win_h += label_bg->getAbsoluteHeight();
@@ -51,7 +51,6 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 
 	mApplyButton = std::make_shared<Helpers::Button>();
 	mApplyButton->getLabel()->setText(LOCALIZE("WINDOW_APPLY"));
-	mApplyButton->getLabel()->setFontSize(18.0f);
 	mApplyButton->setClickCallback([this] {
 		mChangeTextCallback(mLabel->getText());
 		SCENE_MANAGER->popWindow();
@@ -64,7 +63,6 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 
 	mCancelButton = std::make_shared<Helpers::Button>();
 	mCancelButton->getLabel()->setText(LOCALIZE("WINDOW_CANCEL"));
-	mCancelButton->getLabel()->setFontSize(18.0f);
 	mCancelButton->setClickCallback([this] {
 		SCENE_MANAGER->popWindow();
 	});

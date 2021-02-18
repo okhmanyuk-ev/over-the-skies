@@ -44,8 +44,12 @@ namespace hcg001::Helpers
 	public:
 		auto getLabel() const { return mLabel; }
 
+		auto isAdaptiveFontSize() const { return mAdaptiveFontSize; }
+		void setAdaptiveFontSize(bool value) { mAdaptiveFontSize = value; }
+
 	private:
 		std::shared_ptr<Label> mLabel;
+		bool mAdaptiveFontSize = true;
 	};	
 	
 	class RectangleButton : public Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::RectangleButton>
@@ -159,4 +163,6 @@ namespace hcg001::Helpers
 		GuildCallback mGuildCallback;
 		bool mFirstCalled = false;
 	};
+
+	float SmoothValueSetup(float src, float dst);
 }
