@@ -192,6 +192,7 @@ void Application::adaptToScreen(std::shared_ptr<Scene::Node> node)
 
 	auto scale = size / dimensions;
 	node->setScale(glm::min(scale.x, scale.y));
+	node->setStretch(1.0f / node->getScale());
 }
 
 void Application::onEvent(const Helpers::PrintEvent& e)
