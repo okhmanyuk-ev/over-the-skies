@@ -14,20 +14,12 @@ OptionsWindow::OptionsWindow()
 	nickname_label->setText(LOCALIZE("OPTIONS_WINDOW_NICKNAME"));
 	getBody()->attach(nickname_label);
 
-	auto nickname_field = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
-	nickname_field->setPosition({ 128.0f, 24.0f });
-	nickname_field->setSize({ 174.0f, 24.0f });
-	nickname_field->setRounding(0.5f);
-	nickname_field->setPivot({ 0.0f, 0.5f });
-	nickname_field->setColor(Helpers::BaseWindowColor / 24.0f);
-	getBody()->attach(nickname_field);
-
 	mNicknameInputField = std::make_shared<Helpers::TextInputField>();
-	mNicknameInputField->setAnchor(0.5f);
-	mNicknameInputField->setPivot(0.5f);
-	mNicknameInputField->setStretch(1.0f);
+	mNicknameInputField->setPosition({ 128.0f, 24.0f });
+	mNicknameInputField->setSize({ 174.0f, 24.0f });
+	mNicknameInputField->setPivot({ 0.0f, 0.5f });
 	mNicknameInputField->getLabel()->setText(PROFILE->getNickName());
-	nickname_field->attach(mNicknameInputField);
+	getBody()->attach(mNicknameInputField);
 
 	auto ok_button = std::make_shared<Helpers::RectangleButton>();
 	ok_button->setColor(Helpers::BaseWindowColor);

@@ -7,6 +7,7 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 	mChangeTextCallback(changeTextCallback)
 {
 	const float DefaultWindowHeight = 102.0f;
+	const float MinLabelBgHeight = 32.0f;
 	const float DefaultLabelBgHeight = 12.0f;
 
 	getBackground()->setSize({ 314.0f, DefaultWindowHeight });
@@ -15,7 +16,7 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 
 	setCloseOnMissclick(false);
 
-	auto label_bg = std::make_shared<Scene::Rectangle>();
+	auto label_bg = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::Rectangle>>>();
 	label_bg->setStretch({ 1.0f, 0.0f });
 	label_bg->setMargin({ 16.0f, 0.0f });
 	label_bg->setAnchor({ 0.5f, 0.0f });
@@ -26,6 +27,9 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 	label_bg->setAbsoluteRounding(true);
 	label_bg->setColor(Graphics::Color::Black);
 	label_bg->setAlpha(0.5f);
+	label_bg->setClickCallback([] {
+		PLATFORM->showVirtualKeyboard();
+	});
 	getBody()->attach(label_bg);
 
 	mLabel = std::make_shared<Helpers::Label>();
@@ -39,9 +43,10 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 	mLabel->setText(text);
 	label_bg->attach(mLabel);
 
-	runAction(Actions::Factory::ExecuteInfinite([this, label_bg, DefaultWindowHeight, DefaultLabelBgHeight] {
+	runAction(Actions::Factory::ExecuteInfinite([this, label_bg, MinLabelBgHeight, DefaultWindowHeight, DefaultLabelBgHeight] {
 		auto label_bg_h = DefaultLabelBgHeight;
 		label_bg_h += mLabel->getAbsoluteHeight();
+		label_bg_h = glm::max(MinLabelBgHeight, label_bg_h);
 		label_bg->setHeight(Helpers::SmoothValueSetup(label_bg->getHeight(), label_bg_h));
 		
 		auto win_h = DefaultWindowHeight;

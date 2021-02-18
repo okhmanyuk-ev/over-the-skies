@@ -58,7 +58,7 @@ namespace hcg001::Helpers
 		RectangleButton();
 	};
 
-	class TextInputField : public Scene::Clickable<Scene::Node>
+	class TextInputField : public Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::ClippableStencil<Scene::Rectangle>>>
 	{
 	public:
 		TextInputField();

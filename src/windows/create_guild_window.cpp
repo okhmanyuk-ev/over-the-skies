@@ -8,8 +8,6 @@ CreateGuildWindow::CreateGuildWindow()
 	getBackground()->setSize({ 314.0f, 386.0f });
 	getTitle()->setText(LOCALIZE("CREATE_GUILD_WINDOW_TITLE"));
 
-
-
 	auto title_label = std::make_shared<Helpers::Label>();
 	title_label->setFontSize(16.0f);
 	title_label->setPosition({ 16.0f, 24.0f });
@@ -17,20 +15,12 @@ CreateGuildWindow::CreateGuildWindow()
 	title_label->setText(LOCALIZE("TITLE"));
 	getBody()->attach(title_label);
 
-	auto title_field_bg = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
-	title_field_bg->setPosition({ 128.0f, 24.0f });
-	title_field_bg->setSize({ 174.0f, 24.0f });
-	title_field_bg->setRounding(0.5f);
-	title_field_bg->setPivot({ 0.0f, 0.5f });
-	title_field_bg->setColor(Helpers::BaseWindowColor / 24.0f);
-	getBody()->attach(title_field_bg);
-
 	auto title_input_field = std::make_shared<Helpers::TextInputField>();
-	title_input_field->setAnchor(0.5f);
-	title_input_field->setPivot(0.5f);
-	title_input_field->setStretch(1.0f);
+	title_input_field->setPosition({ 128.0f, 24.0f });
+	title_input_field->setSize({ 174.0f, 24.0f });
+	title_input_field->setPivot({ 0.0f, 0.5f });
 	title_input_field->getLabel()->setText("guild_name_here");
-	title_field_bg->attach(title_input_field);
+	getBody()->attach(title_input_field);
 
 	auto create_button = std::make_shared<Helpers::Button>();
 	create_button->getLabel()->setText(LOCALIZE("CREATE"));
