@@ -49,7 +49,7 @@ TextInputField::TextInputField()
 	attach(mLabel);
 }
 
-float ::SmoothValueSetup(float src, float dst)
+float hcg001::Helpers::SmoothValueSetup(float src, float dst)
 {
 	auto delta = dst - src;
 	auto dTime = Clock::ToSeconds(FRAME->getTimeDelta());
