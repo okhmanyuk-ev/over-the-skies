@@ -44,7 +44,6 @@ CreateGuildWindow::CreateGuildWindow()
 
 
 	auto create_button = std::make_shared<Helpers::Button>();
-	create_button->setColor(Helpers::ButtonColor);
 	create_button->getLabel()->setText(LOCALIZE("CREATE"));
 	create_button->getLabel()->setFontSize(18.0f);
 	create_button->setClickCallback([title_input_field] {

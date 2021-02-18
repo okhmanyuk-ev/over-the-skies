@@ -6,7 +6,7 @@
 
 namespace hcg001
 {
-	class InputWindow : public Window,
+	class InputWindow : public StandardWindow,
 		public Common::Event::Listenable<Platform::System::VirtualKeyboardTextChanged>,
 		public Common::Event::Listenable<Platform::System::VirtualKeyboardEnterPressed>,
 		public Common::Event::Listenable<Platform::Input::Keyboard::Event>
@@ -24,7 +24,6 @@ namespace hcg001
 
 	protected:
 		void onOpenBegin() override;
-		void onOpenEnd() override;
 		void onCloseBegin() override;
 
 	private:
@@ -33,7 +32,7 @@ namespace hcg001
 	private:
 		std::shared_ptr<Helpers::Label> mLabel;
 		ChangeTextCallback mChangeTextCallback;
-		std::shared_ptr<Helpers::RectangleButton> mApplyButton;
-		std::shared_ptr<Helpers::RectangleButton> mCancelButton;
+		std::shared_ptr<Helpers::Button> mApplyButton;
+		std::shared_ptr<Helpers::Button> mCancelButton;
 	};
 }

@@ -184,20 +184,21 @@ SocialPanel::Page::Page()
 
 	mScrollbox = std::make_shared<Scene::Scrollbox>();
 	mScrollbox->setStretch(1.0f);
+	mScrollbox->setTouchable(false);
 	//mScrollbox->setSensitivity({ 0.0f, 1.0f });
 	mScrollbox->getBounding()->setStretch(1.0f);
 	mScrollbox->getBounding()->setAnchor(0.5f);
 	mScrollbox->getBounding()->setPivot(0.5f);
 	mBackground->attach(mScrollbox);
 
-	/*runAction(Actions::Factory::RepeatInfinite([this] {
+	runAction(Actions::Factory::RepeatInfinite([this] {
 		return Actions::Factory::MakeSequence(
 			Actions::Factory::Wait(1.0f),
 			Actions::Factory::ChangeVerticalScrollPosition(mScrollbox, 1.0f, 3.0f, Easing::CubicInOut),
 			Actions::Factory::Wait(1.0f),
 			Actions::Factory::ChangeVerticalScrollPosition(mScrollbox, 0.0f, 3.0f, Easing::CubicInOut)
 		);
-	}));*/
+	}));
 
 	auto table_headers_holder = std::make_shared<Scene::Node>();
 	table_headers_holder->setStretch({ 1.0f, 0.0f });
@@ -247,7 +248,7 @@ void SocialPanel::Page::onEvent(const Helpers::HighscoresEvent& e)
 {
 	mHighscores = e;
 
-	while (mHighscores.uids.size() < 20)
+	while (mHighscores.uids.size() < 10)
 		mHighscores.uids.push_back(mHighscores.uids.at(mHighscores.uids.size() - 1));
 
 	refresh();
