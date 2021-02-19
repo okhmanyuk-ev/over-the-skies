@@ -13,7 +13,12 @@ Channel::Channel()
 
 	addEventCallback("authorized", [this](const auto& params) {
 		mUID = std::stoi(params.at("uid"));
-		LOG("authorized (uid: " + std::to_string(mUID) + ")");
+		auto guild_id = std::stoi(params.at("guild_id"));
+
+		PROFILE->setGuildId(guild_id);
+
+		LOG("authorized");
+		LOGF("uid: {}, guild: {}", mUID, guild_id);
 	});
 
 	addEventCallback("print", [](const auto& params) {
@@ -30,9 +35,11 @@ Channel::Channel()
 	addEventCallback("profile", [this](const auto& params) {
 		auto uid = std::stoi(params.at("uid"));
 		auto dump = params.at("json");
+		auto guild_id = std::stoi(params.at("guild_id"));
 		auto json = nlohmann::json::parse(dump);
 		auto profile = std::make_shared<Profile>();
 		profile->read(json);
+		profile->setGuildId(guild_id);
 		mProfiles.erase(uid);
 		mProfiles.insert({ uid, profile });
 		EVENT->emit(Helpers::ProfileReceived({ uid }));
@@ -47,9 +54,18 @@ Channel::Channel()
 		EVENT->emit(GlobalChatMessageEvent({ msgid }));
 	});
 
-	addEventCallback("create_guild", [this](const auto& params) {
-		auto status = params.at("status");
-		EVENT->emit(CreateGuildEvent({ status }));
+	addEventCallback("created_guild", [this](const auto& params) {
+		auto e = CreateGuildEvent();
+
+		e.status = params.at("status");
+		
+		if (params.count("id"))
+			e.id = std::stoi(params.at("id"));
+		
+		if (e.status == "ok")
+			PROFILE->setGuildId(e.id.value());
+
+		EVENT->emit(e);
 	});
 
 	addEventCallback("guild_list", [this](const auto& params) {
@@ -69,6 +85,18 @@ Channel::Channel()
 		mGuilds.insert({ id, guild });
 		EVENT->emit(GuildInfoReceivedEvent({ id }));
 	});
+
+	addEventCallback("joined_to_guild", [this](const auto& params) {
+		auto id = std::stoi(params.at("id"));
+		PROFILE->setGuildId(id);
+		EVENT->emit(JoinedToGuildEvent({ id }));
+	});
+
+	addEventCallback("exited_from_guild", [this](const auto& params) {
+		PROFILE->setGuildId(Profile::NoneGuild);
+		EVENT->emit(ExitedFromGuildEvent());
+	});
+	
 
 	FRAME->addOne([this] {
 		auth();
@@ -159,6 +187,18 @@ void Channel::clearGuilds()
 void Channel::requestGuildInfo(int id)
 {
 	sendEvent("request_guild_info", {
+		{ "id", std::to_string(id) }
+	});
+}
+
+void Channel::exitGuild()
+{
+	sendEvent("exit_guild");
+}
+
+void Channel::joinGuild(int id)
+{
+	sendEvent("join_guild", {
 		{ "id", std::to_string(id) }
 	});
 }
@@ -311,6 +351,22 @@ void Client::requestGuildList()
 	getMyChannel()->requestGuildList();
 }
 
+void Client::exitGuild()
+{
+	if (!isConnected())
+		return;
+
+	getMyChannel()->exitGuild();
+}
+
+void Client::joinGuild(int id)
+{
+	if (!isConnected())
+		return;
+
+	getMyChannel()->joinGuild(id);
+}
+
 void Client::requestGuildInfo(int id)
 {
 	if (!isConnected())
@@ -374,7 +430,7 @@ bool Client::hasGuild(int uid)
 
 Channel::GuildPtr Client::getGuild(int uid)
 {
-	assert(hasProfile(uid));
+	assert(hasGuild(uid));
 	return getGuilds().at(uid);
 }
 

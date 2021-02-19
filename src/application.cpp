@@ -43,7 +43,6 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 #if defined(BUILD_DEVELOPER)
 	CONSOLE->execute("hud_show_fps 1");
 	CONSOLE->execute("hud_show_drawcalls 1");
-	CONSOLE->execute("hud_show_chan 1");
 #else
 	CONSOLE_DEVICE->setEnabled(false);
 	STATS->setEnabled(false);

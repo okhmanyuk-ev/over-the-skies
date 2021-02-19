@@ -1,5 +1,6 @@
 #include "guilds_window.h"
 #include "create_guild_window.h"
+#include "response_wait_window.h"
 
 using namespace hcg001;
 
@@ -8,6 +9,94 @@ GuildsWindow::GuildsWindow()
 	getBackground()->setSize({ 314.0f, 386.0f });
 	getTitle()->setText(LOCALIZE("GUILDS_WINDOW_TITLE"));
 
+	runAction(Actions::Factory::MakeSequence(
+		Actions::Factory::Wait([this] { return getState() != Window::State::Opened; }),
+		Actions::Factory::Wait([] {
+			return !CLIENT->isConnected();
+		}),
+		Actions::Factory::Execute([this] {
+			if (PROFILE->isInGuild())
+			{
+				runAction(Actions::Factory::MakeSequence(
+					Actions::Factory::Execute([] {
+						CLIENT->requireGuildInfo(PROFILE->getGuildId());
+					}),
+					Actions::Factory::Wait([] {
+						return !CLIENT->hasGuild(PROFILE->getGuildId());
+					}),
+					Actions::Factory::Execute([this] {
+						createMyGuildContent();
+					})
+				));
+			}
+			else
+			{
+				createGuildSearchContent();
+			}
+		})
+	));
+}
+
+
+void GuildsWindow::createMyGuildContent()
+{
+	auto guild = CLIENT->getGuild(PROFILE->getGuildId())->getJson();
+
+	std::string title = guild["title"];
+	std::set<int> members = guild["members"];
+
+	auto label = std::make_shared<Helpers::Label>();
+	label->setPivot({ 0.0f, 0.5f });
+	label->setPosition({ 16.0f, 16.0f });
+	label->setText("name: " + title);
+	getBody()->attach(label);
+
+	auto label2 = std::make_shared<Helpers::Label>();
+	label2->setPivot({ 0.0f, 0.5f });
+	label2->setPosition({ 16.0f, 48.0f });
+	label2->setText("members: " + std::to_string(members.size()));
+	getBody()->attach(label2);
+
+	auto exit_button = std::make_shared<Helpers::Button>();
+	exit_button->setColor(Helpers::ButtonColor);
+	exit_button->getLabel()->setText(LOCALIZE("EXIT"));
+	exit_button->getLabel()->setFontSize(18.0f);
+	exit_button->setClickCallback([] {
+		auto window = std::make_shared<ResponseWaitWindow>();
+		SCENE_MANAGER->pushWindow(window);
+		window->runAction(Actions::Factory::MakeSequence(
+			Actions::Factory::Wait([window] { return window->getState() != Window::State::Opened; }),
+			Actions::Factory::Execute([] {
+				CLIENT->exitGuild();
+			}),
+			Actions::Factory::Breakable(5.0f, 
+				Actions::Factory::WaitEvent<Channel::ExitedFromGuildEvent>([](const auto& e) {
+					LOG("exited from guild");
+				})
+			),
+			Actions::Factory::Wait(0.5f),
+			Actions::Factory::Execute([] {
+				SCENE_MANAGER->popWindow([] {
+					if (PROFILE->isInGuild())
+						return;
+					
+					SCENE_MANAGER->popWindow([] {
+						auto window = std::make_shared<GuildsWindow>();
+						SCENE_MANAGER->pushWindow(window);
+					});
+				});
+			})
+		));
+	});
+	exit_button->setAnchor({ 0.5f, 1.0f });
+	exit_button->setPivot(0.5f);
+	exit_button->setSize({ 128.0f, 28.0f });
+	exit_button->setY(-24.0f);
+	getBody()->attach(exit_button);
+}
+
+void GuildsWindow::createGuildSearchContent()
+{
 	auto create_button = std::make_shared<Helpers::Button>();
 	create_button->setColor(Helpers::ButtonColor);
 	create_button->getLabel()->setText(LOCALIZE("CREATE"));
@@ -52,7 +141,15 @@ void GuildsWindow::createGuildItems(const std::vector<int> ids)
 
 	auto grid = Shared::SceneHelpers::MakeVerticalGrid(ItemSize, items);
 
-	getBody()->attach(grid);
+	auto scrollbox = std::make_shared<Scene::ClippableScissor<Scene::Scrollbox>>();
+	scrollbox->setStretch(1.0f);
+	scrollbox->getBounding()->setStretch(1.0f);
+	scrollbox->getContent()->setSize(grid->getSize());
+	scrollbox->getContent()->attach(grid);
+	scrollbox->setVerticalMargin(48.0f);
+	scrollbox->setSensitivity({ 0.0f, 1.0f });
+
+	getBody()->attach(scrollbox);
 }
 
 GuildsWindow::Item::Item(int guildId)
@@ -74,8 +171,32 @@ GuildsWindow::Item::Item(int guildId)
 	auto join_button = std::make_shared<Helpers::Button>();
 	join_button->setColor(Helpers::ButtonColor);
 	join_button->getLabel()->setText(LOCALIZE("JOIN"));
-	join_button->setClickCallback([] {
-		LOG("join button");
+	join_button->setClickCallback([guildId] {
+		auto window = std::make_shared<ResponseWaitWindow>();
+		SCENE_MANAGER->pushWindow(window);
+		window->runAction(Actions::Factory::MakeSequence(
+			Actions::Factory::Wait([window] { return window->getState() != Window::State::Opened; }),
+			Actions::Factory::Execute([guildId] {
+				CLIENT->joinGuild(guildId);
+			}),
+			Actions::Factory::Breakable(5.0f, 
+				Actions::Factory::WaitEvent<Channel::JoinedToGuildEvent>([](const auto& e) {
+					LOGF("joined to guild {}", e.id);
+				})
+			),
+			Actions::Factory::Wait(0.5f),
+			Actions::Factory::Execute([] {
+				SCENE_MANAGER->popWindow([] {
+					if (!PROFILE->isInGuild())
+						return;
+					
+					SCENE_MANAGER->popWindow([] {
+						auto window = std::make_shared<GuildsWindow>();
+						SCENE_MANAGER->pushWindow(window);
+					});
+				});
+			})
+		));
 	});
 	join_button->setAnchor({ 1.0f, 0.5f });
 	join_button->setPivot({ 1.0f, 0.5f });

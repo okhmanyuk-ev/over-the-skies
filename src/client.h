@@ -29,6 +29,7 @@ namespace hcg001
 		struct CreateGuildEvent
 		{
 			std::string status;
+			std::optional<int> id;
 		};
 
 		struct GuildListEvent
@@ -40,6 +41,13 @@ namespace hcg001
 		{
 			int id;
 		};
+
+		struct JoinedToGuildEvent
+		{
+			int id;
+		};
+
+		struct ExitedFromGuildEvent { };
 
 	public:
 		Channel();
@@ -55,6 +63,8 @@ namespace hcg001
 		void requestGuildList();
 		void clearGuilds();
 		void requestGuildInfo(int id);
+		void exitGuild();
+		void joinGuild(int id);
 
 	private:
 		void readFileMessage(Common::BitBuffer& buf);
@@ -121,6 +131,8 @@ namespace hcg001
 		void sendChatMessage(const std::string& text);
 		void createGuild(const std::string& title);
 		void requestGuildList();
+		void exitGuild();
+		void joinGuild(int id);
 
 		void requestGuildInfo(int id);
 		void requireGuildInfo(int id);

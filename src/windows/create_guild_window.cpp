@@ -1,5 +1,6 @@
 #include "create_guild_window.h"
 #include "response_wait_window.h"
+#include "guilds_window.h"
 
 using namespace hcg001;
 
@@ -39,7 +40,15 @@ CreateGuildWindow::CreateGuildWindow()
 			),
 			Actions::Factory::Wait(0.5f),
 			Actions::Factory::Execute([] {
-				SCENE_MANAGER->popWindow();
+				SCENE_MANAGER->popWindow([] {
+					if (!PROFILE->isInGuild())
+						return;
+
+					SCENE_MANAGER->popWindow(2, [] {
+						auto window = std::make_shared<GuildsWindow>();
+						SCENE_MANAGER->pushWindow(window);
+					}); 
+				});
 			})
 		));
 	});

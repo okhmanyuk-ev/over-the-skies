@@ -10,6 +10,9 @@ namespace hcg001
 	class Profile : public Shared::Profile
 	{
 	public:
+		static const int inline NoneGuild = -1;
+
+	public:
 		struct RubiesChangedEvent { };
 
 	public:
@@ -48,6 +51,13 @@ namespace hcg001
 		auto getNickName() const { return mNickName; }
 		void setNickName(const utf8_string& value) { mNickName = value; }
 
+		// guild_id data not stored in local profile,
+		// it will receive from server every game start
+		int getGuildId() const { return mGuildId; }
+		void setGuildId(int value) { mGuildId = value; }
+
+		bool isInGuild() const { return getGuildId() != NoneGuild; }
+
 	private:
 		int mHighScore = 0;
 		int mRubies = 0;
@@ -56,5 +66,6 @@ namespace hcg001
 		int mDailyRewardDay = 0;
 		long long mDailyRewardTime = 0;
 		utf8_string mNickName = "Guest";
+		int mGuildId = NoneGuild;
 	};
 }

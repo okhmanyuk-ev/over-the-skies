@@ -13,6 +13,8 @@ namespace hcg001
 		GuildsWindow();
 
 	private:
+		void createMyGuildContent();
+		void createGuildSearchContent();
 		void createGuildItems(const std::vector<int> ids);
 	};
 
