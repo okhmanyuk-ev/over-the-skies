@@ -59,3 +59,28 @@ float hcg001::Helpers::SmoothValueSetup(float src, float dst)
 	const float speed = 10.0f;
 	return src + (delta * dTime * speed);
 }
+
+WaitingIndicator::WaitingIndicator()
+{
+	setSize(24.0f);
+
+	auto circle = std::make_shared<Scene::Circle>();
+	circle->setStretch(1.0f);
+	circle->setAnchor(0.5f);
+	circle->setPivot(0.5f);
+	circle->setFill(0.2f);
+	circle->setPie(0.66f);
+	attach(circle);
+
+	runAction(Actions::Factory::RepeatInfinite([circle] {
+		return Actions::Factory::ChangeRadialAnchor(circle, 0.0f, 1.0f, 1.0f);
+		
+		/*const auto PieMin = 0.125f;
+		const auto PieMax = 1.0f - 0.125f;
+
+		return Actions::Factory::MakeSequence(
+			Actions::Factory::ChangeCirclePie(circle, PieMin, PieMax, 1.0f, Easing::CubicInOut),
+			Actions::Factory::ChangeCirclePie(circle, PieMax, PieMin, 1.0f, Easing::CubicInOut)
+		);*/
+	}));
+}

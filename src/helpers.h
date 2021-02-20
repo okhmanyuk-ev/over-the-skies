@@ -165,4 +165,10 @@ namespace hcg001::Helpers
 	};
 
 	float SmoothValueSetup(float src, float dst);
+
+	class WaitingIndicator : public Scene::Node
+	{
+	public:
+		WaitingIndicator();
+	};
 }

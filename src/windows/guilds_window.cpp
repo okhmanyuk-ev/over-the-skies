@@ -169,6 +169,7 @@ GuildsWindow::Item::Item(int guildId)
 	attach(mTitle);
 
 	auto join_button = std::make_shared<Helpers::Button>();
+	join_button->setTouchMask(1 << 1);
 	join_button->setColor(Helpers::ButtonColor);
 	join_button->getLabel()->setText(LOCALIZE("JOIN"));
 	join_button->setClickCallback([guildId] {
