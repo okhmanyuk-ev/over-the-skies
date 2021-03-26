@@ -49,7 +49,7 @@ GlobalChatWindow::GlobalChatWindow()
 	scrollbar->setScrollbox(mScrollbox);
 	mScrollbox->attach(scrollbar);
 
-	runAction(Actions::Factory::ExecuteInfinite([this] {
+	runAction(Actions::Collection::ExecuteInfinite([this] {
 		if (getState() != Window::State::Opened)
 			return;
 
@@ -86,8 +86,8 @@ void GlobalChatWindow::onEvent(const Channel::GlobalChatMessageEvent& e)
 	// wait until refreshMessages will add this message
 	// and scroll down with animation
 
-	runAction(Actions::Factory::Delayed([this, e] { return mItems.count(e.msgid) == 0; }, 
-		Actions::Factory::Execute([this] {
+	runAction(Actions::Collection::Delayed([this, e] { return mItems.count(e.msgid) == 0; },
+		Actions::Collection::Execute([this] {
 			scrollToBack();
 		})
 	));
@@ -275,7 +275,7 @@ void GlobalChatWindow::refreshScrollContent()
 void GlobalChatWindow::scrollToBack(bool animated)
 {
 	if (animated)
-		runAction(Actions::Factory::ChangeVerticalScrollPosition(mScrollbox, 1.0f, 0.25f, Easing::CubicOut));
+		runAction(Actions::Collection::ChangeVerticalScrollPosition(mScrollbox, 1.0f, 0.25f, Easing::CubicOut));
 	else
 		mScrollbox->setVerticalScrollPosition(1.0f);
 }
@@ -403,7 +403,7 @@ std::shared_ptr<Scene::Node> GlobalChatWindow::createTextMessage(std::shared_ptr
 		holder->setHorizontalSize(holder->getHorizontalSize() - (abs_width - text_width));
 
 	rect->setScale(0.0f);
-	rect->runAction(Actions::Factory::ChangeScale(rect, { 1.0f, 1.0f }, 0.25f, Easing::CubicInOut));
+	rect->runAction(Actions::Collection::ChangeScale(rect, { 1.0f, 1.0f }, 0.25f, Easing::CubicInOut));
 
 	return item;
 }

@@ -28,18 +28,18 @@ CreateGuildWindow::CreateGuildWindow()
 	create_button->setClickCallback([title_input_field] {
 		auto window = std::make_shared<ResponseWaitWindow>();
 		SCENE_MANAGER->pushWindow(window);
-		window->runAction(Actions::Factory::MakeSequence(
-			Actions::Factory::Wait([window] { return window->getState() != Window::State::Opened; }),
-			Actions::Factory::Execute([title_input_field] {
+		window->runAction(Actions::Collection::MakeSequence(
+			Actions::Collection::Wait([window] { return window->getState() != Window::State::Opened; }),
+			Actions::Collection::Execute([title_input_field] {
 				CLIENT->createGuild(title_input_field->getLabel()->getText().cpp_str());
 			}),
-			Actions::Factory::Breakable(5.0f, 
-				Actions::Factory::WaitEvent<Channel::CreateGuildEvent>([](const auto& e) {
+			Actions::Collection::Breakable(5.0f,
+				Actions::Collection::WaitEvent<Channel::CreateGuildEvent>([](const auto& e) {
 					LOGF("guild created with status {}", e.status);
 				})
 			),
-			Actions::Factory::Wait(0.5f),
-			Actions::Factory::Execute([] {
+			Actions::Collection::Wait(0.5f),
+			Actions::Collection::Execute([] {
 				SCENE_MANAGER->popWindow([] {
 					if (!PROFILE->isInGuild())
 						return;

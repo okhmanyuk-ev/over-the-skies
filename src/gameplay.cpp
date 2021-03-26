@@ -42,21 +42,21 @@ Gameplay::Gameplay()
 	mPlayer = createPlayer(PROFILE->getCurrentSkin(), mPlayerTrailHolder);
 	mPlayer->setAlpha(0.0f);
 
-	runAction(Actions::Factory::Delayed([this] { return !isTransformReady(); },
-		Actions::Factory::MakeSequence(
-			Actions::Factory::Execute([this] {
+	runAction(Actions::Collection::Delayed([this] { return !isTransformReady(); },
+		Actions::Collection::MakeSequence(
+			Actions::Collection::Execute([this] {
 				mPlayer->setPosition({ getAbsoluteWidth() / 2.0f, (-getAbsoluteHeight() / 2.0f) - 32.0f });
 				mGameField->attach(mPlayer);
 			}),
-			Actions::Factory::Wait([this] { return !mPlayer->isTransformReady(); }),
-			Actions::Factory::Delayed(0.25f, Actions::Factory::MakeSequence(
-				Actions::Factory::Execute([this] {
+			Actions::Collection::Wait([this] { return !mPlayer->isTransformReady(); }),
+			Actions::Collection::Delayed(0.25f, Actions::Collection::MakeSequence(
+				Actions::Collection::Execute([this] {
 					spawnPlanes();
 				}),
-				Actions::Factory::Delayed(0.25f,
-					Actions::Factory::Show(mPlayer, 0.25f)
+				Actions::Collection::Delayed(0.25f,
+					Actions::Collection::Show(mPlayer, 0.25f)
 				),
-				Actions::Factory::Execute([this] {
+				Actions::Collection::Execute([this] {
 					mCanStart = true;
 				})
 			))
@@ -252,9 +252,9 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 	mDownslide = false;
 	spawnJumpParticles();
 
-	plane->runAction(Actions::Factory::MakeSequence(
-		Actions::Factory::ChangeScale(plane, { 0.0f, 0.0f }, 0.25f, Easing::BackIn),
-		Actions::Factory::Kill(plane)
+	plane->runAction(Actions::Collection::MakeSequence(
+		Actions::Collection::ChangeScale(plane, { 0.0f, 0.0f }, 0.25f, Easing::BackIn),
+		Actions::Collection::Kill(plane)
 	));
 
 	if (plane->hasRuby())
@@ -331,8 +331,8 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 	plane->setPivot(0.5f);
 	plane->setPosition(pos);
 	plane->setScale(0.0f);
-	plane->runAction(Actions::Factory::Delayed(anim_delay,
-		Actions::Factory::ChangeScale(plane, { 1.0f, 1.0f }, 0.5f / 1.25f, Easing::BackOut)
+	plane->runAction(Actions::Collection::Delayed(anim_delay,
+		Actions::Collection::ChangeScale(plane, { 1.0f, 1.0f }, 0.5f / 1.25f, Easing::BackOut)
 	));
 
 	mPlaneHolder->attach(plane);
@@ -356,18 +356,18 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 
 		const float Center = plane->getX();
 		bool side = Common::Helpers::Chance(0.5f);
-		plane->runAction(Actions::Factory::RepeatInfinite([plane, Center, side] {
+		plane->runAction(Actions::Collection::RepeatInfinite([plane, Center, side] {
 			const float Duration = 0.25f;
 			const float Distance = 32.0f;
 			
 			float firstSide = Center + (side ? Distance : -Distance);
 			float secondSide = Center - (side ? Distance : -Distance);
 
-			return Actions::Factory::MakeSequence(
-				Actions::Factory::ChangeHorizontalPosition(plane, firstSide, Duration),
-				Actions::Factory::ChangeHorizontalPosition(plane, Center, Duration),
-				Actions::Factory::ChangeHorizontalPosition(plane, secondSide, Duration),
-				Actions::Factory::ChangeHorizontalPosition(plane, Center, Duration)
+			return Actions::Collection::MakeSequence(
+				Actions::Collection::ChangeHorizontalPosition(plane, firstSide, Duration),
+				Actions::Collection::ChangeHorizontalPosition(plane, Center, Duration),
+				Actions::Collection::ChangeHorizontalPosition(plane, secondSide, Duration),
+				Actions::Collection::ChangeHorizontalPosition(plane, Center, Duration)
 			);
 		}));
 	}
@@ -395,9 +395,9 @@ void Gameplay::removeFarPlanes()
 
 void Gameplay::start()
 {
-	runAction(Actions::Factory::MakeSequence(
-		Actions::Factory::Hide(mReadyLabel, 0.5f),
-		Actions::Factory::Kill(mReadyLabel)
+	runAction(Actions::Collection::MakeSequence(
+		Actions::Collection::Hide(mReadyLabel, 0.5f),
+		Actions::Collection::Kill(mReadyLabel)
 	));
 }
 
@@ -429,7 +429,7 @@ void Gameplay::showRiskLabel(const utf8_string& text)
 {
 	if (mRiskLabel != nullptr)
 	{
-		mRiskLabel->runAction(Actions::Factory::Kill(mRiskLabel));
+		mRiskLabel->runAction(Actions::Collection::Kill(mRiskLabel));
 	}
 
 	mRiskLabel = std::make_shared<Scene::Label>();
@@ -442,15 +442,15 @@ void Gameplay::showRiskLabel(const utf8_string& text)
 	mRiskLabel->setAlpha(0.0f);
 	attach(mRiskLabel);
 
-	mRiskLabel->runAction(Actions::Factory::MakeSequence(
-		Actions::Factory::Show(mRiskLabel, 0.125f),
-		Actions::Factory::Wait(1.0f),
-		Actions::Factory::Hide(mRiskLabel, 0.5f),
-		Actions::Factory::Kill(mRiskLabel)
+	mRiskLabel->runAction(Actions::Collection::MakeSequence(
+		Actions::Collection::Show(mRiskLabel, 0.125f),
+		Actions::Collection::Wait(1.0f),
+		Actions::Collection::Hide(mRiskLabel, 0.5f),
+		Actions::Collection::Kill(mRiskLabel)
 	));
 
 	mRiskLabel->runAction(
-		Actions::Factory::ChangeHorizontalPivot(mRiskLabel, 0.5f, 0.75f, Easing::ElasticOut)
+		Actions::Collection::ChangeHorizontalPivot(mRiskLabel, 0.5f, 0.75f, Easing::ElasticOut)
 	);
 }
 

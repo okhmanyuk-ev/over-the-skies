@@ -34,7 +34,7 @@ SocialPanel::SocialPanel()
 		auto node = mTabButtons.at(page);
 		auto scroll_taget_pos = mTabButtonScrollbox->screenToScrollPosition(node->project({ 0.0f, 0.0f }));
 		mTabButtonScrollbox->runAction(
-			Actions::Factory::ChangeScrollPosition(mTabButtonScrollbox, scroll_taget_pos, 0.5f, Easing::ExponentialOut)
+			Actions::Collection::ChangeScrollPosition(mTabButtonScrollbox, scroll_taget_pos, 0.5f, Easing::ExponentialOut)
 		);
 	};
 
@@ -191,12 +191,12 @@ SocialPanel::Page::Page()
 	mScrollbox->getBounding()->setPivot(0.5f);
 	mBackground->attach(mScrollbox);
 
-	runAction(Actions::Factory::RepeatInfinite([this] {
-		return Actions::Factory::MakeSequence(
-			Actions::Factory::Wait(1.0f),
-			Actions::Factory::ChangeVerticalScrollPosition(mScrollbox, 1.0f, 3.0f, Easing::CubicInOut),
-			Actions::Factory::Wait(1.0f),
-			Actions::Factory::ChangeVerticalScrollPosition(mScrollbox, 0.0f, 3.0f, Easing::CubicInOut)
+	runAction(Actions::Collection::RepeatInfinite([this] {
+		return Actions::Collection::MakeSequence(
+			Actions::Collection::Wait(1.0f),
+			Actions::Collection::ChangeVerticalScrollPosition(mScrollbox, 1.0f, 3.0f, Easing::CubicInOut),
+			Actions::Collection::Wait(1.0f),
+			Actions::Collection::ChangeVerticalScrollPosition(mScrollbox, 0.0f, 3.0f, Easing::CubicInOut)
 		);
 	}));
 

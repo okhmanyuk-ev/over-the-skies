@@ -9,22 +9,22 @@ GuildsWindow::GuildsWindow()
 	getBackground()->setSize({ 314.0f, 386.0f });
 	getTitle()->setText(LOCALIZE("GUILDS_WINDOW_TITLE"));
 
-	runAction(Actions::Factory::MakeSequence(
-		Actions::Factory::Wait([this] { return getState() != Window::State::Opened; }),
-		Actions::Factory::Wait([] {
+	runAction(Actions::Collection::MakeSequence(
+		Actions::Collection::Wait([this] { return getState() != Window::State::Opened; }),
+		Actions::Collection::Wait([] {
 			return !CLIENT->isConnected();
 		}),
-		Actions::Factory::Execute([this] {
+		Actions::Collection::Execute([this] {
 			if (PROFILE->isInGuild())
 			{
-				runAction(Actions::Factory::MakeSequence(
-					Actions::Factory::Execute([] {
+				runAction(Actions::Collection::MakeSequence(
+					Actions::Collection::Execute([] {
 						CLIENT->requireGuildInfo(PROFILE->getGuildId());
 					}),
-					Actions::Factory::Wait([] {
+					Actions::Collection::Wait([] {
 						return !CLIENT->hasGuild(PROFILE->getGuildId());
 					}),
-					Actions::Factory::Execute([this] {
+					Actions::Collection::Execute([this] {
 						createMyGuildContent();
 					})
 				));
@@ -64,18 +64,18 @@ void GuildsWindow::createMyGuildContent()
 	exit_button->setClickCallback([] {
 		auto window = std::make_shared<ResponseWaitWindow>();
 		SCENE_MANAGER->pushWindow(window);
-		window->runAction(Actions::Factory::MakeSequence(
-			Actions::Factory::Wait([window] { return window->getState() != Window::State::Opened; }),
-			Actions::Factory::Execute([] {
+		window->runAction(Actions::Collection::MakeSequence(
+			Actions::Collection::Wait([window] { return window->getState() != Window::State::Opened; }),
+			Actions::Collection::Execute([] {
 				CLIENT->exitGuild();
 			}),
-			Actions::Factory::Breakable(5.0f, 
-				Actions::Factory::WaitEvent<Channel::ExitedFromGuildEvent>([](const auto& e) {
+			Actions::Collection::Breakable(5.0f,
+				Actions::Collection::WaitEvent<Channel::ExitedFromGuildEvent>([](const auto& e) {
 					LOG("exited from guild");
 				})
 			),
-			Actions::Factory::Wait(0.5f),
-			Actions::Factory::Execute([] {
+			Actions::Collection::Wait(0.5f),
+			Actions::Collection::Execute([] {
 				SCENE_MANAGER->popWindow([] {
 					if (PROFILE->isInGuild())
 						return;
@@ -111,13 +111,13 @@ void GuildsWindow::createGuildSearchContent()
 	create_button->setY(-24.0f);
 	getBody()->attach(create_button);
 
-	runAction(Actions::Factory::MakeSequence(
-		Actions::Factory::Wait([this] { return getState() != Window::State::Opened; }),
-		Actions::Factory::Execute([] {
+	runAction(Actions::Collection::MakeSequence(
+		Actions::Collection::Wait([this] { return getState() != Window::State::Opened; }),
+		Actions::Collection::Execute([] {
 			CLIENT->requestGuildList();
 		}),
-		Actions::Factory::Breakable(5.0f, 
-			Actions::Factory::WaitEvent<Channel::GuildListEvent>([this](const auto& e) {
+		Actions::Collection::Breakable(5.0f,
+			Actions::Collection::WaitEvent<Channel::GuildListEvent>([this](const auto& e) {
 				LOGF("recevied guild list with {} guilds", e.ids.size());
 				createGuildItems(e.ids);
 			})
@@ -175,18 +175,18 @@ GuildsWindow::Item::Item(int guildId)
 	join_button->setClickCallback([guildId] {
 		auto window = std::make_shared<ResponseWaitWindow>();
 		SCENE_MANAGER->pushWindow(window);
-		window->runAction(Actions::Factory::MakeSequence(
-			Actions::Factory::Wait([window] { return window->getState() != Window::State::Opened; }),
-			Actions::Factory::Execute([guildId] {
+		window->runAction(Actions::Collection::MakeSequence(
+			Actions::Collection::Wait([window] { return window->getState() != Window::State::Opened; }),
+			Actions::Collection::Execute([guildId] {
 				CLIENT->joinGuild(guildId);
 			}),
-			Actions::Factory::Breakable(5.0f, 
-				Actions::Factory::WaitEvent<Channel::JoinedToGuildEvent>([](const auto& e) {
+			Actions::Collection::Breakable(5.0f,
+				Actions::Collection::WaitEvent<Channel::JoinedToGuildEvent>([](const auto& e) {
 					LOGF("joined to guild {}", e.id);
 				})
 			),
-			Actions::Factory::Wait(0.5f),
-			Actions::Factory::Execute([] {
+			Actions::Collection::Wait(0.5f),
+			Actions::Collection::Execute([] {
 				SCENE_MANAGER->popWindow([] {
 					if (!PROFILE->isInGuild())
 						return;

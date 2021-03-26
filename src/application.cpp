@@ -84,24 +84,24 @@ void Application::initialize()
 		SCENE_MANAGER->switchScreen(gameplay);
 	});
 
-	Actions::Run(Actions::Factory::MakeSequence(
-		Actions::Factory::WaitOneFrame(),
-		Actions::Factory::Wait(0.25f),
-		Actions::Factory::Execute([sky] {
+	Actions::Run(Actions::Collection::MakeSequence(
+		Actions::Collection::WaitOneFrame(),
+		Actions::Collection::Wait(0.25f),
+		Actions::Collection::Execute([sky] {
 			sky->changeColor(Graphics::Color::Hsv::HueBlue, Graphics::Color::Hsv::HueRed);
 		}),
-		Actions::Factory::RepeatInfinite([sky] {
-			return Actions::Factory::Delayed(10.0f,
-				Actions::Factory::Execute([sky] {
+		Actions::Collection::RepeatInfinite([sky] {
+			return Actions::Collection::Delayed(10.0f,
+				Actions::Collection::Execute([sky] {
 					sky->changeColor();
 				})
 			);
 		})	
 	));
 
-	Actions::Run(Actions::Factory::MakeSequence(
-		Actions::Factory::WaitOneFrame(),
-		Actions::Factory::Execute([this, main_menu] {
+	Actions::Run(Actions::Collection::MakeSequence(
+		Actions::Collection::WaitOneFrame(),
+		Actions::Collection::Execute([this, main_menu] {
 			SCENE_MANAGER->switchScreen(main_menu, [this] {
 				tryShowDailyReward();
 			});
@@ -139,10 +139,10 @@ void Application::addRubies(int count)
 		ruby->setSize(24.0f);
 		ruby->setPosition(glm::linearRand(glm::vec2(-64.0f), glm::vec2(64.0f)));
 		ruby->setAlpha(0.0f);
-		ruby->runAction(Actions::Factory::MakeSequence(
-			Actions::Factory::Wait(i * (0.125f / 1.25f)),
-			Actions::Factory::Show(ruby, 0.25f, Easing::CubicIn),
-			Actions::Factory::Execute([this, ruby] {
+		ruby->runAction(Actions::Collection::MakeSequence(
+			Actions::Collection::Wait(i * (0.125f / 1.25f)),
+			Actions::Collection::Show(ruby, 0.25f, Easing::CubicIn),
+			Actions::Collection::Execute([this, ruby] {
 				FRAME->addOne([this, ruby] {
 					Helpers::gHud->collectRubyAnim(ruby);
 				});
@@ -207,11 +207,11 @@ void Application::onEvent(const Helpers::PrintEvent& e)
 	rect->setAnchor({ -0.5f, 0.125f });
 	rect->setPivot(0.5f);
 	rect->setMargin({ 0.0f, -18.0f });
-	rect->runAction(Actions::Factory::MakeSequence(
-		Actions::Factory::ChangeHorizontalAnchor(rect, 0.5f, 0.5f, Easing::CubicOut),
-		Actions::Factory::Wait(3.0f),
-		Actions::Factory::ChangeHorizontalAnchor(rect, 1.5f, 0.5f, Easing::CubicIn),
-		Actions::Factory::Kill(rect)
+	rect->runAction(Actions::Collection::MakeSequence(
+		Actions::Collection::ChangeHorizontalAnchor(rect, 0.5f, 0.5f, Easing::CubicOut),
+		Actions::Collection::Wait(3.0f),
+		Actions::Collection::ChangeHorizontalAnchor(rect, 1.5f, 0.5f, Easing::CubicIn),
+		Actions::Collection::Kill(rect)
 	));
 	root->attach(rect);
 
@@ -227,7 +227,7 @@ void Application::onEvent(const Helpers::PrintEvent& e)
 	label->setAnchor(0.5f);
 	rect->attach(label);
 
-	rect->runAction(Actions::Factory::ExecuteInfinite([rect, label] {
+	rect->runAction(Actions::Collection::ExecuteInfinite([rect, label] {
 		rect->setHeight(label->getHeight());
 	}));
 }

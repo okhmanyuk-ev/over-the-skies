@@ -67,13 +67,13 @@ GameoverMenu::GameoverMenu(int score)
 	attach(tap_label);
 
 	Actions::Run(
-		Actions::Factory::RepeatInfinite([this, tap_label]() -> Actions::Factory::UAction {
+		Actions::Collection::RepeatInfinite([this, tap_label]() -> Actions::Collection::UAction {
 			if (getState() != State::Entered)
 				return nullptr;
 
-			return Actions::Factory::MakeSequence(
-				Actions::Factory::Show(tap_label, 0.75f),
-				Actions::Factory::Hide(tap_label, 0.75f)
+			return Actions::Collection::MakeSequence(
+				Actions::Collection::Show(tap_label, 0.75f),
+				Actions::Collection::Hide(tap_label, 0.75f)
 			);
 		})
 	);
@@ -109,7 +109,7 @@ void GameoverMenu::onEvent(const Helpers::HighscoresEvent& e)
 			return Client::Profiles.count(uid) == 0; 
 		};
 
-		label->runAction(Actions::Factory::Delayed(wait_func, Actions::Factory::Execute([uid, label] {
+		label->runAction(Actions::Collection::Delayed(wait_func, Actions::Collection::Execute([uid, label] {
 			auto name_chars = Client::Profiles.at(uid).at("nickname");
 			auto name = utf8_string(name_chars.begin(), name_chars.end());
 			label->setText(name);

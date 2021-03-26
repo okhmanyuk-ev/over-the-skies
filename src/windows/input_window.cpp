@@ -43,7 +43,7 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 	mLabel->setText(text);
 	label_bg->attach(mLabel);
 
-	runAction(Actions::Factory::ExecuteInfinite([this, label_bg, MinLabelBgHeight, DefaultWindowHeight, DefaultLabelBgHeight] {
+	runAction(Actions::Collection::ExecuteInfinite([this, label_bg, MinLabelBgHeight, DefaultWindowHeight, DefaultLabelBgHeight] {
 		auto label_bg_h = DefaultLabelBgHeight;
 		label_bg_h += mLabel->getAbsoluteHeight();
 		label_bg_h = glm::max(MinLabelBgHeight, label_bg_h);
@@ -76,6 +76,48 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 	mCancelButton->setSize({ 96.0f, 28.0f });
 	mCancelButton->setPosition({ 56.0f, -24.0f });
 	getBody()->attach(mCancelButton);
+
+	auto rect = std::make_shared<Scene::Rectangle>();
+	rect->setAlpha(0.0f);
+	rect->setWidth(2.0f);
+	rect->setRounding(1.0f);
+	rect->runAction(Actions::Collection::ExecuteInfinite([rect, this] {
+		auto font = mLabel->getFont();
+		
+		auto font_scale = font->getScaleFactorForSize(mLabel->getFontSize());
+		auto height = font->getAscent() * font_scale;
+		height -= font->getDescent() * font_scale;
+
+		rect->setHeight(height);
+
+		if (mLabel->getText().empty())
+		{
+			rect->setPosition({ 0.0f, 0.0f });
+			rect->setAnchor(0.5f);
+			rect->setPivot(0.5f);
+			return;
+		}
+
+		rect->setAnchor(0.0f);
+		rect->setPivot({ 0.5f, 0.0f });
+
+		auto index = mLabel->getText().length() - 1;
+		
+		auto [pos, size] = mLabel->getSymbolBounds(index);
+		auto line_y = mLabel->getSymbolLineY(index);
+		
+		rect->setX(pos.x + size.x);
+		rect->setY(line_y);
+	}));
+	rect->runAction(Actions::Collection::RepeatInfinite([rect] {
+		return Actions::Collection::MakeSequence(
+			Actions::Collection::ChangeAlpha(rect, 1.0f, 0.125f),
+			Actions::Collection::Wait(0.25f),
+			Actions::Collection::ChangeAlpha(rect, 0.0f, 0.125f),
+			Actions::Collection::Wait(0.25f)
+		);
+	}));
+	mLabel->attach(rect);
 }
 
 void InputWindow::onEvent(const Platform::System::VirtualKeyboardTextChanged& e)

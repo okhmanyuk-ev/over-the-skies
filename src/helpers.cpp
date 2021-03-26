@@ -17,7 +17,7 @@ Button::Button()
 	mLabel = std::make_shared<Label>();
 	mLabel->setAnchor(0.5f);
 	mLabel->setPivot(0.5f);
-	mLabel->runAction(Actions::Factory::ExecuteInfinite([this] {
+	mLabel->runAction(Actions::Collection::ExecuteInfinite([this] {
 		if (!mAdaptiveFontSize)
 			return;
 
@@ -72,15 +72,15 @@ WaitingIndicator::WaitingIndicator()
 	circle->setPie(0.66f);
 	attach(circle);
 
-	runAction(Actions::Factory::RepeatInfinite([circle] {
-		return Actions::Factory::ChangeRadialAnchor(circle, 0.0f, 1.0f, 1.0f);
+	runAction(Actions::Collection::RepeatInfinite([circle] {
+		return Actions::Collection::ChangeRadialAnchor(circle, 0.0f, 1.0f, 1.0f);
 		
 		/*const auto PieMin = 0.125f;
 		const auto PieMax = 1.0f - 0.125f;
 
-		return Actions::Factory::MakeSequence(
-			Actions::Factory::ChangeCirclePie(circle, PieMin, PieMax, 1.0f, Easing::CubicInOut),
-			Actions::Factory::ChangeCirclePie(circle, PieMax, PieMin, 1.0f, Easing::CubicInOut)
+		return Actions::Collection::MakeSequence(
+			Actions::Collection::ChangeCirclePie(circle, PieMin, PieMax, 1.0f, Easing::CubicInOut),
+			Actions::Collection::ChangeCirclePie(circle, PieMax, PieMin, 1.0f, Easing::CubicInOut)
 		);*/
 	}));
 }
