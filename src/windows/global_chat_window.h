@@ -1,9 +1,21 @@
 #pragma once
 
 #include "window.h"
+#include "chat_widget.h"
 
 namespace hcg001
 {
+	class GlobalChatWidget : public ChatWidget
+	{
+	public:
+		bool isHistoryEmpty() const override;
+		int getFirstHistoryIndex() const override;
+		int getLastHistoryIndex() const override;
+		bool hasIndexInHistory(int index) const override;
+		int getProfileIdFromMessage(int index) const override;
+		std::shared_ptr<Scene::Node> createMessageNode(int msgid) const override;
+	};
+
 	class GlobalChatWindow : public StandardWindow,
 		public Common::Event::Listenable<Channel::GlobalChatMessageEvent>
 	{
@@ -14,20 +26,6 @@ namespace hcg001
 		void onEvent(const Channel::GlobalChatMessageEvent& e) override;
 
 	private:
-		void refreshMessages();
-		void addMessage(int msgid, std::shared_ptr<Channel::ChatMessage> message);
-		void removeMessage(int msgid);
-		void refreshScrollContent();
-		void scrollToBack(bool animated = true);
-		void addMessages(int topIndex, int bottomIndex);
-		void removeMessages(int topIndex, int bottomIndex);
-		void fixScrollPosition(float height, bool inversed);
-		std::shared_ptr<Scene::Node> createTextMessage(std::shared_ptr<Channel::ChatMessage> msg, int msgid);
-
-	private:
-		std::shared_ptr<Scene::Scrollbox> mScrollbox;
-		std::map<int, std::shared_ptr<Scene::Node>> mItems;
-		int mWatchIndex = 0;
-		float mScrollVerticalSpace = 0.0f;
+		std::shared_ptr<GlobalChatWidget> mChatWidget;
 	};
 }
