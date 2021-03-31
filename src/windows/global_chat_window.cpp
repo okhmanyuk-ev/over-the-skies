@@ -10,26 +10,26 @@ GlobalChatWindow::GlobalChatWindow()
 	getBackground()->setSize({ 314.0f, 386.0f });
 	getTitle()->setText(LOCALIZE("GLOBAL_CHAT_WINDOW_TITLE"));
 
-	auto ok_button = std::make_shared<Helpers::RectangleButton>();
-	ok_button->setColor(Helpers::BaseWindowColor);
-	ok_button->setClickCallback([] {
+	auto chat_button = std::make_shared<Helpers::RectangleButton>();
+	chat_button->setColor(Helpers::BaseWindowColor);
+	chat_button->setClickCallback([] {
 		auto window = std::make_shared<InputWindow>("", [](auto str) {
 			CLIENT->sendChatMessage(str.cpp_str());
 		});
 		SCENE_MANAGER->pushWindow(window);
 	});
-	ok_button->setAnchor(1.0f);
-	ok_button->setPivot({ 1.0f, 0.5f });
-	ok_button->setPosition({ -16.0f, -24.0f });
-	ok_button->setSize({ 96.0f, 28.0f });
-	getBody()->attach(ok_button);
+	chat_button->setAnchor(1.0f);
+	chat_button->setPivot({ 1.0f, 0.5f });
+	chat_button->setPosition({ -16.0f, -24.0f });
+	chat_button->setSize({ 96.0f, 28.0f });
+	getBody()->attach(chat_button);
 
 	auto chat_message_img = std::make_shared<Shared::SceneHelpers::Adaptive<Scene::Sprite>>();
 	chat_message_img->setTexture(TEXTURE("textures/chat_message.png"));
 	chat_message_img->setAdaptSize({ 48.0f, 20.0f });
 	chat_message_img->setAnchor(0.5f);
 	chat_message_img->setPivot(0.5f);
-	ok_button->attach(chat_message_img);
+	chat_button->attach(chat_message_img);
 
 	auto scrollbox_holder = std::make_shared<Scene::ClippableScissor<Scene::Node>>();
 	scrollbox_holder->setStretch(1.0f);

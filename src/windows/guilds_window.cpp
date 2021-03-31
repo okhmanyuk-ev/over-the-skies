@@ -52,6 +52,64 @@ GuildsWindow::MyGuildContent::MyGuildContent()
 {
 	setStretch(1.0f);
 
+	auto content_holder = std::make_shared<Scene::Node>();
+	content_holder->setStretch(1.0f);
+	content_holder->setAnchor({ 0.5f, 1.0f });
+	content_holder->setPivot({ 0.5f, 1.0f });
+	content_holder->setVerticalMargin(32.0f);
+	attach(content_holder);
+
+	auto info_content = std::make_shared<InfoContent>();
+	content_holder->attach(info_content);
+
+	auto chat_content = std::make_shared<ChatContent>();
+	content_holder->attach(chat_content);
+
+	auto chat_tab_button = std::make_shared<Helpers::Button>();
+	chat_tab_button->setColor(Helpers::ButtonColor);
+	chat_tab_button->getLabel()->setText(LOCALIZE("CHAT"));
+	chat_tab_button->getLabel()->setFontSize(18.0f);
+	chat_tab_button->setSize({ 128.0f, 28.0f });
+	chat_tab_button->setPosition({ 18.0f, 9.0f });
+	attach(chat_tab_button);
+
+	auto info_tab_button = std::make_shared<Helpers::Button>();
+	info_tab_button->setColor(Helpers::ButtonColor);
+	info_tab_button->getLabel()->setText(LOCALIZE("INFO"));
+	info_tab_button->getLabel()->setFontSize(18.0f);
+	info_tab_button->setSize({ 128.0f, 28.0f });
+	info_tab_button->setPosition({ 170.0f, 9.0f });
+	attach(info_tab_button);
+
+	for (auto button : { chat_tab_button, info_tab_button })
+	{
+		button->setClickCallback([button, chat_tab_button, info_tab_button, info_content, chat_content] {
+			info_content->setEnabled(button == info_tab_button);
+			chat_content->setEnabled(button == chat_tab_button);
+		});
+	}
+
+	chat_tab_button->click();
+}
+
+GuildsWindow::MyGuildContent::ChatContent::ChatContent()
+{
+	setStretch(1.0f);
+
+	auto asdaw = std::make_shared<Helpers::Button>();
+	asdaw->setColor(Helpers::ButtonColor);
+	asdaw->getLabel()->setText("THIS IS CHAT");
+	asdaw->getLabel()->setFontSize(18.0f);
+	asdaw->setSize({ 128.0f, 28.0f });
+	asdaw->setAnchor(0.5f);
+	asdaw->setPivot(0.5f);
+	attach(asdaw);
+}
+
+GuildsWindow::MyGuildContent::InfoContent::InfoContent()
+{
+	setStretch(1.0f);
+
 	auto guild = CLIENT->getGuild(PROFILE->getGuildId())->getJson();
 
 	std::string title = guild["title"];
@@ -73,6 +131,10 @@ GuildsWindow::MyGuildContent::MyGuildContent()
 	exit_button->setColor(Helpers::ButtonColor);
 	exit_button->getLabel()->setText(LOCALIZE("EXIT"));
 	exit_button->getLabel()->setFontSize(18.0f);
+	exit_button->setAnchor({ 0.5f, 1.0f });
+	exit_button->setPivot(0.5f);
+	exit_button->setSize({ 128.0f, 28.0f });
+	exit_button->setY(-24.0f);
 	exit_button->setClickCallback([] {
 		auto window = std::make_shared<ResponseWaitWindow>();
 		SCENE_MANAGER->pushWindow(window);
@@ -100,10 +162,6 @@ GuildsWindow::MyGuildContent::MyGuildContent()
 			})
 		));
 	});
-	exit_button->setAnchor({ 0.5f, 1.0f });
-	exit_button->setPivot(0.5f);
-	exit_button->setSize({ 128.0f, 28.0f });
-	exit_button->setY(-24.0f);
 	attach(exit_button);
 }
 

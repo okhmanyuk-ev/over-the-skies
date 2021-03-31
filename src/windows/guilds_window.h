@@ -20,8 +20,24 @@ namespace hcg001
 
 	class GuildsWindow::MyGuildContent : public Scene::Node
 	{
+	private:
+		class ChatContent;
+		class InfoContent;
+
 	public:
 		MyGuildContent();
+	};
+
+	class GuildsWindow::MyGuildContent::ChatContent : public Scene::Node
+	{
+	public:
+		ChatContent();
+	};
+
+	class GuildsWindow::MyGuildContent::InfoContent : public Scene::Node
+	{
+	public:
+		InfoContent();
 	};
 
 	class GuildsWindow::SearchContent : public Scene::Node
