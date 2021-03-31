@@ -15,31 +15,43 @@ GuildsWindow::GuildsWindow()
 			return !CLIENT->isConnected();
 		}),
 		Actions::Collection::Execute([this] {
-			if (PROFILE->isInGuild())
-			{
-				runAction(Actions::Collection::MakeSequence(
-					Actions::Collection::Execute([] {
-						CLIENT->requireGuildInfo(PROFILE->getGuildId());
-					}),
-					Actions::Collection::Wait([] {
-						return !CLIENT->hasGuild(PROFILE->getGuildId());
-					}),
-					Actions::Collection::Execute([this] {
-						createMyGuildContent();
-					})
-				));
-			}
-			else
+			if (!PROFILE->isInGuild())
 			{
 				createGuildSearchContent();
+				return;
 			}
+
+			runAction(Actions::Collection::MakeSequence(
+				Actions::Collection::Execute([] {
+					CLIENT->requireGuildInfo(PROFILE->getGuildId());
+				}),
+				Actions::Collection::Wait([] {
+					return !CLIENT->hasGuild(PROFILE->getGuildId());
+				}),
+				Actions::Collection::Execute([this] {
+					createMyGuildContent();
+				})
+			));
 		})
 	));
 }
 
-
 void GuildsWindow::createMyGuildContent()
 {
+	auto content = std::make_shared<MyGuildContent>();
+	getBody()->attach(content);
+}
+
+void GuildsWindow::createGuildSearchContent()
+{
+	auto content = std::make_shared<SearchContent>();
+	getBody()->attach(content);
+}
+
+GuildsWindow::MyGuildContent::MyGuildContent()
+{
+	setStretch(1.0f);
+
 	auto guild = CLIENT->getGuild(PROFILE->getGuildId())->getJson();
 
 	std::string title = guild["title"];
@@ -49,13 +61,13 @@ void GuildsWindow::createMyGuildContent()
 	label->setPivot({ 0.0f, 0.5f });
 	label->setPosition({ 16.0f, 16.0f });
 	label->setText("name: " + title);
-	getBody()->attach(label);
+	attach(label);
 
 	auto label2 = std::make_shared<Helpers::Label>();
 	label2->setPivot({ 0.0f, 0.5f });
 	label2->setPosition({ 16.0f, 48.0f });
 	label2->setText("members: " + std::to_string(members.size()));
-	getBody()->attach(label2);
+	attach(label2);
 
 	auto exit_button = std::make_shared<Helpers::Button>();
 	exit_button->setColor(Helpers::ButtonColor);
@@ -92,11 +104,13 @@ void GuildsWindow::createMyGuildContent()
 	exit_button->setPivot(0.5f);
 	exit_button->setSize({ 128.0f, 28.0f });
 	exit_button->setY(-24.0f);
-	getBody()->attach(exit_button);
+	attach(exit_button);
 }
 
-void GuildsWindow::createGuildSearchContent()
+GuildsWindow::SearchContent::SearchContent()
 {
+	setStretch(1.0f);
+
 	auto create_button = std::make_shared<Helpers::Button>();
 	create_button->setColor(Helpers::ButtonColor);
 	create_button->getLabel()->setText(LOCALIZE("CREATE"));
@@ -109,10 +123,9 @@ void GuildsWindow::createGuildSearchContent()
 	create_button->setPivot(0.5f);
 	create_button->setSize({ 128.0f, 28.0f });
 	create_button->setY(-24.0f);
-	getBody()->attach(create_button);
+	attach(create_button);
 
 	runAction(Actions::Collection::MakeSequence(
-		Actions::Collection::Wait([this] { return getState() != Window::State::Opened; }),
 		Actions::Collection::Execute([] {
 			CLIENT->requestGuildList();
 		}),
@@ -125,7 +138,7 @@ void GuildsWindow::createGuildSearchContent()
 	));
 }
 
-void GuildsWindow::createGuildItems(const std::vector<int> ids)
+void GuildsWindow::SearchContent::createGuildItems(const std::vector<int> ids)
 {
 	std::vector<std::shared_ptr<Scene::Node>> items;
 
@@ -149,10 +162,10 @@ void GuildsWindow::createGuildItems(const std::vector<int> ids)
 	scrollbox->setVerticalMargin(48.0f);
 	scrollbox->setSensitivity({ 0.0f, 1.0f });
 
-	getBody()->attach(scrollbox);
+	attach(scrollbox);
 }
 
-GuildsWindow::Item::Item(int guildId)
+GuildsWindow::SearchContent::Item::Item(int guildId)
 {
 	setStretch({ 1.0f, 0.0f });
 	setMargin(8.0f);
@@ -167,6 +180,13 @@ GuildsWindow::Item::Item(int guildId)
 	mTitle->setX(8.0f);
 	mTitle->setFontSize(15.0f);
 	attach(mTitle);
+
+	mMembersLabel = std::make_shared<Helpers::Label>();
+	mMembersLabel->setAnchor({ 0.0f, 0.5f });
+	mMembersLabel->setPivot({ 1.0f, 0.5f });
+	mMembersLabel->setX(214.0f);
+	mMembersLabel->setFontSize(15.0f);
+	attach(mMembersLabel);
 
 	auto join_button = std::make_shared<Helpers::Button>();
 	join_button->setTouchMask(1 << 1);
@@ -214,8 +234,11 @@ GuildsWindow::Item::Item(int guildId)
 	CLIENT->requireGuildInfo(guildId);
 }
 
-void GuildsWindow::Item::refresh(Channel::GuildPtr guild_info)
+void GuildsWindow::SearchContent::Item::refresh(Channel::GuildPtr guild_info)
 {
+	auto members_count = guild_info->getJson()["members"].get<std::set<int>>().size();
+
 	mTitle->setText(guild_info->getJson()["title"].get<std::string>());
+	mMembersLabel->setText(fmt::format("{}/{}", members_count, 100));
 }
 

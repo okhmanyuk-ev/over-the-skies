@@ -7,7 +7,8 @@ namespace hcg001
 	class GuildsWindow : public StandardWindow
 	{
 	public:
-		class Item;
+		class SearchContent;
+		class MyGuildContent;
 
 	public:
 		GuildsWindow();
@@ -15,10 +16,27 @@ namespace hcg001
 	private:
 		void createMyGuildContent();
 		void createGuildSearchContent();
+	};
+
+	class GuildsWindow::MyGuildContent : public Scene::Node
+	{
+	public:
+		MyGuildContent();
+	};
+
+	class GuildsWindow::SearchContent : public Scene::Node
+	{
+	private:
+		class Item;
+
+	public:
+		SearchContent();
+
+	private:
 		void createGuildItems(const std::vector<int> ids);
 	};
 
-	class GuildsWindow::Item : public Helpers::GuildInfoListenable<Scene::Rectangle>
+	class GuildsWindow::SearchContent::Item : public Helpers::GuildInfoListenable<Scene::Rectangle>
 	{
 	public:
 		Item(int guildId);
@@ -27,5 +45,6 @@ namespace hcg001
 
 	private:
 		std::shared_ptr<Helpers::Label> mTitle;
+		std::shared_ptr<Helpers::Label> mMembersLabel;
 	};
 }
