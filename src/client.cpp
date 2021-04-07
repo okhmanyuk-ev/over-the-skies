@@ -203,7 +203,7 @@ void Channel::joinGuild(int id)
 	});
 }
 
-void Channel::readFileMessage(Common::BitBuffer& buf)
+void Channel::readFileMessage(BitBuffer& buf)
 {
 	auto path = Common::BufferHelpers::ReadString(buf);
 	auto file_size = buf.readBitsVar();
