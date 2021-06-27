@@ -4,7 +4,7 @@
 
 namespace hcg001
 {
-	class Hud : public Shared::SceneHelpers::Hud
+	class Hud : public Shared::SceneHelpers::SafeArea
 	{
 	public:
 		Hud();

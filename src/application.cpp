@@ -39,6 +39,7 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 	STATS->setAlignment(Shared::StatsSystem::Align::BottomRight);
 
 	Scene::Sprite::DefaultSampler = Renderer::Sampler::Linear;
+    Scene::Label::DefaultFont = FONT("default");
 
 #if defined(BUILD_DEVELOPER)
 	CONSOLE->execute("hud_show_fps 1");

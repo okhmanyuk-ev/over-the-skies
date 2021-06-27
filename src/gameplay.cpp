@@ -65,8 +65,8 @@ Gameplay::Gameplay()
 	
 	// hud
 
-	auto hud = std::make_shared<Shared::SceneHelpers::Hud>();
-	attach(hud);
+	auto safe_area = std::make_shared<Shared::SceneHelpers::SafeArea>();
+	attach(safe_area);
 
 	// score label
 
@@ -76,7 +76,7 @@ Gameplay::Gameplay()
 	mScoreLabel->setPivot({ 1.0f, 0.5f });
 	mScoreLabel->setPosition({ -16.0f, 24.0f });
 	mScoreLabel->setText("0");
-	hud->attach(mScoreLabel);
+    safe_area->attach(mScoreLabel);
 	
 	// jump particles
 

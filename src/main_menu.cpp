@@ -115,8 +115,8 @@ MainMenu::MainMenu()
 		menuPhysics(Clock::ToSeconds(FRAME->getTimeDelta()));
 	}));
 
-	auto hud = std::make_shared<Shared::SceneHelpers::Hud>();
-	attach(hud);
+	auto safe_area = std::make_shared<Shared::SceneHelpers::SafeArea>();
+	attach(safe_area);
 
 	auto shop_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
 	shop_button->setTexture(TEXTURE("textures/shop.png"));
@@ -127,7 +127,7 @@ MainMenu::MainMenu()
 		auto window = std::make_shared<ShopWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
-	hud->attach(shop_button);
+    safe_area->attach(shop_button);
 
 	auto options_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
 	options_button->setTexture(TEXTURE("textures/options.png"));
@@ -139,7 +139,7 @@ MainMenu::MainMenu()
 		auto window = std::make_shared<OptionsWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
-	hud->attach(options_button);
+    safe_area->attach(options_button);
 
 	auto hishscores_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
 	hishscores_button->setTexture(TEXTURE("textures/podium.png"));
@@ -150,7 +150,7 @@ MainMenu::MainMenu()
 		auto window = std::make_shared<HighscoresWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
-	hud->attach(hishscores_button);
+    safe_area->attach(hishscores_button);
 
 	auto guilds_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
 	guilds_button->setTexture(TEXTURE("textures/guilds.png"));
@@ -161,7 +161,7 @@ MainMenu::MainMenu()
 		auto window = std::make_shared<GuildsWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
-	hud->attach(guilds_button);
+    safe_area->attach(guilds_button);
 
 	auto global_chat_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
 	global_chat_button->setTexture(TEXTURE("textures/chat.png"));
@@ -172,7 +172,7 @@ MainMenu::MainMenu()
 		auto window = std::make_shared<GlobalChatWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
-	hud->attach(global_chat_button);
+    safe_area->attach(global_chat_button);
 
 	auto social_panel = std::make_shared<SocialPanel>();
 	social_panel->setAnchor(0.5f);
