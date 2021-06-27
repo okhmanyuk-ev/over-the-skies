@@ -9,9 +9,9 @@ Channel::Channel()
 {
 	setShowEventLogs(true);
 
-	addMessageReader("file", [this](auto& buf) { readFileMessage(buf);	});
+	//addMessageReader("file", [this](auto& buf) { readFileMessage(buf);	});
 
-	addEventCallback("authorized", [this](const auto& params) {
+	/*addEventCallback("authorized", [this](const auto& params) {
 		mUID = std::stoi(params.at("uid"));
 		auto guild_id = std::stoi(params.at("guild_id"));
 
@@ -95,7 +95,7 @@ Channel::Channel()
 	addEventCallback("exited_from_guild", [this](const auto& params) {
 		PROFILE->setGuildId(Profile::NoneGuild);
 		EVENT->emit(ExitedFromGuildEvent());
-	});
+	});*/
 	
 
 	FRAME->addOne([this] {
@@ -203,7 +203,7 @@ void Channel::joinGuild(int id)
 	});
 }
 
-void Channel::readFileMessage(Common::BitBuffer& buf)
+void Channel::readFileMessage(BitBuffer& buf)
 {
 	auto path = Common::BufferHelpers::ReadString(buf);
 	auto file_size = buf.readBitsVar();

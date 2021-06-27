@@ -67,7 +67,7 @@ namespace hcg001
 		void joinGuild(int id);
 
 	private:
-		void readFileMessage(Common::BitBuffer& buf);
+		void readFileMessage(BitBuffer& buf);
 
 	public:
 		const auto& getProfiles() const { return mProfiles; }
@@ -85,7 +85,7 @@ namespace hcg001
 		{
 			size_t progress = 0;
 			uint32_t crc32;
-			Common::BitBuffer buf;
+			BitBuffer buf;
 		};
 		std::map<std::string, FileDef> mFiles;
 
