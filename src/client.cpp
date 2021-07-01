@@ -132,7 +132,7 @@ void Channel::commit()
 
 	mPrevProfileDump = dump;
 
-	sendEvent("commit", { { "profile", dump,  } });
+	sendEvent("commit", { { "profile", profile } });
 
 	// update profile in map
 	mProfiles.erase(mUID);

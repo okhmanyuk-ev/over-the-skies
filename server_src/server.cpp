@@ -4,15 +4,23 @@
 
 Channel::Channel()
 {
-	//setShowEventLogs(true);
+	setShowEventLogs(true);
 
 	addEventCallback("auth", [this](const auto& json) {
-		std::string platform = json["platform"];
-		std::string uuid = json["uuid"];
+		auto platform = json["platform"];
+		auto uuid = json["uuid"];
 
 		mAuthorized = true;
-		mUID = SERVER->getUserbase().auth(platform, uuid);
-		LOGF("authorized, uid {}", mUID);
+
+		std::tie(mUID, mProfile) = SERVER->getUserbase().auth(platform, uuid);
+
+		log("authorized");
+
+		sendEvent("authorized", {
+			{ "uid", mUID },
+		//	{ "guild_id", std::to_string(guild_id) }
+		});
+
 		/*auto guild_id = SERVER->getDatabase().getUserGuild(mUID);
 
 		if (!SERVER->getGuilds().count(guild_id))
@@ -48,21 +56,23 @@ Channel::Channel()
 		}*/
 	});
 
-	/*addEventCallback("commit", [this](const auto& params) {
+	addEventCallback("commit", [this](const auto& json) {
 		checkAuthorized();
 		log("commit received");
 
-		auto profile_dump = params.at("profile");
+		auto profile = json["profile"];
 
-		SERVER->getDatabase().profile(mUID, profile_dump);
+		SERVER->getUserbase().commit(mUID, std::make_shared<nlohmann::json>(profile));
+
+		/*SERVER->getDatabase().profile(mUID, profile_dump);
 
 		auto profile_json = nlohmann::json::parse(profile_dump);
 		int highscore = profile_json.at("highscore");
 
-		SERVER->getDatabase().highscore(mUID, highscore);
+		SERVER->getDatabase().highscore(mUID, highscore);*/
 	});
 
-	addEventCallback("request_highscores", [this](const auto& params) {
+	/*addEventCallback("request_highscores", [this](const auto& params) {
 		checkAuthorized();
 		auto highscores = SERVER->getDatabase().getHighscores();
 		auto json = nlohmann::json();
@@ -453,6 +463,13 @@ std::string Database::getGlobalChatMessageText(int msgid)
 Server::Server() : Shared::NetworkingWS::Server(27015)
 {
 	load();
+
+	Actions::Run(Actions::Collection::RepeatInfinite([this] {
+		const auto Delay = 60.0f; // one minute
+		return Actions::Collection::Delayed(Delay, Actions::Collection::Execute([this] {
+			save();
+		}));
+	}));
 }
 
 void Server::save()
@@ -465,10 +482,13 @@ void Server::save()
 	}
 
 	auto json = nlohmann::json();
+	mUserbase.save(json);
 	json["guilds"] = guilds;
 	json["guild_index"] = mGuildIndex;
 	auto dump = json.dump(1);
 	Platform::Asset::Write("server.json", dump.data(), dump.size(), Platform::Asset::Storage::Absolute);
+
+	LOG("saved");
 }
 
 void Server::load()
@@ -481,6 +501,8 @@ void Server::load()
 	auto json_file = Platform::Asset(path, Platform::Asset::Storage::Absolute);
 	auto json_string = std::string((char*)json_file.getMemory(), json_file.getSize());
 	auto json = nlohmann::json::parse(json_string);
+
+	mUserbase.load(json);
 
 	auto guilds = json["guilds"].get<std::set<int>>();
 

@@ -34,6 +34,10 @@ void run()
 		SERVER->broadcastPrint(CON_ARGS_ACCUMULATED_STRING);
 	});
 
+	CONSOLE->registerCommand("save", [](CON_ARGS) {
+		SERVER->save();
+	});
+
 	//LOGF(" - protocol version {}", Shared::NetworkingUDP::Networking::ProtocolVersion);
 	//LOGF(" - port {}", SERVER->getSocket().getPort());
 
@@ -48,6 +52,8 @@ void run()
 			CONSOLE_DEVICE->writeLine(e.what(), Console::Color::Red);
 		}
 	}
+
+	SERVER->save();
 }
 
 int main(int argc, char* argv[])

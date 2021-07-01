@@ -21,6 +21,7 @@ private:
 private:
 	bool mAuthorized = false;
 	Shared::NetworkingWS::Userbase::UID mUID = 0;
+	std::shared_ptr<Shared::NetworkingWS::Userbase::Profile> mProfile = nullptr;
 };
 
 /*class Database
