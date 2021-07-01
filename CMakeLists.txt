@@ -34,11 +34,11 @@ file(GLOB ALL_SRC
 )
 
 if(WIN32)
-    if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Xlinker /SUBSYSTEM:WINDOWS -Xlinker /ENTRY:mainCRTStartup")
-    else()
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
-    endif()
+    #if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    #    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Xlinker /SUBSYSTEM:WINDOWS -Xlinker /ENTRY:mainCRTStartup")
+    #else()
+    #    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+    #endif()
     
     add_definitions(-DNOMINMAX)
 	
@@ -46,6 +46,7 @@ if(WIN32)
         ${ALL_SRC}
     )
 
+	set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
     set_target_properties(${PROJECT_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 elseif(APPLE)
@@ -113,3 +114,21 @@ target_include_directories(${PROJECT_NAME} PUBLIC src)
 add_subdirectory(sky)
 target_link_libraries(${PROJECT_NAME} sky)
 copy_required_libs(${PROJECT_NAME})
+
+# server
+
+if(WIN32)
+	file(GLOB SERVER_SRC
+		server_src/*.cpp
+		server_src/*.h
+	)
+
+	source_group("all" FILES ${SERVER_SRC})
+
+	add_executable(Server 
+		${SERVER_SRC}
+	)
+
+	target_include_directories(Server PUBLIC src)
+	target_link_libraries(Server sky)
+endif()
