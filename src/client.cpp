@@ -58,13 +58,13 @@ Channel::Channel()
 		EVENT->emit(GlobalChatMessageEvent({ msgid }));
 	});
 
-	/*addEventCallback("created_guild", [this](const auto& params) {
+	addEventCallback("created_guild", [this](const auto& json) {
 		auto e = CreateGuildEvent();
 
-		e.status = params.at("status");
+		e.status = json["status"];
 		
-		if (params.count("id"))
-			e.id = std::stoi(params.at("id"));
+		if (json.contains("id"))
+			e.id = json["id"];
 		
 		if (e.status == "ok")
 			PROFILE->setGuildId(e.id.value());
@@ -72,17 +72,16 @@ Channel::Channel()
 		EVENT->emit(e);
 	});
 
-	addEventCallback("guild_list", [this](const auto& params) {
-		auto dump = params.at("ids");
-		auto json = nlohmann::json::parse(dump);
-		std::vector<int> ids = json;
+	addEventCallback("guild_list", [this](const auto& json) {
+		std::vector<int> ids = json["ids"];
 		EVENT->emit(GuildListEvent({ ids }));
 	});
 
-	addEventCallback("guild_info", [this](const auto& params) {
-		auto id = std::stoi(params.at("id"));
-		auto dump = params.at("json");
-		auto json = nlohmann::json::parse(dump);
+	addEventCallback("guild_info", [this](const auto& json) {
+		int id = json["id"];
+		std::string title = json["title"];
+		std::set<int> members = json["members"];
+
 		auto guild = std::make_shared<Guild>();
 		guild->setJson(json);
 		mGuilds.erase(id);
@@ -90,7 +89,7 @@ Channel::Channel()
 		EVENT->emit(GuildInfoReceivedEvent({ id }));
 	});
 
-	addEventCallback("joined_to_guild", [this](const auto& params) {
+	/*addEventCallback("joined_to_guild", [this](const auto& params) {
 		auto id = std::stoi(params.at("id"));
 		PROFILE->setGuildId(id);
 		EVENT->emit(JoinedToGuildEvent({ id }));
@@ -189,7 +188,7 @@ void Channel::clearGuilds()
 void Channel::requestGuildInfo(int id)
 {
 	sendEvent("request_guild_info", {
-		{ "id", std::to_string(id) }
+		{ "id", id }
 	});
 }
 

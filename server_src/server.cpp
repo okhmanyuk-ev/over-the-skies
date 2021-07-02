@@ -95,10 +95,10 @@ Channel::Channel()
 		log("write to chat \"" + text + "\"");
 	});
 
-	/*addEventCallback("create_guild", [this](const auto& params) {
+	addEventCallback("create_guild", [this](const auto& json) {
 		checkAuthorized();
 
-		auto title = params.at("title");
+		std::string title = json["title"];
 
 		if (SERVER->isGuildExist(title))
 		{
@@ -110,51 +110,41 @@ Channel::Channel()
 			return;
 		}
 
-		auto guild = SERVER->createGuild(title);
-		SERVER->joinToGuild(guild, mUID);
+		auto guild_id = SERVER->createGuild(title);
+		SERVER->joinToGuild(guild_id, mUID);
 
-		log("created guild #" + std::to_string(guild));
+		log("created guild #" + std::to_string(guild_id));
 
 		sendEvent("created_guild", {
 			{ "status", "ok" },
-			{ "id", std::to_string(guild) }
+			{ "id", guild_id }
 		});
 	});
 
-	addEventCallback("request_guild_list", [this](const auto& params) {
+	addEventCallback("request_guild_list", [this](const auto& json) {
 		checkAuthorized();
 
 		auto guild_list = SERVER->getGuildList();
 
-		auto json = nlohmann::json();
-		json = guild_list;
-		auto json_str = json.dump();
-
 		sendEvent("guild_list", {
-			{ "ids", json_str }
+			{ "ids", guild_list }
 		});
 	});
 
-	addEventCallback("request_guild_info", [this](const auto& params) {
+	addEventCallback("request_guild_info", [this](const auto& json) {
 		checkAuthorized();
 
-		auto id = std::stoi(params.at("id"));
+		int id = json["id"];
 		auto guild = SERVER->getGuilds().at(id);
 
-		auto json = nlohmann::json();
-
-		json["title"] = guild->getName();
-		json["members"] = guild->getMembers();
-
-		auto dump = json.dump();
-
 		sendEvent("guild_info", {
-			{ "id", std::to_string(id) },
-			{ "json", dump }
+			{ "id", id },
+			{ "title", guild->getName() },
+			{ "members", guild->getMembers() }
 		});
 	});
 	
-	addEventCallback("exit_guild", [this](const auto& params) {
+	/*addEventCallback("exit_guild", [this](const auto& params) {
 		checkAuthorized();
 		auto guildId = SERVER->getDatabase().getUserGuild(mUID);
 		SERVER->exitFromGuild(guildId, mUID);

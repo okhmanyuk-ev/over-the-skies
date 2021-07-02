@@ -117,7 +117,8 @@ namespace hcg001::Helpers
 		bool mFirstCalled = false;
 	};
 
-	template <class T> class GuildInfoListenable : public T, public Common::Event::Listenable<Channel::GuildInfoReceivedEvent>
+	template <class T> class GuildInfoListenable : public T, 
+		public Common::Event::Listenable<Channel::GuildInfoReceivedEvent>
 	{
 	public:
 		using GuildCallback = std::function<void(Channel::GuildPtr)>;
