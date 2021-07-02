@@ -100,7 +100,7 @@ Channel::Channel()
 
 		std::string title = json["title"];
 
-		if (SERVER->isGuildExist(title))
+		if (SERVER->getGuildsSys().isGuildExist(title))
 		{
 			sendEvent("created_guild", {
 				{ "status", "failed" },
@@ -110,8 +110,8 @@ Channel::Channel()
 			return;
 		}
 
-		auto guild_id = SERVER->createGuild(title);
-		SERVER->joinToGuild(guild_id, mUID);
+		auto guild_id = SERVER->getGuildsSys().createGuild(title);
+		SERVER->getGuildsSys().joinToGuild(guild_id, mUID);
 
 		log("created guild #" + std::to_string(guild_id));
 
@@ -124,7 +124,7 @@ Channel::Channel()
 	addEventCallback("request_guild_list", [this](const auto& json) {
 		checkAuthorized();
 
-		auto guild_list = SERVER->getGuildList();
+		auto guild_list = SERVER->getGuildsSys().getGuildList();
 
 		sendEvent("guild_list", {
 			{ "ids", guild_list }
@@ -135,7 +135,7 @@ Channel::Channel()
 		checkAuthorized();
 
 		int id = json["id"];
-		auto guild = SERVER->getGuilds().at(id);
+		auto guild = SERVER->getGuildsSys().getGuilds().at(id);
 
 		sendEvent("guild_info", {
 			{ "id", id },
@@ -503,6 +503,96 @@ void Chat::load(const nlohmann::json& json)
 	}
 }
 
+// guilds
+
+bool Guilds::isGuildExist(const std::string& title) const
+{
+	for (auto [index, guild] : mGuilds)
+	{
+		if (guild->getName() != title)
+			continue;
+
+		return true;
+	}
+
+	return false;
+}
+
+int Guilds::createGuild(const std::string& title)
+{
+	assert(!isGuildExist(title));
+
+	auto guild = std::make_shared<Guild>(mGuildIndex);
+	guild->setName(title);
+	guild->save();
+
+	mGuilds[mGuildIndex] = guild;
+	mGuildIndex += 1;
+
+	SERVER->save();
+
+	return mGuildIndex - 1;
+}
+
+void Guilds::joinToGuild(int guild_id, int user_id)
+{
+	/*SERVER->getDatabase().setUserGuild(user_id, guild_id);
+	auto guild = mGuilds.at(guild_id);
+	auto members = guild->getMembers();
+	members.insert(user_id);
+	guild->setMembers(members);
+	guild->save();*/
+}
+
+void Guilds::exitFromGuild(int guild_id, int user_id)
+{
+	/*SERVER->getDatabase().setUserGuild(user_id, Database::NoneGuild);
+	auto guild = mGuilds.at(guild_id);
+	auto members = guild->getMembers();
+	members.erase(user_id);
+	guild->setMembers(members);
+	guild->save();*/
+}
+
+std::vector<int> Guilds::getGuildList() const
+{
+	std::vector<int> result;
+
+	for (auto [index, guild] : mGuilds)
+	{
+		result.push_back(index);
+	}
+
+	return result;
+}
+
+void Guilds::save(nlohmann::json& json)
+{
+	std::set<int> guilds;
+
+	for (auto [index, guild] : mGuilds)
+	{
+		guilds.insert(index);
+	}
+	json["guilds"] = guilds;
+	json["guild_index"] = mGuildIndex;
+}
+
+void Guilds::load(const nlohmann::json& json)
+{
+	auto guilds = json["guilds"].get<std::set<int>>();
+
+	for (auto index : guilds)
+	{
+		auto guild = std::make_shared<Guild>(index);
+		guild->load();
+		mGuilds[index] = guild;
+	}
+
+	if (json.contains("guild_index"))
+		mGuildIndex = json["guild_index"];
+}
+
 // server
 
 Server::Server() : Shared::NetworkingWS::Server(27015)
@@ -520,21 +610,12 @@ Server::Server() : Shared::NetworkingWS::Server(27015)
 
 void Server::save()
 {
-	std::set<int> guilds;
-
-	for (auto [index, guild] : mGuilds)
-	{
-		guilds.insert(index);
-	}
-
 	auto json = nlohmann::json();
 	mUserbase.save(json);
 	mChat.save(json);
-	json["guilds"] = guilds;
-	json["guild_index"] = mGuildIndex;
+	mGuilds.save(json);
 	auto dump = json.dump(1);
 	Platform::Asset::Write("server.json", dump.data(), dump.size(), Platform::Asset::Storage::Absolute);
-
 	LOG("saved");
 }
 
@@ -551,6 +632,7 @@ void Server::load()
 
 	mUserbase.load(json);
 	mChat.load(json);
+	mGuilds.load(json);
 
 	// collect highscores from profiles
 
@@ -560,18 +642,6 @@ void Server::load()
 	}
 
 	remakeHighscores();
-
-	auto guilds = json["guilds"].get<std::set<int>>();
-
-	for (auto index : guilds)
-	{
-		auto guild = std::make_shared<Guild>(index);
-		guild->load();
-		mGuilds[index] = guild;
-	}
-
-	if (json.contains("guild_index"))
-		mGuildIndex = json["guild_index"];
 }
 
 std::shared_ptr<Shared::NetworkingWS::Channel> Server::createChannel()
@@ -596,67 +666,6 @@ void Server::broadcastGlobalChatMessage(int msgid, int sender_uid, const std::st
 		auto client = std::dynamic_pointer_cast<Channel>(channel);
 		client->globalChatMessage(msgid, sender_uid, text);
 	}
-}
-
-bool Server::isGuildExist(const std::string& title) const
-{
-	for (auto [index, guild] : mGuilds)
-	{
-		if (guild->getName() != title)
-			continue;
-
-		return true;
-	}
-
-	return false;
-}
-
-int Server::createGuild(const std::string& title)
-{
-	assert(!isGuildExist(title));
-
-	auto guild = std::make_shared<Guild>(mGuildIndex);
-	guild->setName(title);
-	guild->save();
-
-	mGuilds[mGuildIndex] = guild;
-	mGuildIndex += 1;
-
-	save();
-
-	return mGuildIndex - 1;
-}
-
-void Server::joinToGuild(int guild_id, int user_id)
-{
-	/*SERVER->getDatabase().setUserGuild(user_id, guild_id);
-	auto guild = mGuilds.at(guild_id);
-	auto members = guild->getMembers();
-	members.insert(user_id);
-	guild->setMembers(members);
-	guild->save();*/
-}
-
-void Server::exitFromGuild(int guild_id, int user_id)
-{
-	/*SERVER->getDatabase().setUserGuild(user_id, Database::NoneGuild);
-	auto guild = mGuilds.at(guild_id);
-	auto members = guild->getMembers();
-	members.erase(user_id);
-	guild->setMembers(members);
-	guild->save();*/
-}
-
-std::vector<int> Server::getGuildList() const
-{
-	std::vector<int> result;
-
-	for (auto [index, guild] : mGuilds)
-	{
-		result.push_back(index);
-	}
-
-	return result;
 }
 
 void Server::highscore(int uid, int value)

@@ -79,18 +79,8 @@ private:
 	int mLastIndex = 0;
 };
 
-class Server : public Shared::NetworkingWS::Server
+class Guilds
 {
-public:
-	Server();
-
-	void save();
-	void load();
-
-	std::shared_ptr<Shared::NetworkingWS::Channel> createChannel() override;
-	void broadcastPrint(const std::string& text);
-	void broadcastGlobalChatMessage(int msgid, int sender_uid, const std::string& text);
-
 public:
 	bool isGuildExist(const std::string& title) const;
 	int createGuild(const std::string& title);
@@ -104,12 +94,31 @@ private:
 	int mGuildIndex = 0;
 
 public:
+	void save(nlohmann::json& json);
+	void load(const nlohmann::json& json);
+};
+
+class Server : public Shared::NetworkingWS::Server
+{
+public:
+	Server();
+
+	void save();
+	void load();
+
+	std::shared_ptr<Shared::NetworkingWS::Channel> createChannel() override;
+	void broadcastPrint(const std::string& text);
+	void broadcastGlobalChatMessage(int msgid, int sender_uid, const std::string& text);
+
+public:
 	auto& getUserbase() { return mUserbase; }
 	auto& getChat() { return mChat; }
+	auto& getGuildsSys() { return mGuilds; }
 
 private:
 	Shared::NetworkingWS::Userbase mUserbase;
 	Chat mChat;
+	Guilds mGuilds;
 
 public: // highscores
 	void highscore(int uid, int value);
