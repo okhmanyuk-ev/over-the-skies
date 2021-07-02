@@ -31,17 +31,17 @@ Channel::Channel()
 		sendEvent("authorized", {
 			{ "uid", std::to_string(mUID) },
 			{ "guild_id", std::to_string(guild_id) }
-		});
+		});*/
 
 		// send last global chat message
 
-		auto msgid = SERVER->getDatabase().getLastGlobalChatMessageIndex();
+		auto msgid = SERVER->getChat().getLastMessageIndex();
 
 		if (msgid == 0) // this means no chat messages
 			return;
 
-		auto uid = SERVER->getDatabase().getGlobalChatMessageUID(msgid);
-		auto text = SERVER->getDatabase().getGlobalChatMessageText(msgid);
+		auto uid = SERVER->getChat().getMessageUID(msgid);
+		auto text = SERVER->getChat().getMessageText(msgid);
 		globalChatMessage(msgid, uid, text);
 
 		// send prev 100 messages (this is fast solution)
@@ -50,10 +50,10 @@ Channel::Channel()
 			if (i < 1)
 				break;
 
-			auto uid = SERVER->getDatabase().getGlobalChatMessageUID(i);
-			auto text = SERVER->getDatabase().getGlobalChatMessageText(i);
+			auto uid = SERVER->getChat().getMessageUID(i);
+			auto text = SERVER->getChat().getMessageText(i);
 			globalChatMessage(i, uid, text);
-		}*/
+		}
 	});
 
 	addEventCallback("commit", [this](const auto& json) {
@@ -63,26 +63,18 @@ Channel::Channel()
 		auto profile = json["profile"];
 
 		SERVER->getUserbase().commit(mUID, std::make_shared<nlohmann::json>(profile));
-
-		/*SERVER->getDatabase().profile(mUID, profile_dump);
-
-		auto profile_json = nlohmann::json::parse(profile_dump);
-		int highscore = profile_json.at("highscore");
-
-		SERVER->getDatabase().highscore(mUID, highscore);*/
+		SERVER->highscore(mUID, profile["highscore"]);
 	});
 
-	/*addEventCallback("request_highscores", [this](const auto& params) {
+	addEventCallback("request_highscores", [this](const auto& params) {
 		checkAuthorized();
-		auto highscores = SERVER->getDatabase().getHighscores();
-		auto json = nlohmann::json();
-		json = highscores;
+		auto highscores = SERVER->getHighscores();
 		sendEvent("highscores", {
-			{ "json", json.dump() }
+			{ "highscores", highscores }
 		});
 	});
 
-	addEventCallback("request_profile", [this](const auto& params) {
+	/*addEventCallback("request_profile", [this](const auto& params) {
 		checkAuthorized();
 		auto uid_s = params.at("uid");
 		auto uid = std::stoi(uid_s);
@@ -93,17 +85,17 @@ Channel::Channel()
 			{ "json", dump },
 			{ "guild_id", std::to_string(guild_id) }
 		});
-	});
+	});*/
 
-	addEventCallback("global_chat_message", [this](const auto& params) {
+	addEventCallback("global_chat_message", [this](const auto& json) {
 		checkAuthorized();
-		auto text = params.at("text");
-		auto msgid = SERVER->getDatabase().addMessageToGlobalChat(mUID, text);
+		std::string text = json["text"];
+		auto msgid = SERVER->getChat().addMessage(mUID, text);
 		SERVER->broadcastGlobalChatMessage(msgid, mUID, text);
 		log("write to chat \"" + text + "\"");
 	});
 
-	addEventCallback("create_guild", [this](const auto& params) {
+	/*addEventCallback("create_guild", [this](const auto& params) {
 		checkAuthorized();
 
 		auto title = params.at("title");
@@ -196,8 +188,8 @@ void Channel::print(const std::string& text)
 void Channel::globalChatMessage(int msgid, int sender_uid, const std::string& text)
 {
 	sendEvent("global_chat_message", {
-		{ "msgid", std::to_string(msgid) },
-		{ "uid", std::to_string(sender_uid) },
+		{ "msgid", msgid },
+		{ "uid", sender_uid },
 		{ "text", text }
 	});
 }
@@ -458,6 +450,69 @@ std::string Database::getGlobalChatMessageText(int msgid)
 	throw std::runtime_error("[Database::getGlobalChatMessageText] not found");
 }*/
 
+// chat
+
+int Chat::addMessage(int uid, const std::string& text)
+{
+	mLastIndex += 1;
+
+	nlohmann::json json = {
+		{ "uid", uid },
+		{ "text", text }
+	};
+
+	mMessages.insert({ mLastIndex, json });
+
+	return getLastMessageIndex();
+}
+
+int Chat::getLastMessageIndex()
+{
+	return mLastIndex;
+}
+int Chat::getMessageUID(int msgid)
+{
+	return mMessages.at(msgid)["uid"];
+}
+std::string Chat::getMessageText(int msgid)
+{
+	return mMessages.at(msgid)["text"];
+}
+
+void Chat::save(nlohmann::json& json)
+{
+	auto& chat = json["chat"];
+
+	chat["last_index"] = mLastIndex;
+
+	auto& messages = chat["messages"];
+
+	for (const auto& [index, msg] : mMessages)
+	{
+		nlohmann::json message = {
+			{ "index", index },
+			{ "msg", msg }
+		};
+
+		messages.push_back(message);
+	}
+}
+
+void Chat::load(const nlohmann::json& json)
+{
+	auto& chat = json["chat"];
+
+	mLastIndex = chat["last_index"];
+
+	for (const auto& message : chat["messages"])
+	{
+		int index = message["index"];
+		auto msg = message["msg"];
+		
+		mMessages.insert({ index, msg });
+	}
+}
+
 // server
 
 Server::Server() : Shared::NetworkingWS::Server(27015)
@@ -467,6 +522,7 @@ Server::Server() : Shared::NetworkingWS::Server(27015)
 	Actions::Run(Actions::Collection::RepeatInfinite([this] {
 		const auto Delay = 60.0f; // one minute
 		return Actions::Collection::Delayed(Delay, Actions::Collection::Execute([this] {
+			remakeHighscores();
 			save();
 		}));
 	}));
@@ -483,6 +539,7 @@ void Server::save()
 
 	auto json = nlohmann::json();
 	mUserbase.save(json);
+	mChat.save(json);
 	json["guilds"] = guilds;
 	json["guild_index"] = mGuildIndex;
 	auto dump = json.dump(1);
@@ -503,6 +560,16 @@ void Server::load()
 	auto json = nlohmann::json::parse(json_string);
 
 	mUserbase.load(json);
+	mChat.load(json);
+
+	// collect highscores from profiles
+
+	for (const auto& [uid, profile] : mUserbase.getProfiles())
+	{
+		highscore(uid, (*profile)["highscore"]);
+	}
+
+	remakeHighscores();
 
 	auto guilds = json["guilds"].get<std::set<int>>();
 
@@ -600,4 +667,50 @@ std::vector<int> Server::getGuildList() const
 	}
 
 	return result;
+}
+
+void Server::highscore(int uid, int value)
+{
+	mHighscores[uid] = value;
+}
+
+std::vector<int> Server::getHighscores()
+{
+	return mSortedHighscores;
+}
+
+void Server::remakeHighscores()
+{
+	auto begin_time = Clock::Now();
+
+	struct def
+	{
+		int uid;
+		int score;
+	};
+
+	std::vector<def> defs;
+
+	for (const auto& [uid, score] : mHighscores)
+	{
+		defs.push_back({ uid, score });
+	}
+
+	std::sort(defs.begin(), defs.end(), [](const def& _def1, const def& _def2) {
+		return _def1.score < _def2.score;
+	});
+
+	mSortedHighscores.clear();
+
+	for (int i = 0; i < 1000; i++)
+	{
+		if (defs.size() - 1 < i)
+			break;
+
+		mSortedHighscores.push_back(defs[i].uid);
+	}
+
+	auto end_time = Clock::Now();
+
+	LOGF("remaked highscores, duration: {} msec", Clock::ToMilliseconds(end_time - begin_time));
 }

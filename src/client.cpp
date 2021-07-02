@@ -11,28 +11,32 @@ Channel::Channel()
 
 	//addMessageReader("file", [this](auto& buf) { readFileMessage(buf);	});
 
-	/*addEventCallback("authorized", [this](const auto& params) {
-		mUID = std::stoi(params.at("uid"));
-		auto guild_id = std::stoi(params.at("guild_id"));
+	addEventCallback("authorized", [this](const auto& json) {
+		mUID = json["uid"];
 
-		PROFILE->setGuildId(guild_id);
+		commit();
+		requestHighscores();
+
+
+		//auto guild_id = std::stoi(params.at("guild_id"));
+
+	//	PROFILE->setGuildId(guild_id);
 
 		LOG("authorized");
-		LOGF("uid: {}, guild: {}", mUID, guild_id);
+	//	LOGF("uid: {}, guild: {}", mUID, guild_id);
 	});
 
-	addEventCallback("print", [](const auto& params) {
+	/*addEventCallback("print", [](const auto& params) {
 		auto text = params.at("text");
 		EVENT->emit(Helpers::PrintEvent({ text }));
+	});*/
+
+	addEventCallback("highscores", [](const auto& json) {
+		std::vector<int> highscores = json["highscores"];
+		EVENT->emit(Helpers::HighscoresEvent({ highscores }));
 	});
 
-	addEventCallback("highscores", [](const auto& params) {
-		nlohmann::json json = nlohmann::json::parse(params.at("json"));
-        auto uids = json.get<std::vector<int>>();
-		EVENT->emit(Helpers::HighscoresEvent({ uids }));
-	});
-
-	addEventCallback("profile", [this](const auto& params) {
+	/*addEventCallback("profile", [this](const auto& params) {
 		auto uid = std::stoi(params.at("uid"));
 		auto dump = params.at("json");
 		auto guild_id = std::stoi(params.at("guild_id"));
@@ -43,18 +47,18 @@ Channel::Channel()
 		mProfiles.erase(uid);
 		mProfiles.insert({ uid, profile });
 		EVENT->emit(Helpers::ProfileReceived({ uid }));
-	});
+	});*/
 
-	addEventCallback("global_chat_message", [this](const auto& params) {
-		auto msgid = std::stoi(params.at("msgid"));
-		auto uid = std::stoi(params.at("uid"));
-		auto text = params.at("text");
+	addEventCallback("global_chat_message", [this](const auto& json) {
+		auto msgid = json["msgid"];
+		auto uid = json["uid"];
+		auto text = json["text"];
 		auto message = std::make_shared<ChatMessage>(uid, text);
 		mGlobalChatMessages[msgid] = message;
 		EVENT->emit(GlobalChatMessageEvent({ msgid }));
 	});
 
-	addEventCallback("created_guild", [this](const auto& params) {
+	/*addEventCallback("created_guild", [this](const auto& params) {
 		auto e = CreateGuildEvent();
 
 		e.status = params.at("status");
@@ -100,8 +104,6 @@ Channel::Channel()
 
 	FRAME->addOne([this] {
 		auth();
-		commit();
-		requestHighscores();
 	});
 }
 
@@ -400,7 +402,8 @@ const Channel::ProfilesMap& Client::getProfiles() const
 
 bool Client::hasProfile(int uid)
 {
-	return getProfiles().count(uid) > 0;
+	auto profiles = getProfiles();
+	return profiles.count(uid) > 0;
 }
 
 Channel::ProfilePtr Client::getProfile(int uid)

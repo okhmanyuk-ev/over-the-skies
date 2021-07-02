@@ -10,10 +10,11 @@ void run()
 	ENGINE->addSystem<Console::Device>(std::make_shared<Common::NativeConsoleDevice>());
 	ENGINE->addSystem<Console::System>(std::make_shared<Console::System>());
 	ENGINE->addSystem<Network::System>(std::make_shared<Network::System>());
-	ENGINE->addSystem<Server>(std::make_shared<Server>());
 	
 	Common::ConsoleCommands consoleCommands;
 	Common::FramerateCounter framerateCounter;
+
+	ENGINE->addSystem<Server>(std::make_shared<Server>());
 
 	Common::Timer timer;
 	timer.setInterval(Clock::FromSeconds(1.0f));

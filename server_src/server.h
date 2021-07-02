@@ -62,6 +62,23 @@ public:
 	std::string getGlobalChatMessageText(int msgid);
 };*/
 
+class Chat // global chat
+{
+public:
+	int addMessage(int uid, const std::string& text);
+	int getLastMessageIndex();
+	int getMessageUID(int msgid);
+	std::string getMessageText(int msgid);
+
+public:
+	void save(nlohmann::json& json);
+	void load(const nlohmann::json& json);
+
+private:
+	std::map<int, nlohmann::json> mMessages;
+	int mLastIndex = 0;
+};
+
 class Server : public Shared::NetworkingWS::Server
 {
 public:
@@ -88,7 +105,18 @@ private:
 
 public:
 	auto& getUserbase() { return mUserbase; }
+	auto& getChat() { return mChat; }
 
 private:
 	Shared::NetworkingWS::Userbase mUserbase;
+	Chat mChat;
+
+public: // highscores
+	void highscore(int uid, int value);
+	// return uid array
+	std::vector<int> getHighscores();
+
+	std::unordered_map<int, int> mHighscores; // uid, highscore
+	std::vector<int> mSortedHighscores;
+	void remakeHighscores();
 };
