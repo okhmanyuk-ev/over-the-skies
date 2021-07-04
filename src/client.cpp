@@ -89,18 +89,17 @@ Channel::Channel()
 		EVENT->emit(GuildInfoReceivedEvent({ id }));
 	});
 
-	/*addEventCallback("joined_to_guild", [this](const auto& params) {
-		auto id = std::stoi(params.at("id"));
+	addEventCallback("joined_to_guild", [this](const auto& json) {
+		int id = json["id"];
 		PROFILE->setGuildId(id);
 		EVENT->emit(JoinedToGuildEvent({ id }));
 	});
 
-	addEventCallback("exited_from_guild", [this](const auto& params) {
+	addEventCallback("exited_from_guild", [this](const auto& json) {
 		PROFILE->setGuildId(Profile::NoneGuild);
 		EVENT->emit(ExitedFromGuildEvent());
-	});*/
+	});
 	
-
 	FRAME->addOne([this] {
 		auth();
 	});
@@ -200,7 +199,7 @@ void Channel::exitGuild()
 void Channel::joinGuild(int id)
 {
 	sendEvent("join_guild", {
-		{ "id", std::to_string(id) }
+		{ "id", id }
 	});
 }
 

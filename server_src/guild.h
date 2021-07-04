@@ -17,9 +17,8 @@ public:
 	const auto& getName() const { return mName; }
 	void setName(const std::string& value) { mName = value; }
 
-	const auto& getMembers() const { return mMembers; }
-	void setMembers(const std::set<int>& value) { mMembers = value; }
-
+	auto& getMembers() { return mMembers; }
+	
 private:
 	int mIndex;
 	std::string mName;

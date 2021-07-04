@@ -84,8 +84,6 @@ class Guilds
 public:
 	bool isGuildExist(const std::string& title) const;
 	int createGuild(const std::string& title);
-	void joinToGuild(int guild_id, int user_id);
-	void exitFromGuild(int guild_id, int user_id);
 	std::vector<int> getGuildList() const;
 	const auto& getGuilds() const { return mGuilds; }
 
@@ -128,4 +126,8 @@ public: // highscores
 	std::unordered_map<int, int> mHighscores; // uid, highscore
 	std::vector<int> mSortedHighscores;
 	void remakeHighscores();
+
+	void joinToGuild(int guild_id, int uid);
+	void exitFromGuild(int guild_id, int uid);
+	std::optional<int> findUserGuild(int uid);
 };

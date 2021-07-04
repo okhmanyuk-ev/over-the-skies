@@ -16,6 +16,8 @@ Channel::Channel()
 
 		log("authorized");
 
+		auto guild_id = SERVER->findUserGuild(mUID);
+
 		sendEvent("authorized", {
 			{ "uid", mUID },
 		//	{ "guild_id", std::to_string(guild_id) }
@@ -111,7 +113,7 @@ Channel::Channel()
 		}
 
 		auto guild_id = SERVER->getGuildsSys().createGuild(title);
-		SERVER->getGuildsSys().joinToGuild(guild_id, mUID);
+		SERVER->joinToGuild(guild_id, mUID);
 
 		log("created guild #" + std::to_string(guild_id));
 
@@ -144,25 +146,31 @@ Channel::Channel()
 		});
 	});
 	
-	/*addEventCallback("exit_guild", [this](const auto& params) {
+	addEventCallback("exit_guild", [this](const auto& json) {
 		checkAuthorized();
-		auto guildId = SERVER->getDatabase().getUserGuild(mUID);
-		SERVER->exitFromGuild(guildId, mUID);
+		auto guild_id = SERVER->findUserGuild(mUID);
+		if (!guild_id.has_value())
+		{
+			LOG("cannot exit_guild, not in guild");
+			return;
+		}
+		SERVER->exitFromGuild(guild_id.value(), mUID);
 		sendEvent("exited_from_guild");
-		LOGF("#{} exited from guild #{}", mUID, guildId);
+		LOGF("#{} exited from guild #{}", mUID, guild_id.value());
 	});
 
-	addEventCallback("join_guild", [this](const auto& params) {
+	addEventCallback("join_guild", [this](const auto& json) {
 		checkAuthorized();
-		auto id = std::stoi(params.at("id"));
+		
+		int id = json["id"];
 		SERVER->joinToGuild(id, mUID);
 
 		sendEvent("joined_to_guild", {
-			{ "id", std::to_string(id) }
+			{ "id", id }
 		});
 
 		LOGF("#{} joined to guild #{}", mUID, id);
-	});*/
+	});
 }
 
 void Channel::log(const std::string& text)
@@ -534,26 +542,6 @@ int Guilds::createGuild(const std::string& title)
 	return mGuildIndex - 1;
 }
 
-void Guilds::joinToGuild(int guild_id, int user_id)
-{
-	/*SERVER->getDatabase().setUserGuild(user_id, guild_id);
-	auto guild = mGuilds.at(guild_id);
-	auto members = guild->getMembers();
-	members.insert(user_id);
-	guild->setMembers(members);
-	guild->save();*/
-}
-
-void Guilds::exitFromGuild(int guild_id, int user_id)
-{
-	/*SERVER->getDatabase().setUserGuild(user_id, Database::NoneGuild);
-	auto guild = mGuilds.at(guild_id);
-	auto members = guild->getMembers();
-	members.erase(user_id);
-	guild->setMembers(members);
-	guild->save();*/
-}
-
 std::vector<int> Guilds::getGuildList() const
 {
 	std::vector<int> result;
@@ -712,4 +700,33 @@ void Server::remakeHighscores()
 	auto end_time = Clock::Now();
 
 	LOGF("remaked highscores, duration: {} msec", Clock::ToMilliseconds(end_time - begin_time));
+}
+
+void Server::joinToGuild(int guild_id, int uid)
+{
+	auto& guild = mGuilds.getGuilds().at(guild_id);
+	guild->getMembers().insert(uid);
+}
+
+void Server::exitFromGuild(int guild_id, int uid)
+{
+	auto& guild = mGuilds.getGuilds().at(guild_id);
+	guild->getMembers().erase(uid);
+}
+
+std::optional<int> Server::findUserGuild(int uid)
+{
+	const auto& guilds = mGuilds.getGuilds();
+
+	for (const auto& [guild_id, guild] : guilds)
+	{
+		const auto& members = guild->getMembers();
+
+		if (members.count(uid) == 0)
+			continue;
+
+		return guild_id;
+	}
+
+	return std::nullopt;
 }
