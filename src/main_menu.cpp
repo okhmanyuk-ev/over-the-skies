@@ -4,7 +4,7 @@
 #include "social_panel.h"
 #include "windows/shop_window.h"
 #include "windows/options_window.h"
-#include "windows/highscores_window.h"
+#include "windows/achievements_window.h"
 #include "windows/guilds_window.h"
 #include "windows/global_chat_window.h"
 
@@ -118,9 +118,11 @@ MainMenu::MainMenu()
 	auto safe_area = std::make_shared<Shared::SceneHelpers::SafeArea>();
 	attach(safe_area);
 
+	const glm::vec2 TopButtonSize = { 72.0f, 28.0f };
+
 	auto shop_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
 	shop_button->setTexture(TEXTURE("textures/shop.png"));
-	shop_button->setAdaptSize({ 86.0f, 28.0f });
+	shop_button->setAdaptSize(TopButtonSize);
 	shop_button->setPosition({ 108.0f, 24.0f });
 	shop_button->setPivot({ 0.0f, 0.5f });
 	shop_button->setClickCallback([] {
@@ -141,21 +143,32 @@ MainMenu::MainMenu()
 	});
     safe_area->attach(options_button);
 
-	auto hishscores_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
+	/*auto hishscores_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
 	hishscores_button->setTexture(TEXTURE("textures/podium.png"));
-	hishscores_button->setAdaptSize({ 86.0f, 28.0f });
+	hishscores_button->setAdaptSize(TopButtonSize);
 	hishscores_button->setPosition({ 164.0f, 24.0f });
 	hishscores_button->setPivot({ 0.0f, 0.5f });
 	hishscores_button->setClickCallback([] {
 		auto window = std::make_shared<HighscoresWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
-    safe_area->attach(hishscores_button);
+    safe_area->attach(hishscores_button);*/
+
+	auto achievements_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
+	achievements_button->setTexture(TEXTURE("textures/cup.png"));
+	achievements_button->setAdaptSize(TopButtonSize);
+	achievements_button->setPosition({ 168.0f, 24.0f });
+	achievements_button->setPivot({ 0.0f, 0.5f });
+	achievements_button->setClickCallback([] {
+		auto window = std::make_shared<AchievementsWindow>();
+		SCENE_MANAGER->pushWindow(window);
+	});
+	safe_area->attach(achievements_button);
 
 	auto guilds_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
 	guilds_button->setTexture(TEXTURE("textures/guilds.png"));
-	guilds_button->setAdaptSize({ 86.0f, 28.0f });
-	guilds_button->setPosition({ 220.0f, 24.0f });
+	guilds_button->setAdaptSize(TopButtonSize);
+	guilds_button->setPosition({ 216.0f, 24.0f });
 	guilds_button->setPivot({ 0.0f, 0.5f });
 	guilds_button->setClickCallback([] {
 		auto window = std::make_shared<GuildsWindow>();
@@ -165,7 +178,7 @@ MainMenu::MainMenu()
 
 	auto global_chat_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
 	global_chat_button->setTexture(TEXTURE("textures/chat.png"));
-	global_chat_button->setAdaptSize({ 86.0f, 28.0f });
+	global_chat_button->setAdaptSize(TopButtonSize);
 	global_chat_button->setPosition({ 276.0f, 24.0f });
 	global_chat_button->setPivot({ 0.0f, 0.5f });
 	global_chat_button->setClickCallback([] {

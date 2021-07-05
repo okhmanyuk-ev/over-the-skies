@@ -125,10 +125,10 @@ if(WIN32)
 
 	source_group("all" FILES ${SERVER_SRC})
 
-	add_executable(Server 
+	add_executable(server 
 		${SERVER_SRC}
 	)
 
-	target_include_directories(Server PUBLIC src)
-	target_link_libraries(Server sky)
+	target_include_directories(server PUBLIC src)
+	target_link_libraries(server sky)
 endif()

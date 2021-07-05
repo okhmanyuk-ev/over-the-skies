@@ -193,9 +193,9 @@ SocialPanel::Page::Page()
 
 	runAction(Actions::Collection::RepeatInfinite([this] {
 		return Actions::Collection::MakeSequence(
-			Actions::Collection::Wait(1.0f),
+			Actions::Collection::Wait(1.25f),
 			Actions::Collection::ChangeVerticalScrollPosition(mScrollbox, 1.0f, 3.0f, Easing::CubicInOut),
-			Actions::Collection::Wait(1.0f),
+			Actions::Collection::Wait(0.75f),
 			Actions::Collection::ChangeVerticalScrollPosition(mScrollbox, 0.0f, 3.0f, Easing::CubicInOut)
 		);
 	}));
