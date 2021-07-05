@@ -17,19 +17,18 @@ Channel::Channel()
 		commit();
 		requestHighscores();
 
-
-		//auto guild_id = std::stoi(params.at("guild_id"));
-
-	//	PROFILE->setGuildId(guild_id);
-
 		LOG("authorized");
-	//	LOGF("uid: {}, guild: {}", mUID, guild_id);
 	});
 
-	/*addEventCallback("print", [](const auto& params) {
-		auto text = params.at("text");
+	addEventCallback("guild_id", [](const auto& json) {
+		PROFILE->setGuildId(json["id"]);
+		LOGF("guild: {}", PROFILE->getGuildId());
+	});
+
+	addEventCallback("print", [](const auto& json) {
+		std::string text = json["text"];
 		EVENT->emit(Helpers::PrintEvent({ text }));
-	});*/
+	});
 
 	addEventCallback("highscores", [](const auto& json) {
 		std::vector<int> highscores = json["highscores"];

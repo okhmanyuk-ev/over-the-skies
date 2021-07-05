@@ -5,6 +5,9 @@
 class Guild
 {
 public:
+	static inline const int NoneGuild = -1;
+
+public:
 	Guild(int index);
 
 public:

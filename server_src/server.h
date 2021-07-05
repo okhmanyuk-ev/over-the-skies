@@ -12,8 +12,9 @@ public:
 
 public:
 	void log(const std::string& text);
-	void print(const std::string& text);
-	void globalChatMessage(int msgid, int sender_uid, const std::string& text);
+	void sendPrint(const std::string& text);
+	void sendGlobalChatMessage(int msgid, int sender_uid, const std::string& text);
+	void sendGuildId();
 
 private:
 	void checkAuthorized();
@@ -23,44 +24,6 @@ private:
 	Shared::NetworkingWS::Userbase::UID mUID = 0;
 	std::shared_ptr<Shared::NetworkingWS::Userbase::Profile> mProfile = nullptr;
 };
-
-/*class Database
-{
-public:
-	static inline const int NoneGuild = -1;
-
-public:
-	Database();
-
-private:
-	void check();
-
-public:
-	bool isUserExists(int uid);
-	bool isUserExists(const std::string& platform, const std::string& uuid);
-	void registerUser(const std::string& platform, const std::string& uuid);
-	int getUsersCount();
-
-	// returning id
-	int auth(const std::string& platform, const std::string& uuid);
-
-	void profile(int uid, const std::string& data);
-	void highscore(int uid, int value);
-	int getUserGuild(int uid);
-	void setUserGuild(int user_id, int guild_id);
-
-	// return id array
-	std::vector<int> getHighscores();
-
-	// return json dump
-	std::string getProfile(int uid);
-
-	// return msgid
-	int addMessageToGlobalChat(int uid, const std::string& text);
-	int getLastGlobalChatMessageIndex();
-	int getGlobalChatMessageUID(int msgid);
-	std::string getGlobalChatMessageText(int msgid);
-};*/
 
 class Chat // global chat
 {
