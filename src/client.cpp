@@ -95,6 +95,7 @@ Channel::Channel()
 	});
 
 	addEventCallback("exited_from_guild", [this](const auto& json) {
+		mGuilds.erase(PROFILE->getGuildId());
 		PROFILE->setGuildId(Profile::NoneGuild);
 		EVENT->emit(ExitedFromGuildEvent());
 	});
