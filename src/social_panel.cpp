@@ -303,7 +303,7 @@ void SocialPanel::Page::refresh()
 			score_label->setText(std::to_string(profile->getHighScore()));
 		});
 
-		auto skin_img = std::make_shared<Helpers::ProfileListenable<Shared::SceneHelpers::Adaptive<Scene::Sprite>>>();
+		auto skin_img = std::make_shared<Helpers::ProfileListenable<Scene::Adaptive<Scene::Sprite>>>();
 		skin_img->setAdaptSize({ 8.0f, 8.0f });
 		skin_img->setAnchor(0.5f);
 		skin_img->setPivot(0.5f);

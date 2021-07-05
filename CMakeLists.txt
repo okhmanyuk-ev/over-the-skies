@@ -118,17 +118,5 @@ copy_required_libs(${PROJECT_NAME})
 # server
 
 if(WIN32)
-	file(GLOB SERVER_SRC
-		server_src/*.cpp
-		server_src/*.h
-	)
-
-	source_group("all" FILES ${SERVER_SRC})
-
-	add_executable(server 
-		${SERVER_SRC}
-	)
-
-	target_include_directories(server PUBLIC src)
-	target_link_libraries(server sky)
+	add_subdirectory(server)
 endif()

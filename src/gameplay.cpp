@@ -2,6 +2,7 @@
 #include "profile.h"
 #include "helpers.h"
 #include "client.h"
+#include "achievements.h"
 
 using namespace hcg001;
 
@@ -431,6 +432,7 @@ void Gameplay::gameover()
 
 	mGameovered = true;
 	mGameoverCallback();
+	ACHIEVEMENTS->hit("GAME_COMPLETED");
 	PROFILE->saveAsync();
 }
 

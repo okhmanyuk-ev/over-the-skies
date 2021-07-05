@@ -58,6 +58,8 @@ namespace hcg001
 
 		bool isInGuild() const { return getGuildId() != NoneGuild; }
 
+		auto& getAchievementsProgress() { return mAchievementsProgress; }
+
 	private:
 		int mHighScore = 0;
 		int mRubies = 0;
@@ -67,5 +69,6 @@ namespace hcg001
 		long long mDailyRewardTime = 0;
 		utf8_string mNickName = "Guest";
 		int mGuildId = NoneGuild;
+		std::map<std::string, int> mAchievementsProgress;
 	};
 }

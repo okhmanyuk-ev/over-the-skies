@@ -119,7 +119,7 @@ GlobalChatWindow::GlobalChatWindow()
 	chat_button->setSize({ 96.0f, 28.0f });
 	getBody()->attach(chat_button);
 
-	auto chat_message_img = std::make_shared<Shared::SceneHelpers::Adaptive<Scene::Sprite>>();
+	auto chat_message_img = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
 	chat_message_img->setTexture(TEXTURE("textures/chat_message.png"));
 	chat_message_img->setAdaptSize({ 48.0f, 20.0f });
 	chat_message_img->setAnchor(0.5f);

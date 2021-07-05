@@ -12,6 +12,7 @@
 #include "helpers.h"
 #include "hud.h"
 #include "client.h"
+#include "achievements.h"
 
 using namespace hcg001;
 
@@ -26,6 +27,8 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 
 	ENGINE->addSystem<Client>(std::make_shared<Client>());
 	ENGINE->addSystem<Profile>(std::make_shared<Profile>());
+	ENGINE->addSystem<Achievements>(std::make_shared<Achievements>());
+
 	PROFILE->load();
 
 	PLATFORM->initializeBilling({
@@ -60,6 +63,7 @@ Application::~Application()
 {
 	PROFILE->save();
 	ENGINE->removeSystem<Client>();
+	ENGINE->removeSystem<Achievements>();
 }
 
 void Application::initialize()
@@ -125,6 +129,7 @@ void Application::onFrame()
 
 void Application::addRubies(int count)
 {
+	ACHIEVEMENTS->hit("RUBIES_COLLECTED", count);
 	PROFILE->increaseRubies(count);
 	PROFILE->saveAsync();
 

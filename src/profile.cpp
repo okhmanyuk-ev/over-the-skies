@@ -29,6 +29,16 @@ void Profile::read(const nlohmann::json& json)
 	{
 		mCurrentSkin = (Skin)json["current_skin"].get<int>();
 	}
+
+	if (json.contains("achievements_progress"))
+	{
+		for (auto& field : json["achievements_progress"])
+		{
+			std::string name = field["name"];
+			int progress = field["progress"];
+			mAchievementsProgress[name] = progress;
+		}
+	}
 }
 
 void Profile::write(nlohmann::json& json)
@@ -40,6 +50,14 @@ void Profile::write(nlohmann::json& json)
 	json["dailyreward_time"] = mDailyRewardTime;
 	json["nickname"] = std::vector<utf8_string::value_type>(mNickName.begin(), mNickName.end());
 	json["current_skin"] = (int)mCurrentSkin;
+
+	for (const auto& [name, progress] : mAchievementsProgress)
+	{
+		json["achievements_progress"].push_back({
+			{ "name", name },
+			{ "progress", progress }
+		});
+	}
 }
 
 void Profile::makeDefault()

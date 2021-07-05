@@ -1,11 +1,87 @@
 [
     {
-        "name": "PLAY_FIRST_GAME"
+        "name": "PLAY_ONE_GAME",
+        "trigger": "GAME_COMPLETED",
+        "required": 1
     },
     {
-        "name": "REACH_SCORE_100"
+        "name": "REACH_SCORE_50",
+        "trigger": "SCORE_REACHED",
+        "required": 50
     },
     {
-        "name": "UNLOCK_SKIN"
+        "name": "REACH_SCORE_100",
+        "trigger": "SCORE_REACHED",
+        "required": 100
+    },
+    {
+        "name": "REACH_SCORE_200",
+        "trigger": "SCORE_REACHED",
+        "required": 200
+    },
+    {
+        "name": "REACH_SCORE_500",
+        "trigger": "SCORE_REACHED",
+        "required": 500
+    },
+    {
+        "name": "REACH_SCORE_1000",
+        "trigger": "SCORE_REACHED",
+        "required": 1000
+    },
+    {
+        "name": "COLLECT_RUBIES_10",
+        "trigger": "RUBIES_COLLECTED",
+        "required": 10
+    },
+    {
+        "name": "COLLECT_RUBIES_50",
+        "trigger": "RUBIES_COLLECTED",
+        "required": 50
+    },
+    {
+        "name": "COLLECT_RUBIES_100",
+        "trigger": "RUBIES_COLLECTED",
+        "required": 100
+    },
+    {
+        "name": "COLLECT_RUBIES_200",
+        "trigger": "RUBIES_COLLECTED",
+        "required": 200
+    },
+    {
+        "name": "COLLECT_RUBIES_500",
+        "trigger": "RUBIES_COLLECTED",
+        "required": 500
+    },
+    {
+        "name": "COLLECT_RUBIES_1000",
+        "trigger": "RUBIES_COLLECTED",
+        "required": 1000
+    },
+    {
+        "name": "UNLOCK_SKIN",
+        "trigger": "SKIN_UNLOCKED",
+        "required": 1
+    },
+    {
+        "name": "PLAY_10_GAMES",
+        "trigger": "GAME_COMPLETED",
+        "required": 10
+    },
+    {
+        "name": "PLAY_25_GAMES",
+        "trigger": "GAME_COMPLETED",
+        "required": 25
+    },
+    {
+        "name": "PLAY_50_GAMES",
+        "trigger": "GAME_COMPLETED",
+        "required": 50
+    },
+    {
+        "name": "PLAY_100_GAMES",
+        "trigger": "GAME_COMPLETED",
+        "required": 100
     }
 ]

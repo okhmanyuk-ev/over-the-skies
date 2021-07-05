@@ -87,7 +87,7 @@ StandardWindow::StandardWindow(bool has_close_button)
 
 	if (has_close_button)
 	{
-		auto close_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Shared::SceneHelpers::Adaptive<Scene::Sprite>>>>();
+		auto close_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::Adaptive<Scene::Sprite>>>>();
 		close_button->setTexture(TEXTURE("textures/close2.png"));
 		close_button->setAdaptSize(22.0f);
 		close_button->setAnchor({ 1.0f, 0.5f });
