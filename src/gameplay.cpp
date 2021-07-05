@@ -280,6 +280,12 @@ void Gameplay::spawnPlanes()
 	float anim_delay = 0.0f;
 	const float AnimWait = 0.125f / 1.125f;
 
+	auto getNextPos = [this] {
+		float pos_x = mLastPlanePos.x + glm::linearRand(36.0f, 96.0f);
+		float pos_y = mLastPlanePos.y - glm::linearRand(32.0f, 128.0f);
+		return glm::vec2({ pos_x, pos_y });
+	};
+
 	if (!mPlaneHolder->hasNodes())
 	{
 		auto pos = mPlayer->getPosition();
@@ -291,6 +297,9 @@ void Gameplay::spawnPlanes()
 		pos.x += 96.0f;
 		spawnPlane(pos, anim_delay, false, false, false);
 		anim_delay += AnimWait;
+
+		spawnPlane(getNextPos(), anim_delay, false, true, false);
+		anim_delay += AnimWait;
 	}
 
 	if (mLastPlanePos.x - mPlayer->getX() > 286.0f)
@@ -301,9 +310,7 @@ void Gameplay::spawnPlanes()
 		bool has_ruby = Common::Helpers::Chance(0.05f);
 		bool powerjump = Common::Helpers::Chance(0.1f);
 		bool moving = Common::Helpers::Chance(0.75f * getDifficulty());
-		float pos_x = mLastPlanePos.x + glm::linearRand(36.0f, 96.0f);
-		float pos_y = mLastPlanePos.y - glm::linearRand(32.0f, 128.0f);
-		spawnPlane({ pos_x, pos_y }, anim_delay, has_ruby, powerjump, moving);
+		spawnPlane(getNextPos(), anim_delay, has_ruby, powerjump, moving);
 		anim_delay += AnimWait;
 	}
 }
