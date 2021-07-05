@@ -4,6 +4,7 @@
 #include "plane.h"
 #include "player.h"
 #include "skin.h"
+#include "helpers.h"
 #include <common/timestep_fixer.h>
 
 namespace hcg001
@@ -44,6 +45,7 @@ namespace hcg001
 		std::shared_ptr<Scene::Node> mPlayerTrailHolder;
 		std::shared_ptr<Scene::Node> mRectangleParticlesHolder;
 		std::shared_ptr<Player> mPlayer;
+		std::shared_ptr<Helpers::Label> mNickname;
 		std::shared_ptr<Scene::Label> mScoreLabel;
 		std::shared_ptr<Scene::Label> mRiskLabel = nullptr;
 		std::shared_ptr<Shared::SceneHelpers::RectangleEmitter> mJumpParticles;
