@@ -43,8 +43,11 @@ AchievementsWindow::AchievementsWindow()
 	scrollbox->getContent()->attach(grid);
 	scrollbox->setVerticalMargin(48.0f);
 	scrollbox->setSensitivity({ 0.0f, 1.0f });
-
 	getBody()->attach(scrollbox);
+    
+    auto scrollbar = std::make_shared<Shared::SceneHelpers::VerticalScrollbar>();
+    scrollbar->setScrollbox(scrollbox);
+    scrollbox->attach(scrollbar);
 }
 
 AchievementsWindow::Item::Item(const std::string& name)
