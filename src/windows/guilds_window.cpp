@@ -66,7 +66,6 @@ GuildsWindow::MyGuildContent::MyGuildContent()
 	content_holder->attach(chat_content);
 
 	auto chat_tab_button = std::make_shared<Helpers::Button>();
-	chat_tab_button->setColor(Helpers::ButtonColor);
 	chat_tab_button->getLabel()->setText(LOCALIZE("CHAT"));
 	chat_tab_button->getLabel()->setFontSize(18.0f);
 	chat_tab_button->setSize({ 128.0f, 28.0f });
@@ -74,7 +73,6 @@ GuildsWindow::MyGuildContent::MyGuildContent()
 	attach(chat_tab_button);
 
 	auto info_tab_button = std::make_shared<Helpers::Button>();
-	info_tab_button->setColor(Helpers::ButtonColor);
 	info_tab_button->getLabel()->setText(LOCALIZE("INFO"));
 	info_tab_button->getLabel()->setFontSize(18.0f);
 	info_tab_button->setSize({ 128.0f, 28.0f });
@@ -97,7 +95,6 @@ GuildsWindow::MyGuildContent::ChatContent::ChatContent()
 	setStretch(1.0f);
 
 	auto asdaw = std::make_shared<Helpers::Button>();
-	asdaw->setColor(Helpers::ButtonColor);
 	asdaw->getLabel()->setText("THIS IS CHAT");
 	asdaw->getLabel()->setFontSize(18.0f);
 	asdaw->setSize({ 128.0f, 28.0f });
@@ -128,7 +125,6 @@ GuildsWindow::MyGuildContent::InfoContent::InfoContent()
 	attach(label2);
 
 	auto exit_button = std::make_shared<Helpers::Button>();
-	exit_button->setColor(Helpers::ButtonColor);
 	exit_button->getLabel()->setText(LOCALIZE("EXIT"));
 	exit_button->getLabel()->setFontSize(18.0f);
 	exit_button->setAnchor({ 0.5f, 1.0f });
@@ -170,7 +166,6 @@ GuildsWindow::SearchContent::SearchContent()
 	setStretch(1.0f);
 
 	auto create_button = std::make_shared<Helpers::Button>();
-	create_button->setColor(Helpers::ButtonColor);
 	create_button->getLabel()->setText(LOCALIZE("CREATE"));
 	create_button->getLabel()->setFontSize(18.0f);
 	create_button->setClickCallback([] {
@@ -248,7 +243,6 @@ GuildsWindow::SearchContent::Item::Item(int guildId)
 
 	auto join_button = std::make_shared<Helpers::Button>();
 	join_button->setTouchMask(1 << 1);
-	join_button->setColor(Helpers::ButtonColor);
 	join_button->getLabel()->setText(LOCALIZE("JOIN"));
 	join_button->setClickCallback([guildId] {
 		auto window = std::make_shared<ResponseWaitWindow>();

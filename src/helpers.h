@@ -7,9 +7,23 @@
 
 namespace hcg001::Helpers
 {
-	const auto MajorColor = glm::rgbColor(glm::vec3(210.0f, 0.5f, 1.0f));
-	const auto HeadWindowColor = MajorColor;
-	const auto ButtonColor = glm::rgbColor(glm::vec3(210.0f, 0.5f, 0.4f));
+	// https://paletton.com/#uid=73i1q0kllll4GM+d0tFtFd0M+4G
+
+	namespace Pallete
+	{
+		const float Hue = 200.0f;
+
+		const auto WindowHead = glm::rgbColor(glm::vec3(Hue, 0.75f + 0.125f, 0.25f));
+		const auto WindowBody = glm::rgbColor(glm::vec3(Hue, 0.75f + 0.125f, 0.125f));
+		const auto WindowTitle = Graphics::Color::ToNormalized(255, 255, 255);
+		const auto WindowItem = glm::rgbColor(glm::vec3(Hue, 0.4f, 0.25f));
+		const auto YellowLabel = glm::rgbColor(glm::vec3(60.0f, 0.25f, 1.0f));
+		const auto ButtonColor = glm::rgbColor(glm::vec3(Hue, 0.75f + 0.125f, 0.25f + 0.125f));
+	}
+
+	const auto HeadWindowColor = Graphics::Color::ToNormalized(5, 62, 62);
+	const auto BodyWindowColor = Graphics::Color::ToNormalized(0, 22, 22);
+
 
 	inline std::shared_ptr<Hud> gHud = nullptr;
 

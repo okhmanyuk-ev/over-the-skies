@@ -12,7 +12,7 @@ Label::Label()
 Button::Button()
 {
 	setRounding(0.5f);
-	setColor(ButtonColor);
+	setColor(Pallete::ButtonColor);
 
 	mLabel = std::make_shared<Label>();
 	mLabel->setAnchor(0.5f);

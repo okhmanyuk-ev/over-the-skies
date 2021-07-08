@@ -9,8 +9,7 @@ AchievementsWindow::AchievementsWindow()
 	getBackground()->setSize({ 314.0f, 512.0f - 64.0f });
 	getTitle()->setText(LOCALIZE("ACHIEVEMENTS_WINDOW_TITLE"));
 
-	auto ok_button = std::make_shared<Helpers::RectangleButton>();
-	ok_button->setColor(Helpers::HeadWindowColor);
+	auto ok_button = std::make_shared<Helpers::Button>();
 	ok_button->getLabel()->setText(LOCALIZE("WINDOW_OK"));
 	ok_button->getLabel()->setFontSize(18.0f);
 	ok_button->setClickCallback([] {
@@ -39,8 +38,8 @@ AchievementsWindow::AchievementsWindow()
 	const glm::vec2 ItemSize = { 314.0f, 64.0f };
 
 	auto grid = Shared::SceneHelpers::MakeVerticalGrid(ItemSize, items);
-	grid->setY(4.0f);
-	grid->setHeight(grid->getHeight() + 4.0f);
+	grid->setY(Item::VerticalMargin / 2.0f);
+	grid->setHeight(grid->getHeight() + Item::VerticalMargin);
 
 	auto scrollbox = std::make_shared<Scene::ClippableScissor<Scene::Scrollbox>>();
 	scrollbox->setStretch(1.0f);
@@ -55,16 +54,32 @@ AchievementsWindow::AchievementsWindow()
 	scrollbar->setX(-4.0f);
     scrollbar->setScrollbox(scrollbox);
     scrollbox->attach(scrollbar);
+
+	auto top_gradient = std::make_shared<Scene::Rectangle>();
+	top_gradient->setStretch({ 1.0f, 0.0f });
+	top_gradient->setHeight(Item::VerticalMargin);
+	top_gradient->setAnchor({ 0.5f, 0.0f });
+	top_gradient->setPivot({ 0.5f, 0.0f });
+	top_gradient->setVerticalGradient({ Helpers::Pallete::WindowBody, 1.0f }, { Helpers::Pallete::WindowBody, 0.0f });
+	scrollbox->attach(top_gradient);
+
+	auto bottom_gradient = std::make_shared<Scene::Rectangle>();
+	bottom_gradient->setStretch({ 1.0f, 0.0f });
+	bottom_gradient->setHeight(Item::VerticalMargin);
+	bottom_gradient->setAnchor({ 0.5f, 1.0f });
+	bottom_gradient->setPivot({ 0.5f, 1.0f });
+	bottom_gradient->setVerticalGradient({ Helpers::Pallete::WindowBody, 0.0f }, { Helpers::Pallete::WindowBody, 1.0f });
+	scrollbox->attach(bottom_gradient);
 }
 
 AchievementsWindow::Item::Item(int num, const std::string& name)
 {
 	setStretch({ 1.0f, 0.0f });
-	setMargin({ 16.0f, 8.0f });
+	setMargin({ 16.0f, VerticalMargin });
 	setHeight(64.0f);
 	setRounding(8.0f);
 	setAbsoluteRounding(true);
-	setAlpha(0.125f);
+	setColor(Helpers::Pallete::WindowItem);
 
 	auto num_label = std::make_shared<Helpers::Label>();
 	num_label->setFontSize(24.0f);
@@ -78,7 +93,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name)
 	title->setPosition({ 48.0f, 8.0f });
 	title->setFontSize(16.0f);
 	title->setText(LOCALIZE("ACHIEVEMENT_" + name));
-	title->setColor(glm::rgbColor(glm::vec3(60.0f, 0.25f, 1.0f)));
+	title->setColor(Helpers::Pallete::YellowLabel);
 	attach(title);
 
 	auto progress = ACHIEVEMENTS->getProgress(name);
@@ -98,7 +113,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name)
 
 	auto claim_button = std::make_shared<Helpers::Button>();
 	claim_button->setTouchMask(1 << 1);
-	claim_button->setColor(glm::rgbColor(glm::vec3(150.0f, 0.5f, 0.4f)));
+	claim_button->setColor(glm::rgbColor(glm::vec3(150.0f, 0.5f, 0.25f + 0.125f)));
 	claim_button->getLabel()->setText(LOCALIZE("CLAIM"));
 	claim_button->setClickCallback([] {
 		//
