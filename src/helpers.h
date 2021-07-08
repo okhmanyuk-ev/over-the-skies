@@ -7,8 +7,9 @@
 
 namespace hcg001::Helpers
 {
-	const auto BaseWindowColor = glm::rgbColor(glm::vec3(210.0f, 0.5f, 1.0f));
-	const auto ButtonColor = glm::rgbColor(glm::vec3(209.0f, 0.5f, 0.38f));
+	const auto MajorColor = glm::rgbColor(glm::vec3(210.0f, 0.5f, 1.0f));
+	const auto HeadWindowColor = MajorColor;
+	const auto ButtonColor = glm::rgbColor(glm::vec3(210.0f, 0.5f, 0.4f));
 
 	inline std::shared_ptr<Hud> gHud = nullptr;
 

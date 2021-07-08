@@ -35,7 +35,7 @@ RectangleButton::RectangleButton()
 TextInputField::TextInputField()
 {
 	setRounding(0.5f);
-	setColor(Helpers::BaseWindowColor / 24.0f);
+	setColor(Helpers::HeadWindowColor / 24.0f);
 
 	setClickCallback([this] {
 		auto text = mLabel->getText();

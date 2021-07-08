@@ -59,7 +59,7 @@ StandardWindow::StandardWindow(bool has_close_button)
 	mBackground->setAnchor(0.5f);
 	mBackground->setPivot(0.5f);
 	mBackground->setTouchable(true);
-	mBackground->setColor(Helpers::BaseWindowColor / 12.0f);
+	mBackground->setColor(Helpers::HeadWindowColor / 12.0f);
 	getContent()->attach(mBackground);
 
 	auto header = std::make_shared<Scene::Node>();
@@ -75,7 +75,7 @@ StandardWindow::StandardWindow(bool has_close_button)
 
 	auto header_bg = std::make_shared<Scene::Rectangle>();
 	header_bg->setStretch(1.0f);
-	header_bg->setColor(Helpers::BaseWindowColor);
+	header_bg->setColor(Helpers::HeadWindowColor);
 	header_bg->setAlpha(0.25f);
 	header->attach(header_bg);
 

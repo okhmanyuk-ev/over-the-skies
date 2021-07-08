@@ -16,6 +16,6 @@ namespace hcg001
 	class AchievementsWindow::Item : public Scene::Rectangle
 	{
 	public:
-		Item(const std::string& name);
+		Item(int num, const std::string& name);
 	};
 }
