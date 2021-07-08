@@ -4,7 +4,7 @@
 
 namespace hcg001
 {
-	class AchievementsWindow : public StandardWindow
+	class AchievementsWindow : public Window
 	{
 	private:
 		class Item;

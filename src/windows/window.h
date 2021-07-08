@@ -5,39 +5,10 @@
 
 namespace hcg001
 {
-	class Window : public Scene::Clickable<Shared::SceneHelpers::Backshaded<Shared::SceneManager::Window>>
+	class Window : public Shared::SceneHelpers::StandardWindow
 	{
 	public:
-		Window();
-
-	public:
-		void onOpenEnd() override;
-		void onCloseBegin() override;
-
-	public:
-		std::unique_ptr<Actions::Action> createOpenAction() override;
-		std::unique_ptr<Actions::Action> createCloseAction() override;
-
-	public:
-		auto getContent() { return mContent; }
-
-		auto getCloseOnMissclick() const { return mCloseOnMissclick; }
-		void setCloseOnMissclick(bool value) { mCloseOnMissclick = value; }
-
-	public:
-		auto getFadeAlpha() const { return mFadeAlpha; }
-		void setFadeAlpha(float value) { mFadeAlpha = value; }
-
-	private:
-		std::shared_ptr<Scene::Node> mContent;
-		bool mCloseOnMissclick = true;
-		float mFadeAlpha = 0.5f;
-	};
-
-	class StandardWindow : public Window
-	{
-	public:
-		StandardWindow(bool has_close_button = true);
+		Window(bool has_close_button = true);
 
 	public:
 		auto getBackground() const { return mBackground; }

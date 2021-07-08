@@ -4,7 +4,7 @@
 
 namespace hcg001
 {
-	class CreateGuildWindow : public StandardWindow
+	class CreateGuildWindow : public Window
 	{
 	public:
 		CreateGuildWindow();

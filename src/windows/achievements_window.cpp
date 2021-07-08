@@ -108,13 +108,13 @@ AchievementsWindow::Item::Item(int num, const std::string& name)
 	auto progressbar = std::make_shared<Shared::SceneHelpers::Progressbar>();
 	progressbar->setSize({ 148.0f, 4.0f });
 	progressbar->setPosition({ 48.0f, 42.0f });
-	progressbar->setProgress(0.25f);
+	progressbar->setProgress((float)progress / (float)required);
 	attach(progressbar);
 
 	auto claim_button = std::make_shared<Helpers::Button>();
 	claim_button->setTouchMask(1 << 1);
 	claim_button->setColor(glm::rgbColor(glm::vec3(150.0f, 0.5f, 0.25f + 0.125f)));
-	claim_button->getLabel()->setText(LOCALIZE("CLAIM"));
+	claim_button->getLabel()->setText(LOCALIZE("ACHIEVEMENTS_WINDOW_CLAIM"));
 	claim_button->setClickCallback([] {
 		//
 	});

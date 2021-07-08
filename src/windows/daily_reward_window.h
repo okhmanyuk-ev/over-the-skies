@@ -4,7 +4,7 @@
 
 namespace hcg001
 {
-	class DailyRewardWindow : public StandardWindow
+	class DailyRewardWindow : public Window
 	{
 	public:
 		const static inline std::map<int, int> DailyRewardMap = {

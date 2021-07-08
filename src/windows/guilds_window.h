@@ -4,7 +4,7 @@
 
 namespace hcg001
 {
-	class GuildsWindow : public StandardWindow
+	class GuildsWindow : public Window
 	{
 	public:
 		class SearchContent;

@@ -16,7 +16,7 @@ namespace hcg001
 		std::shared_ptr<Scene::Node> createMessageNode(int msgid) const override;
 	};
 
-	class GlobalChatWindow : public StandardWindow,
+	class GlobalChatWindow : public Window,
 		public Common::Event::Listenable<Channel::GlobalChatMessageEvent>
 	{
 	public:

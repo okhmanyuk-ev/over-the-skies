@@ -2,7 +2,7 @@
 
 using namespace hcg001;
 
-ResponseWaitWindow::ResponseWaitWindow() : StandardWindow(false)
+ResponseWaitWindow::ResponseWaitWindow() : Window(false)
 {
 	setCloseOnMissclick(false);
 	getBackground()->setSize({ 314.0f, 128.0f });

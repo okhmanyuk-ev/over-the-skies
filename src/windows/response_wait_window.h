@@ -4,7 +4,7 @@
 
 namespace hcg001
 {
-	class ResponseWaitWindow : public StandardWindow
+	class ResponseWaitWindow : public Window
 	{
 	public:
 		ResponseWaitWindow();

@@ -4,7 +4,7 @@
 
 namespace hcg001
 {
-	class ShopWindow : public StandardWindow
+	class ShopWindow : public Window
 	{
 	public:
 		ShopWindow();

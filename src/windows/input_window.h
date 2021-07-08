@@ -6,7 +6,7 @@
 
 namespace hcg001
 {
-	class InputWindow : public StandardWindow,
+	class InputWindow : public Window,
 		public Common::Event::Listenable<Platform::System::VirtualKeyboardTextChanged>,
 		public Common::Event::Listenable<Platform::System::VirtualKeyboardEnterPressed>,
 		public Common::Event::Listenable<Platform::Input::Keyboard::Event>

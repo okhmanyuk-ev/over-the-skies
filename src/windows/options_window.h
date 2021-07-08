@@ -4,7 +4,7 @@
 
 namespace hcg001
 {
-	class OptionsWindow : public StandardWindow
+	class OptionsWindow : public Window
 	{
 	public:
 		OptionsWindow();
