@@ -45,12 +45,12 @@ TextInputField::TextInputField()
 	attach(mLabel);
 }
 
-float hcg001::Helpers::SmoothValueSetup(float src, float dst)
+float hcg001::Helpers::SmoothValueSetup(float src, float dst, Clock::Duration dTime)
 {
 	auto delta = dst - src;
-	auto dTime = Clock::ToSeconds(FRAME->getTimeDelta());
+	auto _dTime = Clock::ToSeconds(dTime);
 	const float speed = 10.0f;
-	return src + (delta * dTime * speed);
+	return src + (delta * _dTime * speed);
 }
 
 WaitingIndicator::WaitingIndicator()

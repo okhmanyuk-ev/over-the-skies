@@ -163,7 +163,7 @@ namespace hcg001::Helpers
 		bool mFirstCalled = false;
 	};
 
-	float SmoothValueSetup(float src, float dst);
+	float SmoothValueSetup(float src, float dst, Clock::Duration dTime);
 
 	class WaitingIndicator : public Scene::Node
 	{

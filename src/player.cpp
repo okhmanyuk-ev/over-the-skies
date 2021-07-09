@@ -120,7 +120,7 @@ PayablePlayer::PayablePlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Sk
 	trail->setNarrowing(true);
 	attach(trail);*/
 
-	auto circle_texture = std::make_shared<Renderer::RenderTarget>(32, 32);
+	auto circle_texture = std::make_shared<Renderer::RenderTarget>(24, 24);
 
 	auto model = glm::mat4(1.0f);
 	model = glm::scale(model, { (float)circle_texture->getWidth(), (float)circle_texture->getHeight(), 1.0f });
@@ -143,8 +143,8 @@ PayablePlayer::PayablePlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Sk
 	emitter->setTexture(circle_texture);			
 	emitter->setBlendMode(Renderer::BlendStates::Additive);
 	emitter->setSampler(Renderer::Sampler::Linear);
-	emitter->setDelay(1.0f / 60.0f);
-	emitter->setDirection({ 0.0f, 1.0f });
+	emitter->setDelay(1.0f / 120.0f);
+	emitter->setDirection({ 0.0f, 0.0f });
 	emitter->setBeginColor({ 1.0f, 0.25f, 1.0f, 1.0f });
 	emitter->setEndColor({ 0.25f, 0.25f, 1.0f, 1.0f });
 	//emitter->setBeginScale({ 1.0f, 1.0f });

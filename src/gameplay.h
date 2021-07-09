@@ -19,7 +19,7 @@ namespace hcg001
 
 	protected:
 		void touch(Touch type, const glm::vec2& pos) override;
-		void update() override;
+		void update(Clock::Duration delta) override;
 		
 	private:
 		void physics(float dTime);
@@ -55,7 +55,6 @@ namespace hcg001
 
 	private:
 		bool mReady = false;
-		Common::TimestepFixer mTimestepFixer;
 		glm::vec2 mVelocity = { 0.0f, 0.0f };
 		float mMaxY = 0.0f;
 		int mScore = 0;

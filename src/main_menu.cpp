@@ -116,8 +116,8 @@ MainMenu::MainMenu()
 
 	refresh();
 
-	runAction(Actions::Collection::ExecuteInfinite([this] {
-		menuPhysics(Clock::ToSeconds(FRAME->getTimeDelta()));
+	runAction(Actions::Collection::ExecuteInfinite([this](auto delta) {
+		menuPhysics(Clock::ToSeconds(delta));
 	}));
 
 	auto safe_area = std::make_shared<Shared::SceneHelpers::SafeArea>();

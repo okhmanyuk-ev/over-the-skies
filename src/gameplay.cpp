@@ -103,11 +103,6 @@ Gameplay::Gameplay()
 	mJumpParticles->setMinDuration(0.25f);
 	mJumpParticles->setMaxDuration(0.75f);
 	mPlayer->attach(mJumpParticles);
-
-	mTimestepFixer.setTimestep(1.0f / 120.0f);
-	mTimestepFixer.setCallback([this](float dTime) {
-		physics(dTime);
-	});
 }
 
 void Gameplay::touch(Touch type, const glm::vec2& pos)
@@ -120,14 +115,14 @@ void Gameplay::touch(Touch type, const glm::vec2& pos)
 	tap();
 }
 
-void Gameplay::update()
+void Gameplay::update(Clock::Duration delta)
 {
-	Screen::update();
+	Screen::update(delta);
 
 	if (!mReady)
 		return;
 
-	mTimestepFixer.execute();
+	physics(Clock::ToSeconds(delta));
 
 	auto projected_player_pos = unproject(mPlayer->project(mPlayer->getAbsoluteSize() / 2.0f));
 
@@ -144,8 +139,8 @@ void Gameplay::update()
 		mPlayer->setSpriteRotation(angle);
 	}
 
-	auto dTime = Clock::ToSeconds(FRAME->getTimeDelta());
-	camera(dTime); // TODO: maybe inside TimestepFixer?
+	auto dTime = Clock::ToSeconds(delta);
+	camera(dTime);
 	removeFarPlanes();
 	spawnPlanes();
 

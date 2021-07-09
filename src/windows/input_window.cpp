@@ -42,11 +42,11 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 	mLabel->setText(text);
 	label_bg->attach(mLabel);
 
-	runAction(Actions::Collection::ExecuteInfinite([this, label_bg, MinLabelBgHeight, DefaultWindowHeight, DefaultLabelBgHeight] {
+	runAction(Actions::Collection::ExecuteInfinite([this, label_bg, MinLabelBgHeight, DefaultWindowHeight, DefaultLabelBgHeight](auto delta) {
 		auto label_bg_h = DefaultLabelBgHeight;
 		label_bg_h += mLabel->getAbsoluteHeight();
 		label_bg_h = glm::max(MinLabelBgHeight, label_bg_h);
-		label_bg->setHeight(Helpers::SmoothValueSetup(label_bg->getHeight(), label_bg_h));
+		label_bg->setHeight(Helpers::SmoothValueSetup(label_bg->getHeight(), label_bg_h, delta));
 		
 		auto win_h = DefaultWindowHeight;
 		win_h += label_bg->getAbsoluteHeight();
