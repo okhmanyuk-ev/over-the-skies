@@ -11,10 +11,11 @@ namespace hcg001
 		Snowflake,
 		Basketball,
 		Football,
-		Vynil
+		Vynil,
+		Payable // TODO: rename
 	};
 
-	const inline int SkinCount = 5;
+	const inline int SkinCount = 6;
 
 	const inline std::map<Skin, std::string> SkinPath = { 
 		{ Skin::Ball, "textures/skins/ball.png" },
@@ -22,6 +23,7 @@ namespace hcg001
 		{ Skin::Basketball, "textures/skins/basketball.png" },
 		{ Skin::Football, "textures/skins/football.png" },
 		{ Skin::Vynil, "textures/skins/vynil.png" },
+		{ Skin::Payable, "textures/skins/ball.png" }
 	};
 
 	const inline std::map<Skin, int> SkinCost = {
@@ -30,6 +32,7 @@ namespace hcg001
 		{ Skin::Basketball, 25 },
 		{ Skin::Football, 50 },
 		{ Skin::Vynil, 75 },
+		{ Skin::Payable, 0 }
 		// 100
 		// 150
 		// 200

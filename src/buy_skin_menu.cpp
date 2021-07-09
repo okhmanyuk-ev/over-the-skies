@@ -6,7 +6,7 @@ using namespace hcg001;
 
 BuySkinMenu::BuySkinMenu(Skin skin)
 {
-	setStretch({ 1.0f, 1.0f });
+	setStretch(1.0f);
 
 	mTitle = std::make_shared<Scene::Label>();
 	mTitle->setFont(FONT("default"));
@@ -24,6 +24,9 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	attach(mImage);
 
 	mBuyButton = std::make_shared<Helpers::Button>();
+	mBuyButton->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
+	mBuyButton->setAdaptiveFontSize(false);
+	mBuyButton->getLabel()->setFontSize(20.0f);
 	mBuyButton->getLabel()->setText(LOCALIZE("BUY_SKIN_BUY"));
 	mBuyButton->setClickCallback([this, skin] {
 		PROFILE->decreaseRubies(SkinCost.at(skin));
@@ -37,9 +40,13 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	mBuyButton->setAnchor({ 0.5f, 1.25f });
 	mBuyButton->setPivot({ 1.0f, 0.5f });
 	mBuyButton->setPosition({ -8.0f, 0.0f });
+	mBuyButton->refresh();
 	attach(mBuyButton);
 
 	mCancelButton = std::make_shared<Helpers::Button>();
+	mCancelButton->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
+	mCancelButton->setAdaptiveFontSize(false);
+	mCancelButton->getLabel()->setFontSize(20.0f);
 	mCancelButton->getLabel()->setText(LOCALIZE("BUY_SKIN_CANCEL"));
 	mCancelButton->setClickCallback([this] {
 		mExitCallback();
@@ -48,6 +55,7 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	mCancelButton->setAnchor({ 0.5f, 1.25f });
 	mCancelButton->setPivot({ 0.0f, 0.5f });
 	mCancelButton->setPosition({ 8.0f, 0.0f });
+	mCancelButton->refresh();
 	attach(mCancelButton);
 }
 

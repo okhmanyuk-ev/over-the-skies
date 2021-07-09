@@ -54,6 +54,12 @@ namespace hcg001
 		VynilPlayer(std::weak_ptr<Scene::Node> trailHolder);
 	};
 
+	class PayablePlayer : public Player
+	{
+	public:
+		PayablePlayer(std::weak_ptr<Scene::Node> trailHolder);
+	};
+
 	inline std::shared_ptr<Player> createPlayer(Skin skin, std::weak_ptr<Scene::Node> trailHolder)
 	{
 		if (skin == Skin::Ball)
@@ -66,6 +72,8 @@ namespace hcg001
 			return std::make_shared<FootballPlayer>(trailHolder);
 		else if (skin == Skin::Vynil)
 			return std::make_shared<VynilPlayer>(trailHolder);
+		else if (skin == Skin::Payable)
+			return std::make_shared<PayablePlayer>(trailHolder);
 		else
 		{
 			assert(false);

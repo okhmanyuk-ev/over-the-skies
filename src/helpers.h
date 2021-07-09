@@ -7,8 +7,6 @@
 
 namespace hcg001::Helpers
 {
-	// https://paletton.com/#uid=73i1q0kllll4GM+d0tFtFd0M+4G
-
 	namespace Pallete
 	{
 		const float Hue = 200.0f;

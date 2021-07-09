@@ -109,3 +109,47 @@ VynilPlayer::VynilPlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Skin::
 
 	makeSprite();
 }
+
+PayablePlayer::PayablePlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Skin::Payable)
+{
+	/*auto trail = std::make_shared<Scene::Trail>(trailHolder);
+	trail->setAnchor({ 0.5f, 0.5f });
+	trail->setPivot({ 0.5f, 0.5f });
+	trail->setStretch({ 0.9f, 0.9f });
+	trail->setLifetime(0.2f);
+	trail->setNarrowing(true);
+	attach(trail);*/
+
+	auto circle_texture = std::make_shared<Renderer::RenderTarget>(32, 32);
+
+	auto model = glm::mat4(1.0f);
+	model = glm::scale(model, { (float)circle_texture->getWidth(), (float)circle_texture->getHeight(), 1.0f });
+
+	GRAPHICS->begin();
+	GRAPHICS->pushRenderTarget(circle_texture);
+	GRAPHICS->pushOrthoMatrix(circle_texture);
+	GRAPHICS->pushBlendMode(Renderer::BlendStates::AlphaBlend);
+	GRAPHICS->pushViewport(circle_texture);
+	GRAPHICS->clear();
+	GRAPHICS->drawCircle(model, { Graphics::Color::White, 1.0f }, { Graphics::Color::White, 0.0f });
+	GRAPHICS->pop(4);
+	GRAPHICS->end();
+
+	auto emitter = std::make_shared<Shared::SceneHelpers::SpriteEmitter>();
+	emitter->setHolder(trailHolder);
+	emitter->setStretch(0.0f);
+	emitter->setPivot(0.5f);
+	emitter->setAnchor(0.5f);
+	emitter->setTexture(circle_texture);			
+	emitter->setBlendMode(Renderer::BlendStates::Additive);
+	emitter->setSampler(Renderer::Sampler::Linear);
+	emitter->setDelay(1.0f / 60.0f);
+	emitter->setDirection({ 0.0f, 1.0f });
+	emitter->setBeginColor({ 1.0f, 0.25f, 1.0f, 1.0f });
+	emitter->setEndColor({ 0.25f, 0.25f, 1.0f, 1.0f });
+	//emitter->setBeginScale({ 1.0f, 1.0f });
+	//emitter->setEndScale({ 1.0f, 1.0f });
+	attach(emitter);
+
+	makeSprite();
+}

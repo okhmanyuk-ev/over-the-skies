@@ -250,23 +250,87 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 
 	for (const auto& [skin, path] : SkinPath)
 	{
+		auto locked = PROFILE->isSkinLocked(skin);
+
 		auto item = std::make_shared<Scene::Cullable<Scene::Clickable<Scene::Node>>>();
 		item->setStretch(1.0f);
 		item->setPivot(0.5f);
 		item->setAnchor(0.5f);
 		item->setTouchMask(1 << 1);
+		item->setClickCallback([this, item] {
+			mScrollTarget = item;
+		});
 		result.push_back(item);
 
 		auto image = std::make_shared<Scene::Sprite>();
 		image->setBatchGroup("main_menu_item_image");
 		image->setTexture(TEXTURE(path));
 		image->setSampler(Renderer::Sampler::Linear);
-		image->setSize({ SkinSize, SkinSize });
+		image->setSize(SkinSize);
 		image->setAnchor(0.5f);
 		image->setPivot(0.5f);
 		item->attach(image);
 
-		image->runAction(Actions::Collection::ExecuteInfinite([this, image, SkinSize, SkinSizeChoosed] {
+		if (locked)
+			image->setColor({ 0.5f, 0.5f, 0.5f });
+
+		auto padlock = std::make_shared<Scene::Sprite>();
+		padlock->setBatchGroup("main_menu_item_padlock");
+		padlock->setTexture(TEXTURE("textures/padlock.png"));
+		padlock->setScale({ 0.04f, 0.04f });
+		padlock->setAnchor({ 0.5f, 0.0f });
+		padlock->setPivot({ 0.5f, 1.0f });
+		padlock->setPosition({ 0.0f, -16.0f });
+		padlock->setEnabled(locked);
+		image->attach(padlock);
+
+		auto footer = std::make_shared<Scene::Node>();
+		footer->setAnchor({ 0.5f, 1.0f });
+		footer->setPivot({ 0.5f, 0.0f });
+		footer->setPosition({ 0.0f, 24.0f });
+		image->attach(footer);
+
+		auto price = std::make_shared<Scene::Label>();
+		price->setFont(FONT("default"));
+		price->setFontSize(16.0f);
+		price->setText(std::to_string(SkinCost.at(skin)));
+		price->setAnchor({ 0.0f, 0.5f });
+		price->setPivot({ 0.0f, 0.5f });
+		price->setEnabled(locked);
+		footer->attach(price);
+
+		const float PriceRubyPadding = 6.0f;
+
+		auto ruby = std::make_shared<Scene::Sprite>();
+		ruby->setTexture(TEXTURE("textures/ruby.png"));
+		ruby->setSize(16.0f);
+		ruby->setAnchor({ 1.0f, 0.5f });
+		ruby->setPivot({ 0.0f, 0.5f });
+		ruby->setPosition({ PriceRubyPadding, 0.0f });
+		ruby->setEnabled(locked);
+		price->attach(ruby);
+
+		auto name = std::make_shared<Scene::Label>();
+		name->setFont(FONT("default"));
+		name->setFontSize(16.0f);
+		name->setText(LOCALIZE("SKIN_NAME_" + std::to_string((int)skin)));
+		name->setAnchor(0.5f);
+		name->setPivot(0.5f);
+		name->setEnabled(!locked);
+		footer->attach(name);
+
+		auto hideFarNode = [this, item](auto node) {
+			if (!mScrollbox->isTransformReady())
+				return;
+
+			auto item_projected = unproject(item->project(item->getAbsoluteSize() / 2.0f));
+			auto slot_projected = unproject(mScrollbox->project(mScrollbox->getAbsoluteSize() / 2.0f));
+			auto distance = glm::distance(item_projected, slot_projected);
+			auto alpha = glm::smoothstep(ItemSize, ItemSize / 2.0f, distance);
+			node->setAlpha(alpha);
+		};
+
+		image->runAction(Actions::Collection::ExecuteInfinite([this, image, SkinSize, SkinSizeChoosed, hideFarNode, footer, price, ruby, name, PriceRubyPadding, locked] {
 			if (!mScrollbox->isTransformReady())
 				return;
 
@@ -275,96 +339,16 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			auto distance = glm::distance(skin_projected, slot_projected);
 			auto size = glm::lerp(SkinSize, SkinSizeChoosed, glm::smoothstep(ItemSize, 0.0f, distance));
 			image->setSize(size);
-		}));
+			//auto scale = glm::lerp(1.0f, 1.75f, glm::smoothstep(ItemSize, 0.0f, distance));
+			//image->setScale(scale);
 
-		item->setClickCallback([this, item] {
-			mScrollTarget = item;
-		});
-
-		// footer
-
-		auto footer = std::make_shared<Scene::Node>();
-		footer->setAnchor({ 0.5f, 1.0f });
-		footer->setPivot({ 0.5f, 0.0f });
-		footer->setPosition({ 0.0f, 24.0f });
-		image->attach(footer);
-
-		auto hideFarNode = [this, item](auto node) {
-			if (!mScrollbox->isTransformReady())
-				return;
-			
-			auto item_projected = unproject(item->project(item->getAbsoluteSize() / 2.0f));
-			auto slot_projected = unproject(mScrollbox->project(mScrollbox->getAbsoluteSize() / 2.0f));
-			auto distance = glm::distance(item_projected, slot_projected);
-			auto alpha = glm::smoothstep(ItemSize, ItemSize / 2.0f, distance);
-			node->setAlpha(alpha);
-		};
-
-		if (PROFILE->isSkinLocked(skin))
-		{
-			image->setColor({ 0.5f, 0.5f, 0.5f });
-
-			// padlock
-
-			auto padlock = std::make_shared<Scene::Sprite>();
-			padlock->setBatchGroup("main_menu_item_padlock");
-			padlock->setTexture(TEXTURE("textures/padlock.png"));
-			padlock->setScale({ 0.04f, 0.04f });
-			padlock->setAnchor({ 0.5f, 0.0f });
-			padlock->setPivot({ 0.5f, 1.0f });
-			padlock->setPosition({ 0.0f, -16.0f });
-			image->attach(padlock);
-
-			// price
-
-			const float PriceRubyPadding = 6.0f;
-
-			auto price = std::make_shared<Scene::Label>();
-			price->setFont(FONT("default"));
-			price->setFontSize(16.0f);
-			price->setText(std::to_string(SkinCost.at(skin)));
-			price->setAnchor({ 0.0f, 0.5f });
-			price->setPivot({ 0.0f, 0.5f });
-			footer->attach(price);
-
-			price->runAction(Actions::Collection::ExecuteInfinite([hideFarNode, price] {
-				hideFarNode(price);
-			}));
-
-			// ruby
-
-			auto ruby = std::make_shared<Scene::Sprite>();
-			ruby->setTexture(TEXTURE("textures/ruby.png"));
-			ruby->setSize({ 16.0f, 16.0f });
-			ruby->setAnchor({ 1.0f, 0.5f });
-			ruby->setPivot({ 0.0f, 0.5f });
-			ruby->setPosition({ PriceRubyPadding, 0.0f });
-			price->attach(ruby);
-
-			ruby->runAction(Actions::Collection::ExecuteInfinite([hideFarNode, ruby] {
-				hideFarNode(ruby);
-			}));
-
-			footer->runAction(Actions::Collection::ExecuteInfinite([footer, price, ruby, PriceRubyPadding] {
+			if (locked)
 				footer->setWidth(price->getWidth() + ruby->getWidth() + PriceRubyPadding);
-			}));
-		}
-		else
-		{
-			// title
 
-			auto name = std::make_shared<Scene::Label>();
-			name->setFont(FONT("default"));
-			name->setFontSize(16.0f);
-			name->setText(LOCALIZE("SKIN_NAME_" + std::to_string((int)skin)));
-			name->setAnchor({ 0.5f, 0.5f });
-			name->setPivot({ 0.5f, 0.5f });
-			footer->attach(name);
-
-			name->runAction(Actions::Collection::ExecuteInfinite([hideFarNode, name] {
-				hideFarNode(name);
-			}));
-		}
+			hideFarNode(ruby);
+			hideFarNode(price);
+			hideFarNode(name);
+		}));
 
 		if (PROFILE->getCurrentSkin() == skin)
 			mScrollTarget = item;
