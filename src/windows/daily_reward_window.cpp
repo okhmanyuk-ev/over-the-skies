@@ -99,10 +99,8 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	grid->setY(8.0f);
 	getBody()->attach(grid);
 
-	auto ok_button = std::make_shared<Helpers::RectangleButton>();
-	ok_button->setColor(Helpers::HeadWindowColor);
+	auto ok_button = std::make_shared<Helpers::Button>();
 	ok_button->getLabel()->setText(LOCALIZE("DAILYREWARD_CLAIM"));
-	ok_button->getLabel()->setFontSize(18.0f);
 	ok_button->setClickCallback([this] {
 		SCENE_MANAGER->popWindow(mClaimCallback);
 	});

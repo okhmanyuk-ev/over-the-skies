@@ -14,7 +14,7 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 	getBackground()->setAnchor({ 0.5f, 0.25f });
 	getTitle()->setText(LOCALIZE("INPUT_WINDOW_TITLE"));
 
-	setCloseOnMissclick(false);
+	//setCloseOnMissclick(false);
 
 	auto label_bg = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::Rectangle>>>();
 	label_bg->setStretch({ 1.0f, 0.0f });
@@ -25,8 +25,7 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 	label_bg->setY(12.0f);
 	label_bg->setRounding(8.0f);
 	label_bg->setAbsoluteRounding(true);
-	label_bg->setColor(Graphics::Color::Black);
-	label_bg->setAlpha(0.5f);
+	label_bg->setColor(Helpers::Pallete::InputField);
 	label_bg->setClickCallback([] {
 		PLATFORM->showVirtualKeyboard();
 	});
@@ -77,47 +76,47 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 	mCancelButton->setPosition({ 56.0f, -24.0f });
 	getBody()->attach(mCancelButton);
 
-	auto rect = std::make_shared<Scene::Rectangle>();
-	rect->setAlpha(0.0f);
-	rect->setWidth(2.0f);
-	rect->setRounding(1.0f);
-	rect->runAction(Actions::Collection::ExecuteInfinite([rect, this] {
+	auto indicator = std::make_shared<Scene::Rectangle>();
+	indicator->setAlpha(0.0f);
+	indicator->setWidth(2.0f);
+	indicator->setRounding(1.0f);
+	indicator->runAction(Actions::Collection::ExecuteInfinite([indicator, this] {
 		auto font = mLabel->getFont();
 		
 		auto font_scale = font->getScaleFactorForSize(mLabel->getFontSize());
 		auto height = font->getAscent() * font_scale;
 		height -= font->getDescent() * font_scale;
 
-		rect->setHeight(height);
+		indicator->setHeight(height);
 
 		if (mLabel->getText().empty())
 		{
-			rect->setPosition({ 0.0f, 0.0f });
-			rect->setAnchor(0.5f);
-			rect->setPivot(0.5f);
+			indicator->setPosition({ 0.0f, 0.0f });
+			indicator->setAnchor(0.5f);
+			indicator->setPivot(0.5f);
 			return;
 		}
 
-		rect->setAnchor(0.0f);
-		rect->setPivot({ 0.5f, 0.0f });
+		indicator->setAnchor(0.0f);
+		indicator->setPivot({ 0.5f, 0.0f });
 
 		auto index = mLabel->getText().length() - 1;
 		
 		auto [pos, size] = mLabel->getSymbolBounds(index);
 		auto line_y = mLabel->getSymbolLineY(index);
 		
-		rect->setX(pos.x + size.x);
-		rect->setY(line_y);
+		indicator->setX(pos.x + size.x);
+		indicator->setY(line_y);
 	}));
-	rect->runAction(Actions::Collection::RepeatInfinite([rect] {
+	indicator->runAction(Actions::Collection::RepeatInfinite([indicator] {
 		return Actions::Collection::MakeSequence(
-			Actions::Collection::ChangeAlpha(rect, 1.0f, 0.125f),
+			Actions::Collection::ChangeAlpha(indicator, 1.0f, 0.125f),
 			Actions::Collection::Wait(0.25f),
-			Actions::Collection::ChangeAlpha(rect, 0.0f, 0.125f),
+			Actions::Collection::ChangeAlpha(indicator, 0.0f, 0.125f),
 			Actions::Collection::Wait(0.25f)
 		);
 	}));
-	mLabel->attach(rect);
+	mLabel->attach(indicator);
 }
 
 void InputWindow::onEvent(const Platform::System::VirtualKeyboardTextChanged& e)

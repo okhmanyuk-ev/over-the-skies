@@ -19,11 +19,8 @@ namespace hcg001::Helpers
 		const auto WindowItem = glm::rgbColor(glm::vec3(Hue, 0.4f, 0.25f));
 		const auto YellowLabel = glm::rgbColor(glm::vec3(60.0f, 0.25f, 1.0f));
 		const auto ButtonColor = glm::rgbColor(glm::vec3(Hue, 0.75f + 0.125f, 0.25f + 0.125f));
+		const auto InputField = glm::rgbColor(glm::vec3(Hue, 0.75f + 0.125f, 0.125f / 2.0f));
 	}
-
-	const auto HeadWindowColor = Graphics::Color::ToNormalized(5, 62, 62);
-	const auto BodyWindowColor = Graphics::Color::ToNormalized(0, 22, 22);
-
 
 	inline std::shared_ptr<Hud> gHud = nullptr;
 
@@ -48,31 +45,19 @@ namespace hcg001::Helpers
 		Label();
 	};
 
-	class Button : public Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::Button<Scene::Rectangle>>
+	class Button : public Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::RectangleButton>
 	{
 	public:
 		Button();
 
 	public:
-		void refresh() override {}
-
-	public:
-		auto getLabel() const { return mLabel; }
-
 		auto isAdaptiveFontSize() const { return mAdaptiveFontSize; }
 		void setAdaptiveFontSize(bool value) { mAdaptiveFontSize = value; }
 
 	private:
-		std::shared_ptr<Label> mLabel;
 		bool mAdaptiveFontSize = true;
 	};	
 	
-	class RectangleButton : public Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::RectangleButton>
-	{
-	public:
-		RectangleButton();
-	};
-
 	class TextInputField : public Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::ClippableStencil<Scene::Rectangle>>>
 	{
 	public:

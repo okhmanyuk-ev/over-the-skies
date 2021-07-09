@@ -21,11 +21,12 @@ MainMenu::MainMenu()
 	title->setText(LOCALIZE("MAIN_MENU_TITLE"));
 	attach(title);
 
-	const float ButtonLabelFontSize = 20.0f;
 	const glm::vec2 ButtonSize = { 192.0f, 48.0f };
 
-	auto play_button = std::make_shared<Helpers::RectangleButton>();
-	play_button->getLabel()->setFontSize(ButtonLabelFontSize);
+	auto play_button = std::make_shared<Helpers::Button>();	
+	play_button->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
+	play_button->setAdaptiveFontSize(false);
+	play_button->getLabel()->setFontSize(20.0f);
 	play_button->getLabel()->setText(LOCALIZE("MAIN_MENU_PLAY"));
 	play_button->setClickCallback([this] {
 		if (PROFILE->isSkinLocked(mChoosedSkin))
@@ -40,18 +41,21 @@ MainMenu::MainMenu()
 	play_button->setAnchor({ -0.5f, 0.5f });
 	play_button->setPivot(0.5f);
 	play_button->setPosition({ 0.0f, 224.0f - 16.0f });
+	play_button->refresh();
 	attach(play_button);
 
-	auto unlock_button = std::make_shared<Helpers::RectangleButton>();
-	unlock_button->getLabel()->setFontSize(ButtonLabelFontSize);
+	auto unlock_button = std::make_shared<Helpers::Button>();
+	unlock_button->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
+	unlock_button->setAdaptiveFontSize(false);
+	unlock_button->getLabel()->setFontSize(20.0f);
 	unlock_button->getLabel()->setText(LOCALIZE("MAIN_MENU_UNLOCK"));
-	unlock_button->setClickCallback([this, ButtonLabelFontSize, unlock_button] {
+	unlock_button->setClickCallback([this, unlock_button] {
 		if (!PROFILE->isSkinLocked(mChoosedSkin))
 			return;
 
 		if (PROFILE->getRubies() < SkinCost.at(mChoosedSkin))
 		{
-			auto label = Shared::SceneHelpers::MakeFastPopupLabel(shared_from_this(), unlock_button, LOCALIZE("MAIN_MENU_NOT_ENOUG_RUBIES"), ButtonLabelFontSize);
+			auto label = Shared::SceneHelpers::MakeFastPopupLabel(shared_from_this(), unlock_button, LOCALIZE("MAIN_MENU_NOT_ENOUG_RUBIES"), 20.0f);
 			label->setOrigin({ 0.0f, unlock_button->getHeight() });
 			return;
 		}
@@ -67,6 +71,7 @@ MainMenu::MainMenu()
 	unlock_button->setAnchor({ 1.5f, 0.5f });
 	unlock_button->setPivot(0.5f);
 	unlock_button->setPosition({ 0.0f, 224.0f - 16.0f });
+	unlock_button->refresh();
 
 	attach(unlock_button);
 

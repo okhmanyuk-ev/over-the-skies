@@ -21,8 +21,8 @@ namespace hcg001
 	private:
 		std::shared_ptr<Scene::Label> mTitle = nullptr;
 		std::shared_ptr<Scene::Sprite> mImage = nullptr;
-		std::shared_ptr<Helpers::RectangleButton> mBuyButton = nullptr;
-		std::shared_ptr<Helpers::RectangleButton> mCancelButton = nullptr;
+		std::shared_ptr<Helpers::Button> mBuyButton = nullptr;
+		std::shared_ptr<Helpers::Button> mCancelButton = nullptr;
 
 	public:
 		void setExitCallback(std::function<void()> value) { mExitCallback = value; }

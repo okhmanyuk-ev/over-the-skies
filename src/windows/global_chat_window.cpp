@@ -105,8 +105,7 @@ GlobalChatWindow::GlobalChatWindow()
 	getBackground()->setSize({ 314.0f, 386.0f });
 	getTitle()->setText(LOCALIZE("GLOBAL_CHAT_WINDOW_TITLE"));
 
-	auto chat_button = std::make_shared<Helpers::RectangleButton>();
-	chat_button->setColor(Helpers::HeadWindowColor);
+	auto chat_button = std::make_shared<Helpers::Button>();
 	chat_button->setClickCallback([] {
 		auto window = std::make_shared<InputWindow>("", [](auto str) {
 			CLIENT->sendChatMessage(str.cpp_str());

@@ -12,30 +12,23 @@ Label::Label()
 Button::Button()
 {
 	setRounding(0.5f);
-	setColor(Pallete::ButtonColor);
-
-	mLabel = std::make_shared<Label>();
-	mLabel->setAnchor(0.5f);
-	mLabel->setPivot(0.5f);
-	mLabel->runAction(Actions::Collection::ExecuteInfinite([this] {
+	setActiveColor({ Pallete::ButtonColor, 1.0f });
+	setInactiveColor({ 0.5f, 0.5f, 0.5f, 1.0f });
+	setHighlightColor({ Pallete::ButtonColor * 1.5f, 1.0f });
+	setHighlightEnabled(false);
+	runAction(Actions::Collection::ExecuteInfinite([this] {
 		if (!mAdaptiveFontSize)
 			return;
 
-		mLabel->setFontSize(getAbsoluteHeight() * (18.0f / 28.0f));
+		getLabel()->setFontSize(getAbsoluteHeight() * (18.0f / 28.0f));
 	}));
-	attach(mLabel);
-}
-
-RectangleButton::RectangleButton()
-{
-	setHighlightEnabled(false);
-	setRounding(0.5f);
+	refresh();
 }
 
 TextInputField::TextInputField()
 {
 	setRounding(0.5f);
-	setColor(Helpers::HeadWindowColor / 24.0f);
+	setColor(Pallete::InputField);
 
 	setClickCallback([this] {
 		auto text = mLabel->getText();

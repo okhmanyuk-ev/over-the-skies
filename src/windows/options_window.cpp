@@ -21,10 +21,8 @@ OptionsWindow::OptionsWindow()
 	mNicknameInputField->getLabel()->setText(PROFILE->getNickName());
 	getBody()->attach(mNicknameInputField);
 
-	auto ok_button = std::make_shared<Helpers::RectangleButton>();
-	ok_button->setColor(Helpers::HeadWindowColor);
+	auto ok_button = std::make_shared<Helpers::Button>();
 	ok_button->getLabel()->setText(LOCALIZE("WINDOW_OK"));
-	ok_button->getLabel()->setFontSize(18.0f);
 	ok_button->setClickCallback([] {
 		SCENE_MANAGER->popWindow();
 	});
