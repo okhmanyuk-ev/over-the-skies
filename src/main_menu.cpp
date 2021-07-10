@@ -195,7 +195,7 @@ MainMenu::MainMenu()
 	auto social_panel = std::make_shared<SocialPanel>();
 	social_panel->setAnchor(0.5f);
 	social_panel->setPivot(0.5f);
-	social_panel->setPosition({ 0.0f, -48.0f - 16.0f });
+	social_panel->setPosition({ 0.0f, -96.0f + 16.0f });
 	attach(social_panel);
 }
 

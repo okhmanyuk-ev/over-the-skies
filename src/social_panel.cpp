@@ -7,6 +7,7 @@ SocialPanel::SocialPanel()
 {
 	setStretch({ 1.0f, 0.0f });
 	setSize({ 0.0f, 136.0f });
+    setScale(1.125f);
 
 	auto header = std::make_shared<Scene::Node>();
 	header->setStretch({ 1.0f, 0.0f });
