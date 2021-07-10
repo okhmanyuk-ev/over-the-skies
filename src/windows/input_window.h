@@ -15,7 +15,7 @@ namespace hcg001
 		using ChangeTextCallback = std::function<void(const utf8_string&)>;
 
 	public:
-		InputWindow(const utf8_string& text, ChangeTextCallback changeTextCallback);
+		InputWindow(const utf8_string& title, const utf8_string& text, ChangeTextCallback changeTextCallback);
 
 	private:
 		void onEvent(const Platform::System::VirtualKeyboardTextChanged& e) override;

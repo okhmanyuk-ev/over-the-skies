@@ -3,7 +3,7 @@
 
 using namespace hcg001;
 
-InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextCallback) :
+InputWindow::InputWindow(const utf8_string& title, const utf8_string& text, ChangeTextCallback changeTextCallback) :
 	mChangeTextCallback(changeTextCallback)
 {
 	const float DefaultWindowHeight = 102.0f;
@@ -12,7 +12,7 @@ InputWindow::InputWindow(const utf8_string& text, ChangeTextCallback changeTextC
 
 	getBackground()->setSize({ 314.0f, DefaultWindowHeight });
 	getBackground()->setAnchor({ 0.5f, 0.25f });
-	getTitle()->setText(LOCALIZE("INPUT_WINDOW_TITLE"));
+	getTitle()->setText(title);
 
 	//setCloseOnMissclick(false);
 

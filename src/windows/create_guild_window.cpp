@@ -16,7 +16,7 @@ CreateGuildWindow::CreateGuildWindow()
 	title_label->setText(LOCALIZE("TITLE"));
 	getBody()->attach(title_label);
 
-	auto title_input_field = std::make_shared<Helpers::TextInputField>();
+	auto title_input_field = std::make_shared<Helpers::TextInputField>(LOCALIZE("INPUT_GUILD_NAME"));
 	title_input_field->setPosition({ 128.0f, 24.0f });
 	title_input_field->setSize({ 174.0f, 24.0f });
 	title_input_field->setPivot({ 0.0f, 0.5f });

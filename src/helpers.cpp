@@ -25,17 +25,17 @@ Button::Button()
 	refresh();
 }
 
-TextInputField::TextInputField()
+TextInputField::TextInputField(const utf8_string& input_window_title)
 {
 	setRounding(0.5f);
 	setColor(Pallete::InputField);
 
-	setClickCallback([this] {
+	setClickCallback([this, input_window_title] {
 		auto text = mLabel->getText();
 		auto callback = [this](auto text) {
 			mLabel->setText(text);
 		};
-		auto input_window = std::make_shared<InputWindow>(text, callback);
+		auto input_window = std::make_shared<InputWindow>(input_window_title, text, callback);
 		SCENE_MANAGER->pushWindow(input_window);
 	});
 

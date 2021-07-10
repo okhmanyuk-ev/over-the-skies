@@ -14,7 +14,7 @@ OptionsWindow::OptionsWindow()
 	nickname_label->setText(LOCALIZE("OPTIONS_WINDOW_NICKNAME"));
 	getBody()->attach(nickname_label);
 
-	mNicknameInputField = std::make_shared<Helpers::TextInputField>();
+	mNicknameInputField = std::make_shared<Helpers::TextInputField>(LOCALIZE("INPUT_NICK_NAME"));
 	mNicknameInputField->setPosition({ 128.0f, 24.0f });
 	mNicknameInputField->setSize({ 174.0f, 24.0f });
 	mNicknameInputField->setPivot({ 0.0f, 0.5f });

@@ -107,7 +107,7 @@ GlobalChatWindow::GlobalChatWindow()
 
 	auto chat_button = std::make_shared<Helpers::Button>();
 	chat_button->setClickCallback([] {
-		auto window = std::make_shared<InputWindow>("", [](auto str) {
+		auto window = std::make_shared<InputWindow>(LOCALIZE("INPUT_CHAT_MESSAGE"), "", [](auto str) {
 			CLIENT->sendChatMessage(str.cpp_str());
 		});
 		SCENE_MANAGER->pushWindow(window);

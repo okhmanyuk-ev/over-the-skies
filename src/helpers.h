@@ -59,7 +59,7 @@ namespace hcg001::Helpers
 	class TextInputField : public Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::ClippableStencil<Scene::Rectangle>>>
 	{
 	public:
-		TextInputField();
+		TextInputField(const utf8_string& input_window_title);
 
 	public:
 		auto getLabel() const { return mLabel; }
