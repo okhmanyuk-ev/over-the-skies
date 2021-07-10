@@ -16,27 +16,28 @@
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-    //
+    [super applicationWillResignActive:application];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    //
+    [super applicationDidEnterBackground:application];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-    //
+    [super applicationWillEnterForeground:application];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
+    [super applicationDidBecomeActive:application];
     [FBSDKAppEvents activateApp];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    //
+    [super applicationWillTerminate:application];
 }
 
 @end
