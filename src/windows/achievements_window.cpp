@@ -6,7 +6,7 @@ using namespace hcg001;
 
 AchievementsWindow::AchievementsWindow()
 {
-	getBackground()->setSize({ 314.0f, 512.0f - 64.0f });
+	getBackground()->setSize({ 314.0f, 512.0f });
 	getTitle()->setText(LOCALIZE("ACHIEVEMENTS_WINDOW_TITLE"));
 
 	auto ok_button = std::make_shared<Helpers::Button>();

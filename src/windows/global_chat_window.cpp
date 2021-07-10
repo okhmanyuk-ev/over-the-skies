@@ -45,7 +45,7 @@ std::shared_ptr<Scene::Node> GlobalChatWidget::createMessageNode(int index) cons
 
 	auto holder = std::make_shared<Scene::Node>();
 	holder->setStretch({ 0.8f, 1.0f });
-	holder->setMargin({ 8.0f, 6.0f });
+	holder->setMargin({ 0.0f, 8.0f });
 	holder->setAnchor({ 0.0f, 0.5f });
 	holder->setPivot({ 0.0f, 0.5f });
 	holder->setX(8.0f);
@@ -60,7 +60,7 @@ std::shared_ptr<Scene::Node> GlobalChatWidget::createMessageNode(int index) cons
 	rect->setPivot(0.5f);
 	rect->setRounding(8.0f);
 	rect->setAbsoluteRounding(true);
-	rect->setAlpha(0.25f);
+	rect->setColor(Helpers::Pallete::WindowItem);
 	holder->attach(rect);
 
 	const auto& history = CLIENT->getGlobalChatMessages();
@@ -102,7 +102,7 @@ std::shared_ptr<Scene::Node> GlobalChatWidget::createMessageNode(int index) cons
 
 GlobalChatWindow::GlobalChatWindow()
 {
-	getBackground()->setSize({ 314.0f, 386.0f });
+	getBackground()->setSize({ 314.0f, 512.0f });
 	getTitle()->setText(LOCALIZE("GLOBAL_CHAT_WINDOW_TITLE"));
 
 	auto chat_button = std::make_shared<Helpers::Button>();
@@ -137,6 +137,22 @@ GlobalChatWindow::GlobalChatWindow()
 			mChatWidget->setEnabled(true);
 		})
 	));
+
+	auto top_gradient = std::make_shared<Scene::Rectangle>();
+	top_gradient->setStretch({ 1.0f, 0.0f });
+	top_gradient->setHeight(6.0f);
+	top_gradient->setAnchor({ 0.5f, 0.0f });
+	top_gradient->setPivot({ 0.5f, 0.0f });
+	top_gradient->setVerticalGradient({ Helpers::Pallete::WindowBody, 1.0f }, { Helpers::Pallete::WindowBody, 0.0f });
+	mChatWidget->attach(top_gradient);
+
+	auto bottom_gradient = std::make_shared<Scene::Rectangle>();
+	bottom_gradient->setStretch({ 1.0f, 0.0f });
+	bottom_gradient->setHeight(6.0f);
+	bottom_gradient->setAnchor({ 0.5f, 1.0f });
+	bottom_gradient->setPivot({ 0.5f, 1.0f });
+	bottom_gradient->setVerticalGradient({ Helpers::Pallete::WindowBody, 0.0f }, { Helpers::Pallete::WindowBody, 1.0f });
+	mChatWidget->attach(bottom_gradient);
 }
 
 void GlobalChatWindow::onEvent(const Channel::GlobalChatMessageEvent& e)
