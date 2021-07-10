@@ -248,8 +248,12 @@ void SocialPanel::Page::onEvent(const Helpers::HighscoresEvent& e)
 {
 	mHighscores = e;
 
-	while (mHighscores.uids.size() < 10)
-		mHighscores.uids.push_back(mHighscores.uids.at(mHighscores.uids.size() - 1));
+	
+	if (!mHighscores.uids.empty())
+	{
+		while (mHighscores.uids.size() < 10)
+			mHighscores.uids.push_back(mHighscores.uids.at(mHighscores.uids.size() - 1));
+	}
 
 	refresh();
 }

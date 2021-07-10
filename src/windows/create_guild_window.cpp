@@ -6,7 +6,7 @@ using namespace hcg001;
 
 CreateGuildWindow::CreateGuildWindow()
 {
-	getBackground()->setSize({ 314.0f, 386.0f });
+	getBackground()->setSize({ 314.0f, 152.0f });
 	getTitle()->setText(LOCALIZE("CREATE_GUILD_WINDOW_TITLE"));
 
 	auto title_label = std::make_shared<Helpers::Label>();

@@ -35,18 +35,17 @@ Channel::Channel()
 		EVENT->emit(Helpers::HighscoresEvent({ highscores }));
 	});
 
-	/*addEventCallback("profile", [this](const auto& params) {
-		auto uid = std::stoi(params.at("uid"));
-		auto dump = params.at("json");
-		auto guild_id = std::stoi(params.at("guild_id"));
-		auto json = nlohmann::json::parse(dump);
+	addEventCallback("profile", [this](const auto& json) {
+		int uid = json["uid"];
+		auto profile_json = json["profile"];
+		int guild_id = json["guild_id"];
 		auto profile = std::make_shared<Profile>();
-		profile->read(json);
+		profile->read(profile_json);
 		profile->setGuildId(guild_id);
 		mProfiles.erase(uid);
 		mProfiles.insert({ uid, profile });
 		EVENT->emit(Helpers::ProfileReceived({ uid }));
-	});*/
+	});
 
 	addEventCallback("global_chat_message", [this](const auto& json) {
 		auto msgid = json["msgid"];
@@ -151,7 +150,7 @@ void Channel::requestProfile(int uid)
 		mProfiles.erase(uid);
 
 	sendEvent("request_profile", {
-		{ "uid", std::to_string(uid) }
+		{ "uid", uid }
 	});
 }
 

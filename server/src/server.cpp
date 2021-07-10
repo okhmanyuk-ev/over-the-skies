@@ -64,18 +64,25 @@ Channel::Channel()
 		});
 	});
 
-	/*addEventCallback("request_profile", [this](const auto& params) {
+	addEventCallback("request_profile", [this](const auto& json) {
 		checkAuthorized();
-		auto uid_s = params.at("uid");
-		auto uid = std::stoi(uid_s);
-		auto dump = SERVER->getDatabase().getProfile(uid);
-		auto guild_id = SERVER->getDatabase().getUserGuild(uid);
+		int uid = json["uid"];
+
+		auto profiles = SERVER->getUserbase().getProfiles();
+
+		if (profiles.count(uid) == 0)
+			return;
+
+		auto profile_json = profiles.at(uid);
+
+		auto guild_id = SERVER->findUserGuild(uid);
+
 		sendEvent("profile", {
-			{ "uid", uid_s },
-			{ "json", dump },
-			{ "guild_id", std::to_string(guild_id) }
+			{ "uid", uid },
+			{ "profile", *profile_json },
+			{ "guild_id", guild_id.value_or(Guild::NoneGuild) }
 		});
-	});*/
+	});
 
 	addEventCallback("global_chat_message", [this](const auto& json) {
 		checkAuthorized();

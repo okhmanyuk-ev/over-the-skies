@@ -225,7 +225,7 @@ GuildsWindow::SearchContent::Item::Item(int guildId)
 	setHeight(48.0f);
 	setRounding(8.0f);
 	setAbsoluteRounding(true);
-	setAlpha(0.125f);
+	setColor(Helpers::Pallete::WindowItem);
 
 	mTitle = std::make_shared<Helpers::Label>();
 	mTitle->setAnchor({ 0.0f, 0.5f });
