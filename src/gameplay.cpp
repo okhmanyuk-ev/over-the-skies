@@ -105,19 +105,23 @@ Gameplay::Gameplay()
 	mPlayer->attach(mJumpParticles);
 }
 
-void Gameplay::touch(Touch type, const glm::vec2& pos)
+void Gameplay::onTap()
 {
-	Screen::touch(type, pos);
-
-	if (type != Touch::Begin)
+	if (!mCanStart)
 		return;
 
-	tap();
+	if (!mReady)
+	{
+		start();
+		mReady = true;
+	}
+
+	downslide();
 }
 
 void Gameplay::update(Clock::Duration delta)
 {
-	Screen::update(delta);
+	Scene::Tappable<Screen>::update(delta);
 
 	if (!mReady)
 		return;
@@ -429,20 +433,6 @@ void Gameplay::gameover()
 	mGameoverCallback();
 	ACHIEVEMENTS->hit("GAME_COMPLETED");
 	PROFILE->saveAsync();
-}
-
-void Gameplay::tap()
-{
-	if (!mCanStart)
-		return;
-
-	if (!mReady)
-	{
-		start();
-		mReady = true;
-	}
-	
-	downslide();
 }
 
 void Gameplay::showRiskLabel(const utf8_string& text)

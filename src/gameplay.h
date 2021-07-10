@@ -9,7 +9,7 @@
 
 namespace hcg001
 {
-	class Gameplay : public Screen
+	class Gameplay : public Scene::Tappable<Screen>
 	{
 	private:
 		const float MaxFallVelocity = 20.0f;
@@ -18,7 +18,7 @@ namespace hcg001
 		Gameplay();
 
 	protected:
-		void touch(Touch type, const glm::vec2& pos) override;
+		void onTap() override;
 		void update(Clock::Duration delta) override;
 		
 	private:
@@ -33,7 +33,6 @@ namespace hcg001
 		void spawnJumpParticles();
 		void start();
 		void gameover();
-		void tap();
 		void showRiskLabel(const utf8_string& text);
 		void setScore(int count);
 		float getDifficulty() const;
