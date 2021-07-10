@@ -8,8 +8,6 @@ using namespace hcg001;
 
 Gameplay::Gameplay()
 {
-	setTouchable(true);
-
 	mReadyLabel = std::make_shared<Scene::Label>();
 	mReadyLabel->setFont(FONT("default"));
 	mReadyLabel->setFontSize(28.0f);
