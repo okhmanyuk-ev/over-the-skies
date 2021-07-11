@@ -12,23 +12,13 @@ Gameplay::Gameplay()
 	mReadyLabel->setFont(FONT("default"));
 	mReadyLabel->setFontSize(28.0f);
 	mReadyLabel->setAnchor({ 0.5f, 0.25f });
-	mReadyLabel->setPivot({ 0.5f, 0.5f });
+	mReadyLabel->setPivot(0.5f);
 	mReadyLabel->setText(LOCALIZE("READY_MENU_TITLE"));
 	attach(mReadyLabel);
-
-	// game field
 
 	mGameField = std::make_shared<Scene::Node>();
 	mGameField->setAnchor({ 0.0f, 1.0f });
 	attach(mGameField);
-
-	// plane holder
-
-	mPlaneHolder = std::make_shared<Scene::Node>();
-	mPlaneHolder->setStretch({ 1.0f, 1.0f });
-	mGameField->attach(mPlaneHolder);
-
-	// particles
 
 	mPlayerTrailHolder = std::make_shared<Scene::Node>();
 	mPlayerTrailHolder->setStretch(1.0f);
@@ -37,6 +27,10 @@ Gameplay::Gameplay()
 	mRectangleParticlesHolder = std::make_shared<Scene::Node>();
 	mRectangleParticlesHolder->setStretch(1.0f);
 	mGameField->attach(mRectangleParticlesHolder);
+
+	mPlaneHolder = std::make_shared<Scene::Node>();
+	mPlaneHolder->setStretch(1.0f);
+	mGameField->attach(mPlaneHolder);
 
 	mPlayer = createPlayer(PROFILE->getCurrentSkin(), mPlayerTrailHolder);
 	mPlayer->setAlpha(0.0f);
