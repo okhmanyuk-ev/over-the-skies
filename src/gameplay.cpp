@@ -329,18 +329,18 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		plane->setBatchGroup("plane_small");
 		plane->setTexture(TEXTURE("textures/plane_small.png"));
 		plane->setSize({ 48.0f, 8.0f });
-		plane->setColor(Graphics::Color::Yellow);
+		plane->setColor(Graphics::Color::Coral);
 		plane->setPowerjump(true);
 		
 		auto emitter = std::make_shared<Shared::SceneHelpers::RectangleEmitter>();
 		emitter->setHolder(mRectangleParticlesHolder);
 		emitter->setBeginSize({ 6.0f, 6.0f });
-		emitter->setDelay(1.0f / 60.0f);
+		emitter->setDelay(1.0f / 30.0f);
 		emitter->setStretch({ 0.75f, 0.0f });
 		emitter->setPivot(0.5f);
 		emitter->setAnchor({ 0.5f, 1.0f });
 		emitter->setDirection({ 0.0f, 1.0f });
-		emitter->setBeginColor({ Graphics::Color::Yellow, 1.0f });
+		emitter->setBeginColor({ Graphics::Color::FloralWhite, 1.0f });
 		plane->attach(emitter);
 	}
 
@@ -364,6 +364,18 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		ruby->setSize(18.0f);
 		plane->attach(ruby);
 		plane->setRuby(ruby);
+
+		auto emitter = std::make_shared<Shared::SceneHelpers::RectangleEmitter>();
+		emitter->setHolder(mRectangleParticlesHolder);
+		emitter->setBeginSize({ 4.0f, 4.0f });
+		emitter->setDelay(1.0f / 10.0f);
+		emitter->setStretch({ 0.75f, 0.0f });
+		emitter->setPivot(0.5f);
+		emitter->setAnchor({ 0.5f, 0.0f });
+		emitter->setDirection({ 0.0f, -1.0f });
+		emitter->setDistance(24.0f);
+		emitter->setBeginColor({ Graphics::Color::HotPink, 1.0f });
+		ruby->attach(emitter);
 	}
 
 	if (moving)
