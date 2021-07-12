@@ -7,7 +7,32 @@
 
 namespace hcg001
 {
-    class PagesManager;
+	class TabsManager
+	{
+	public:
+		class Item;
+
+	public:
+		void addContent(int type, std::shared_ptr<Item> node);
+		void addButton(int type, std::shared_ptr<Item> node);
+		void show(int type);
+
+	public:
+		const auto& getContents() const { return mContents; }
+
+	private:
+		std::map<int, std::shared_ptr<Item>> mContents;
+		std::map<int, std::shared_ptr<Item>> mButtons;
+		std::optional<int> mCurrentPage;
+	};
+
+	class TabsManager::Item
+	{
+	public:
+		virtual void onJoin() = 0;
+		virtual void onEnter() = 0;
+		virtual void onLeave() = 0;
+	};
 
 	class SocialPanel : public Scene::Node
 	{
@@ -19,30 +44,52 @@ namespace hcg001
 		};
 
 	private:
-        class HighscoresPage;
+		class TabButton;
+		class TabContent;
+		class HighscoresPage;
         class TopGuildsPage;
 
 	public:
 		SocialPanel();
 
 	private:
-		using TabButton = Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::Rectangle>>;
-
-		std::shared_ptr<TabButton> createTabButton(const utf8_string& text);
-
-        void showPage(PageType type);
-        
-	private:
-		std::shared_ptr<Scene::Scrollbox> mTabButtonScrollbox;
-		std::map<PageType, std::shared_ptr<Scene::Node>> mTabButtons;
-        std::map<PageType, std::shared_ptr<Scene::Node>> mTabContents;
+		TabsManager mTabsManager;
 	};
 
-	class SocialPanel::HighscoresPage : public Scene::Node,
+	class SocialPanel::TabButton : public Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::Rectangle>>, 
+		public TabsManager::Item, public std::enable_shared_from_this<SocialPanel::TabButton>
+	{
+	public:
+		TabButton();
+
+	public:
+		void onJoin() override;
+		void onEnter() override;
+		void onLeave() override;
+
+	private:
+		std::shared_ptr<Scene::Rectangle> mCheckbox;
+	};
+
+	class SocialPanel::TabContent : public Scene::Node, public TabsManager::Item, public std::enable_shared_from_this<SocialPanel::TabContent>
+	{
+	public:
+		void onJoin() override;
+		void onEnter() override;
+		void onLeave() override;
+
+	public:
+		virtual Actions::Collection::UAction getScenario() = 0;
+	};
+
+	class SocialPanel::HighscoresPage : public SocialPanel::TabContent,
 		public Common::Event::Listenable<NetEvents::HighscoresEvent>
 	{
 	public:
         HighscoresPage();
+
+	public:
+		Actions::Collection::UAction getScenario() override;
 
 	private:
 		void onEvent(const NetEvents::HighscoresEvent& e) override;
@@ -59,11 +106,14 @@ namespace hcg001
 		NetEvents::HighscoresEvent mHighscores;
 	};
 
-    class SocialPanel::TopGuildsPage : public Scene::Node,
+    class SocialPanel::TopGuildsPage : public SocialPanel::TabContent,
         public Common::Event::Listenable<NetEvents::GuildsTopEvent>
     {
     public:
         TopGuildsPage();
+
+	public:
+		Actions::Collection::UAction getScenario() override;
 
     private:
         void onEvent(const NetEvents::GuildsTopEvent& e) override;

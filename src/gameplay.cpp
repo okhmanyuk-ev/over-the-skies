@@ -287,7 +287,7 @@ void Gameplay::spawnPlanes()
 
 		pos.y -= 56.0f;
 		pos.x += 96.0f;
-		spawnPlane(pos, anim_delay, true, false, false);
+		spawnPlane(pos, anim_delay, false, false, false);
 		anim_delay += AnimWait;
 
 		spawnPlane(getNextPos(), anim_delay, false, true, false);

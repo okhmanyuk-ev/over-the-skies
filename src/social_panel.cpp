@@ -3,6 +3,35 @@
 
 using namespace hcg001;
 
+// pages manager
+
+void TabsManager::addContent(int type, std::shared_ptr<Item> node)
+{
+	mContents.insert({ type, node });
+	node->onJoin();
+}
+
+void TabsManager::addButton(int type, std::shared_ptr<Item> node)
+{
+	mButtons.insert({ type, node });
+	node->onJoin();
+}
+
+void TabsManager::show(int type)
+{
+	if (mCurrentPage.has_value())
+	{
+		mContents.at(mCurrentPage.value())->onLeave();
+		mButtons.at(mCurrentPage.value())->onLeave();
+	}
+
+	mContents.at(type)->onEnter();
+	mButtons.at(type)->onEnter();
+	mCurrentPage = type;
+}
+
+// social panel
+
 SocialPanel::SocialPanel()
 {
 	setStretch({ 1.0f, 0.0f });
@@ -31,141 +60,127 @@ SocialPanel::SocialPanel()
 	body->setMargin({ 0.0f, header->getHeight() + footer->getHeight() });
 	attach(body);
 
-	auto centerizeTabScrollbox = [this](PageType page) {
-		auto node = mTabButtons.at(page);
-		auto scroll_taget_pos = mTabButtonScrollbox->screenToScrollPosition(node->project({ 0.0f, 0.0f }));
-		mTabButtonScrollbox->runAction(
-			Actions::Collection::ChangeScrollPosition(mTabButtonScrollbox, scroll_taget_pos, 0.5f, Easing::ExponentialOut)
-		);
-	};
-    
-	auto score_tab_button = createTabButton(LOCALIZE("SCORE"));
-	score_tab_button->setClickCallback([this] {
-        showPage(PageType::Highscores);
+	auto highscores_button = std::make_shared<TabButton>();
+	highscores_button->setClickCallback([this] {
+		mTabsManager.show((int)PageType::Highscores);
 	});
 
-	auto rubies_tab_button = createTabButton(LOCALIZE("TOP GUILDS"));
-	rubies_tab_button->setClickCallback([this] {
-		showPage(PageType::TopGuilds);
+	auto top_guilds_button = std::make_shared<TabButton>();
+	top_guilds_button->setClickCallback([this] {
+		mTabsManager.show((int)PageType::TopGuilds);
 	});
 
-	const glm::vec2 TabItemSize = { 72.0f, footer->getHeight() };
+	const glm::vec2 TabItemSize = { 24.0f, footer->getHeight() };
 	
 	auto tab_button_grid = Shared::SceneHelpers::MakeHorizontalGrid(TabItemSize, {
-		score_tab_button,
-		rubies_tab_button
+		highscores_button,
+		top_guilds_button
 	});
-
-	mTabButtons.insert({ PageType::Highscores, score_tab_button });
-	mTabButtons.insert({ PageType::TopGuilds, rubies_tab_button });
-	
 	tab_button_grid->setAnchor(0.5f);
 	tab_button_grid->setPivot(0.5f);
+	footer->attach(tab_button_grid);
 
-	mTabButtonScrollbox = std::make_shared<Scene::Scrollbox>();
-	mTabButtonScrollbox->setTouchable(false);
-	mTabButtonScrollbox->setStretch(1.0f);
-	//mTabButtonScrollbox->getBounding()->setStretch({ 0.0f, 1.0f });
-	mTabButtonScrollbox->getBounding()->setSize(TabItemSize);
-	mTabButtonScrollbox->getBounding()->setAnchor(0.5f);
-	mTabButtonScrollbox->getBounding()->setPivot(0.5f);
-	mTabButtonScrollbox->getContent()->setSize(tab_button_grid->getSize());
-	mTabButtonScrollbox->getContent()->attach(tab_button_grid);
-	footer->attach(mTabButtonScrollbox);
-
-
+	mTabsManager.addButton((int)PageType::Highscores, highscores_button);
+	mTabsManager.addButton((int)PageType::TopGuilds, top_guilds_button);
+	
 	auto highscores_page = std::make_shared<HighscoresPage>();
 	body->attach(highscores_page);
 
 	auto top_guilds_page = std::make_shared<TopGuildsPage>();
 	body->attach(top_guilds_page);
-    
-    mTabContents.insert({ PageType::Highscores, highscores_page });
-    mTabContents.insert({ PageType::TopGuilds, top_guilds_page });
-    
-    showPage(PageType::Highscores);
 
-	//mPagesManager.addPage(PageType::Scores, page1);
-	//mPagesManager.addPage(PageType::Rubies, page2);
-	//mPagesManager.showPage(PageType::Scores);
-	//mPagesManager.setPageChangedCallback([centerizeTabScrollbox](auto from, auto to) {
-	//	centerizeTabScrollbox((PageType)to);
-	//});*/
+	mTabsManager.addContent((int)PageType::Highscores, highscores_page);
+	mTabsManager.addContent((int)PageType::TopGuilds, top_guilds_page);
+	
+	runAction(Actions::Collection::RepeatInfinite([this] {
+		auto seq = Actions::Collection::MakeSequence();
 
-	/*auto right_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::Node>>>();
-	right_button->setStretch({ 0.0f, 1.0f }); // use body height
-	right_button->setWidth(48.0f);
-	right_button->setAnchor(0.5f);
-	right_button->setPivot({ 1.0f, 0.5f });
-	right_button->setX(178.0f);
-	right_button->setClickCallback([this] {
-		//mPagesManager.showNextPage();
-	});
-	body->attach(right_button);
+		for (auto [type, _content] : mTabsManager.getContents())
+		{
+			auto content = std::static_pointer_cast<TabContent>(_content);
+			seq->add(Actions::Collection::Execute([this, type] { 
+				mTabsManager.show(type);
+			}));
+			seq->add(Actions::Collection::Wait(1.0f));
+			seq->add(content->getScenario());
+			seq->add(Actions::Collection::Wait(1.0f));
+		}
 
-	auto right_arrow_img = std::make_shared<Shared::SceneHelpers::Adaptive<Scene::Sprite>>();
-	right_arrow_img->setAdaptSize(24.0f);
-	right_arrow_img->setAnchor(0.5f);
-	right_arrow_img->setPivot(0.5f);
-	right_arrow_img->setTexture(TEXTURE("textures/right_arrow.png"));
-	right_arrow_img->setAlpha(0.25f);
-	right_button->attach(right_arrow_img);
-
-	auto left_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::Node>>>();
-	left_button->setStretch({ 0.0f, 1.0f }); // use body height
-	left_button->setWidth(48.0f);
-	left_button->setAnchor(0.5f);
-	left_button->setPivot({ 0.0f, 0.5f });
-	left_button->setX(-178.0f);
-	left_button->setClickCallback([this] {
-		//mPagesManager.showPrevPage();
-	});
-	body->attach(left_button);
-
-	auto left_arrow_img = std::make_shared<Shared::SceneHelpers::Adaptive<Scene::Sprite>>();
-	left_arrow_img->setAdaptSize(24.0f);
-	left_arrow_img->setAnchor(0.5f);
-	left_arrow_img->setPivot(0.5f);
-	left_arrow_img->setTexture(TEXTURE("textures/right_arrow.png"));
-	left_arrow_img->setAlpha(0.25f);
-	left_arrow_img->setRadialAnchor(0.5f); // flip
-	left_button->attach(left_arrow_img);*/
-
-
-	//auto page = std::make_shared<Page>();
-	//body->attach(page);
+		return seq;
+	}));
 }
 
-std::shared_ptr<SocialPanel::TabButton> SocialPanel::createTabButton(const utf8_string& text)
+// tab button
+
+SocialPanel::TabButton::TabButton()
 {
-	auto result = std::make_shared<TabButton>();
-	//result->setSize({ 64.0f, 20.0f });
-	result->setStretch(1.0f);
-	result->setMargin({ 2.0f, 0.0f });
-	result->setAnchor({ 0.5f, 0.5f });
-	result->setPivot({ 0.5f, 0.5f });
-	//result->setRounding(0.5f);
-	result->setAlpha(0.125f);
-	//result->setAlpha(0.0f);
+	setSize(12.0f);
+	setPivot(0.5f);
+	setAnchor(0.5f);
+	setAlpha(0.25f);
+	setRounding(0.5f);
+	setClickEnabled(false);
 
-	auto label = std::make_shared<Helpers::Label>();
-	label->setAnchor(0.5f);
-	label->setPivot(0.5f);
-	label->setFontSize(13.0f);
-	label->setText(text);
-	result->attach(label);
-
-	return result;
+	mCheckbox = std::make_shared<Scene::Rectangle>();
+	mCheckbox->setAnchor(0.5f);
+	mCheckbox->setPivot(0.5f);
+	mCheckbox->setStretch(0.75f);
+	mCheckbox->setAlpha(0.75f);
+	mCheckbox->setRounding(0.5f);
+	attach(mCheckbox);
 }
 
-void SocialPanel::showPage(PageType type)
+void SocialPanel::TabButton::onJoin()
 {
-    for (auto [_type, page] : mTabContents)
-    {
-        page->setEnabled(false);
-    }
-    
-    mTabContents.at(type)->setEnabled(true);
+	mCheckbox->setVisible(false);
+	mCheckbox->setScale(0.0f);
+}
+
+void SocialPanel::TabButton::onEnter()
+{
+	runAction(Actions::Collection::MakeSequence(
+		Actions::Collection::Execute([this] {
+			mCheckbox->setVisible(true);
+		}),
+		Actions::Collection::ChangeScale(mCheckbox, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 0.5f, Easing::ExponentialOut)
+	));
+}
+
+void SocialPanel::TabButton::onLeave()
+{
+	runAction(Actions::Collection::MakeSequence(
+		Actions::Collection::ChangeScale(mCheckbox, { 1.0f, 1.0f }, { 0.0f, 0.0f }, 0.5f, Easing::ExponentialOut),
+		Actions::Collection::Execute([this] {
+			mCheckbox->setVisible(false);
+		})
+	));
+}
+
+// tab content
+
+void SocialPanel::TabContent::onJoin()
+{
+	setHorizontalAnchor(1.5f);
+}
+
+void SocialPanel::TabContent::onEnter()
+{
+	runAction(Actions::Collection::MakeSequence(
+		Actions::Collection::Execute([this] {
+			setVisible(true);
+		}),
+		Actions::Collection::ChangeHorizontalAnchor(shared_from_this(), 1.5f, 0.5f, 0.5f, Easing::ExponentialOut)
+	));
+}
+
+void SocialPanel::TabContent::onLeave()
+{
+	runAction(Actions::Collection::MakeSequence(
+		Actions::Collection::ChangeHorizontalAnchor(shared_from_this(), 0.5f, -0.5f, 0.5f, Easing::ExponentialOut),
+		Actions::Collection::Execute([this] {
+			setVisible(false);
+		})
+	));
 }
 
 // highscores page
@@ -192,15 +207,6 @@ SocialPanel::HighscoresPage::HighscoresPage()
 	mScrollbox->getBounding()->setAnchor(0.5f);
 	mScrollbox->getBounding()->setPivot(0.5f);
 	mBackground->attach(mScrollbox);
-
-	runAction(Actions::Collection::RepeatInfinite([this] {
-		return Actions::Collection::MakeSequence(
-			Actions::Collection::Wait(1.25f),
-			Actions::Collection::ChangeVerticalScrollPosition(mScrollbox, 1.0f, 3.0f, Easing::CubicInOut),
-			Actions::Collection::Wait(0.75f),
-			Actions::Collection::ChangeVerticalScrollPosition(mScrollbox, 0.0f, 3.0f, Easing::CubicInOut)
-		);
-	}));
 
 	auto table_headers_holder = std::make_shared<Scene::Node>();
 	table_headers_holder->setStretch({ 1.0f, 0.0f });
@@ -244,6 +250,16 @@ SocialPanel::HighscoresPage::HighscoresPage()
 	table_skin_header->setPosition({ 32.0f + 96.0f + 64.0f + (64.0f / 2.0f), 0.0f });
 	table_skin_header->setAlpha(0.5f);
 	table_headers_holder->attach(table_skin_header);
+}
+
+Actions::Collection::UAction SocialPanel::HighscoresPage::getScenario()
+{
+	return Actions::Collection::MakeSequence(
+		Actions::Collection::Wait(1.25f),
+		Actions::Collection::ChangeVerticalScrollPosition(mScrollbox, 1.0f, 5.0f, Easing::CubicInOut),
+		Actions::Collection::Wait(0.75f),
+		Actions::Collection::ChangeVerticalScrollPosition(mScrollbox, 0.0f, 5.0f, Easing::CubicInOut)
+	);
 }
 
 void SocialPanel::HighscoresPage::onEvent(const NetEvents::HighscoresEvent& e)
@@ -364,6 +380,16 @@ SocialPanel::TopGuildsPage::TopGuildsPage()
     mBackground->setAbsoluteRounding(true);
     mBackground->setRounding(8.0f);
     attach(mBackground);
+}
+
+Actions::Collection::UAction SocialPanel::TopGuildsPage::getScenario()
+{
+	return Actions::Collection::MakeSequence(
+		Actions::Collection::Wait(1.25f),
+		//Actions::Collection::ChangeVerticalScrollPosition(mScrollbox, 1.0f, 3.0f, Easing::CubicInOut),
+		Actions::Collection::Wait(0.75f)//,
+		//Actions::Collection::ChangeVerticalScrollPosition(mScrollbox, 0.0f, 3.0f, Easing::CubicInOut)
+	);
 }
 
 void SocialPanel::TopGuildsPage::onEvent(const NetEvents::GuildsTopEvent& e)
