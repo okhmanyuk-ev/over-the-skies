@@ -31,22 +31,22 @@ SocialPanel::SocialPanel()
 	body->setMargin({ 0.0f, header->getHeight() + footer->getHeight() });
 	attach(body);
 
-	/*auto centerizeTabScrollbox = [this](PageType page) {
+	auto centerizeTabScrollbox = [this](PageType page) {
 		auto node = mTabButtons.at(page);
 		auto scroll_taget_pos = mTabButtonScrollbox->screenToScrollPosition(node->project({ 0.0f, 0.0f }));
 		mTabButtonScrollbox->runAction(
 			Actions::Collection::ChangeScrollPosition(mTabButtonScrollbox, scroll_taget_pos, 0.5f, Easing::ExponentialOut)
 		);
 	};
-
+    
 	auto score_tab_button = createTabButton(LOCALIZE("SCORE"));
 	score_tab_button->setClickCallback([this] {
-		mPagesManager.showPage(PageType::Scores);
+        showPage(PageType::Highscores);
 	});
 
-	auto rubies_tab_button = createTabButton(LOCALIZE("RUBIES"));
+	auto rubies_tab_button = createTabButton(LOCALIZE("TOP GUILDS"));
 	rubies_tab_button->setClickCallback([this] {
-		mPagesManager.showPage(PageType::Rubies);
+		showPage(PageType::TopGuilds);
 	});
 
 	const glm::vec2 TabItemSize = { 72.0f, footer->getHeight() };
@@ -56,8 +56,8 @@ SocialPanel::SocialPanel()
 		rubies_tab_button
 	});
 
-	mTabButtons.insert({ PageType::Scores, score_tab_button });
-	mTabButtons.insert({ PageType::Rubies, rubies_tab_button });
+	mTabButtons.insert({ PageType::Highscores, score_tab_button });
+	mTabButtons.insert({ PageType::TopGuilds, rubies_tab_button });
 	
 	tab_button_grid->setAnchor(0.5f);
 	tab_button_grid->setPivot(0.5f);
@@ -74,18 +74,23 @@ SocialPanel::SocialPanel()
 	footer->attach(mTabButtonScrollbox);
 
 
-	auto page1 = std::make_shared<Page>();
-	body->attach(page1);
+	auto highscores_page = std::make_shared<HighscoresPage>();
+	body->attach(highscores_page);
 
-	auto page2 = std::make_shared<Page>();
-	body->attach(page2);
+	auto top_guilds_page = std::make_shared<TopGuildsPage>();
+	body->attach(top_guilds_page);
+    
+    mTabContents.insert({ PageType::Highscores, highscores_page });
+    mTabContents.insert({ PageType::TopGuilds, top_guilds_page });
+    
+    showPage(PageType::Highscores);
 
-	mPagesManager.addPage(PageType::Scores, page1);
-	mPagesManager.addPage(PageType::Rubies, page2);
-	mPagesManager.showPage(PageType::Scores);
-	mPagesManager.setPageChangedCallback([centerizeTabScrollbox](auto from, auto to) {
-		centerizeTabScrollbox((PageType)to);
-	});*/
+	//mPagesManager.addPage(PageType::Scores, page1);
+	//mPagesManager.addPage(PageType::Rubies, page2);
+	//mPagesManager.showPage(PageType::Scores);
+	//mPagesManager.setPageChangedCallback([centerizeTabScrollbox](auto from, auto to) {
+	//	centerizeTabScrollbox((PageType)to);
+	//});*/
 
 	/*auto right_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::Node>>>();
 	right_button->setStretch({ 0.0f, 1.0f }); // use body height
@@ -127,24 +132,8 @@ SocialPanel::SocialPanel()
 	left_button->attach(left_arrow_img);*/
 
 
-	auto page = std::make_shared<Page>();
-	body->attach(page);
-
-
-
-
-	/*auto refresh_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Helpers::Label>>>();
-	refresh_button->setClickCallback([this] {
-		CLIENT->clearProfiles();
-		refresh();
-	});
-	refresh_button->setText("refresh"); // TODO: del
-	refresh_button->setFontSize(12.0f);
-	refresh_button->setAnchor({ 1.0f, 1.0f });
-	refresh_button->setPivot({ 1.0f, 0.0f });
-	refresh_button->setPosition({ 0.0f, 4.0f });
-	refresh_button->setAlpha(0.25f);
-	attach(refresh_button);*/
+	//auto page = std::make_shared<Page>();
+	//body->attach(page);
 }
 
 std::shared_ptr<SocialPanel::TabButton> SocialPanel::createTabButton(const utf8_string& text)
@@ -169,7 +158,19 @@ std::shared_ptr<SocialPanel::TabButton> SocialPanel::createTabButton(const utf8_
 	return result;
 }
 
-SocialPanel::Page::Page()
+void SocialPanel::showPage(PageType type)
+{
+    for (auto [_type, page] : mTabContents)
+    {
+        page->setEnabled(false);
+    }
+    
+    mTabContents.at(type)->setEnabled(true);
+}
+
+// highscores page
+
+SocialPanel::HighscoresPage::HighscoresPage()
 {
 	setStretch({ 0.0f, 1.0f });
 	setSize({ 256.0f, 0.0f });
@@ -245,7 +246,7 @@ SocialPanel::Page::Page()
 	table_headers_holder->attach(table_skin_header);
 }
 
-void SocialPanel::Page::onEvent(const NetEvents::HighscoresEvent& e)
+void SocialPanel::HighscoresPage::onEvent(const NetEvents::HighscoresEvent& e)
 {
 	mHighscores = e;
 
@@ -259,7 +260,7 @@ void SocialPanel::Page::onEvent(const NetEvents::HighscoresEvent& e)
 	refresh();
 }
 
-void SocialPanel::Page::refresh()
+void SocialPanel::HighscoresPage::refresh()
 {
 	if (mGrid)
 	{
@@ -346,4 +347,26 @@ void SocialPanel::Page::refresh()
 	mGrid = Shared::SceneHelpers::MakeVerticalGrid(VerticalGridItemSize, v_items);
 	mScrollbox->getContent()->setSize(mGrid->getSize());
 	mScrollbox->getContent()->attach(mGrid);
+}
+
+// top guilds page
+
+SocialPanel::TopGuildsPage::TopGuildsPage()
+{
+    setStretch({ 0.0f, 1.0f });
+    setSize({ 256.0f, 0.0f });
+    setPivot(0.5f);
+    setAnchor(0.5f);
+    
+    mBackground = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
+    mBackground->setStretch(1.0f);
+    mBackground->setAlpha(0.125f);
+    mBackground->setAbsoluteRounding(true);
+    mBackground->setRounding(8.0f);
+    attach(mBackground);
+}
+
+void SocialPanel::TopGuildsPage::onEvent(const NetEvents::GuildsTopEvent& e)
+{
+    //
 }

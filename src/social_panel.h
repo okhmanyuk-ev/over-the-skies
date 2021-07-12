@@ -7,19 +7,20 @@
 
 namespace hcg001
 {
+    class PagesManager;
+
 	class SocialPanel : public Scene::Node
 	{
 	public:
 		enum class PageType
 		{
-			TopScores,
-			TopRubies,
-			MyScores,
-			MyRubies
+			Highscores,
+			TopGuilds,
 		};
 
-	public:
-		class Page;
+	private:
+        class HighscoresPage;
+        class TopGuildsPage;
 
 	public:
 		SocialPanel();
@@ -29,24 +30,19 @@ namespace hcg001
 
 		std::shared_ptr<TabButton> createTabButton(const utf8_string& text);
 
+        void showPage(PageType type);
+        
 	private:
 		std::shared_ptr<Scene::Scrollbox> mTabButtonScrollbox;
-		//std::map<PageType, std::shared_ptr<Scene::Node>> mTabButtons;
-
-
-		struct PageData
-		{
-			std::shared_ptr<Scene::Node> button;
-			std::shared_ptr<Scene::Node> content;
-		};
-		std::map<PageType, PageData> mPages;
+		std::map<PageType, std::shared_ptr<Scene::Node>> mTabButtons;
+        std::map<PageType, std::shared_ptr<Scene::Node>> mTabContents;
 	};
 
-	class SocialPanel::Page : public Scene::Node,
+	class SocialPanel::HighscoresPage : public Scene::Node,
 		public Common::Event::Listenable<NetEvents::HighscoresEvent>
 	{
 	public:
-		Page();
+        HighscoresPage();
 
 	private:
 		void onEvent(const NetEvents::HighscoresEvent& e) override;
@@ -63,6 +59,18 @@ namespace hcg001
 		NetEvents::HighscoresEvent mHighscores;
 	};
 
+    class SocialPanel::TopGuildsPage : public Scene::Node,
+        public Common::Event::Listenable<NetEvents::GuildsTopEvent>
+    {
+    public:
+        TopGuildsPage();
+
+    private:
+        void onEvent(const NetEvents::GuildsTopEvent& e) override;
+
+    private:
+        std::shared_ptr<Scene::ClippableStencil<Scene::Rectangle>> mBackground;
+    };
 
 	// class who can manage pages
 	// void addPage(std::shared_ptr<Page>)
