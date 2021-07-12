@@ -20,10 +20,6 @@ Gameplay::Gameplay()
 	mGameField->setAnchor({ 0.0f, 1.0f });
 	attach(mGameField);
 
-	mPlayerTrailHolder = std::make_shared<Scene::Node>();
-	mPlayerTrailHolder->setStretch(1.0f);
-	mGameField->attach(mPlayerTrailHolder);
-
 	mRectangleParticlesHolder = std::make_shared<Scene::Node>();
 	mRectangleParticlesHolder->setStretch(1.0f);
 	mGameField->attach(mRectangleParticlesHolder);
@@ -31,6 +27,10 @@ Gameplay::Gameplay()
 	mPlaneHolder = std::make_shared<Scene::Node>();
 	mPlaneHolder->setStretch(1.0f);
 	mGameField->attach(mPlaneHolder);
+
+	mPlayerTrailHolder = std::make_shared<Scene::Node>();
+	mPlayerTrailHolder->setStretch(1.0f);
+	mGameField->attach(mPlayerTrailHolder);
 
 	mPlayer = createPlayer(PROFILE->getCurrentSkin(), mPlayerTrailHolder);
 	mPlayer->setAlpha(0.0f);
