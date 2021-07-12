@@ -10,6 +10,7 @@ void Guild::save()
 	auto json = nlohmann::json();
 	
 	json["name"] = mName;
+	json["score"] = mScore;
 	json["members"] = mMembers;
 
 	auto dump = json.dump(1);
@@ -27,5 +28,6 @@ void Guild::load()
 	auto json = nlohmann::json::parse(json_string);
 	
 	mName = json["name"];
+	mScore = json.value("score", 0);
 	mMembers = json["members"].get<std::set<int>>();;
 }

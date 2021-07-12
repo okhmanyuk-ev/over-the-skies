@@ -64,6 +64,14 @@ Channel::Channel()
 		});
 	});
 
+	addEventCallback("request_guilds_top", [this](const auto& params) {
+		checkAuthorized();
+		auto guilds_top = SERVER->getGuildsTop();
+		sendEvent("guilds_top", {
+			{ "guild_ids", guilds_top }
+		});
+	});
+
 	addEventCallback("request_profile", [this](const auto& json) {
 		checkAuthorized();
 		int uid = json["uid"];
@@ -137,7 +145,8 @@ Channel::Channel()
 		sendEvent("guild_info", {
 			{ "id", id },
 			{ "title", guild->getName() },
-			{ "members", guild->getMembers() }
+			{ "members", guild->getMembers() },
+			{ "score", guild->getScore() }
 		});
 	});
 	
@@ -165,6 +174,31 @@ Channel::Channel()
 		});
 
 		LOGF("#{} joined to guild #{}", mUID, id);
+	});
+
+	addEventCallback("guild_contribution", [this](const auto& json) {
+		checkAuthorized();
+
+		int count = json["count"];
+
+		auto guild_id = SERVER->findUserGuild(mUID);
+
+		if (!guild_id.has_value())
+			return;
+
+		auto& guilds = SERVER->getGuildsSys().getGuilds();
+
+		if (guilds.count(guild_id.value()) == 0)
+			return;
+
+		auto guild = guilds.at(guild_id.value());
+
+		guild->setScore(guild->getScore() + count);
+
+		sendEvent("contributed_to_guild", {
+			{ "count", count },
+			{ "new_total_score", guild->getScore() }
+		});
 	});
 }
 
@@ -354,6 +388,7 @@ Server::Server() : Shared::NetworkingWS::Server(27015)
 		const auto Delay = 60.0f; // one minute
 		return Actions::Collection::Delayed(Delay, Actions::Collection::Execute([this] {
 			remakeHighscores();
+			remakeGuildTop();
 			save();
 		}));
 	}));
@@ -424,11 +459,6 @@ void Server::highscore(int uid, int value)
 	mHighscores[uid] = value;
 }
 
-std::vector<int> Server::getHighscores()
-{
-	return mSortedHighscores;
-}
-
 void Server::remakeHighscores()
 {
 	auto begin_time = Clock::Now();
@@ -463,6 +493,32 @@ void Server::remakeHighscores()
 	auto end_time = Clock::Now();
 
 	LOGF("remaked highscores, duration: {} msec", Clock::ToMilliseconds(end_time - begin_time));
+}
+
+void Server::remakeGuildTop()
+{
+	auto begin_time = Clock::Now();
+
+	auto guilds_list = mGuilds.getGuildList();
+	auto& guilds = mGuilds.getGuilds();
+
+	std::sort(guilds_list.begin(), guilds_list.end(), [&guilds](int left, int right) {
+		return guilds.at(left)->getScore() < guilds.at(right)->getScore();
+	});
+
+	mSortedGuildTop.clear();
+
+	for (int i = 0; i < 1000; i++)
+	{
+		if (guilds_list.size() - 1 < i)
+			break;
+
+		mSortedGuildTop.push_back(guilds_list.at(i));
+	}
+
+	auto end_time = Clock::Now();
+
+	LOGF("remaked guild top, duration: {} msec", Clock::ToMilliseconds(end_time - begin_time));
 }
 
 void Server::joinToGuild(int guild_id, int uid)

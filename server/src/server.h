@@ -84,11 +84,14 @@ private:
 public: // highscores
 	void highscore(int uid, int value);
 	// return uid array
-	std::vector<int> getHighscores();
-
+	const auto& getHighscores() { return mSortedHighscores; }
+	const auto& getGuildsTop() { return mSortedGuildTop; }
+	
 	std::unordered_map<int, int> mHighscores; // uid, highscore
 	std::vector<int> mSortedHighscores;
+	std::vector<int> mSortedGuildTop;
 	void remakeHighscores();
+	void remakeGuildTop();
 
 	void joinToGuild(int guild_id, int uid);
 	void exitFromGuild(int guild_id, int uid);

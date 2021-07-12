@@ -89,7 +89,7 @@ GameoverMenu::GameoverMenu(int score)
 	attach(mHighscoresRect);*/
 }
 
-void GameoverMenu::onEvent(const Helpers::HighscoresEvent& e)
+void GameoverMenu::onEvent(const NetEvents::HighscoresEvent& e)
 {
 	/*std::vector<std::shared_ptr<Scene::Node>> items;
 

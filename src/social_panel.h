@@ -3,6 +3,7 @@
 #include <optional>
 #include <shared/all.h>
 #include "helpers.h"
+#include "client.h"
 
 namespace hcg001
 {
@@ -42,13 +43,13 @@ namespace hcg001
 	};
 
 	class SocialPanel::Page : public Scene::Node,
-		public Common::Event::Listenable<Helpers::HighscoresEvent>
+		public Common::Event::Listenable<NetEvents::HighscoresEvent>
 	{
 	public:
 		Page();
 
 	private:
-		void onEvent(const Helpers::HighscoresEvent& e) override;
+		void onEvent(const NetEvents::HighscoresEvent& e) override;
 
 	private:
 		void refresh();
@@ -59,7 +60,7 @@ namespace hcg001
 		std::shared_ptr<Scene::Node> mGrid;
 
 	private:
-		Helpers::HighscoresEvent mHighscores;
+		NetEvents::HighscoresEvent mHighscores;
 	};
 
 

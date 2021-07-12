@@ -245,7 +245,7 @@ SocialPanel::Page::Page()
 	table_headers_holder->attach(table_skin_header);
 }
 
-void SocialPanel::Page::onEvent(const Helpers::HighscoresEvent& e)
+void SocialPanel::Page::onEvent(const NetEvents::HighscoresEvent& e)
 {
 	mHighscores = e;
 

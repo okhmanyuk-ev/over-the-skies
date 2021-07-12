@@ -66,7 +66,6 @@ Gameplay::Gameplay()
 		)
 	));
 	
-
 	// hud
 
 	auto safe_area = std::make_shared<Shared::SceneHelpers::SafeArea>();
@@ -264,6 +263,7 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 	{
 		PROFILE->increaseRubies(1);
 		Helpers::gHud->collectRubyAnim(plane->getRuby());
+		mRubiesCollected += 1;
 	}
 }
 
@@ -287,7 +287,7 @@ void Gameplay::spawnPlanes()
 
 		pos.y -= 56.0f;
 		pos.x += 96.0f;
-		spawnPlane(pos, anim_delay, false, false, false);
+		spawnPlane(pos, anim_delay, true, false, false);
 		anim_delay += AnimWait;
 
 		spawnPlane(getNextPos(), anim_delay, false, true, false);
@@ -437,6 +437,7 @@ void Gameplay::gameover()
 	mGameoverCallback();
 	ACHIEVEMENTS->hit("GAME_COMPLETED");
 	PROFILE->saveAsync();
+	CLIENT->sendGuildContribution(mRubiesCollected);
 }
 
 void Gameplay::showRiskLabel(const utf8_string& text)

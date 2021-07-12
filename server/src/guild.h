@@ -20,10 +20,14 @@ public:
 	const auto& getName() const { return mName; }
 	void setName(const std::string& value) { mName = value; }
 
+	auto getScore() const { return mScore; }
+	void setScore(int value) { mScore = value; }
+
 	auto& getMembers() { return mMembers; }
 	
 private:
 	int mIndex;
 	std::string mName;
+	int mScore = 0;
 	std::set<int> mMembers;
 };

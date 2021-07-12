@@ -203,7 +203,7 @@ void Application::adaptToScreen(std::shared_ptr<Scene::Node> node)
 	node->setStretch(1.0f / node->getScale());
 }
 
-void Application::onEvent(const Helpers::PrintEvent& e)
+void Application::onEvent(const NetEvents::PrintEvent& e)
 {
 	auto root = getScene()->getRoot();
 

@@ -22,21 +22,6 @@ namespace hcg001::Helpers
 
 	inline std::shared_ptr<Hud> gHud = nullptr;
 
-	struct PrintEvent
-	{
-		std::string text;
-	};
-
-	struct HighscoresEvent
-	{
-		std::vector<int> uids;
-	};
-
-	struct ProfileReceived // TODO: move to client.h
-	{
-		int uid;
-	};
-
 	class Label : public Scene::Label
 	{
 	public:
@@ -68,13 +53,13 @@ namespace hcg001::Helpers
 		std::shared_ptr<Label> mLabel;
 	};
 
-	template <class T> class ProfileListenable : public T, public Common::Event::Listenable<ProfileReceived>
+	template <class T> class ProfileListenable : public T, public Common::Event::Listenable<NetEvents::ProfileReceived>
 	{
 	public:
 		using ProfileCallback = std::function<void(Channel::ProfilePtr)>;
 
 	private:
-		void onEvent(const ProfileReceived& e) override
+		void onEvent(const NetEvents::ProfileReceived& e) override
 		{
 			if (e.uid != mProfileUID)
 				return;

@@ -111,6 +111,7 @@ GuildsWindow::MyGuildContent::InfoContent::InfoContent()
 
 	std::string title = guild["title"];
 	std::set<int> members = guild["members"];
+	int score = guild["score"];
 
 	auto label = std::make_shared<Helpers::Label>();
 	label->setPivot({ 0.0f, 0.5f });
@@ -123,6 +124,12 @@ GuildsWindow::MyGuildContent::InfoContent::InfoContent()
 	label2->setPosition({ 16.0f, 48.0f });
 	label2->setText("members: " + std::to_string(members.size()));
 	attach(label2);
+
+	auto label3 = std::make_shared<Helpers::Label>();
+	label3->setPivot({ 0.0f, 0.5f });
+	label3->setPosition({ 16.0f, 48.0f + (48.0f - 16.0f) });
+	label3->setText("score: " + std::to_string(score));
+	attach(label3);
 
 	auto exit_button = std::make_shared<Helpers::Button>();
 	exit_button->getLabel()->setText(LOCALIZE("EXIT"));

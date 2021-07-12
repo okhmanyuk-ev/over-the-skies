@@ -8,6 +8,29 @@
 
 namespace hcg001
 {
+	namespace NetEvents
+	{
+		struct PrintEvent
+		{
+			std::string text;
+		};
+
+		struct HighscoresEvent
+		{
+			std::vector<int> uids;
+		};
+
+		struct ProfileReceived // TODO: move to client.h
+		{
+			int uid;
+		};
+
+		struct GuildsTopEvent
+		{
+			std::vector<int> ids;
+		};
+	}
+
 	class Channel : public Shared::NetworkingWS::SimpleChannel
 	{
 	public:
@@ -136,6 +159,8 @@ namespace hcg001
 
 		void requestGuildInfo(int id);
 		void requireGuildInfo(int id);
+
+		void sendGuildContribution(int count);
 		
 	public:
 		const Channel::GlobalChatMessages& getGlobalChatMessages() const;

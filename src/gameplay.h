@@ -61,6 +61,7 @@ namespace hcg001
 		glm::vec2 mLastPlanePos = { 0.0f, 0.0f };
 		bool mCanStart = false;
 		bool mGameovered = false;
+		int mRubiesCollected = 0;
 
 	public:
 		using MoveSkyCallback = std::function<void(const glm::vec2&)>;

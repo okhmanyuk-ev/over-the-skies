@@ -27,12 +27,17 @@ Channel::Channel()
 
 	addEventCallback("print", [](const auto& json) {
 		std::string text = json["text"];
-		EVENT->emit(Helpers::PrintEvent({ text }));
+		EVENT->emit(NetEvents::PrintEvent({ text }));
 	});
 
 	addEventCallback("highscores", [](const auto& json) {
 		std::vector<int> highscores = json["highscores"];
-		EVENT->emit(Helpers::HighscoresEvent({ highscores }));
+		EVENT->emit(NetEvents::HighscoresEvent({ highscores }));
+	});
+
+	addEventCallback("guilds_top", [](const auto& json) {
+		std::vector<int> guild_ids = json["guild_ids"];
+		EVENT->emit(NetEvents::GuildsTopEvent({ guild_ids }));
 	});
 
 	addEventCallback("profile", [this](const auto& json) {
@@ -44,7 +49,7 @@ Channel::Channel()
 		profile->setGuildId(guild_id);
 		mProfiles.erase(uid);
 		mProfiles.insert({ uid, profile });
-		EVENT->emit(Helpers::ProfileReceived({ uid }));
+		EVENT->emit(NetEvents::ProfileReceived({ uid }));
 	});
 
 	addEventCallback("global_chat_message", [this](const auto& json) {
@@ -98,6 +103,10 @@ Channel::Channel()
 		PROFILE->setGuildId(Profile::NoneGuild);
 		EVENT->emit(ExitedFromGuildEvent());
 	});
+
+	addEventCallback("contributed_to_guild", [this](const auto& json) {
+		requestGuildInfo(PROFILE->getGuildId());
+	});
 	
 	FRAME->addOne([this] {
 		auth();
@@ -136,12 +145,13 @@ void Channel::commit()
 	// update profile in map
 	mProfiles.erase(mUID);
 	mProfiles.insert({ mUID, PROFILE });
-	EVENT->emit(Helpers::ProfileReceived({ mUID }));
+	EVENT->emit(NetEvents::ProfileReceived({ mUID }));
 }
 
 void Channel::requestHighscores()
 {
 	sendEvent("request_highscores");
+	sendEvent("request_guilds_top");
 }
 
 void Channel::requestProfile(int uid)
@@ -383,6 +393,17 @@ void Client::requireGuildInfo(int id)
 		return;
 
 	requestGuildInfo(id);
+}
+
+void Client::sendGuildContribution(int count)
+{
+	if (!isConnected())
+		return;
+
+	if (count <= 0)
+		return;
+
+	getMyChannel()->sendEvent("guild_contribution", { { "count", count } });
 }
 
 const Channel::GlobalChatMessages& Client::getGlobalChatMessages() const

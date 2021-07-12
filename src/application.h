@@ -2,12 +2,13 @@
 
 #include <shared/all.h>
 #include "helpers.h"
+#include "client.h"
 
 namespace hcg001
 {
 	class Application : public Shared::Application,
 		public Common::FrameSystem::Frameable,
-		public Common::Event::Listenable<Helpers::PrintEvent>,
+		public Common::Event::Listenable<NetEvents::PrintEvent>,
 		public Common::Event::Listenable<Shared::Profile::ProfileSavedEvent>
 	{
 	public:
@@ -22,7 +23,7 @@ namespace hcg001
 		void adaptToScreen(std::shared_ptr<Scene::Node> node);
 
 	private:
-		void onEvent(const Helpers::PrintEvent& e) override;
+		void onEvent(const NetEvents::PrintEvent& e) override;
 		void onEvent(const Shared::Profile::ProfileSavedEvent& e) override;
 	};
 }
