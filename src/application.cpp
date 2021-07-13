@@ -96,7 +96,8 @@ void Application::initialize()
 		Actions::Collection::WaitOneFrame(),
 		Actions::Collection::Wait(0.25f),
 		Actions::Collection::Execute([sky] {
-			sky->changeColor(Graphics::Color::Hsv::HueBlue, Graphics::Color::Hsv::HueRed);
+			//sky->changeColor(Graphics::Color::Hsv::HueBlue, Graphics::Color::Hsv::HueRed);
+			sky->changeColor(205.0f, 15.0f);
 		}),
 		Actions::Collection::RepeatInfinite([sky] {
 			return Actions::Collection::Delayed(10.0f,

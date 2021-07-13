@@ -118,8 +118,16 @@ namespace hcg001
     private:
         void onEvent(const NetEvents::GuildsTopEvent& e) override;
 
+	private:
+		void refresh();
+
     private:
         std::shared_ptr<Scene::ClippableStencil<Scene::Rectangle>> mBackground;
+		std::shared_ptr<Scene::Scrollbox> mScrollbox;
+		std::shared_ptr<Scene::Node> mGrid;
+
+	private:
+		NetEvents::GuildsTopEvent mTopGuilds;
     };
 
 	// class who can manage pages

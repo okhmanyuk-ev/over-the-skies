@@ -427,7 +427,8 @@ void Server::load()
 		highscore(uid, (*profile)["highscore"]);
 	}
 
-	remakeHighscores();
+	remakeHighscores(); 
+	remakeGuildTop();
 }
 
 std::shared_ptr<Shared::NetworkingWS::Channel> Server::createChannel()
@@ -503,7 +504,7 @@ void Server::remakeGuildTop()
 	auto& guilds = mGuilds.getGuilds();
 
 	std::sort(guilds_list.begin(), guilds_list.end(), [&guilds](int left, int right) {
-		return guilds.at(left)->getScore() < guilds.at(right)->getScore();
+		return guilds.at(left)->getScore() > guilds.at(right)->getScore();
 	});
 
 	mSortedGuildTop.clear();

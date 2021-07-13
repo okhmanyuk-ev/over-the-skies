@@ -108,6 +108,16 @@ SocialPanel::SocialPanel()
 
 		return seq;
 	}));
+	
+	/*mTabsManager.show((int)PageType::Highscores);
+
+	for (auto [type, _content] : mTabsManager.getContents())
+	{
+		auto content = std::static_pointer_cast<TabContent>(_content);
+		runAction(Actions::Collection::RepeatInfinite([content] {
+			return content->getScenario();
+		}));
+	}*/
 }
 
 // tab button
@@ -138,20 +148,26 @@ void SocialPanel::TabButton::onJoin()
 
 void SocialPanel::TabButton::onEnter()
 {
+	//setClickEnabled(false);
 	runAction(Actions::Collection::MakeSequence(
 		Actions::Collection::Execute([this] {
 			mCheckbox->setVisible(true);
 		}),
-		Actions::Collection::ChangeScale(mCheckbox, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 0.5f, Easing::ExponentialOut)
+		Actions::Collection::ChangeScale(mCheckbox, { 0.0f, 0.0f }, { 1.0f, 1.0f }, 0.5f, Easing::ExponentialOut),
+		Actions::Collection::Execute([this] {
+		//	setClickEnabled(true);
+		})
 	));
 }
 
 void SocialPanel::TabButton::onLeave()
 {
+	//setClickEnabled(false);
 	runAction(Actions::Collection::MakeSequence(
 		Actions::Collection::ChangeScale(mCheckbox, { 1.0f, 1.0f }, { 0.0f, 0.0f }, 0.5f, Easing::ExponentialOut),
 		Actions::Collection::Execute([this] {
 			mCheckbox->setVisible(false);
+		//	setClickEnabled(true);
 		})
 	));
 }
@@ -380,19 +396,151 @@ SocialPanel::TopGuildsPage::TopGuildsPage()
     mBackground->setAbsoluteRounding(true);
     mBackground->setRounding(8.0f);
     attach(mBackground);
+
+	mScrollbox = std::make_shared<Scene::Scrollbox>();
+	mScrollbox->setStretch(1.0f);
+	mScrollbox->setTouchable(false);
+	//mScrollbox->setSensitivity({ 0.0f, 1.0f });
+	mScrollbox->getBounding()->setStretch(1.0f);
+	mScrollbox->getBounding()->setAnchor(0.5f);
+	mScrollbox->getBounding()->setPivot(0.5f);
+	mBackground->attach(mScrollbox);
+
+	auto table_headers_holder = std::make_shared<Scene::Node>();
+	table_headers_holder->setStretch({ 1.0f, 0.0f });
+	table_headers_holder->setSize({ 0.0f, 16.0f });
+	table_headers_holder->setAnchor({ 0.5f, 0.0f });
+	table_headers_holder->setPivot({ 0.5f, 1.0f });
+	attach(table_headers_holder);
+
+	auto table_number_header = std::make_shared<Helpers::Label>();
+	table_number_header->setText(LOCALIZE("SOCIAL_PANEL_NUM"));
+	table_number_header->setFontSize(12.0f);
+	table_number_header->setAnchor({ 0.0f, 0.5f });
+	table_number_header->setPivot({ 0.5f, 0.5f });
+	table_number_header->setPosition({ 16.0f, 0.0f });
+	table_number_header->setAlpha(0.5f);
+	table_headers_holder->attach(table_number_header);
+
+	auto table_name_header = std::make_shared<Helpers::Label>();
+	table_name_header->setText(LOCALIZE("SOCIAL_PANEL_GUILD_NAME"));
+	table_name_header->setFontSize(12.0f);
+	table_name_header->setAnchor({ 0.0f, 0.5f });
+	table_name_header->setPivot({ 0.5f, 0.5f });
+	table_name_header->setPosition({ 32.0f + (96.0f / 2.0f), 0.0f });
+	table_name_header->setAlpha(0.5f);
+	table_headers_holder->attach(table_name_header);
+
+	auto table_score_header = std::make_shared<Helpers::Label>();
+	table_score_header->setText(LOCALIZE("SOCIAL_PANEL_SCORE"));
+	table_score_header->setFontSize(12.0f);
+	table_score_header->setAnchor({ 0.0f, 0.5f });
+	table_score_header->setPivot({ 0.5f, 0.5f });
+	table_score_header->setPosition({ 32.0f + 96.0f + (128.0f / 2.0f), 0.0f });
+	table_score_header->setAlpha(0.5f);
+	table_headers_holder->attach(table_score_header);
 }
 
 Actions::Collection::UAction SocialPanel::TopGuildsPage::getScenario()
 {
 	return Actions::Collection::MakeSequence(
 		Actions::Collection::Wait(1.25f),
-		//Actions::Collection::ChangeVerticalScrollPosition(mScrollbox, 1.0f, 3.0f, Easing::CubicInOut),
-		Actions::Collection::Wait(0.75f)//,
-		//Actions::Collection::ChangeVerticalScrollPosition(mScrollbox, 0.0f, 3.0f, Easing::CubicInOut)
+		Actions::Collection::ChangeVerticalScrollPosition(mScrollbox, 1.0f, 5.0f, Easing::CubicInOut),
+		Actions::Collection::Wait(0.75f),
+		Actions::Collection::ChangeVerticalScrollPosition(mScrollbox, 0.0f, 5.0f, Easing::CubicInOut)
 	);
 }
 
 void SocialPanel::TopGuildsPage::onEvent(const NetEvents::GuildsTopEvent& e)
 {
-    //
+	mTopGuilds = e;
+
+	if (!mTopGuilds.ids.empty())
+	{
+		while (mTopGuilds.ids.size() < 10)
+			mTopGuilds.ids.push_back(mTopGuilds.ids.at(mTopGuilds.ids.size() - 1));
+	}
+
+	refresh();
+}
+
+void SocialPanel::TopGuildsPage::refresh()
+{
+	if (mGrid)
+	{
+		mScrollbox->getContent()->detach(mGrid);
+	}
+
+	std::vector<std::shared_ptr<Scene::Node>> v_items;
+
+	const glm::vec2 VerticalGridItemSize = { 256.0f, 16.0f };
+
+	bool grayed_line = true;
+
+	for (int i = 0; i < mTopGuilds.ids.size(); i++)
+	{
+		auto id = mTopGuilds.ids.at(i);
+
+		CLIENT->requestGuildInfo(id);
+
+		const float LabelFontSize = 13.0f;
+
+		auto count_label = std::make_shared<Helpers::Label>();
+		count_label->setFontSize(LabelFontSize);
+		count_label->setText(std::to_string(i + 1) + ".");
+		count_label->setAnchor(0.5f);
+		count_label->setPivot(0.5f);
+
+		auto nickname_scissor = std::make_shared<Scene::ClippableScissor<Scene::Node>>();
+		nickname_scissor->setStretch(1.0f);
+
+		auto nickname_label = std::make_shared<Helpers::GuildInfoListenable<Helpers::Label>>();
+		nickname_label->setAnchor({ 0.0f, 0.5f });
+		nickname_label->setPivot({ 0.0f, 0.5f });
+		nickname_label->setFontSize(LabelFontSize);
+		nickname_label->setGuildID(id);
+		nickname_label->setGuildCallback([nickname_label](auto guild) {
+			std::string title = guild->getJson().value("title", "");
+			nickname_label->setText(title);
+		});
+		nickname_scissor->attach(nickname_label);
+
+		auto score_label = std::make_shared<Helpers::GuildInfoListenable<Helpers::Label>>();
+		score_label->setAnchor(0.5f);
+		score_label->setPivot(0.5f);
+		score_label->setFontSize(LabelFontSize);
+		score_label->setGuildID(id);
+		score_label->setGuildCallback([score_label](auto guild) {
+			int score = guild->getJson().value("score", 0);
+			score_label->setText(std::to_string(score));
+		});
+
+		auto h_grid = Shared::SceneHelpers::MakeHorizontalGrid(VerticalGridItemSize.y, {
+			{ 32.0f, count_label },
+			{ 96.0f, nickname_scissor },
+			{ 128.0f, score_label }
+		});
+
+		if (grayed_line)
+		{
+			auto gray_rect = std::make_shared<Scene::Rectangle>();
+			gray_rect->setColor(Graphics::Color::Black);
+			gray_rect->setAlpha(0.125f);
+			gray_rect->setSize(VerticalGridItemSize);
+			gray_rect->attach(h_grid);
+			h_grid = gray_rect;
+		}
+
+		grayed_line = !grayed_line;
+
+		auto cullable_h_grid = std::make_shared<Scene::Cullable<Scene::Node>>();
+		cullable_h_grid->setSize(VerticalGridItemSize);
+		cullable_h_grid->attach(h_grid);
+
+		v_items.push_back(cullable_h_grid);
+	}
+
+	mGrid = Shared::SceneHelpers::MakeVerticalGrid(VerticalGridItemSize, v_items);
+	mScrollbox->getContent()->setSize(mGrid->getSize());
+	mScrollbox->getContent()->attach(mGrid);
 }
