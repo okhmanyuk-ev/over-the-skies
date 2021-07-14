@@ -66,12 +66,12 @@ GuildsWindow::MyGuildContent::MyGuildContent()
 	content_holder->setVerticalMargin(tab_buttons_holder->getHeight());
 	attach(content_holder);
 
-	auto chat_tab_button = std::make_shared<TabButton>(LOCALIZE("CHAT"));
+	auto chat_tab_button = std::make_shared<TabButton>(LOCALIZE("GUILDS_WINDOW_TAB_CHAT"));
 	chat_tab_button->setClickCallback([this] {
 		mTabsManager.show(PageType::Chat);
 	});
 
-	auto info_tab_button = std::make_shared<TabButton>(LOCALIZE("INFO"));
+	auto info_tab_button = std::make_shared<TabButton>(LOCALIZE("GUILDS_WINDOW_TAB_INFO"));
 	info_tab_button->setClickCallback([this] {
 		mTabsManager.show(PageType::Info);
 	});
@@ -158,6 +158,8 @@ GuildsWindow::MyGuildContent::ChatContent::ChatContent()
 	attach(asdaw);
 }
 
+// info content
+
 GuildsWindow::MyGuildContent::InfoContent::InfoContent()
 {
 	setStretch(1.0f);
@@ -168,32 +170,54 @@ GuildsWindow::MyGuildContent::InfoContent::InfoContent()
 	std::set<int> members = guild["members"];
 	int score = guild["score"];
 
+	auto top_section = std::make_shared<Scene::Node>();
+	top_section->setStretch({ 1.0f, 0.0f });
+	top_section->setHeight(128.0f);
+	attach(top_section);
+
+	auto bottom_section = std::make_shared<Scene::Node>();
+	bottom_section->setStretch(1.0f);
+	bottom_section->setVerticalMargin(top_section->getHeight());
+	bottom_section->setAnchor({ 0.5f, 1.0f });
+	bottom_section->setPivot({ 0.5f, 1.0f });
+	attach(bottom_section);
+
+	auto info_bg = std::make_shared<Scene::Rectangle>();
+	info_bg->setStretch(1.0f);
+	info_bg->setPivot(0.5f);
+	info_bg->setAnchor(0.5f);
+	info_bg->setMargin(16.0f);
+	info_bg->setAbsoluteRounding(true);
+	info_bg->setRounding(8.0f);
+	info_bg->setAlpha(0.125f);
+	top_section->attach(info_bg);
+
 	auto label = std::make_shared<Helpers::Label>();
 	label->setPivot({ 0.0f, 0.5f });
 	label->setPosition({ 16.0f, 16.0f });
 	label->setText("name: " + title);
-	attach(label);
+	info_bg->attach(label);
 
 	auto label2 = std::make_shared<Helpers::Label>();
 	label2->setPivot({ 0.0f, 0.5f });
 	label2->setPosition({ 16.0f, 48.0f });
 	label2->setText("members: " + std::to_string(members.size()));
-	attach(label2);
+	info_bg->attach(label2);
 
 	auto label3 = std::make_shared<Helpers::Label>();
 	label3->setPivot({ 0.0f, 0.5f });
 	label3->setPosition({ 16.0f, 48.0f + (48.0f - 16.0f) });
 	label3->setText("score: " + std::to_string(score));
-	attach(label3);
+	info_bg->attach(label3);
 
 	auto leave_button = std::make_shared<Helpers::Button>();
 	leave_button->setButtonColor(Helpers::Pallete::ButtonColorRed);
 	leave_button->getLabel()->setText(LOCALIZE("GUILDS_WINDOW_LEAVE"));
 	leave_button->getLabel()->setFontSize(18.0f);
-	leave_button->setAnchor({ 0.5f, 1.0f });
-	leave_button->setPivot(0.5f);
-	leave_button->setSize({ 128.0f, 28.0f });
-	leave_button->setY(-24.0f);
+	leave_button->setAnchor({ 1.0f, 0.0f });
+	leave_button->setPivot({ 1.0f, 0.0f });
+	leave_button->setSize({ 96.0f, 24.0f });
+	leave_button->setPosition({ -8.0f, 32.0f });
 	leave_button->setClickCallback([] {
 		auto window = std::make_shared<ResponseWaitWindow>();
 		SCENE_MANAGER->pushWindow(window);
@@ -221,8 +245,93 @@ GuildsWindow::MyGuildContent::InfoContent::InfoContent()
 			})
 		));
 	});
-	attach(leave_button);
+	info_bg->attach(leave_button);
+
+	std::vector<std::shared_ptr<Scene::Node>> items;
+
+	int num = 0;
+
+	for (auto uid : members)
+	{
+		num += 1;
+
+		auto item = std::make_shared<Member>(num, uid);
+		item->setAnchor(0.5f);
+		item->setPivot(0.5f);
+		items.push_back(item);
+	}
+
+	const glm::vec2 ItemSize = { 314.0f, 48.0f };
+
+	auto grid = Shared::SceneHelpers::MakeVerticalGrid(ItemSize, items);
+	grid->setY(Member::VerticalMargin / 2.0f);
+	grid->setHeight(grid->getHeight() + Member::VerticalMargin);
+
+	auto scrollbox = std::make_shared<Scene::ClippableScissor<Scene::Scrollbox>>();
+	scrollbox->setStretch(1.0f);
+	scrollbox->getBounding()->setStretch(1.0f);
+	scrollbox->getContent()->setSize(grid->getSize());
+	scrollbox->getContent()->attach(grid);
+	scrollbox->setSensitivity({ 0.0f, 1.0f });
+	bottom_section->attach(scrollbox);
+
+	auto scrollbar = std::make_shared<Shared::SceneHelpers::VerticalScrollbar>();
+	scrollbar->setX(-4.0f);
+	scrollbar->setScrollbox(scrollbox);
+	scrollbox->attach(scrollbar);
+
+	auto top_gradient = std::make_shared<Scene::Rectangle>();
+	top_gradient->setStretch({ 1.0f, 0.0f });
+	top_gradient->setHeight(Member::VerticalMargin);
+	top_gradient->setAnchor({ 0.5f, 0.0f });
+	top_gradient->setPivot({ 0.5f, 0.0f });
+	top_gradient->setVerticalGradient({ Helpers::Pallete::WindowBody, 1.0f }, { Helpers::Pallete::WindowBody, 0.0f });
+	scrollbox->attach(top_gradient);
+
+	auto bottom_gradient = std::make_shared<Scene::Rectangle>();
+	bottom_gradient->setStretch({ 1.0f, 0.0f });
+	bottom_gradient->setHeight(Member::VerticalMargin);
+	bottom_gradient->setAnchor({ 0.5f, 1.0f });
+	bottom_gradient->setPivot({ 0.5f, 1.0f });
+	bottom_gradient->setVerticalGradient({ Helpers::Pallete::WindowBody, 0.0f }, { Helpers::Pallete::WindowBody, 1.0f });
+	scrollbox->attach(bottom_gradient);
 }
+
+// member
+
+GuildsWindow::MyGuildContent::InfoContent::Member::Member(int num, int uid)
+{
+	setStretch({ 1.0f, 0.0f });
+	setMargin({ 16.0f, VerticalMargin });
+	setHeight(48.0f);
+	setRounding(8.0f);
+	setAbsoluteRounding(true);
+	setColor(Helpers::Pallete::WindowItem);
+
+	auto num_label = std::make_shared<Helpers::Label>();
+	num_label->setFontSize(18.0f);
+	num_label->setPosition({ 24.0f, 0.0f });
+	num_label->setPivot(0.5f);
+	num_label->setAnchor({ 0.0f, 0.5f });
+	num_label->setText(std::to_string(num));
+	attach(num_label);
+
+	CLIENT->requireProfile(uid);
+
+	auto name = std::make_shared<Helpers::ProfileListenable<Helpers::Label>>();
+	name->setPosition({ 48.0f, 0.0f });
+	name->setAnchor({ 0.0f, 0.5f });
+	name->setPivot({ 0.0f, 0.5f });
+	name->setFontSize(16.0f);
+	name->setColor(Helpers::Pallete::YellowLabel);
+	name->setProfileUID(uid);
+	name->setProfileCallback([name](auto profile) {
+		name->setText(profile->getNickName());
+	});
+	attach(name);
+}
+
+// search content
 
 GuildsWindow::SearchContent::SearchContent()
 {

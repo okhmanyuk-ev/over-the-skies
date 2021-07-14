@@ -81,16 +81,6 @@ SocialPanel::SocialPanel()
 
 		return seq;
 	}));
-	
-	/*mTabsManager.show((int)PageType::Highscores);
-
-	for (auto [type, _content] : mTabsManager.getContents())
-	{
-		auto content = std::static_pointer_cast<TabContent>(_content);
-		runAction(Actions::Collection::RepeatInfinite([content] {
-			return content->getScenario();
-		}));
-	}*/
 }
 
 // tab button

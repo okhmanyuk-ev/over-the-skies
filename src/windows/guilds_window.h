@@ -69,8 +69,20 @@ namespace hcg001
 
 	class GuildsWindow::MyGuildContent::InfoContent : public GuildsWindow::MyGuildContent::TabContent
 	{
+	private:
+		class Member;
+
 	public:
 		InfoContent();
+	};
+
+	class GuildsWindow::MyGuildContent::InfoContent::Member : public Scene::Rectangle
+	{
+	public:
+		static inline const float VerticalMargin = 8.0f;
+
+	public:
+		Member(int num, int uid);
 	};
 
 	class GuildsWindow::SearchContent : public Scene::Node
