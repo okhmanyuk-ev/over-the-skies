@@ -1,6 +1,7 @@
 #include "guilds_window.h"
 #include "create_guild_window.h"
 #include "response_wait_window.h"
+#include "confirm_window.h"
 
 using namespace hcg001;
 
@@ -219,31 +220,43 @@ GuildsWindow::MyGuildContent::InfoContent::InfoContent()
 	leave_button->setSize({ 96.0f, 24.0f });
 	leave_button->setPosition({ -8.0f, 32.0f });
 	leave_button->setClickCallback([] {
-		auto window = std::make_shared<ResponseWaitWindow>();
-		SCENE_MANAGER->pushWindow(window);
-		window->runAction(Actions::Collection::MakeSequence(
-			Actions::Collection::Wait([window] { return window->getState() != Window::State::Opened; }),
-			Actions::Collection::Execute([] {
-				CLIENT->exitGuild();
-			}),
-			Actions::Collection::Breakable(5.0f,
-				Actions::Collection::WaitEvent<Channel::ExitedFromGuildEvent>([](const auto& e) {
-					LOG("exited from guild");
-				})
-			),
-			Actions::Collection::Wait(0.5f),
-			Actions::Collection::Execute([] {
-				SCENE_MANAGER->popWindow([] {
-					if (PROFILE->isInGuild())
-						return;
+		auto title = LOCALIZE("ARE YOU SURE ?");
+		auto yes_text = LOCALIZE("YES");
+		auto no_text = LOCALIZE("NO");
+		auto confirm_window = std::make_shared<ConfirmWindow>(title, yes_text, no_text);
+		confirm_window->setYesCallback([] {
+			SCENE_MANAGER->popWindow([] {
+				auto window = std::make_shared<ResponseWaitWindow>();
+				SCENE_MANAGER->pushWindow(window);
+				window->runAction(Actions::Collection::MakeSequence(
+					Actions::Collection::Wait([window] { return window->getState() != Window::State::Opened; }),
+					Actions::Collection::Execute([] {
+						CLIENT->exitGuild();
+					}),
+					Actions::Collection::Breakable(5.0f,
+						Actions::Collection::WaitEvent<Channel::ExitedFromGuildEvent>([](const auto& e) {
+							LOG("exited from guild");
+						})
+					),
+					Actions::Collection::Wait(0.5f),
+					Actions::Collection::Execute([] {
+						SCENE_MANAGER->popWindow([] {
+							if (PROFILE->isInGuild())
+								return;
 					
-					SCENE_MANAGER->popWindow([] {
-						auto window = std::make_shared<GuildsWindow>();
-						SCENE_MANAGER->pushWindow(window);
-					});
-				});
-			})
-		));
+							SCENE_MANAGER->popWindow([] {
+								auto window = std::make_shared<GuildsWindow>();
+								SCENE_MANAGER->pushWindow(window);
+							});
+						});
+					})
+				));			
+			});
+		});
+		confirm_window->setNoCallback([] {
+			SCENE_MANAGER->popWindow();
+		});
+		SCENE_MANAGER->pushWindow(confirm_window);
 	});
 	info_bg->attach(leave_button);
 
