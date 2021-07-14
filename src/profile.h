@@ -60,6 +60,9 @@ namespace hcg001
 
 		auto& getAchievementsProgress() { return mAchievementsProgress; }
 
+		bool isNicknameChanged() const { return mNicknameChanged; }
+		void setNicknameChanged(bool value) { mNicknameChanged = value; }
+
 	private:
 		int mHighScore = 0;
 		int mRubies = 0;
@@ -70,5 +73,6 @@ namespace hcg001
 		utf8_string mNickName = "Guest";
 		int mGuildId = NoneGuild;
 		std::map<std::string, int> mAchievementsProgress;
+		bool mNicknameChanged = false;
 	};
 }

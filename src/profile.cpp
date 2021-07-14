@@ -39,6 +39,8 @@ void Profile::read(const nlohmann::json& json)
 			mAchievementsProgress[name] = progress;
 		}
 	}
+
+	mNicknameChanged = json.value("nickname_changed", false);
 }
 
 void Profile::write(nlohmann::json& json)
@@ -50,6 +52,7 @@ void Profile::write(nlohmann::json& json)
 	json["dailyreward_time"] = mDailyRewardTime;
 	json["nickname"] = std::vector<utf8_string::value_type>(mNickName.begin(), mNickName.end());
 	json["current_skin"] = (int)mCurrentSkin;
+	json["nickname_changed"] = mNicknameChanged;
 
 	for (const auto& [name, progress] : mAchievementsProgress)
 	{
@@ -66,6 +69,8 @@ void Profile::makeDefault()
 	setRubies(0);
 	mSkins = { 0 };
 	mNickName = "Guest";
+	mAchievementsProgress.clear();
+	mNicknameChanged = false;
 }
 
 void Profile::setRubies(int value)

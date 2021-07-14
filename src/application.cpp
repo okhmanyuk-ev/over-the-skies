@@ -13,6 +13,7 @@
 #include "hud.h"
 #include "client.h"
 #include "achievements.h"
+#include "windows/input_window.h"
 
 using namespace hcg001;
 
@@ -77,12 +78,14 @@ void Application::initialize()
 	root->attach(sky, Scene::Node::AttachDirection::Front);
 
 	auto main_menu = std::make_shared<MainMenu>();
-	main_menu->setStartCallback([sky, main_menu] {
+	main_menu->setStartCallback([this, sky, main_menu] {
 		auto gameplay = std::make_shared<Gameplay>();
-		gameplay->setGameoverCallback([main_menu, gameplay] {
+		gameplay->setGameoverCallback([this, main_menu, gameplay] {
 			auto gameover_screen = std::make_shared<GameoverMenu>(gameplay->getScore());
-			gameover_screen->setClickCallback([main_menu] {
-				SCENE_MANAGER->switchScreen(main_menu);
+			gameover_screen->setClickCallback([this, main_menu] {
+				SCENE_MANAGER->switchScreen(main_menu, [this] {
+					inputNickname();
+				});
 			});
 			SCENE_MANAGER->switchScreen(gameover_screen);
 		});
@@ -245,4 +248,19 @@ void Application::onEvent(const NetEvents::PrintEvent& e)
 void Application::onEvent(const Shared::Profile::ProfileSavedEvent& e)
 {
 	CLIENT->commit();
+}
+
+void Application::inputNickname()
+{
+	if (PROFILE->isNicknameChanged())
+		return;
+
+	PROFILE->setNicknameChanged(true);
+
+	auto text = PROFILE->getNickName();
+	auto callback = [this](auto text) {
+		PROFILE->setNickName(text);
+	};
+	auto input_window = std::make_shared<InputWindow>(LOCALIZE("INPUT_NICK_NAME"), text, callback);
+	SCENE_MANAGER->pushWindow(input_window);
 }

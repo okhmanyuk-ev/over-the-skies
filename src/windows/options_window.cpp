@@ -21,6 +21,8 @@ OptionsWindow::OptionsWindow()
 	mNicknameInputField->getLabel()->setText(PROFILE->getNickName());
 	getBody()->attach(mNicknameInputField);
 
+	PROFILE->setNicknameChanged(true); // that means that user have been seen his nickname, and no need to show him a nickname change window
+
 	auto ok_button = std::make_shared<Helpers::Button>();
 	ok_button->getLabel()->setText(LOCALIZE("WINDOW_OK"));
 	ok_button->setClickCallback([] {
