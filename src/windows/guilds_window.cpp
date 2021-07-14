@@ -6,7 +6,7 @@ using namespace hcg001;
 
 GuildsWindow::GuildsWindow()
 {
-	getBackground()->setSize({ 314.0f, 386.0f });
+	getBackground()->setSize({ 314.0f, 512.0f });
 	getTitle()->setText(LOCALIZE("GUILDS_WINDOW_TITLE"));
 
 	runAction(Actions::Collection::MakeSequence(
@@ -52,42 +52,97 @@ GuildsWindow::MyGuildContent::MyGuildContent()
 {
 	setStretch(1.0f);
 
+	auto tab_buttons_holder = std::make_shared<Scene::Node>();
+	tab_buttons_holder->setStretch({ 1.0f, 0.0f });
+	tab_buttons_holder->setAnchor({ 0.5f, 0.0f });
+	tab_buttons_holder->setPivot({ 0.5f, 0.0f });
+	tab_buttons_holder->setHeight(28.0f);
+	attach(tab_buttons_holder);
+
 	auto content_holder = std::make_shared<Scene::Node>();
 	content_holder->setStretch(1.0f);
 	content_holder->setAnchor({ 0.5f, 1.0f });
 	content_holder->setPivot({ 0.5f, 1.0f });
-	content_holder->setVerticalMargin(32.0f);
+	content_holder->setVerticalMargin(tab_buttons_holder->getHeight());
 	attach(content_holder);
 
-	auto info_content = std::make_shared<InfoContent>();
-	content_holder->attach(info_content);
+	auto chat_tab_button = std::make_shared<TabButton>(LOCALIZE("CHAT"));
+	chat_tab_button->setClickCallback([this] {
+		mTabsManager.show(PageType::Chat);
+	});
+
+	auto info_tab_button = std::make_shared<TabButton>(LOCALIZE("INFO"));
+	info_tab_button->setClickCallback([this] {
+		mTabsManager.show(PageType::Info);
+	});
+
+	auto tab_button_grid = Shared::SceneHelpers::MakeGrid({ 
+		{ chat_tab_button, info_tab_button },
+	});
+
+	tab_button_grid->setStretch(1.0f);
+	tab_button_grid->setAnchor(0.5f);
+	tab_button_grid->setPivot(0.5f);
+	tab_buttons_holder->attach(tab_button_grid);
+
+	mTabsManager.addButton(PageType::Chat, chat_tab_button);
+	mTabsManager.addButton(PageType::Info, info_tab_button);
 
 	auto chat_content = std::make_shared<ChatContent>();
 	content_holder->attach(chat_content);
 
-	auto chat_tab_button = std::make_shared<Helpers::Button>();
-	chat_tab_button->getLabel()->setText(LOCALIZE("CHAT"));
-	chat_tab_button->getLabel()->setFontSize(18.0f);
-	chat_tab_button->setSize({ 128.0f, 28.0f });
-	chat_tab_button->setPosition({ 18.0f, 9.0f });
-	attach(chat_tab_button);
+	auto info_content = std::make_shared<InfoContent>();
+	content_holder->attach(info_content);
 
-	auto info_tab_button = std::make_shared<Helpers::Button>();
-	info_tab_button->getLabel()->setText(LOCALIZE("INFO"));
-	info_tab_button->getLabel()->setFontSize(18.0f);
-	info_tab_button->setSize({ 128.0f, 28.0f });
-	info_tab_button->setPosition({ 170.0f, 9.0f });
-	attach(info_tab_button);
+	mTabsManager.addContent(PageType::Chat, chat_content);
+	mTabsManager.addContent(PageType::Info, info_content);
 
-	for (auto button : { chat_tab_button, info_tab_button })
-	{
-		button->setClickCallback([button, chat_tab_button, info_tab_button, info_content, chat_content] {
-			info_content->setEnabled(button == info_tab_button);
-			chat_content->setEnabled(button == chat_tab_button);
-		});
-	}
+	mTabsManager.show(PageType::Chat);
+}
 
-	chat_tab_button->click();
+// tab button
+
+GuildsWindow::MyGuildContent::TabButton::TabButton(const utf8_string& text)
+{
+	getLabel()->setText(text);
+	getLabel()->setFontSize(18.0f);
+	setStretch(1.0f);
+	setAnchor(0.5f);
+	setPivot(0.5f);
+	setRounding(0.0f);
+	setMargin({ 2.0f, 0.0f });
+}
+
+void GuildsWindow::MyGuildContent::TabButton::onJoin()
+{
+	//setEnabled(false);
+}
+
+void GuildsWindow::MyGuildContent::TabButton::onEnter()
+{
+	//setEnabled(true);
+}
+
+void GuildsWindow::MyGuildContent::TabButton::onLeave()
+{
+	//setEnabled(false);
+}
+
+// tab content
+
+void GuildsWindow::MyGuildContent::TabContent::onJoin()
+{
+	setEnabled(false);
+}
+
+void GuildsWindow::MyGuildContent::TabContent::onEnter()
+{
+	setEnabled(true);
+}
+
+void GuildsWindow::MyGuildContent::TabContent::onLeave()
+{
+	setEnabled(false);
 }
 
 GuildsWindow::MyGuildContent::ChatContent::ChatContent()
@@ -131,14 +186,15 @@ GuildsWindow::MyGuildContent::InfoContent::InfoContent()
 	label3->setText("score: " + std::to_string(score));
 	attach(label3);
 
-	auto exit_button = std::make_shared<Helpers::Button>();
-	exit_button->getLabel()->setText(LOCALIZE("EXIT"));
-	exit_button->getLabel()->setFontSize(18.0f);
-	exit_button->setAnchor({ 0.5f, 1.0f });
-	exit_button->setPivot(0.5f);
-	exit_button->setSize({ 128.0f, 28.0f });
-	exit_button->setY(-24.0f);
-	exit_button->setClickCallback([] {
+	auto leave_button = std::make_shared<Helpers::Button>();
+	leave_button->setButtonColor(Helpers::Pallete::ButtonColorRed);
+	leave_button->getLabel()->setText(LOCALIZE("GUILDS_WINDOW_LEAVE"));
+	leave_button->getLabel()->setFontSize(18.0f);
+	leave_button->setAnchor({ 0.5f, 1.0f });
+	leave_button->setPivot(0.5f);
+	leave_button->setSize({ 128.0f, 28.0f });
+	leave_button->setY(-24.0f);
+	leave_button->setClickCallback([] {
 		auto window = std::make_shared<ResponseWaitWindow>();
 		SCENE_MANAGER->pushWindow(window);
 		window->runAction(Actions::Collection::MakeSequence(
@@ -165,7 +221,7 @@ GuildsWindow::MyGuildContent::InfoContent::InfoContent()
 			})
 		));
 	});
-	attach(exit_button);
+	attach(leave_button);
 }
 
 GuildsWindow::SearchContent::SearchContent()

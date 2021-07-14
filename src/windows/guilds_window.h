@@ -20,21 +20,54 @@ namespace hcg001
 
 	class GuildsWindow::MyGuildContent : public Scene::Node
 	{
+	public:
+		enum class PageType
+		{
+			Chat,
+			Info,
+		};
+
+	private:
+		class TabButton;
+		class TabContent;
+
 	private:
 		class ChatContent;
 		class InfoContent;
 
 	public:
 		MyGuildContent();
+
+	private:
+		Helpers::MappedTabsManager<PageType> mTabsManager;
 	};
 
-	class GuildsWindow::MyGuildContent::ChatContent : public Scene::Node
+	class GuildsWindow::MyGuildContent::TabButton : public Helpers::Button, public Helpers::TabsManager::Item
+	{
+	public:
+		TabButton(const utf8_string& text);
+
+	public:
+		void onJoin() override;
+		void onEnter() override;
+		void onLeave() override;
+	};
+
+	class GuildsWindow::MyGuildContent::TabContent : public Scene::Node, public Helpers::TabsManager::Item
+	{
+	public:
+		void onJoin() override;
+		void onEnter() override;
+		void onLeave() override;
+	};
+
+	class GuildsWindow::MyGuildContent::ChatContent : public GuildsWindow::MyGuildContent::TabContent
 	{
 	public:
 		ChatContent();
 	};
 
-	class GuildsWindow::MyGuildContent::InfoContent : public Scene::Node
+	class GuildsWindow::MyGuildContent::InfoContent : public GuildsWindow::MyGuildContent::TabContent
 	{
 	public:
 		InfoContent();

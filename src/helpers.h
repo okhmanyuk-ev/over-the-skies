@@ -17,6 +17,7 @@ namespace hcg001::Helpers
 		const auto WindowItem = glm::rgbColor(glm::vec3(Hue, 0.4f, 0.25f));
 		const auto YellowLabel = glm::rgbColor(glm::vec3(60.0f, 0.25f, 1.0f));
 		const auto ButtonColor = glm::rgbColor(glm::vec3(Hue, 0.75f + 0.125f, 0.25f + 0.125f));
+		const auto ButtonColorRed = glm::rgbColor(glm::vec3(20.0f, 0.75f + 0.125f, 0.25f + 0.125f));
 		const auto InputField = glm::rgbColor(glm::vec3(Hue, 0.75f + 0.125f, 0.125f / 2.0f));
 	}
 
@@ -32,6 +33,9 @@ namespace hcg001::Helpers
 	{
 	public:
 		Button();
+
+	public:
+		void setButtonColor(const glm::vec3& color);
 
 	public:
 		auto isAdaptiveFontSize() const { return mAdaptiveFontSize; }
@@ -154,5 +158,41 @@ namespace hcg001::Helpers
 	{
 	public:
 		WaitingIndicator();
+	};
+
+	class TabsManager
+	{
+	public:
+		class Item;
+
+	public:
+		void addContent(int type, std::shared_ptr<Item> node);
+		void addButton(int type, std::shared_ptr<Item> node);
+		void show(int type);
+
+	public:
+		const auto& getContents() const { return mContents; }
+
+	private:
+		std::map<int, std::shared_ptr<Item>> mContents;
+		std::map<int, std::shared_ptr<Item>> mButtons;
+		std::optional<int> mCurrentPage;
+	};
+
+	class TabsManager::Item
+	{
+	public:
+		virtual void onJoin() = 0;
+		virtual void onEnter() = 0;
+		virtual void onLeave() = 0;
+	};
+
+	template <class T> class MappedTabsManager : public TabsManager
+	{
+		static_assert(std::is_enum<T>::value, "T must be enum");
+	public:
+		void addContent(T type, std::shared_ptr<Item> node) { TabsManager::addContent((int)type, node); }
+		void addButton(T type, std::shared_ptr<Item> node) { TabsManager::addButton((int)type, node); }
+		void show(T type) { TabsManager::show((int)type); }
 	};
 }

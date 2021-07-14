@@ -3,33 +3,6 @@
 
 using namespace hcg001;
 
-// pages manager
-
-void TabsManager::addContent(int type, std::shared_ptr<Item> node)
-{
-	mContents.insert({ type, node });
-	node->onJoin();
-}
-
-void TabsManager::addButton(int type, std::shared_ptr<Item> node)
-{
-	mButtons.insert({ type, node });
-	node->onJoin();
-}
-
-void TabsManager::show(int type)
-{
-	if (mCurrentPage.has_value())
-	{
-		mContents.at(mCurrentPage.value())->onLeave();
-		mButtons.at(mCurrentPage.value())->onLeave();
-	}
-
-	mContents.at(type)->onEnter();
-	mButtons.at(type)->onEnter();
-	mCurrentPage = type;
-}
-
 // social panel
 
 SocialPanel::SocialPanel()
@@ -62,12 +35,12 @@ SocialPanel::SocialPanel()
 
 	auto highscores_button = std::make_shared<TabButton>();
 	highscores_button->setClickCallback([this] {
-		mTabsManager.show((int)PageType::Highscores);
+		mTabsManager.show(PageType::Highscores);
 	});
 
 	auto top_guilds_button = std::make_shared<TabButton>();
 	top_guilds_button->setClickCallback([this] {
-		mTabsManager.show((int)PageType::TopGuilds);
+		mTabsManager.show(PageType::TopGuilds);
 	});
 
 	const glm::vec2 TabItemSize = { 24.0f, footer->getHeight() };
@@ -80,8 +53,8 @@ SocialPanel::SocialPanel()
 	tab_button_grid->setPivot(0.5f);
 	footer->attach(tab_button_grid);
 
-	mTabsManager.addButton((int)PageType::Highscores, highscores_button);
-	mTabsManager.addButton((int)PageType::TopGuilds, top_guilds_button);
+	mTabsManager.addButton(PageType::Highscores, highscores_button);
+	mTabsManager.addButton(PageType::TopGuilds, top_guilds_button);
 	
 	auto highscores_page = std::make_shared<HighscoresPage>();
 	body->attach(highscores_page);
@@ -89,8 +62,8 @@ SocialPanel::SocialPanel()
 	auto top_guilds_page = std::make_shared<TopGuildsPage>();
 	body->attach(top_guilds_page);
 
-	mTabsManager.addContent((int)PageType::Highscores, highscores_page);
-	mTabsManager.addContent((int)PageType::TopGuilds, top_guilds_page);
+	mTabsManager.addContent(PageType::Highscores, highscores_page);
+	mTabsManager.addContent(PageType::TopGuilds, top_guilds_page);
 	
 	runAction(Actions::Collection::RepeatInfinite([this] {
 		auto seq = Actions::Collection::MakeSequence();
@@ -99,7 +72,7 @@ SocialPanel::SocialPanel()
 		{
 			auto content = std::static_pointer_cast<TabContent>(_content);
 			seq->add(Actions::Collection::Execute([this, type] { 
-				mTabsManager.show(type);
+				mTabsManager.show((PageType)type);
 			}));
 			seq->add(Actions::Collection::Wait(1.0f));
 			seq->add(content->getScenario());

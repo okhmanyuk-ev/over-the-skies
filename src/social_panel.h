@@ -7,33 +7,6 @@
 
 namespace hcg001
 {
-	class TabsManager
-	{
-	public:
-		class Item;
-
-	public:
-		void addContent(int type, std::shared_ptr<Item> node);
-		void addButton(int type, std::shared_ptr<Item> node);
-		void show(int type);
-
-	public:
-		const auto& getContents() const { return mContents; }
-
-	private:
-		std::map<int, std::shared_ptr<Item>> mContents;
-		std::map<int, std::shared_ptr<Item>> mButtons;
-		std::optional<int> mCurrentPage;
-	};
-
-	class TabsManager::Item
-	{
-	public:
-		virtual void onJoin() = 0;
-		virtual void onEnter() = 0;
-		virtual void onLeave() = 0;
-	};
-
 	class SocialPanel : public Scene::Node
 	{
 	public:
@@ -53,11 +26,11 @@ namespace hcg001
 		SocialPanel();
 
 	private:
-		TabsManager mTabsManager;
+		Helpers::MappedTabsManager<PageType> mTabsManager;
 	};
 
 	class SocialPanel::TabButton : public Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::Rectangle>>, 
-		public TabsManager::Item, public std::enable_shared_from_this<SocialPanel::TabButton>
+		public Helpers::TabsManager::Item, public std::enable_shared_from_this<SocialPanel::TabButton>
 	{
 	public:
 		TabButton();
@@ -71,7 +44,7 @@ namespace hcg001
 		std::shared_ptr<Scene::Rectangle> mCheckbox;
 	};
 
-	class SocialPanel::TabContent : public Scene::Node, public TabsManager::Item, public std::enable_shared_from_this<SocialPanel::TabContent>
+	class SocialPanel::TabContent : public Scene::Node, public Helpers::TabsManager::Item, public std::enable_shared_from_this<SocialPanel::TabContent>
 	{
 	public:
 		void onJoin() override;
@@ -129,16 +102,4 @@ namespace hcg001
 	private:
 		NetEvents::GuildsTopEvent mTopGuilds;
     };
-
-	// class who can manage pages
-	// void addPage(std::shared_ptr<Page>)
-	// void removePage(..same)
-	// void showPage(int) (or choosePage)
-	// int getPagesCount()
-	
-
-
-	// page class
-	// onEnter
-	// onLeave
 }

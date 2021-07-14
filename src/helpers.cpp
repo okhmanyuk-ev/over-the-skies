@@ -12,9 +12,6 @@ Label::Label()
 Button::Button()
 {
 	setRounding(0.5f);
-	setActiveColor({ Pallete::ButtonColor, 1.0f });
-	setInactiveColor({ 0.5f, 0.5f, 0.5f, 1.0f });
-	setHighlightColor({ Pallete::ButtonColor * 1.5f, 1.0f });
 	setHighlightEnabled(false);
 	runAction(Actions::Collection::ExecuteInfinite([this] {
 		if (!mAdaptiveFontSize)
@@ -22,6 +19,15 @@ Button::Button()
 
 		getLabel()->setFontSize(getAbsoluteHeight() * (18.0f / 28.0f));
 	}));
+	setButtonColor(Pallete::ButtonColor);
+	refresh();
+}
+
+void Button::setButtonColor(const glm::vec3& color)
+{
+	setActiveColor({ color, 1.0f });
+	setInactiveColor({ 0.5f, 0.5f, 0.5f, 1.0f });
+	setHighlightColor({ color * 1.5f, 1.0f });
 	refresh();
 }
 
@@ -76,4 +82,31 @@ WaitingIndicator::WaitingIndicator()
 			Actions::Collection::ChangeCirclePie(circle, PieMax, PieMin, 1.0f, Easing::CubicInOut)
 		);*/
 	}));
+}
+
+// tabs manager
+
+void TabsManager::addContent(int type, std::shared_ptr<Item> node)
+{
+	mContents.insert({ type, node });
+	node->onJoin();
+}
+
+void TabsManager::addButton(int type, std::shared_ptr<Item> node)
+{
+	mButtons.insert({ type, node });
+	node->onJoin();
+}
+
+void TabsManager::show(int type)
+{
+	if (mCurrentPage.has_value())
+	{
+		mContents.at(mCurrentPage.value())->onLeave();
+		mButtons.at(mCurrentPage.value())->onLeave();
+	}
+
+	mContents.at(type)->onEnter();
+	mButtons.at(type)->onEnter();
+	mCurrentPage = type;
 }
