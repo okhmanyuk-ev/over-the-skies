@@ -2,6 +2,7 @@
 
 #include <shared/all.h>
 #include "profile.h"
+#include "achievements.h"
 #include "windows/daily_reward_window.h"
 
 namespace hcg001
@@ -33,6 +34,16 @@ namespace hcg001
 			{
 				auto window = std::make_shared<DailyRewardWindow>(2);
 				SCENE_MANAGER->pushWindow(window);
+			}
+
+			if (ImGui::Button("COMPLETE ALL ACHIEVEMENTS"))
+			{
+				for (auto item : ACHIEVEMENTS->getItems())
+				{
+					auto& progress = ACHIEVEMENTS->getProgress(item.name);
+					progress = item.required;
+				}
+				PROFILE->saveAsync();
 			}
 		}
 

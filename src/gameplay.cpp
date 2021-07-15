@@ -262,6 +262,7 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 	if (plane->hasRuby())
 	{
 		PROFILE->increaseRubies(1);
+		ACHIEVEMENTS->hit("RUBIES_COLLECTED", 1);
 		Helpers::gHud->collectRubyAnim(plane->getRuby());
 		mRubiesCollected += 1;
 	}
@@ -435,6 +436,7 @@ void Gameplay::gameover()
 
 	mGameovered = true;
 	mGameoverCallback();
+	ACHIEVEMENTS->hit("SCORE_REACHED", mScore);
 	ACHIEVEMENTS->hit("GAME_COMPLETED");
 	PROFILE->saveAsync();
 	CLIENT->sendGuildContribution(mRubiesCollected);

@@ -123,7 +123,8 @@ void Application::initialize()
 	// hud
 
 	Helpers::gHud = std::make_shared<Hud>();
-	SCENE_MANAGER->getWindowHolder()->attach(Helpers::gHud); // after screens, before windows
+	//SCENE_MANAGER->getWindowHolder()->attach(Helpers::gHud); // after screens, before windows
+	SCENE_MANAGER->attach(Helpers::gHud);
 }
 
 void Application::onFrame()

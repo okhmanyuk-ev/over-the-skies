@@ -2,86 +2,120 @@
     {
         "name": "PLAY_ONE_GAME",
         "trigger": "GAME_COMPLETED",
-        "required": 1
+        "required": 1,
+        "reward": 1
     },
     {
         "name": "REACH_SCORE_50",
         "trigger": "SCORE_REACHED",
-        "required": 50
+        "required": 50,
+        "reward": 3,
+        "oneshot": true
     },
     {
         "name": "REACH_SCORE_100",
         "trigger": "SCORE_REACHED",
-        "required": 100
+        "required": 100,
+        "reward": 5,
+        "oneshot": true
     },
     {
         "name": "REACH_SCORE_200",
         "trigger": "SCORE_REACHED",
-        "required": 200
+        "required": 200,
+        "reward": 10,
+        "oneshot": true
     },
     {
         "name": "REACH_SCORE_500",
         "trigger": "SCORE_REACHED",
-        "required": 500
+        "required": 500,
+        "reward": 15,
+        "oneshot": true
     },
     {
         "name": "REACH_SCORE_1000",
         "trigger": "SCORE_REACHED",
-        "required": 1000
+        "required": 1000,
+        "reward": 50,
+        "oneshot": true
     },
     {
         "name": "COLLECT_RUBIES_10",
         "trigger": "RUBIES_COLLECTED",
-        "required": 10
+        "required": 10,
+        "reward": 1
+    },
+    {
+        "name": "COLLECT_RUBIES_25",
+        "trigger": "RUBIES_COLLECTED",
+        "required": 25,
+        "reward": 3
     },
     {
         "name": "COLLECT_RUBIES_50",
         "trigger": "RUBIES_COLLECTED",
-        "required": 50
+        "required": 50,
+        "reward": 5
+    },
+    {
+        "name": "COLLECT_RUBIES_75",
+        "trigger": "RUBIES_COLLECTED",
+        "required": 75,
+        "reward": 7
     },
     {
         "name": "COLLECT_RUBIES_100",
         "trigger": "RUBIES_COLLECTED",
-        "required": 100
+        "required": 100,
+        "reward": 10
     },
     {
         "name": "COLLECT_RUBIES_200",
         "trigger": "RUBIES_COLLECTED",
-        "required": 200
+        "required": 200,
+        "reward": 20
     },
     {
         "name": "COLLECT_RUBIES_500",
         "trigger": "RUBIES_COLLECTED",
-        "required": 500
+        "required": 500,
+        "reward": 50
     },
     {
         "name": "COLLECT_RUBIES_1000",
         "trigger": "RUBIES_COLLECTED",
-        "required": 1000
+        "required": 1000,
+        "reward": 100
     },
     {
         "name": "UNLOCK_SKIN",
         "trigger": "SKIN_UNLOCKED",
-        "required": 1
+        "required": 1,
+        "reward": 5
     },
     {
         "name": "PLAY_10_GAMES",
         "trigger": "GAME_COMPLETED",
-        "required": 10
+        "required": 10,
+        "reward": 5
     },
     {
         "name": "PLAY_25_GAMES",
         "trigger": "GAME_COMPLETED",
-        "required": 25
+        "required": 25,
+        "reward": 5
     },
     {
         "name": "PLAY_50_GAMES",
         "trigger": "GAME_COMPLETED",
-        "required": 50
+        "required": 50,
+        "reward": 10
     },
     {
         "name": "PLAY_100_GAMES",
         "trigger": "GAME_COMPLETED",
-        "required": 100
+        "required": 100,
+        "reward": 15
     }
 ]

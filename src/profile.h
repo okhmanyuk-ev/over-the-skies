@@ -63,6 +63,9 @@ namespace hcg001
 		bool isNicknameChanged() const { return mNicknameChanged; }
 		void setNicknameChanged(bool value) { mNicknameChanged = value; }
 
+		bool isAchievementRewardTaken(const std::string& achievement_id) const;
+		void achievementRewardTake(const std::string& achievement_id);
+
 	private:
 		int mHighScore = 0;
 		int mRubies = 0;
@@ -74,5 +77,6 @@ namespace hcg001
 		int mGuildId = NoneGuild;
 		std::map<std::string, int> mAchievementsProgress;
 		bool mNicknameChanged = false;
+		std::set<std::string> mAchievementRewardTaken;
 	};
 }

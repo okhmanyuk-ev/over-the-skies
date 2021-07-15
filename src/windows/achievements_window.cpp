@@ -21,6 +21,13 @@ AchievementsWindow::AchievementsWindow()
 	ok_button->setY(-24.0f);
 	getBody()->attach(ok_button);
 
+	auto scrollbox = std::make_shared<Scene::ClippableScissor<Scene::Scrollbox>>();
+	scrollbox->setStretch(1.0f);
+	scrollbox->getBounding()->setStretch(1.0f);
+	scrollbox->setVerticalMargin(48.0f);
+	scrollbox->setSensitivity({ 0.0f, 1.0f });
+	getBody()->attach(scrollbox);
+
 	std::vector<std::shared_ptr<Scene::Node>> items;
 
 	int num = 0;
@@ -32,6 +39,7 @@ AchievementsWindow::AchievementsWindow()
 		auto item = std::make_shared<Item>(num, achievement.name);
 		item->setAnchor(0.5f);
 		item->setPivot(0.5f);
+		item->setCullTarget(scrollbox);
 		items.push_back(item);
 	}
 
@@ -41,15 +49,9 @@ AchievementsWindow::AchievementsWindow()
 	grid->setY(Item::VerticalMargin / 2.0f);
 	grid->setHeight(grid->getHeight() + Item::VerticalMargin);
 
-	auto scrollbox = std::make_shared<Scene::ClippableScissor<Scene::Scrollbox>>();
-	scrollbox->setStretch(1.0f);
-	scrollbox->getBounding()->setStretch(1.0f);
 	scrollbox->getContent()->setSize(grid->getSize());
 	scrollbox->getContent()->attach(grid);
-	scrollbox->setVerticalMargin(48.0f);
-	scrollbox->setSensitivity({ 0.0f, 1.0f });
-	getBody()->attach(scrollbox);
-    
+
     auto scrollbar = std::make_shared<Shared::SceneHelpers::VerticalScrollbar>();
 	scrollbar->setX(-4.0f);
     scrollbar->setScrollbox(scrollbox);
@@ -72,7 +74,7 @@ AchievementsWindow::AchievementsWindow()
 	scrollbox->attach(bottom_gradient);
 }
 
-AchievementsWindow::Item::Item(int num, const std::string& name)
+AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 {
 	setStretch({ 1.0f, 0.0f });
 	setMargin({ 16.0f, VerticalMargin });
@@ -80,6 +82,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name)
 	setRounding(8.0f);
 	setAbsoluteRounding(true);
 	setColor(Helpers::Pallete::WindowItem);
+	setBatchGroup("achievement_item");
 
 	auto num_label = std::make_shared<Helpers::Label>();
 	num_label->setFontSize(24.0f);
@@ -98,6 +101,8 @@ AchievementsWindow::Item::Item(int num, const std::string& name)
 
 	auto progress = ACHIEVEMENTS->getProgress(name);
 	auto required = ACHIEVEMENTS->getRequired(name);
+	auto achievement = ACHIEVEMENTS->getItemByName(name).value();
+	bool completed = progress >= required;
 
 	auto progress_label = std::make_shared<Helpers::Label>();
 	progress_label->setPosition({ 48.0f, 28.0f });
@@ -111,16 +116,78 @@ AchievementsWindow::Item::Item(int num, const std::string& name)
 	progressbar->setProgress((float)progress / (float)required);
 	attach(progressbar);
 
-	auto claim_button = std::make_shared<Helpers::Button>();
-	claim_button->setTouchMask(1 << 1);
-	claim_button->setColor(glm::rgbColor(glm::vec3(150.0f, 0.5f, 0.25f + 0.125f)));
-	claim_button->getLabel()->setText(LOCALIZE("ACHIEVEMENTS_WINDOW_CLAIM"));
-	claim_button->setClickCallback([] {
-		//
+	auto ruby = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
+	ruby->setTexture(TEXTURE("textures/ruby.png"));
+	ruby->setAnchor({ 0.0f, 0.5f });
+	ruby->setPivot({ 1.0f, 0.5f });
+	ruby->setX(-3.0f);
+	ruby->setAdaptSize(12.0f);
+	ruby->setBatchGroup("achievement_ruby");
+
+	mButtonHolder = std::make_shared<Scene::Node>();
+	mButtonHolder->setAnchor({ 1.0f, 0.5f });
+	mButtonHolder->setPivot({ 1.0f, 0.5f });
+	mButtonHolder->setX(-44.0f);
+	attach(mButtonHolder);
+
+	mButton = std::make_shared<Helpers::Button>();
+	mButton->setTouchMask(1 << 1);
+	mButton->setActive(completed);
+	mButton->setButtonColor(glm::rgbColor(glm::vec3(150.0f, 0.5f, 0.5f)));
+	//mButton->getLabel()->setText(LOCALIZE("ACHIEVEMENTS_WINDOW_CLAIM"));
+	mButton->getLabel()->setText(std::to_string(achievement.reward));
+	mButton->setClickCallback([this, name, ruby, achievement] {
+		PROFILE->achievementRewardTake(name);
+		PROFILE->increaseRubies(achievement.reward);
+		PROFILE->saveAsync();
+
+		ruby->setBatchGroup("");
+		ruby->setAdaptingEnabled(false);
+		ruby->setSize(ruby->getSize() * ruby->getScale());
+		ruby->setScale(1.0f);
+		Helpers::gHud->collectRubyAnim(ruby);
+		refresh(true);
 	});
-	claim_button->setAnchor({ 1.0f, 0.5f });
-	claim_button->setPivot({ 1.0f, 0.5f });
-	claim_button->setSize({ 72.0f, 24.0f });
-	claim_button->setX(-8.0f);
-	attach(claim_button);
+	mButton->setAnchor(0.5f);
+	mButton->setPivot(0.5f);
+	mButton->setSize({ 72.0f, 24.0f });
+	mButton->getLabel()->setPivot({ 0.0f, 0.5f });
+	mButton->setBatchGroup("achievement_button");
+	mButtonHolder->attach(mButton);
+
+	mButton->getLabel()->attach(ruby);
+
+	mCheck = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
+	mCheck->setTexture(TEXTURE("textures/check.png"));
+	mCheck->setAnchor(0.5f);
+	mCheck->setPivot(0.5f);
+	mCheck->setAdaptSize(32.0f);
+	mCheck->setBatchGroup("achievement_check");
+	mButtonHolder->attach(mCheck);
+
+	refresh();
+}
+
+void AchievementsWindow::Item::refresh(bool anim)
+{
+	bool reward_taken = PROFILE->isAchievementRewardTaken(mName);
+
+	if (!anim)
+	{
+		mButton->setEnabled(!reward_taken);
+		mCheck->setEnabled(reward_taken);
+		return;
+	}
+
+	if (mButton->isEnabled() && reward_taken)
+	{
+		runAction(Actions::Collection::MakeSequence(
+			Actions::Collection::ChangeScale(mButtonHolder, { 0.0f, 0.0f }, 0.25f, Easing::CubicOut),
+			Actions::Collection::Execute([this, reward_taken] {
+				mButton->setEnabled(false);
+				mCheck->setEnabled(true);
+			}),
+			Actions::Collection::ChangeScale(mButtonHolder, { 1.0f, 1.0f }, 0.25f, Easing::BackOut)
+		));
+	}
 }

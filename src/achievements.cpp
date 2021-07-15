@@ -13,6 +13,8 @@ Achievements::Achievements()
 		item.name = field["name"];
 		item.trigger = field["trigger"];
 		item.required = field["required"];
+		item.reward = field["reward"];
+		item.oneshot = field.value("oneshot", false);
 		mItems.push_back(item);		
 	}
 }
@@ -26,7 +28,15 @@ void Achievements::hit(const std::string& trigger, int count)
 
 		auto& progress = getProgress(item.name);
 
-		progress += count;
+		if (item.oneshot)
+		{
+			if (count >= item.required)
+				progress = item.required;
+		}
+		else
+		{
+			progress += count;
+		}
 
 		if (progress > item.required)
 			progress = item.required;

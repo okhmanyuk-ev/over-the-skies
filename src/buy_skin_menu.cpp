@@ -1,6 +1,7 @@
 #include "buy_skin_menu.h"
 #include "profile.h"
 #include "helpers.h"
+#include "achievements.h"
 
 using namespace hcg001;
 
@@ -34,6 +35,7 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 		skins.insert((int)skin);
 		PROFILE->setSkins(skins);
 		PROFILE->save();
+		ACHIEVEMENTS->hit("SKIN_UNLOCKED", 1);
 		mExitCallback();
 	});
 	mBuyButton->setSize({ 128.0f, 48.0f });

@@ -26,7 +26,7 @@ Button::Button()
 void Button::setButtonColor(const glm::vec3& color)
 {
 	setActiveColor({ color, 1.0f });
-	setInactiveColor({ 0.5f, 0.5f, 0.5f, 1.0f });
+	setInactiveColor({ glm::rgbColor(glm::vec3(0.0f, 0.0f, 0.25f)), 1.0f });
 	setHighlightColor({ color * 1.5f, 1.0f });
 	refresh();
 }

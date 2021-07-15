@@ -15,6 +15,8 @@ namespace hcg001
 			std::string name;
 			std::string trigger;
 			int required;
+			int reward;
+			bool oneshot;
 		};
 
 	public:

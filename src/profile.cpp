@@ -41,6 +41,10 @@ void Profile::read(const nlohmann::json& json)
 	}
 
 	mNicknameChanged = json.value("nickname_changed", false);
+
+	if (json.contains("achievement_reward_taken"))
+		mAchievementRewardTaken = json["achievement_reward_taken"].get<std::set<std::string>>();
+
 }
 
 void Profile::write(nlohmann::json& json)
@@ -61,6 +65,8 @@ void Profile::write(nlohmann::json& json)
 			{ "progress", progress }
 		});
 	}
+
+	json["achievement_reward_taken"] = mAchievementRewardTaken;
 }
 
 void Profile::makeDefault()
@@ -71,6 +77,7 @@ void Profile::makeDefault()
 	mNickName = "Guest";
 	mAchievementsProgress.clear();
 	mNicknameChanged = false;
+	mAchievementRewardTaken.clear();
 }
 
 void Profile::setRubies(int value)
@@ -80,4 +87,14 @@ void Profile::setRubies(int value)
 
 	mRubies = value;
 	EVENT->emit(RubiesChangedEvent());
+}
+
+bool Profile::isAchievementRewardTaken(const std::string& achievement_id) const
+{
+	return mAchievementRewardTaken.count(achievement_id);
+}
+
+void Profile::achievementRewardTake(const std::string& achievement_id)
+{
+	mAchievementRewardTaken.insert(achievement_id);
 }
