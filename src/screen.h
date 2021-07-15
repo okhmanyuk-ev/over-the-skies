@@ -7,56 +7,18 @@ namespace hcg001
 	class Screen : public Scene::RenderLayer<Shared::SceneManager::Screen>, public std::enable_shared_from_this<Screen>
 	{
 	public:
-		Screen()
-		{
-			setEnabled(false);
-			setInteractions(false);
-			setStretch(1.0f);
-			setAnchor(0.5f);
-			setPivot(0.5f);
-			setAlpha(0.0f);
-		}
+		Screen();
 
 	protected:
-		void onEnterBegin() override
-		{
-			setEnabled(true);
-		}
+		void onEnterBegin() override;
+		void onEnterEnd() override;
+		void onLeaveBegin() override;
+		void onLeaveEnd() override;
+		void onWindowAppearing() override;
+		void onWindowDisappearing() override;
 
-		void onEnterEnd() override
-		{
-			setInteractions(true);
-		}
-
-		void onLeaveBegin() override
-		{
-			setInteractions(false);
-		}
-
-		void onLeaveEnd() override
-		{
-			setEnabled(false);
-			setAlpha(0.0f);
-		}
-
-		void onWindowAppearing() override
-		{
-			setInteractions(false);
-		}
-
-		void onWindowDisappearing() override
-		{
-			setInteractions(true);
-		}
-
-		std::unique_ptr<Actions::Action> createEnterAction() override
-		{
-			return Actions::Collection::Show(shared_from_this(), 0.25f);
-		};
-
-		std::unique_ptr<Actions::Action> createLeaveAction() override
-		{
-			return Actions::Collection::Hide(shared_from_this(), 0.25f);
-		};
+	protected:
+		std::unique_ptr<Actions::Action> createEnterAction() override;
+		std::unique_ptr<Actions::Action> createLeaveAction() override;
 	};
 }
