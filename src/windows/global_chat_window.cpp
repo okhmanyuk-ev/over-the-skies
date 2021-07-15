@@ -105,6 +105,9 @@ GlobalChatWindow::GlobalChatWindow()
 	getBackground()->setSize({ 314.0f, 512.0f });
 	getTitle()->setText(LOCALIZE("GLOBAL_CHAT_WINDOW_TITLE"));
 
+	auto no_internet_content = std::make_shared<Helpers::NoInternetContent>();
+	getBackground()->attach(no_internet_content);
+
 	auto chat_button = std::make_shared<Helpers::Button>();
 	chat_button->setClickCallback([] {
 		auto window = std::make_shared<InputWindow>(LOCALIZE("INPUT_CHAT_MESSAGE"), "", [](auto str) {
@@ -116,6 +119,7 @@ GlobalChatWindow::GlobalChatWindow()
 	chat_button->setPivot({ 1.0f, 0.5f });
 	chat_button->setPosition({ -16.0f, -24.0f });
 	chat_button->setSize({ 96.0f, 28.0f });
+	chat_button->setEnabled(false);
 	getBody()->attach(chat_button);
 
 	auto chat_message_img = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
@@ -133,8 +137,16 @@ GlobalChatWindow::GlobalChatWindow()
 
 	runAction(Actions::Collection::MakeSequence(
 		Actions::Collection::Wait([this] { return getState() != Window::State::Opened; }),
-		Actions::Collection::Execute([this] {
+		Actions::Collection::Execute([this, no_internet_content] {
+			no_internet_content->runShowAction();
+		}),
+		Actions::Collection::Wait([] {
+			return !CLIENT->isConnected();
+		}),
+		Actions::Collection::Execute([this, chat_button, no_internet_content] {
+			no_internet_content->setEnabled(false);
 			mChatWidget->setEnabled(true);
+			chat_button->setEnabled(true);
 		})
 	));
 

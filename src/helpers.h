@@ -195,4 +195,17 @@ namespace hcg001::Helpers
 		void addButton(T type, std::shared_ptr<Item> node) { TabsManager::addButton((int)type, node); }
 		void show(T type) { TabsManager::show((int)type); }
 	};
+
+	class NoInternetContent : public Scene::Node
+	{
+	public:
+		NoInternetContent();
+
+	public:
+		void runShowAction();
+
+	private:
+		std::shared_ptr<Helpers::Label> mLabel;
+		std::shared_ptr<Scene::Adaptive<Scene::Sprite>> mIcon;
+	};
 }

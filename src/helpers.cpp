@@ -110,3 +110,40 @@ void TabsManager::show(int type)
 	mButtons.at(type)->onEnter();
 	mCurrentPage = type;
 }
+
+// no internet content
+
+NoInternetContent::NoInternetContent()
+{
+	setStretch(1.0f);
+
+	mLabel = std::make_shared<Helpers::Label>();
+	mLabel->setText(LOCALIZE("SOCIAL_NO_INTERNET"));
+	//mLabel->setFontSize(24.0f);
+	mLabel->setAnchor(0.5f);
+	mLabel->setPivot({ 0.5f, 0.0f });
+	mLabel->setY(8.0f);
+	mLabel->setMultiline(true);
+	mLabel->setMultilineAlign(Graphics::TextMesh::Align::Center);
+	mLabel->setStretch({ 1.0f, 0.0f });
+	mLabel->setMargin({ 48.0f, 0.0f });
+	mLabel->setAlpha(0.0f);
+	attach(mLabel);
+
+	mIcon = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
+	mIcon->setTexture(TEXTURE("textures/no_internet.png"));
+	mIcon->setAnchor(0.5f);
+	mIcon->setPivot({ 0.5f, 1.0f });
+	mIcon->setY(-8.0f);
+	mIcon->setAdaptSize(64.0f);
+	mIcon->setAlpha(0.0f);
+	attach(mIcon);
+}
+
+void NoInternetContent::runShowAction()
+{
+	runAction(Actions::Collection::Delayed(0.25f, Actions::Collection::MakeParallel(
+		Actions::Collection::Show(mIcon, 0.25f, Easing::CubicOut),
+		Actions::Collection::Show(mLabel, 0.25f, Easing::CubicOut)
+	)));
+}

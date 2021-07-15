@@ -69,3 +69,7 @@ GUILDS_WINDOW_TITLE:GUILDS
 GUILDS_WINDOW_LEAVE:LEAVE
 GUILDS_WINDOW_TAB_CHAT:CHAT
 GUILDS_WINDOW_TAB_INFO:INFO
+
+GLOBAL_CHAT_WINDOW_TITLE:GLOBAL CHAT
+
+SOCIAL_NO_INTERNET:It seems there is no internet connection on your device (or server is offline). Social features will not be available while you are not connected to the server.

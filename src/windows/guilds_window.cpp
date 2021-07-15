@@ -10,12 +10,20 @@ GuildsWindow::GuildsWindow()
 	getBackground()->setSize({ 314.0f, 512.0f });
 	getTitle()->setText(LOCALIZE("GUILDS_WINDOW_TITLE"));
 
+	auto no_internet_content = std::make_shared<Helpers::NoInternetContent>();
+	getBackground()->attach(no_internet_content);
+
 	runAction(Actions::Collection::MakeSequence(
 		Actions::Collection::Wait([this] { return getState() != Window::State::Opened; }),
+		Actions::Collection::Execute([this, no_internet_content] {
+			no_internet_content->runShowAction();
+		}),
 		Actions::Collection::Wait([] {
 			return !CLIENT->isConnected();
 		}),
-		Actions::Collection::Execute([this] {
+		Actions::Collection::Execute([this, no_internet_content] {
+			no_internet_content->setEnabled(false);
+			
 			if (!PROFILE->isInGuild())
 			{
 				createGuildSearchContent();
