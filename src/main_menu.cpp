@@ -67,10 +67,6 @@ MainMenu::MainMenu()
 		}
 
 		auto buy_skin_menu = std::make_shared<BuySkinMenu>(mChoosedSkin);
-		buy_skin_menu->setExitCallback([this] {
-			refresh();
-			SCENE_MANAGER->switchScreen(shared_from_this());
-		});
 		SCENE_MANAGER->switchScreen(buy_skin_menu);
 	});
 	unlock_button->setSize(ButtonSize);
@@ -119,8 +115,6 @@ MainMenu::MainMenu()
 			));
 		}
 	}));
-
-	refresh();
 
 	runAction(Actions::Collection::ExecuteInfinite([this](auto delta) {
 		menuPhysics(Clock::ToSeconds(delta));
@@ -186,6 +180,17 @@ MainMenu::MainMenu()
 
 	auto rubies = std::make_shared<Helpers::RubiesIndicator>();
 	getGui()->attach(rubies);
+
+	runAction(Actions::Collection::Delayed([this] { return isTransformReady(); }, Actions::Collection::Execute([this] {
+		mScrollTarget = mSkinItems.at(PROFILE->getCurrentSkin());
+	})));
+}
+
+
+void MainMenu::onEnterBegin()
+{
+	Screen::onEnterBegin();
+	refresh();
 }
 
 void MainMenu::refresh()
@@ -250,6 +255,8 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			mScrollTarget = item;
 		});
 		result.push_back(item);
+
+		mSkinItems[skin] = item;
 
 		auto image = std::make_shared<Scene::Sprite>();
 		image->setBatchGroup("main_menu_item_image");
@@ -338,9 +345,6 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			hideFarNode(price);
 			hideFarNode(name);
 		}));
-
-		if (PROFILE->getCurrentSkin() == skin)
-			mScrollTarget = item;
 	}
 
 	return result;

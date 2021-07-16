@@ -21,6 +21,9 @@ namespace hcg001
 	public:
 		void setStartCallback(std::function<void()> value) { mStartCallback = value; }
 
+	protected:
+		void onEnterBegin() override;
+
 	private:
 		void refresh();
 		void menuPhysics(float dTime);
@@ -35,5 +38,6 @@ namespace hcg001
 		bool mDecideButtons = false;
 		bool mButtonsAnimating = false;
 		bool mPlayButtonVisible = false;
+		std::map<Skin, std::shared_ptr<Scene::Node>> mSkinItems;
 	};
 }

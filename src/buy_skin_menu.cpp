@@ -33,8 +33,8 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 		skins.insert((int)skin);
 		PROFILE->setSkins(skins);
 		PROFILE->save();
-		ACHIEVEMENTS->hit("SKIN_UNLOCKED", 1);
-		mExitCallback();
+		ACHIEVEMENTS->hit("SKIN_UNLOCKED");
+		SCENE_MANAGER->switchScreenBack();
 	});
 	mBuyButton->setSize({ 128.0f, 48.0f });
 	mBuyButton->setAnchor({ 0.5f, 1.25f });
@@ -49,7 +49,7 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	mCancelButton->getLabel()->setFontSize(20.0f);
 	mCancelButton->getLabel()->setText(LOCALIZE("BUY_SKIN_CANCEL"));
 	mCancelButton->setClickCallback([this] {
-		mExitCallback();
+		SCENE_MANAGER->switchScreenBack(); 
 	});
 	mCancelButton->setSize({ 128.0f, 48.0f });
 	mCancelButton->setAnchor({ 0.5f, 1.25f });
@@ -68,44 +68,3 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	mBuyButton->setVerticalAnchor(0.75f);
 	mCancelButton->setVerticalAnchor(0.75f);
 }
-
-/*void BuySkinMenu::onLeaveBegin()
-{
-	setInteractions(false);
-}*/
-
-/*std::unique_ptr<Actions::Action> BuySkinMenu::createEnterAction()
-{
-	const float Duration = 0.25f;
-
-	return Actions::Collection::MakeParallel(
-		Actions::Collection::ChangeHorizontalAnchor(mTitle, 0.5f, Duration, Easing::CubicOut),
-		Actions::Collection::Delayed(Duration / 2.0f,
-			Actions::Collection::ChangeHorizontalAnchor(mImage, 0.5f, Duration, Easing::CubicOut)
-		),
-		Actions::Collection::Delayed(Duration,
-			Actions::Collection::MakeParallel(
-				Actions::Collection::ChangeVerticalAnchor(mBuyButton, 0.75f, Duration, Easing::CubicOut),
-				Actions::Collection::ChangeVerticalAnchor(mCancelButton, 0.75f, Duration, Easing::CubicOut)
-			)
-		)
-	);
-}
-
-std::unique_ptr<Actions::Action> BuySkinMenu::createLeaveAction()
-{
-	const float Duration = 0.25f;
-
-	return Actions::Collection::MakeParallel(
-		Actions::Collection::MakeParallel(
-			Actions::Collection::ChangeVerticalAnchor(mBuyButton, 1.25f, Duration, Easing::CubicIn),
-			Actions::Collection::ChangeVerticalAnchor(mCancelButton, 1.25f, Duration, Easing::CubicIn)
-		),
-		Actions::Collection::Delayed(Duration / 2.0f,
-			Actions::Collection::ChangeHorizontalAnchor(mImage, 1.5f, Duration, Easing::CubicIn)
-		),
-		Actions::Collection::Delayed(Duration,
-			Actions::Collection::ChangeHorizontalAnchor(mTitle, -0.5f, Duration, Easing::CubicIn)
-		)
-	);
-}*/
