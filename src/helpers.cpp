@@ -259,18 +259,18 @@ void RubiesIndicator::collectRubyAnim(std::shared_ptr<Scene::Node> ruby)
 	ruby->getParent()->detach(ruby);
 	attach(ruby);
 
-	auto dest_pos = unproject(project({ 0.0f, 0.0f }));
-
 	const float MoveDuration = 0.75f;
+
+	auto rubies_count = PROFILE->getRubies();
 
 	runAction(Actions::Collection::MakeSequence(
 		Actions::Collection::MakeParallel(
-			Actions::Collection::ChangePosition(ruby, dest_pos, MoveDuration, Easing::QuarticInOut),
+			Actions::Collection::ChangePosition(ruby, { 0.0f, 0.0f }, MoveDuration, Easing::QuarticInOut),
 			Actions::Collection::ChangeSize(ruby, getAbsoluteSize(), MoveDuration, Easing::QuarticInOut)
 		),
 		Actions::Collection::Kill(ruby),
-		Actions::Collection::Execute([this] {
-			refresh();
+		Actions::Collection::Execute([this, rubies_count] {
+			mLabel->setText(std::to_string(rubies_count));
 		}),
 		Actions::Collection::Shake(mLabel, 2.0f, 0.2f)
 	));
