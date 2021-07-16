@@ -436,7 +436,6 @@ void Gameplay::gameover()
 
 	mGameovered = true;
 	mGameoverCallback();
-	ACHIEVEMENTS->hit("SCORE_REACHED", mScore);
 	ACHIEVEMENTS->hit("GAME_COMPLETED");
 	PROFILE->saveAsync();
 	CLIENT->sendGuildContribution(mRubiesCollected);
