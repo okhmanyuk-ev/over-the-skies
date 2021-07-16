@@ -12,7 +12,6 @@
 #include "helpers.h"
 #include "client.h"
 #include "achievements.h"
-#include "windows/input_window.h"
 
 using namespace hcg001;
 
@@ -73,47 +72,31 @@ void Application::initialize()
 {
 	auto root = getScene()->getRoot();
 
-	auto sky = std::make_shared<Sky>();
-	root->attach(sky, Scene::Node::AttachDirection::Front);
-
-	auto main_menu = std::make_shared<MainMenu>();
-	main_menu->setStartCallback([this, sky, main_menu] {
-		auto gameplay = std::make_shared<Gameplay>();
-		gameplay->setGameoverCallback([this, main_menu, gameplay] {
-			auto gameover_screen = std::make_shared<GameoverMenu>(gameplay->getScore());
-			gameover_screen->setClickCallback([this, main_menu] {
-				SCENE_MANAGER->switchScreen(main_menu, [this] {
-					inputNickname();
-				});
-			});
-			SCENE_MANAGER->switchScreen(gameover_screen);
-		});
-		gameplay->setMoveSkyCallback([sky](auto offset) {
-			sky->moveSky(offset);
-		});
-		SCENE_MANAGER->switchScreen(gameplay);
-	});
+	Helpers::gSky = std::make_shared<Sky>();
+	root->attach(Helpers::gSky, Scene::Node::AttachDirection::Front);
 
 	Actions::Run(Actions::Collection::MakeSequence(
 		Actions::Collection::WaitOneFrame(),
 		Actions::Collection::Wait(0.25f),
-		Actions::Collection::Execute([sky] {
+		Actions::Collection::Execute([] {
 			//sky->changeColor(Graphics::Color::Hsv::HueBlue, Graphics::Color::Hsv::HueRed);
-			sky->changeColor(205.0f, 15.0f);
+			Helpers::gSky->changeColor(205.0f, 15.0f);
 		}),
-		Actions::Collection::RepeatInfinite([sky] {
+		Actions::Collection::RepeatInfinite([] {
 			return Actions::Collection::Delayed(10.0f,
-				Actions::Collection::Execute([sky] {
-					sky->changeColor();
+				Actions::Collection::Execute([] {
+					Helpers::gSky->changeColor();
 				})
 			);
 		})	
 	));
 
+	Helpers::gMainMenu = std::make_shared<MainMenu>();
+
 	Actions::Run(Actions::Collection::MakeSequence(
 		Actions::Collection::WaitOneFrame(),
-		Actions::Collection::Execute([this, main_menu] {
-			SCENE_MANAGER->switchScreen(main_menu, [this] {
+		Actions::Collection::Execute([this] {
+			SCENE_MANAGER->switchScreen(Helpers::gMainMenu, [this] {
 				tryShowDailyReward();
 			});
 		})
@@ -134,7 +117,6 @@ void Application::onFrame()
 
 void Application::addRubies(int count)
 {
-	ACHIEVEMENTS->hit("RUBIES_COLLECTED", count);
 	PROFILE->increaseRubies(count);
 	PROFILE->saveAsync();
 
@@ -155,11 +137,11 @@ void Application::addRubies(int count)
 			Actions::Collection::Show(ruby, 0.25f, Easing::CubicIn),
 			Actions::Collection::Execute([this, ruby] {
 				FRAME->addOne([this, ruby] {
-				//	Helpers::gHud->collectRubyAnim(ruby); // TODO
+					Helpers::gMainMenu->getRubiesIndicator()->collectRubyAnim(ruby);
 				});
 			})
 		));
-		//Helpers::gHud->attach(ruby); // TODO
+		Helpers::gMainMenu->attach(ruby);
 	}
 }
 
@@ -208,23 +190,6 @@ void Application::adaptToScreen(std::shared_ptr<Scene::Node> node)
 void Application::onEvent(const Shared::Profile::ProfileSavedEvent& e)
 {
 	CLIENT->commit();
-}
-
-void Application::inputNickname()
-{
-	if (PROFILE->isNicknameChanged())
-		return;
-
-	PROFILE->setNicknameChanged(true);
-	PROFILE->saveAsync();
-
-	auto text = PROFILE->getNickName();
-	auto callback = [this](auto text) {
-		PROFILE->setNickName(text);
-		PROFILE->saveAsync();
-	};
-	auto input_window = std::make_shared<InputWindow>(LOCALIZE("INPUT_NICK_NAME"), text, callback);
-	SCENE_MANAGER->pushWindow(input_window);
 }
 
 void Application::onEvent(const Achievements::AchievementEarnedEvent& e)

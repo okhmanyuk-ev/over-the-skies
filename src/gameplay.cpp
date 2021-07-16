@@ -3,6 +3,7 @@
 #include "helpers.h"
 #include "client.h"
 #include "achievements.h"
+#include "gameover_menu.h"
 
 using namespace hcg001;
 
@@ -75,8 +76,9 @@ Gameplay::Gameplay()
 	mScoreLabel->setText("0");
     getGui()->attach(mScoreLabel);
 	
-	auto rubies = std::make_shared<Helpers::RubiesIndicator>();
-	getGui()->attach(rubies);
+	mRubiesIndicator = std::make_shared<Helpers::RubiesIndicator>();
+	mRubiesIndicator->setInstantRefresh(false);
+	getGui()->attach(mRubiesIndicator);
 
 	mJumpParticles = std::make_shared<Shared::SceneHelpers::RectangleEmitter>();
 	mJumpParticles->setHolder(mRectangleParticlesHolder);
@@ -214,7 +216,7 @@ void Gameplay::camera(float dTime)
 	pos += (target - pos) * dTime * Speed;
 
 	mGameField->setPosition(pos);
-	mMoveSkyCallback(pos);
+	Helpers::gSky->moveSky(pos);
 }
 
 void Gameplay::jump(bool powerjump)
@@ -261,7 +263,7 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 	{
 		PROFILE->increaseRubies(1);
 		ACHIEVEMENTS->hit("RUBIES_COLLECTED");
-		//Helpers::gHud->collectRubyAnim(plane->getRuby()); // TODO
+		mRubiesIndicator->collectRubyAnim(plane->getRuby());
 		mRubiesCollected += 1;
 	}
 }
@@ -433,10 +435,11 @@ void Gameplay::gameover()
 		return;
 
 	mGameovered = true;
-	mGameoverCallback();
 	ACHIEVEMENTS->hit("GAME_COMPLETED");
 	PROFILE->saveAsync();
 	CLIENT->sendGuildContribution(mRubiesCollected);
+	auto gameover_screen = std::make_shared<GameoverMenu>(getScore());
+	SCENE_MANAGER->switchScreen(gameover_screen);
 }
 
 void Gameplay::showRiskLabel(const utf8_string& text)

@@ -1,4 +1,7 @@
 #include "gameover_menu.h"
+#include "helpers.h"
+#include "main_menu.h"
+#include "windows/input_window.h"
 
 using namespace hcg001;
 
@@ -77,6 +80,24 @@ GameoverMenu::GameoverMenu(int score)
 			);
 		})
 	);
+
+	setClickCallback([] {
+		SCENE_MANAGER->switchScreen(Helpers::gMainMenu, [] {
+			if (PROFILE->isNicknameChanged())
+				return;
+
+			PROFILE->setNicknameChanged(true);
+			PROFILE->saveAsync();
+
+			auto text = PROFILE->getNickName();
+			auto callback = [](auto text) {
+				PROFILE->setNickName(text);
+				PROFILE->saveAsync();
+			};
+			auto input_window = std::make_shared<InputWindow>(LOCALIZE("INPUT_NICK_NAME"), text, callback);
+			SCENE_MANAGER->pushWindow(input_window);
+		});
+	});
 
 	/*mHighscoresRect = std::make_shared<Scene::Rectangle>();
 	mHighscoresRect->setAbsoluteRounding(true);

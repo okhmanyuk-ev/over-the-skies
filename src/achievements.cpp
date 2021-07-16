@@ -27,19 +27,18 @@ void Achievements::hit(const std::string& trigger, int count)
 
 		auto& progress = getProgress(item.name);
 
-		bool was_not_earned = progress < item.required;
+		bool earned = progress >= item.required;
+
+		if (earned)
+			continue;
 
 		progress += count;
 
-		if (progress >= item.required)
-		{
-			if (was_not_earned)
-			{
-				EVENT->emit(AchievementEarnedEvent{item});
-			}
+		if (progress < item.required)
+			continue;
 
-			progress = item.required;
-		}
+		progress = item.required;
+		EVENT->emit(AchievementEarnedEvent{item});
 	}
 }
 

@@ -7,6 +7,9 @@
 #include "windows/achievements_window.h"
 #include "windows/guilds_window.h"
 #include "windows/global_chat_window.h"
+#include "gameplay.h"
+#include "gameover_menu.h"
+#include "buy_skin_menu.h"
 
 using namespace hcg001;
 
@@ -40,8 +43,8 @@ MainMenu::MainMenu()
 
 		PROFILE->setCurrentSkin(mChoosedSkin);
 
-		if (mStartCallback)
-			mStartCallback();
+		auto gameplay = std::make_shared<Gameplay>();
+		SCENE_MANAGER->switchScreen(gameplay);
 	});
 	play_button->setSize(ButtonSize);
 	play_button->setAnchor({ -0.5f, 0.5f });
@@ -178,14 +181,14 @@ MainMenu::MainMenu()
 	});
 	getGui()->attach(global_chat_button);
 
-	auto rubies = std::make_shared<Helpers::RubiesIndicator>();
-	getGui()->attach(rubies);
+	mRubiesIndicator = std::make_shared<Helpers::RubiesIndicator>();
+	mRubiesIndicator->setInstantRefresh(true);
+	getGui()->attach(mRubiesIndicator);
 
 	runAction(Actions::Collection::Delayed([this] { return isTransformReady(); }, Actions::Collection::Execute([this] {
 		mScrollTarget = mSkinItems.at(PROFILE->getCurrentSkin());
 	})));
 }
-
 
 void MainMenu::onEnterBegin()
 {

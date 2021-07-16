@@ -48,6 +48,7 @@ namespace hcg001
 		std::shared_ptr<Scene::Label> mScoreLabel;
 		std::shared_ptr<Scene::Label> mRiskLabel = nullptr;
 		std::shared_ptr<Shared::SceneHelpers::RectangleEmitter> mJumpParticles;
+		std::shared_ptr<Helpers::RubiesIndicator> mRubiesIndicator;
 
 	public:
 		auto getScore() const { return mScore; }
@@ -62,16 +63,5 @@ namespace hcg001
 		bool mCanStart = false;
 		bool mGameovered = false;
 		int mRubiesCollected = 0;
-
-	public:
-		using MoveSkyCallback = std::function<void(const glm::vec2&)>;
-
-	public:
-		void setGameoverCallback(std::function<void()> value) { mGameoverCallback = value; }
-		void setMoveSkyCallback(MoveSkyCallback value) { mMoveSkyCallback = value; }
-
-	private:
-		std::function<void()> mGameoverCallback = nullptr;
-		MoveSkyCallback mMoveSkyCallback = nullptr;
 	};
 }

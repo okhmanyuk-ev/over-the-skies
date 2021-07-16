@@ -22,7 +22,6 @@ namespace hcg001
 		void addRubies(int count);
 		void tryShowDailyReward();
 		void adaptToScreen(std::shared_ptr<Scene::Node> node);
-		void inputNickname();
 		
 	private:
 		void onEvent(const Shared::Profile::ProfileSavedEvent& e) override;
