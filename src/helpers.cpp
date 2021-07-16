@@ -219,3 +219,51 @@ void AchievementNotify::showTada()
 		})
 	));
 }
+
+// rubies indicator
+
+RubiesIndicator::RubiesIndicator()
+{
+	setTexture(TEXTURE("textures/ruby.png"));
+	setPivot({ 0.0f, 0.5f });
+	setPosition({ 16.0f, 24.0f });
+	setSize(24.0f);
+	
+	auto label = std::make_shared<Scene::Label>();
+	label->setFont(FONT("default"));
+	label->setText(std::to_string(PROFILE->getRubies()));
+	label->setAnchor({ 1.0f, 0.5f });
+	label->setPivot({ 0.0f, 0.5f });
+	label->setPosition({ 8.0f, 0.0f });
+	attach(label);
+}
+
+/*
+
+void Hud::collectRubyAnim(std::shared_ptr<Scene::Node> ruby)
+{
+	auto pos = unproject(ruby->project({ 0.0f, 0.0f }));
+	ruby->setAnchor({ 0.0f, 0.0f });
+	ruby->setPivot({ 0.0f, 0.0f });
+	ruby->setPosition(pos);
+	ruby->getParent()->detach(ruby);
+	attach(ruby);
+
+	auto dest_pos = unproject(mRubyScore.sprite->project({ 0.0f, 0.0f }));
+
+	const float MoveDuration = 0.75f;
+
+	Actions::Run(Actions::Collection::MakeSequence(
+		Actions::Collection::MakeParallel(
+			Actions::Collection::ChangePosition(ruby, dest_pos, MoveDuration, Easing::QuarticInOut),
+			Actions::Collection::ChangeSize(ruby, mRubyScore.sprite->getAbsoluteSize(), MoveDuration, Easing::QuarticInOut)
+		),
+		Actions::Collection::Kill(ruby),
+		Actions::Collection::Execute([this] {
+			mRubyScore.label->setText(std::to_string(PROFILE->getRubies()));
+		}),
+		Actions::Collection::Shake(mRubyScore.label, 2.0f, 0.2f)
+	));
+}
+
+*/

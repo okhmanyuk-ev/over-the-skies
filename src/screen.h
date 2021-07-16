@@ -20,5 +20,13 @@ namespace hcg001
 	protected:
 		std::unique_ptr<Actions::Action> createEnterAction() override;
 		std::unique_ptr<Actions::Action> createLeaveAction() override;
+
+	public:
+		auto getContent() { return mContent; }
+		auto getGui() { return mGui; }
+
+	private:
+		std::shared_ptr<Scene::Node> mContent;
+		std::shared_ptr<Shared::SceneHelpers::SafeArea> mGui;
 	};
 }

@@ -10,7 +10,6 @@
 #include "cheats.h"
 #include "windows/daily_reward_window.h"
 #include "helpers.h"
-#include "hud.h"
 #include "client.h"
 #include "achievements.h"
 #include "windows/input_window.h"
@@ -120,12 +119,6 @@ void Application::initialize()
 		})
 	));
 
-	// hud
-
-	Helpers::gHud = std::make_shared<Hud>();
-	//SCENE_MANAGER->getWindowHolder()->attach(Helpers::gHud); // after screens, before windows
-	SCENE_MANAGER->attach(Helpers::gHud);
-
 	auto tada_particles_holder = std::make_shared<Scene::Node>();
 	SCENE_MANAGER->attach(tada_particles_holder);
 	Helpers::AchievementNotify::ParticlesHolder = tada_particles_holder;
@@ -162,11 +155,11 @@ void Application::addRubies(int count)
 			Actions::Collection::Show(ruby, 0.25f, Easing::CubicIn),
 			Actions::Collection::Execute([this, ruby] {
 				FRAME->addOne([this, ruby] {
-					Helpers::gHud->collectRubyAnim(ruby);
+				//	Helpers::gHud->collectRubyAnim(ruby); // TODO
 				});
 			})
 		));
-		Helpers::gHud->attach(ruby);
+		//Helpers::gHud->attach(ruby); // TODO
 	}
 }
 

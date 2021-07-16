@@ -1,7 +1,6 @@
 #pragma once
 
 #include <shared/all.h>
-#include "hud.h"
 #include "client.h"
 #include "profile.h"
 #include "achievements.h"
@@ -21,8 +20,6 @@ namespace hcg001::Helpers
 		const auto ButtonColorRed = glm::rgbColor(glm::vec3(20.0f, 0.75f + 0.125f, 0.25f + 0.125f));
 		const auto InputField = glm::rgbColor(glm::vec3(Hue, 0.75f + 0.125f, 0.125f / 2.0f));
 	}
-
-	inline std::shared_ptr<Hud> gHud = nullptr;
 
 	class Label : public Scene::Label
 	{
@@ -224,5 +221,12 @@ namespace hcg001::Helpers
 	private:
 		std::shared_ptr<Scene::Node> mTadaHolder;
 		std::shared_ptr<Shared::SceneHelpers::RectangleEmitter> mTadaEmitter;
+	};
+
+	// for gui
+	class RubiesIndicator : public Scene::Sprite
+	{
+	public:
+		RubiesIndicator();
 	};
 }

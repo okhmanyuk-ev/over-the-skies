@@ -7,22 +7,20 @@ using namespace hcg001;
 
 BuySkinMenu::BuySkinMenu(Skin skin)
 {
-	setStretch(1.0f);
-
 	mTitle = std::make_shared<Scene::Label>();
 	mTitle->setFont(FONT("default"));
 	mTitle->setFontSize(34.0f);
 	mTitle->setAnchor({ -0.5f, 0.25f });
 	mTitle->setPivot({ 0.5f, 0.5f });
 	mTitle->setText(LOCALIZE("BUY_SKIN_TITLE"));
-	attach(mTitle);
+	getContent()->attach(mTitle);
 
 	mImage = std::make_shared<Scene::Sprite>();
 	mImage->setTexture(TEXTURE(SkinPath.at(skin)));
 	mImage->setAnchor({ 1.5f, 0.5f });
 	mImage->setPivot({ 0.5f, 0.5f });
 	mImage->setSize({ 96.0f, 96.0f });
-	attach(mImage);
+	getContent()->attach(mImage);
 
 	mBuyButton = std::make_shared<Helpers::Button>();
 	mBuyButton->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
@@ -43,7 +41,7 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	mBuyButton->setPivot({ 1.0f, 0.5f });
 	mBuyButton->setPosition({ -8.0f, 0.0f });
 	mBuyButton->refresh();
-	attach(mBuyButton);
+	getContent()->attach(mBuyButton);
 
 	mCancelButton = std::make_shared<Helpers::Button>();
 	mCancelButton->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
@@ -58,15 +56,25 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	mCancelButton->setPivot({ 0.0f, 0.5f });
 	mCancelButton->setPosition({ 8.0f, 0.0f });
 	mCancelButton->refresh();
-	attach(mCancelButton);
+	getContent()->attach(mCancelButton);
+
+	auto rubies = std::make_shared<Helpers::RubiesIndicator>();
+	getGui()->attach(rubies);
+
+	//
+
+	mTitle->setHorizontalAnchor(0.5f);
+	mImage->setHorizontalAnchor(0.5f);
+	mBuyButton->setVerticalAnchor(0.75f);
+	mCancelButton->setVerticalAnchor(0.75f);
 }
 
-void BuySkinMenu::onLeaveBegin()
+/*void BuySkinMenu::onLeaveBegin()
 {
 	setInteractions(false);
-}
+}*/
 
-std::unique_ptr<Actions::Action> BuySkinMenu::createEnterAction()
+/*std::unique_ptr<Actions::Action> BuySkinMenu::createEnterAction()
 {
 	const float Duration = 0.25f;
 
@@ -100,4 +108,4 @@ std::unique_ptr<Actions::Action> BuySkinMenu::createLeaveAction()
 			Actions::Collection::ChangeHorizontalAnchor(mTitle, -0.5f, Duration, Easing::CubicIn)
 		)
 	);
-}
+}*/

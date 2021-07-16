@@ -145,7 +145,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 		ruby->setAdaptingEnabled(false);
 		ruby->setSize(ruby->getSize() * ruby->getScale());
 		ruby->setScale(1.0f);
-		Helpers::gHud->collectRubyAnim(ruby);
+		//Helpers::gHud->collectRubyAnim(ruby); // TODO
 		refresh(true);
 	});
 	mButton->setAnchor(0.5f);

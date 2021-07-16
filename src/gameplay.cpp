@@ -14,11 +14,11 @@ Gameplay::Gameplay()
 	mReadyLabel->setAnchor({ 0.5f, 0.25f });
 	mReadyLabel->setPivot(0.5f);
 	mReadyLabel->setText(LOCALIZE("READY_MENU_TITLE"));
-	attach(mReadyLabel);
+	getContent()->attach(mReadyLabel);
 
 	mGameField = std::make_shared<Scene::Node>();
 	mGameField->setAnchor({ 0.0f, 1.0f });
-	attach(mGameField);
+	getContent()->attach(mGameField);
 
 	mRectangleParticlesHolder = std::make_shared<Scene::Node>();
 	mRectangleParticlesHolder->setStretch(1.0f);
@@ -67,22 +67,16 @@ Gameplay::Gameplay()
 		)
 	));
 	
-	// hud
-
-	auto safe_area = std::make_shared<Shared::SceneHelpers::SafeArea>();
-	attach(safe_area);
-
-	// score label
-
 	mScoreLabel = std::make_shared<Scene::Label>();
 	mScoreLabel->setFont(FONT("default"));
 	mScoreLabel->setAnchor({ 1.0f, 0.0f });
 	mScoreLabel->setPivot({ 1.0f, 0.5f });
 	mScoreLabel->setPosition({ -16.0f, 24.0f });
 	mScoreLabel->setText("0");
-    safe_area->attach(mScoreLabel);
+    getGui()->attach(mScoreLabel);
 	
-	// jump particles
+	auto rubies = std::make_shared<Helpers::RubiesIndicator>();
+	getGui()->attach(rubies);
 
 	mJumpParticles = std::make_shared<Shared::SceneHelpers::RectangleEmitter>();
 	mJumpParticles->setHolder(mRectangleParticlesHolder);
@@ -267,7 +261,7 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 	{
 		PROFILE->increaseRubies(1);
 		ACHIEVEMENTS->hit("RUBIES_COLLECTED");
-		Helpers::gHud->collectRubyAnim(plane->getRuby());
+		//Helpers::gHud->collectRubyAnim(plane->getRuby()); // TODO
 		mRubiesCollected += 1;
 	}
 }
@@ -460,7 +454,7 @@ void Gameplay::showRiskLabel(const utf8_string& text)
 	mRiskLabel->setVerticalPivot(0.5f);
 	mRiskLabel->setHorizontalPivot(Common::Helpers::Chance(0.5f) ? 1.0f : 0.0f);
 	mRiskLabel->setAlpha(0.0f);
-	attach(mRiskLabel);
+	getContent()->attach(mRiskLabel);
 
 	mRiskLabel->runAction(Actions::Collection::MakeSequence(
 		Actions::Collection::Show(mRiskLabel, 0.125f),
