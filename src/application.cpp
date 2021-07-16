@@ -212,44 +212,6 @@ void Application::adaptToScreen(std::shared_ptr<Scene::Node> node)
 	node->setStretch(1.0f / node->getScale());
 }
 
-void Application::onEvent(const NetEvents::PrintEvent& e)
-{
-	auto root = getScene()->getRoot();
-
-	auto rect = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
-	rect->setTouchable(true);
-	rect->setSize({ 264.0f, 42.0f });
-	rect->setAlpha(0.25f);
-	rect->setRounding(12.0f);
-	rect->setAbsoluteRounding(true);
-	rect->setAnchor({ -0.5f, 0.125f });
-	rect->setPivot(0.5f);
-	rect->setMargin({ 0.0f, -18.0f });
-	rect->runAction(Actions::Collection::MakeSequence(
-		Actions::Collection::ChangeHorizontalAnchor(rect, 0.5f, 0.5f, Easing::CubicOut),
-		Actions::Collection::Wait(3.0f),
-		Actions::Collection::ChangeHorizontalAnchor(rect, 1.5f, 0.5f, Easing::CubicIn),
-		Actions::Collection::Kill(rect)
-	));
-	root->attach(rect);
-
-	auto label = std::make_shared<Scene::Label>();
-	label->setFont(FONT("default"));
-	label->setFontSize(16.0f);
-	label->setText(e.text);
-	label->setMultiline(true);
-	label->setMultilineAlign(Graphics::TextMesh::Align::Center);
-	label->setStretch({ 1.0f, 0.0f });
-	label->setHorizontalMargin(-rect->getVerticalMargin());
-	label->setPivot(0.5f);
-	label->setAnchor(0.5f);
-	rect->attach(label);
-
-	rect->runAction(Actions::Collection::ExecuteInfinite([rect, label] {
-		rect->setHeight(label->getHeight());
-	}));
-}
-
 void Application::onEvent(const Shared::Profile::ProfileSavedEvent& e)
 {
 	CLIENT->commit();
@@ -274,6 +236,8 @@ void Application::inputNickname()
 
 void Application::onEvent(const Achievements::AchievementEarnedEvent& e)
 {
+	CLIENT->sendAchievementEarned(e.item.name);
+
 	auto node = std::make_shared<Helpers::AchievementNotify>(e.item);
 	node->setAnchor({ 0.5f, 0.0f });
 	node->setPivot({ 0.5f, 1.0f });

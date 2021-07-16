@@ -96,7 +96,9 @@ Channel::Channel()
 		checkAuthorized();
 		std::string text = json["text"];
 		auto msgid = SERVER->getChat().addMessage(mUID, text);
-		SERVER->broadcastGlobalChatMessage(msgid, mUID, text);
+		SERVER->foreachClient([this, msgid, text](auto client) {
+			client.sendGlobalChatMessage(msgid, mUID, text);
+		});
 		log("write to chat \"" + text + "\"");
 	});
 
@@ -200,16 +202,22 @@ Channel::Channel()
 			{ "new_total_score", guild->getScore() }
 		});
 	});
+
+	addEventCallback("achievement_earned", [this](const auto& json) {
+		std::string name = json["name"];
+
+		SERVER->foreachClient([this, name](auto client) {
+			client.sendEvent("achievement_earned", {
+				{ "uid", mUID },
+				{ "achievement", name }
+			});
+		});
+	});
 }
 
 void Channel::log(const std::string& text)
 {
 	LOGF("#{} {}", mUID, text);
-}
-
-void Channel::sendPrint(const std::string& text)
-{
-	sendEvent("print", { { "text", text } });
 }
 
 void Channel::sendGlobalChatMessage(int msgid, int sender_uid, const std::string& text)
@@ -436,22 +444,12 @@ std::shared_ptr<Shared::NetworkingWS::Channel> Server::createChannel()
 	return std::make_shared<Channel>();
 }
 
-void Server::broadcastPrint(const std::string& text)
+void Server::foreachClient(std::function<void(Channel&)> callback)
 {
 	for (auto& [adr, channel] : getChannels())
 	{
 		auto client = std::dynamic_pointer_cast<Channel>(channel);
-		client->sendPrint(text);
-	}
-	LOG("broadcast message \"" + text + "\" to " + std::to_string(getChannels().size()) + " clients");
-}
-
-void Server::broadcastGlobalChatMessage(int msgid, int sender_uid, const std::string& text)
-{
-	for (auto& [adr, channel] : getChannels())
-	{
-		auto client = std::dynamic_pointer_cast<Channel>(channel);
-		client->sendGlobalChatMessage(msgid, sender_uid, text);
+		callback(*client);
 	}
 }
 
@@ -485,7 +483,7 @@ void Server::remakeHighscores()
 
 	for (int i = 0; i < 1000; i++)
 	{
-		if (defs.size() - 1 < i)
+		if ((int)defs.size() - 1 < i)
 			break;
 
 		mSortedHighscores.push_back(defs[i].uid);
@@ -511,7 +509,7 @@ void Server::remakeGuildTop()
 
 	for (int i = 0; i < 1000; i++)
 	{
-		if (guilds_list.size() - 1 < i)
+		if ((int)guilds_list.size() - 1 < i)
 			break;
 
 		mSortedGuildTop.push_back(guilds_list.at(i));

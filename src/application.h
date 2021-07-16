@@ -9,7 +9,6 @@ namespace hcg001
 {
 	class Application : public Shared::Application,
 		public Common::FrameSystem::Frameable,
-		public Common::Event::Listenable<NetEvents::PrintEvent>,
 		public Common::Event::Listenable<Shared::Profile::ProfileSavedEvent>,
 		public Common::Event::Listenable<Achievements::AchievementEarnedEvent>
 	{
@@ -26,7 +25,6 @@ namespace hcg001
 		void inputNickname();
 		
 	private:
-		void onEvent(const NetEvents::PrintEvent& e) override;
 		void onEvent(const Shared::Profile::ProfileSavedEvent& e) override;
 		void onEvent(const Achievements::AchievementEarnedEvent& e) override;		
 	};

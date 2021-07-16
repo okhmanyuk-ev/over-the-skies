@@ -40,6 +40,7 @@ Gameplay::Gameplay()
 	mNickname->setPivot(0.5f);
 	mNickname->setColor(Graphics::Color::ToNormalized(220, 220, 170));
 	mNickname->setAlpha(0.0f);
+	mNickname->setEnabled(PROFILE->isNicknameChanged());
 
 	runAction(Actions::Collection::Delayed([this] { return !isTransformReady(); },
 		Actions::Collection::MakeSequence(
@@ -475,6 +476,9 @@ void Gameplay::showRiskLabel(const utf8_string& text)
 
 void Gameplay::setScore(int count)
 {
+	if (mScore < count)
+		ACHIEVEMENTS->hit("COVER_DISTANCE", count - mScore);
+
 	mScore = count;
 	mScoreLabel->setText(std::to_string(mScore));
 

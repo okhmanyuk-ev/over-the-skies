@@ -31,10 +31,6 @@ void run()
 	CONSOLE->execute("sys_framerate 60");
 	CONSOLE->execute("sys_sleep 1");
 
-	CONSOLE->registerCommand("print", "broadcast message to all clients", { "text" }, { "text.." }, [](CON_ARGS) {
-		SERVER->broadcastPrint(CON_ARGS_ACCUMULATED_STRING);
-	});
-
 	CONSOLE->registerCommand("save", [](CON_ARGS) {
 		SERVER->save();
 	});

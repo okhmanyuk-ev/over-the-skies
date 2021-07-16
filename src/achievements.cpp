@@ -34,7 +34,9 @@ void Achievements::hit(const std::string& trigger, int count)
 		if (progress >= item.required)
 		{
 			if (was_not_earned)
+			{
 				EVENT->emit(AchievementEarnedEvent{item});
+			}
 
 			progress = item.required;
 		}

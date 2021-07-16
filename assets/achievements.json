@@ -48,6 +48,12 @@
         "reward": 100
     },
     {
+        "name": "COVER_DISTANCE_500",
+        "trigger": "COVER_DISTANCE",
+        "required": 500,
+        "reward": 1
+    },
+    {
         "name": "COVER_DISTANCE_1000",
         "trigger": "COVER_DISTANCE",
         "required": 1000,

@@ -25,11 +25,6 @@ Channel::Channel()
 		LOGF("guild: {}", PROFILE->getGuildId());
 	});
 
-	addEventCallback("print", [](const auto& json) {
-		std::string text = json["text"];
-		EVENT->emit(NetEvents::PrintEvent({ text }));
-	});
-
 	addEventCallback("highscores", [](const auto& json) {
 		std::vector<int> highscores = json["highscores"];
 		EVENT->emit(NetEvents::HighscoresEvent({ highscores }));
@@ -133,12 +128,10 @@ void Channel::commit()
 	nlohmann::json profile;
 	PROFILE->write(profile);
 
-	auto dump = profile.dump();
-
-	if (mPrevProfileDump == dump)
+	if (mPrevProfile == profile)
 		return;
 
-	mPrevProfileDump = dump;
+	mPrevProfile = profile;
 
 	sendEvent("commit", { { "profile", profile } });
 
@@ -404,6 +397,16 @@ void Client::sendGuildContribution(int count)
 		return;
 
 	getMyChannel()->sendEvent("guild_contribution", { { "count", count } });
+}
+
+void Client::sendAchievementEarned(const std::string& name)
+{
+	if (!isConnected())
+		return;
+
+	getMyChannel()->sendEvent("achievement_earned", {
+		{ "name", name }
+	});
 }
 
 const Channel::GlobalChatMessages& Client::getGlobalChatMessages() const
