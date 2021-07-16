@@ -229,6 +229,9 @@ void Gameplay::jump(bool powerjump)
 
 	if (powerjump)
 		mVelocity.y *= 1.75f;
+
+	if (powerjump)
+		ACHIEVEMENTS->hit("JUMP_BOOSTER_PANEL");
 }
 
 void Gameplay::downslide()
@@ -262,7 +265,7 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 	if (plane->hasRuby())
 	{
 		PROFILE->increaseRubies(1);
-		ACHIEVEMENTS->hit("RUBIES_COLLECTED", 1);
+		ACHIEVEMENTS->hit("RUBIES_COLLECTED");
 		Helpers::gHud->collectRubyAnim(plane->getRuby());
 		mRubiesCollected += 1;
 	}

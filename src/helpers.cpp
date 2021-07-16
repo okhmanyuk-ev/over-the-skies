@@ -147,3 +147,75 @@ void NoInternetContent::runShowAction()
 		Actions::Collection::Show(mLabel, 0.25f, Easing::CubicOut)
 	)));
 }
+
+// achievement notify
+
+AchievementNotify::AchievementNotify(const Achievements::Item& item)
+{
+	setSize({ 256.0f, 64.0f });
+	setRounding(1.0f);
+	setColor(Pallete::WindowItem);
+
+	mTadaHolder = std::make_shared<Scene::Node>();
+	mTadaHolder->setAnchor({ 0.0f, 0.5f });
+	mTadaHolder->setPivot(0.5f);
+	mTadaHolder->setPosition({ 38.0f, 0.0f });
+	mTadaHolder->setScale(0.0f);
+	attach(mTadaHolder);
+
+	auto tada = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
+	tada->setTexture(TEXTURE("textures/tada.png"));
+	tada->setAdaptSize(32.0f);
+	tada->setAnchor(0.5f);
+	tada->setPivot(0.5f);
+	mTadaHolder->attach(tada);
+
+	mTadaEmitter = std::make_shared<Shared::SceneHelpers::RectangleEmitter>();
+	mTadaEmitter->setHolder(ParticlesHolder);
+	mTadaEmitter->setRunning(false);
+	mTadaEmitter->setBeginSize({ 8.0f, 8.0f });
+	mTadaEmitter->setStretch({ 1.0f, 0.0f });
+	mTadaEmitter->setPivot({ 0.5f, 0.5f });
+	mTadaEmitter->setAnchor({ 0.5f, 1.0f });
+	mTadaEmitter->setDistance(48.0f);
+	mTadaEmitter->setMinDuration(0.25f);
+	mTadaEmitter->setMaxDuration(0.75f);
+	tada->attach(mTadaEmitter);
+
+	auto title = std::make_shared<Label>();
+	title->setColor(Pallete::YellowLabel);
+	title->setAnchor({ 0.0f, 0.5f });
+	title->setPivot({ 0.0f, 1.0f });
+	title->setPosition({ 64.0f, -4.0f });
+	title->setText(LOCALIZE("ACHIEVEMENT_" + item.name));
+	attach(title);
+
+	auto progress = ACHIEVEMENTS->getProgress(item.name);
+	auto required = item.required;
+
+	auto progressbar = std::make_shared<Shared::SceneHelpers::Progressbar>();
+	progressbar->setSize({ 148.0f, 4.0f });
+	progressbar->setAnchor({ 0.0f, 0.5f });
+	progressbar->setPivot({ 0.0f, 1.0f });
+	progressbar->setPosition({ 64.0f, 18.0f });
+	progressbar->setProgress((float)progress / (float)required);
+	attach(progressbar);
+
+	auto progress_label = std::make_shared<Helpers::Label>();
+	progress_label->setPosition({ 0.0f, -4.0f });
+	progress_label->setAnchor({ 0.0f, 0.0f });
+	progress_label->setPivot({ 0.0f, 1.0f });
+	progress_label->setFontSize(12.0f);
+	progress_label->setText(fmt::format("{}/{}", progress, required));
+	progressbar->attach(progress_label);
+}
+
+void AchievementNotify::showTada()
+{
+	runAction(Actions::Collection::MakeSequence(
+		Actions::Collection::ChangeScale(mTadaHolder, { 1.0f, 1.0f }, 0.25f, Easing::BackOut),
+		Actions::Collection::Execute([this] {
+			//mTadaEmitter->emit(16);
+		})
+	));
+}

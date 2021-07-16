@@ -19,6 +19,12 @@ namespace hcg001
 		};
 
 	public:
+		struct AchievementEarnedEvent
+		{
+			Item item;
+		};
+
+	public:
 		Achievements();
 
 	public:

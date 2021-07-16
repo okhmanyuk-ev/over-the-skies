@@ -125,6 +125,10 @@ void Application::initialize()
 	Helpers::gHud = std::make_shared<Hud>();
 	//SCENE_MANAGER->getWindowHolder()->attach(Helpers::gHud); // after screens, before windows
 	SCENE_MANAGER->attach(Helpers::gHud);
+
+	auto tada_particles_holder = std::make_shared<Scene::Node>();
+	SCENE_MANAGER->attach(tada_particles_holder);
+	Helpers::AchievementNotify::ParticlesHolder = tada_particles_holder;
 }
 
 void Application::onFrame()
@@ -257,11 +261,37 @@ void Application::inputNickname()
 		return;
 
 	PROFILE->setNicknameChanged(true);
+	PROFILE->saveAsync();
 
 	auto text = PROFILE->getNickName();
 	auto callback = [this](auto text) {
 		PROFILE->setNickName(text);
+		PROFILE->saveAsync();
 	};
 	auto input_window = std::make_shared<InputWindow>(LOCALIZE("INPUT_NICK_NAME"), text, callback);
 	SCENE_MANAGER->pushWindow(input_window);
+}
+
+void Application::onEvent(const Achievements::AchievementEarnedEvent& e)
+{
+	auto node = std::make_shared<Helpers::AchievementNotify>(e.item);
+	node->setAnchor({ 0.5f, 0.0f });
+	node->setPivot({ 0.5f, 1.0f });
+	node->runAction(Actions::Collection::MakeSequence(
+		Actions::Collection::MakeParallel(
+			Actions::Collection::ChangeVerticalPivot(node, 0.5f, 0.25f, Easing::CubicOut),
+			Actions::Collection::ChangeVerticalAnchor(node, 0.125f, 0.25f, Easing::CubicOut)
+		),
+		Actions::Collection::Wait(0.25f),
+		Actions::Collection::Execute([node] {
+			node->showTada();
+		}),
+		Actions::Collection::Wait(2.0f),
+		Actions::Collection::MakeParallel(
+			Actions::Collection::ChangeVerticalPivot(node, 1.0f, 0.25f, Easing::CubicIn),
+			Actions::Collection::ChangeVerticalAnchor(node, 0.0f, 0.25f, Easing::CubicIn)
+		),
+		Actions::Collection::Kill(node)
+	));
+	getScene()->getRoot()->attach(node);
 }

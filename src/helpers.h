@@ -4,6 +4,7 @@
 #include "hud.h"
 #include "client.h"
 #include "profile.h"
+#include "achievements.h"
 
 namespace hcg001::Helpers
 {
@@ -207,5 +208,21 @@ namespace hcg001::Helpers
 	private:
 		std::shared_ptr<Helpers::Label> mLabel;
 		std::shared_ptr<Scene::Adaptive<Scene::Sprite>> mIcon;
+	};
+
+	class AchievementNotify : public Scene::ClippableStencil<Scene::Rectangle>
+	{
+	public:
+		static inline std::shared_ptr<Scene::Node> ParticlesHolder = nullptr;
+
+	public:
+		AchievementNotify(const Achievements::Item& item);
+
+	public:
+		void showTada();
+
+	private:
+		std::shared_ptr<Scene::Node> mTadaHolder;
+		std::shared_ptr<Shared::SceneHelpers::RectangleEmitter> mTadaEmitter;
 	};
 }
