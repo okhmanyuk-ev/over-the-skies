@@ -71,7 +71,7 @@ SocialPanel::SocialPanel()
 		for (auto [type, _content] : mTabsManager.getContents())
 		{
 			auto content = std::static_pointer_cast<TabContent>(_content);
-			seq->add(Actions::Collection::Execute([this, type] { 
+			seq->add(Actions::Collection::Execute([this, type = type] { 
 				mTabsManager.show((PageType)type);
 			}));
 			seq->add(Actions::Collection::Wait(1.0f));
