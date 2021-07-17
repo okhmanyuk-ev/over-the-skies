@@ -1,4 +1,7 @@
 #include "gameover_menu.h"
+#include "helpers.h"
+#include "main_menu.h"
+#include "windows/input_window.h"
 
 using namespace hcg001;
 
@@ -12,7 +15,7 @@ GameoverMenu::GameoverMenu(int score)
 	mScoreLabel->setAnchor({ 0.5f, 0.25f });
 	mScoreLabel->setPivot({ 0.5f, 0.5f });
 	mScoreLabel->setText(std::to_string(score));
-	attach(mScoreLabel);
+	getContent()->attach(mScoreLabel);
 
 	// crown
 
@@ -64,7 +67,7 @@ GameoverMenu::GameoverMenu(int score)
 	tap_label->setPivot({ 0.5f, 0.5f });
 	tap_label->setText(LOCALIZE("GAMEOVER_MENU_TAP"));
 	tap_label->setAlpha(0.0f);
-	attach(tap_label);
+	getContent()->attach(tap_label);
 
 	Actions::Run(
 		Actions::Collection::RepeatInfinite([this, tap_label]() -> Actions::Collection::UAction {
@@ -78,6 +81,24 @@ GameoverMenu::GameoverMenu(int score)
 		})
 	);
 
+	setClickCallback([] {
+		SCENE_MANAGER->switchScreen(Helpers::gMainMenu, [] {
+			if (PROFILE->isNicknameChanged())
+				return;
+
+			PROFILE->setNicknameChanged(true);
+			PROFILE->saveAsync();
+
+			auto text = PROFILE->getNickName();
+			auto callback = [](auto text) {
+				PROFILE->setNickName(text);
+				PROFILE->saveAsync();
+			};
+			auto input_window = std::make_shared<InputWindow>(LOCALIZE("INPUT_NICK_NAME"), text, callback);
+			SCENE_MANAGER->pushWindow(input_window);
+		});
+	});
+
 	/*mHighscoresRect = std::make_shared<Scene::Rectangle>();
 	mHighscoresRect->setAbsoluteRounding(true);
 	mHighscoresRect->setRounding(16.0f);
@@ -86,7 +107,7 @@ GameoverMenu::GameoverMenu(int score)
 	mHighscoresRect->setPivot(0.5f);
 	mHighscoresRect->setAlpha(0.25f);
 	mHighscoresRect->setY(64.0f);
-	attach(mHighscoresRect);*/
+	getContent()->attach(mHighscoresRect);*/
 }
 
 void GameoverMenu::onEvent(const NetEvents::HighscoresEvent& e)

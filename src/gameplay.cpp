@@ -3,6 +3,7 @@
 #include "helpers.h"
 #include "client.h"
 #include "achievements.h"
+#include "gameover_menu.h"
 
 using namespace hcg001;
 
@@ -14,11 +15,11 @@ Gameplay::Gameplay()
 	mReadyLabel->setAnchor({ 0.5f, 0.25f });
 	mReadyLabel->setPivot(0.5f);
 	mReadyLabel->setText(LOCALIZE("READY_MENU_TITLE"));
-	attach(mReadyLabel);
+	getContent()->attach(mReadyLabel);
 
 	mGameField = std::make_shared<Scene::Node>();
 	mGameField->setAnchor({ 0.0f, 1.0f });
-	attach(mGameField);
+	getContent()->attach(mGameField);
 
 	mRectangleParticlesHolder = std::make_shared<Scene::Node>();
 	mRectangleParticlesHolder->setStretch(1.0f);
@@ -40,6 +41,7 @@ Gameplay::Gameplay()
 	mNickname->setPivot(0.5f);
 	mNickname->setColor(Graphics::Color::ToNormalized(220, 220, 170));
 	mNickname->setAlpha(0.0f);
+	mNickname->setEnabled(PROFILE->isNicknameChanged());
 
 	runAction(Actions::Collection::Delayed([this] { return !isTransformReady(); },
 		Actions::Collection::MakeSequence(
@@ -66,24 +68,19 @@ Gameplay::Gameplay()
 		)
 	));
 	
-	// hud
-
-	auto safe_area = std::make_shared<Shared::SceneHelpers::SafeArea>();
-	attach(safe_area);
-
-	// score label
-
 	mScoreLabel = std::make_shared<Scene::Label>();
 	mScoreLabel->setFont(FONT("default"));
 	mScoreLabel->setAnchor({ 1.0f, 0.0f });
 	mScoreLabel->setPivot({ 1.0f, 0.5f });
 	mScoreLabel->setPosition({ -16.0f, 24.0f });
 	mScoreLabel->setText("0");
-    safe_area->attach(mScoreLabel);
+    getGui()->attach(mScoreLabel);
 	
-	// jump particles
+	mRubiesIndicator = std::make_shared<Helpers::RubiesIndicator>();
+	mRubiesIndicator->setInstantRefresh(false);
+	getGui()->attach(mRubiesIndicator);
 
-	mJumpParticles = std::make_shared<Shared::SceneHelpers::RectangleEmitter>();
+	mJumpParticles = std::make_shared<Scene::RectangleEmitter>();
 	mJumpParticles->setHolder(mRectangleParticlesHolder);
 	mJumpParticles->setRunning(false);
 	mJumpParticles->setBeginSize({ 8.0f, 8.0f });
@@ -219,7 +216,7 @@ void Gameplay::camera(float dTime)
 	pos += (target - pos) * dTime * Speed;
 
 	mGameField->setPosition(pos);
-	mMoveSkyCallback(pos);
+	Helpers::gSky->moveSky(pos);
 }
 
 void Gameplay::jump(bool powerjump)
@@ -229,6 +226,9 @@ void Gameplay::jump(bool powerjump)
 
 	if (powerjump)
 		mVelocity.y *= 1.75f;
+
+	if (powerjump)
+		ACHIEVEMENTS->hit("JUMP_BOOSTER_PANEL");
 }
 
 void Gameplay::downslide()
@@ -262,8 +262,8 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 	if (plane->hasRuby())
 	{
 		PROFILE->increaseRubies(1);
-		ACHIEVEMENTS->hit("RUBIES_COLLECTED", 1);
-		Helpers::gHud->collectRubyAnim(plane->getRuby());
+		ACHIEVEMENTS->hit("RUBIES_COLLECTED");
+		mRubiesIndicator->collectRubyAnim(plane->getRuby());
 		mRubiesCollected += 1;
 	}
 }
@@ -327,7 +327,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		plane->setColor(Graphics::Color::Coral);
 		plane->setPowerjump(true);
 		
-		auto emitter = std::make_shared<Shared::SceneHelpers::RectangleEmitter>();
+		auto emitter = std::make_shared<Scene::RectangleEmitter>();
 		emitter->setHolder(mRectangleParticlesHolder);
 		emitter->setBeginSize({ 6.0f, 6.0f });
 		emitter->setDelay(1.0f / 30.0f);
@@ -360,7 +360,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		plane->attach(ruby);
 		plane->setRuby(ruby);
 
-		auto emitter = std::make_shared<Shared::SceneHelpers::RectangleEmitter>();
+		auto emitter = std::make_shared<Scene::RectangleEmitter>();
 		emitter->setHolder(mRectangleParticlesHolder);
 		emitter->setBeginSize({ 4.0f, 4.0f });
 		emitter->setDelay(1.0f / 10.0f);
@@ -435,11 +435,11 @@ void Gameplay::gameover()
 		return;
 
 	mGameovered = true;
-	mGameoverCallback();
-	ACHIEVEMENTS->hit("SCORE_REACHED", mScore);
 	ACHIEVEMENTS->hit("GAME_COMPLETED");
 	PROFILE->saveAsync();
 	CLIENT->sendGuildContribution(mRubiesCollected);
+	auto gameover_screen = std::make_shared<GameoverMenu>(getScore());
+	SCENE_MANAGER->switchScreen(gameover_screen);
 }
 
 void Gameplay::showRiskLabel(const utf8_string& text)
@@ -457,7 +457,7 @@ void Gameplay::showRiskLabel(const utf8_string& text)
 	mRiskLabel->setVerticalPivot(0.5f);
 	mRiskLabel->setHorizontalPivot(Common::Helpers::Chance(0.5f) ? 1.0f : 0.0f);
 	mRiskLabel->setAlpha(0.0f);
-	attach(mRiskLabel);
+	getContent()->attach(mRiskLabel);
 
 	mRiskLabel->runAction(Actions::Collection::MakeSequence(
 		Actions::Collection::Show(mRiskLabel, 0.125f),
@@ -473,6 +473,9 @@ void Gameplay::showRiskLabel(const utf8_string& text)
 
 void Gameplay::setScore(int count)
 {
+	if (mScore < count)
+		ACHIEVEMENTS->hit("COVER_DISTANCE", count - mScore);
+
 	mScore = count;
 	mScoreLabel->setText(std::to_string(mScore));
 

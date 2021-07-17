@@ -7,22 +7,20 @@ using namespace hcg001;
 
 BuySkinMenu::BuySkinMenu(Skin skin)
 {
-	setStretch(1.0f);
-
 	mTitle = std::make_shared<Scene::Label>();
 	mTitle->setFont(FONT("default"));
 	mTitle->setFontSize(34.0f);
 	mTitle->setAnchor({ -0.5f, 0.25f });
 	mTitle->setPivot({ 0.5f, 0.5f });
 	mTitle->setText(LOCALIZE("BUY_SKIN_TITLE"));
-	attach(mTitle);
+	getContent()->attach(mTitle);
 
 	mImage = std::make_shared<Scene::Sprite>();
 	mImage->setTexture(TEXTURE(SkinPath.at(skin)));
 	mImage->setAnchor({ 1.5f, 0.5f });
 	mImage->setPivot({ 0.5f, 0.5f });
 	mImage->setSize({ 96.0f, 96.0f });
-	attach(mImage);
+	getContent()->attach(mImage);
 
 	mBuyButton = std::make_shared<Helpers::Button>();
 	mBuyButton->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
@@ -35,15 +33,15 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 		skins.insert((int)skin);
 		PROFILE->setSkins(skins);
 		PROFILE->save();
-		ACHIEVEMENTS->hit("SKIN_UNLOCKED", 1);
-		mExitCallback();
+		ACHIEVEMENTS->hit("SKIN_UNLOCKED");
+		SCENE_MANAGER->switchScreenBack();
 	});
 	mBuyButton->setSize({ 128.0f, 48.0f });
 	mBuyButton->setAnchor({ 0.5f, 1.25f });
 	mBuyButton->setPivot({ 1.0f, 0.5f });
 	mBuyButton->setPosition({ -8.0f, 0.0f });
 	mBuyButton->refresh();
-	attach(mBuyButton);
+	getContent()->attach(mBuyButton);
 
 	mCancelButton = std::make_shared<Helpers::Button>();
 	mCancelButton->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
@@ -51,53 +49,22 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	mCancelButton->getLabel()->setFontSize(20.0f);
 	mCancelButton->getLabel()->setText(LOCALIZE("BUY_SKIN_CANCEL"));
 	mCancelButton->setClickCallback([this] {
-		mExitCallback();
+		SCENE_MANAGER->switchScreenBack(); 
 	});
 	mCancelButton->setSize({ 128.0f, 48.0f });
 	mCancelButton->setAnchor({ 0.5f, 1.25f });
 	mCancelButton->setPivot({ 0.0f, 0.5f });
 	mCancelButton->setPosition({ 8.0f, 0.0f });
 	mCancelButton->refresh();
-	attach(mCancelButton);
-}
+	getContent()->attach(mCancelButton);
 
-void BuySkinMenu::onLeaveBegin()
-{
-	setInteractions(false);
-}
+	auto rubies = std::make_shared<Helpers::RubiesIndicator>();
+	getGui()->attach(rubies);
 
-std::unique_ptr<Actions::Action> BuySkinMenu::createEnterAction()
-{
-	const float Duration = 0.25f;
+	//
 
-	return Actions::Collection::MakeParallel(
-		Actions::Collection::ChangeHorizontalAnchor(mTitle, 0.5f, Duration, Easing::CubicOut),
-		Actions::Collection::Delayed(Duration / 2.0f,
-			Actions::Collection::ChangeHorizontalAnchor(mImage, 0.5f, Duration, Easing::CubicOut)
-		),
-		Actions::Collection::Delayed(Duration,
-			Actions::Collection::MakeParallel(
-				Actions::Collection::ChangeVerticalAnchor(mBuyButton, 0.75f, Duration, Easing::CubicOut),
-				Actions::Collection::ChangeVerticalAnchor(mCancelButton, 0.75f, Duration, Easing::CubicOut)
-			)
-		)
-	);
-}
-
-std::unique_ptr<Actions::Action> BuySkinMenu::createLeaveAction()
-{
-	const float Duration = 0.25f;
-
-	return Actions::Collection::MakeParallel(
-		Actions::Collection::MakeParallel(
-			Actions::Collection::ChangeVerticalAnchor(mBuyButton, 1.25f, Duration, Easing::CubicIn),
-			Actions::Collection::ChangeVerticalAnchor(mCancelButton, 1.25f, Duration, Easing::CubicIn)
-		),
-		Actions::Collection::Delayed(Duration / 2.0f,
-			Actions::Collection::ChangeHorizontalAnchor(mImage, 1.5f, Duration, Easing::CubicIn)
-		),
-		Actions::Collection::Delayed(Duration,
-			Actions::Collection::ChangeHorizontalAnchor(mTitle, -0.5f, Duration, Easing::CubicIn)
-		)
-	);
+	mTitle->setHorizontalAnchor(0.5f);
+	mImage->setHorizontalAnchor(0.5f);
+	mBuyButton->setVerticalAnchor(0.75f);
+	mCancelButton->setVerticalAnchor(0.75f);
 }

@@ -7,27 +7,15 @@
 
 namespace hcg001
 {
-	class BuySkinMenu : public Shared::SceneManager::Screen
+	class BuySkinMenu : public Screen
 	{
 	public:
 		BuySkinMenu(Skin skin);
-
-	protected:	
-		void onLeaveBegin() override;
-		
-		std::unique_ptr<Actions::Action> createEnterAction() override;
-		std::unique_ptr<Actions::Action> createLeaveAction() override;
 
 	private:
 		std::shared_ptr<Scene::Label> mTitle = nullptr;
 		std::shared_ptr<Scene::Sprite> mImage = nullptr;
 		std::shared_ptr<Helpers::Button> mBuyButton = nullptr;
 		std::shared_ptr<Helpers::Button> mCancelButton = nullptr;
-
-	public:
-		void setExitCallback(std::function<void()> value) { mExitCallback = value; }
-
-	private:
-		std::function<void()> mExitCallback = nullptr;
 	};
 }

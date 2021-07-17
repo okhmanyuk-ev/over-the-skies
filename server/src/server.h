@@ -12,7 +12,6 @@ public:
 
 public:
 	void log(const std::string& text);
-	void sendPrint(const std::string& text);
 	void sendGlobalChatMessage(int msgid, int sender_uid, const std::string& text);
 	void sendGuildId();
 
@@ -68,8 +67,7 @@ public:
 	void load();
 
 	std::shared_ptr<Shared::NetworkingWS::Channel> createChannel() override;
-	void broadcastPrint(const std::string& text);
-	void broadcastGlobalChatMessage(int msgid, int sender_uid, const std::string& text);
+	void foreachClient(std::function<void(Channel&)> callback);
 
 public:
 	auto& getUserbase() { return mUserbase; }

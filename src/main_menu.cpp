@@ -7,6 +7,9 @@
 #include "windows/achievements_window.h"
 #include "windows/guilds_window.h"
 #include "windows/global_chat_window.h"
+#include "gameplay.h"
+#include "gameover_menu.h"
+#include "buy_skin_menu.h"
 
 using namespace hcg001;
 
@@ -19,7 +22,13 @@ MainMenu::MainMenu()
 	title->setPivot(0.5f);
 	title->setPosition({ 0.0f, -32.0f });
 	title->setText(LOCALIZE("MAIN_MENU_TITLE"));
-	attach(title);
+	getContent()->attach(title);
+
+	auto social_panel = std::make_shared<SocialPanel>();
+	social_panel->setAnchor(0.5f);
+	social_panel->setPivot(0.5f);
+	social_panel->setPosition({ 0.0f, -96.0f + 16.0f });
+	getContent()->attach(social_panel);
 
 	const glm::vec2 ButtonSize = { 192.0f, 48.0f };
 
@@ -34,15 +43,15 @@ MainMenu::MainMenu()
 
 		PROFILE->setCurrentSkin(mChoosedSkin);
 
-		if (mStartCallback)
-			mStartCallback();
+		auto gameplay = std::make_shared<Gameplay>();
+		SCENE_MANAGER->switchScreen(gameplay);
 	});
 	play_button->setSize(ButtonSize);
 	play_button->setAnchor({ -0.5f, 0.5f });
 	play_button->setPivot(0.5f);
 	play_button->setPosition({ 0.0f, 224.0f - 16.0f });
 	play_button->refresh();
-	attach(play_button);
+	getContent()->attach(play_button);
 
 	auto unlock_button = std::make_shared<Helpers::Button>();
 	unlock_button->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
@@ -61,10 +70,6 @@ MainMenu::MainMenu()
 		}
 
 		auto buy_skin_menu = std::make_shared<BuySkinMenu>(mChoosedSkin);
-		buy_skin_menu->setExitCallback([this] {
-			refresh();
-			SCENE_MANAGER->switchScreen(shared_from_this());
-		});
 		SCENE_MANAGER->switchScreen(buy_skin_menu);
 	});
 	unlock_button->setSize(ButtonSize);
@@ -73,7 +78,7 @@ MainMenu::MainMenu()
 	unlock_button->setPosition({ 0.0f, 224.0f - 16.0f });
 	unlock_button->refresh();
 
-	attach(unlock_button);
+	getContent()->attach(unlock_button);
 
 	runAction(Actions::Collection::ExecuteInfinite([this, play_button, unlock_button] {
 		if (!mDecideButtons)
@@ -114,14 +119,9 @@ MainMenu::MainMenu()
 		}
 	}));
 
-	refresh();
-
 	runAction(Actions::Collection::ExecuteInfinite([this](auto delta) {
 		menuPhysics(Clock::ToSeconds(delta));
 	}));
-
-	auto safe_area = std::make_shared<Shared::SceneHelpers::SafeArea>();
-	attach(safe_area);
 
 	const glm::vec2 TopButtonSize = { 72.0f, 28.0f };
 
@@ -134,7 +134,7 @@ MainMenu::MainMenu()
 		auto window = std::make_shared<ShopWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
-    safe_area->attach(shop_button);
+    getGui()->attach(shop_button);
 
 	auto options_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
 	options_button->setTexture(TEXTURE("textures/options.png"));
@@ -146,18 +146,7 @@ MainMenu::MainMenu()
 		auto window = std::make_shared<OptionsWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
-    safe_area->attach(options_button);
-
-	/*auto hishscores_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
-	hishscores_button->setTexture(TEXTURE("textures/podium.png"));
-	hishscores_button->setAdaptSize(TopButtonSize);
-	hishscores_button->setPosition({ 164.0f, 24.0f });
-	hishscores_button->setPivot({ 0.0f, 0.5f });
-	hishscores_button->setClickCallback([] {
-		auto window = std::make_shared<HighscoresWindow>();
-		SCENE_MANAGER->pushWindow(window);
-	});
-    safe_area->attach(hishscores_button);*/
+	getGui()->attach(options_button);
 
 	auto achievements_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
 	achievements_button->setTexture(TEXTURE("textures/cup.png"));
@@ -168,7 +157,7 @@ MainMenu::MainMenu()
 		auto window = std::make_shared<AchievementsWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
-	safe_area->attach(achievements_button);
+	getGui()->attach(achievements_button);
 
 	auto guilds_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
 	guilds_button->setTexture(TEXTURE("textures/guilds.png"));
@@ -179,7 +168,7 @@ MainMenu::MainMenu()
 		auto window = std::make_shared<GuildsWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
-    safe_area->attach(guilds_button);
+	getGui()->attach(guilds_button);
 
 	auto global_chat_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
 	global_chat_button->setTexture(TEXTURE("textures/chat.png"));
@@ -190,13 +179,21 @@ MainMenu::MainMenu()
 		auto window = std::make_shared<GlobalChatWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
-    safe_area->attach(global_chat_button);
+	getGui()->attach(global_chat_button);
 
-	auto social_panel = std::make_shared<SocialPanel>();
-	social_panel->setAnchor(0.5f);
-	social_panel->setPivot(0.5f);
-	social_panel->setPosition({ 0.0f, -96.0f + 16.0f });
-	attach(social_panel);
+	mRubiesIndicator = std::make_shared<Helpers::RubiesIndicator>();
+	mRubiesIndicator->setInstantRefresh(true);
+	getGui()->attach(mRubiesIndicator);
+
+	runAction(Actions::Collection::Delayed([this] { return isTransformReady(); }, Actions::Collection::Execute([this] {
+		mScrollTarget = mSkinItems.at(PROFILE->getCurrentSkin());
+	})));
+}
+
+void MainMenu::onEnterBegin()
+{
+	Screen::onEnterBegin();
+	refresh();
 }
 
 void MainMenu::refresh()
@@ -206,7 +203,7 @@ void MainMenu::refresh()
 	if (mScrollbox)
 	{
 		prev_scroll_pos = mScrollbox->getScrollPosition();
-		detach(mScrollbox);
+		getContent()->detach(mScrollbox);
 	}
 
 	mScrollbox = std::make_shared<Scene::Scrollbox>();
@@ -238,7 +235,7 @@ void MainMenu::refresh()
 	bounding->setVerticalStretch(1.0f);
 	bounding->setWidth(SlotWidth);
 
-	attach(mScrollbox);
+	getContent()->attach(mScrollbox);
 }
 
 std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
@@ -261,6 +258,8 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			mScrollTarget = item;
 		});
 		result.push_back(item);
+
+		mSkinItems[skin] = item;
 
 		auto image = std::make_shared<Scene::Sprite>();
 		image->setBatchGroup("main_menu_item_image");
@@ -349,9 +348,6 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			hideFarNode(price);
 			hideFarNode(name);
 		}));
-
-		if (PROFILE->getCurrentSkin() == skin)
-			mScrollTarget = item;
 	}
 
 	return result;

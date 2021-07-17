@@ -10,10 +10,8 @@
 #include "cheats.h"
 #include "windows/daily_reward_window.h"
 #include "helpers.h"
-#include "hud.h"
 #include "client.h"
 #include "achievements.h"
-#include "windows/input_window.h"
 
 using namespace hcg001;
 
@@ -74,57 +72,39 @@ void Application::initialize()
 {
 	auto root = getScene()->getRoot();
 
-	auto sky = std::make_shared<Sky>();
-	root->attach(sky, Scene::Node::AttachDirection::Front);
-
-	auto main_menu = std::make_shared<MainMenu>();
-	main_menu->setStartCallback([this, sky, main_menu] {
-		auto gameplay = std::make_shared<Gameplay>();
-		gameplay->setGameoverCallback([this, main_menu, gameplay] {
-			auto gameover_screen = std::make_shared<GameoverMenu>(gameplay->getScore());
-			gameover_screen->setClickCallback([this, main_menu] {
-				SCENE_MANAGER->switchScreen(main_menu, [this] {
-					inputNickname();
-				});
-			});
-			SCENE_MANAGER->switchScreen(gameover_screen);
-		});
-		gameplay->setMoveSkyCallback([sky](auto offset) {
-			sky->moveSky(offset);
-		});
-		SCENE_MANAGER->switchScreen(gameplay);
-	});
+	Helpers::gSky = std::make_shared<Sky>();
+	root->attach(Helpers::gSky, Scene::Node::AttachDirection::Front);
 
 	Actions::Run(Actions::Collection::MakeSequence(
 		Actions::Collection::WaitOneFrame(),
 		Actions::Collection::Wait(0.25f),
-		Actions::Collection::Execute([sky] {
+		Actions::Collection::Execute([] {
 			//sky->changeColor(Graphics::Color::Hsv::HueBlue, Graphics::Color::Hsv::HueRed);
-			sky->changeColor(205.0f, 15.0f);
+			Helpers::gSky->changeColor(205.0f, 15.0f);
 		}),
-		Actions::Collection::RepeatInfinite([sky] {
+		Actions::Collection::RepeatInfinite([] {
 			return Actions::Collection::Delayed(10.0f,
-				Actions::Collection::Execute([sky] {
-					sky->changeColor();
+				Actions::Collection::Execute([] {
+					Helpers::gSky->changeColor();
 				})
 			);
 		})	
 	));
 
+	Helpers::gMainMenu = std::make_shared<MainMenu>();
+
 	Actions::Run(Actions::Collection::MakeSequence(
 		Actions::Collection::WaitOneFrame(),
-		Actions::Collection::Execute([this, main_menu] {
-			SCENE_MANAGER->switchScreen(main_menu, [this] {
+		Actions::Collection::Execute([this] {
+			SCENE_MANAGER->switchScreen(Helpers::gMainMenu, [this] {
 				tryShowDailyReward();
 			});
 		})
 	));
 
-	// hud
-
-	Helpers::gHud = std::make_shared<Hud>();
-	//SCENE_MANAGER->getWindowHolder()->attach(Helpers::gHud); // after screens, before windows
-	SCENE_MANAGER->attach(Helpers::gHud);
+	auto tada_particles_holder = std::make_shared<Scene::Node>();
+	SCENE_MANAGER->attach(tada_particles_holder);
+	Helpers::AchievementNotify::ParticlesHolder = tada_particles_holder;
 }
 
 void Application::onFrame()
@@ -137,7 +117,6 @@ void Application::onFrame()
 
 void Application::addRubies(int count)
 {
-	ACHIEVEMENTS->hit("RUBIES_COLLECTED", count);
 	PROFILE->increaseRubies(count);
 	PROFILE->saveAsync();
 
@@ -158,11 +137,11 @@ void Application::addRubies(int count)
 			Actions::Collection::Show(ruby, 0.25f, Easing::CubicIn),
 			Actions::Collection::Execute([this, ruby] {
 				FRAME->addOne([this, ruby] {
-					Helpers::gHud->collectRubyAnim(ruby);
+					Helpers::gMainMenu->getRubiesIndicator()->collectRubyAnim(ruby);
 				});
 			})
 		));
-		Helpers::gHud->attach(ruby);
+		Helpers::gMainMenu->attach(ruby);
 	}
 }
 
@@ -208,60 +187,33 @@ void Application::adaptToScreen(std::shared_ptr<Scene::Node> node)
 	node->setStretch(1.0f / node->getScale());
 }
 
-void Application::onEvent(const NetEvents::PrintEvent& e)
-{
-	auto root = getScene()->getRoot();
-
-	auto rect = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
-	rect->setTouchable(true);
-	rect->setSize({ 264.0f, 42.0f });
-	rect->setAlpha(0.25f);
-	rect->setRounding(12.0f);
-	rect->setAbsoluteRounding(true);
-	rect->setAnchor({ -0.5f, 0.125f });
-	rect->setPivot(0.5f);
-	rect->setMargin({ 0.0f, -18.0f });
-	rect->runAction(Actions::Collection::MakeSequence(
-		Actions::Collection::ChangeHorizontalAnchor(rect, 0.5f, 0.5f, Easing::CubicOut),
-		Actions::Collection::Wait(3.0f),
-		Actions::Collection::ChangeHorizontalAnchor(rect, 1.5f, 0.5f, Easing::CubicIn),
-		Actions::Collection::Kill(rect)
-	));
-	root->attach(rect);
-
-	auto label = std::make_shared<Scene::Label>();
-	label->setFont(FONT("default"));
-	label->setFontSize(16.0f);
-	label->setText(e.text);
-	label->setMultiline(true);
-	label->setMultilineAlign(Graphics::TextMesh::Align::Center);
-	label->setStretch({ 1.0f, 0.0f });
-	label->setHorizontalMargin(-rect->getVerticalMargin());
-	label->setPivot(0.5f);
-	label->setAnchor(0.5f);
-	rect->attach(label);
-
-	rect->runAction(Actions::Collection::ExecuteInfinite([rect, label] {
-		rect->setHeight(label->getHeight());
-	}));
-}
-
 void Application::onEvent(const Shared::Profile::ProfileSavedEvent& e)
 {
 	CLIENT->commit();
 }
 
-void Application::inputNickname()
+void Application::onEvent(const Achievements::AchievementEarnedEvent& e)
 {
-	if (PROFILE->isNicknameChanged())
-		return;
+	CLIENT->sendAchievementEarned(e.item.name);
 
-	PROFILE->setNicknameChanged(true);
-
-	auto text = PROFILE->getNickName();
-	auto callback = [this](auto text) {
-		PROFILE->setNickName(text);
-	};
-	auto input_window = std::make_shared<InputWindow>(LOCALIZE("INPUT_NICK_NAME"), text, callback);
-	SCENE_MANAGER->pushWindow(input_window);
+	auto node = std::make_shared<Helpers::AchievementNotify>(e.item);
+	node->setAnchor({ 0.5f, 0.0f });
+	node->setPivot({ 0.5f, 1.0f });
+	node->runAction(Actions::Collection::MakeSequence(
+		Actions::Collection::MakeParallel(
+			Actions::Collection::ChangeVerticalPivot(node, 0.5f, 0.25f, Easing::CubicOut),
+			Actions::Collection::ChangeVerticalAnchor(node, 0.125f, 0.25f, Easing::CubicOut)
+		),
+		Actions::Collection::Wait(0.25f),
+		Actions::Collection::Execute([node] {
+			node->showTada();
+		}),
+		Actions::Collection::Wait(2.0f),
+		Actions::Collection::MakeParallel(
+			Actions::Collection::ChangeVerticalPivot(node, 1.0f, 0.25f, Easing::CubicIn),
+			Actions::Collection::ChangeVerticalAnchor(node, 0.0f, 0.25f, Easing::CubicIn)
+		),
+		Actions::Collection::Kill(node)
+	));
+	getScene()->getRoot()->attach(node);
 }

@@ -106,7 +106,7 @@ GuildsWindow::MyGuildContent::MyGuildContent()
 	mTabsManager.addContent(PageType::Chat, chat_content);
 	mTabsManager.addContent(PageType::Info, info_content);
 
-	mTabsManager.show(PageType::Chat);
+	mTabsManager.show(PageType::Info);
 }
 
 // tab button

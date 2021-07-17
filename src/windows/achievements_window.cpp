@@ -1,6 +1,7 @@
 #include "achievements_window.h"
 #include "achievements.h"
 #include "profile.h"
+#include "main_menu.h"
 
 using namespace hcg001;
 
@@ -72,6 +73,33 @@ AchievementsWindow::AchievementsWindow()
 	bottom_gradient->setPivot({ 0.5f, 1.0f });
 	bottom_gradient->setVerticalGradient({ Helpers::Pallete::WindowBody, 0.0f }, { Helpers::Pallete::WindowBody, 1.0f });
 	scrollbox->attach(bottom_gradient);
+
+	auto safe_area = std::make_shared<Shared::SceneHelpers::SafeArea>();
+	attach(safe_area);
+
+	RubiesIndicator = std::make_shared<Helpers::RubiesIndicator>();
+	RubiesIndicator->setInstantRefresh(false);
+	RubiesIndicator->makeHidden();
+	safe_area->attach(RubiesIndicator);
+}
+
+AchievementsWindow::~AchievementsWindow()
+{
+	RubiesIndicator = nullptr;
+}
+
+void AchievementsWindow::onOpenEnd()
+{
+	Window::onOpenEnd();
+	RubiesIndicator->show();
+	Helpers::gMainMenu->getRubiesIndicator()->hide();
+}
+
+void AchievementsWindow::onCloseBegin()
+{
+	Window::onCloseBegin();
+	RubiesIndicator->hide();
+	Helpers::gMainMenu->getRubiesIndicator()->show();
 }
 
 AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
@@ -145,7 +173,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 		ruby->setAdaptingEnabled(false);
 		ruby->setSize(ruby->getSize() * ruby->getScale());
 		ruby->setScale(1.0f);
-		Helpers::gHud->collectRubyAnim(ruby);
+		RubiesIndicator->collectRubyAnim(ruby);
 		refresh(true);
 	});
 	mButton->setAnchor(0.5f);

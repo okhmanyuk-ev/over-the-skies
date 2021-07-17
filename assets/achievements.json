@@ -6,39 +6,94 @@
         "reward": 1
     },
     {
-        "name": "REACH_SCORE_50",
-        "trigger": "SCORE_REACHED",
+        "name": "JUMP_BOOSTER_PANEL_10",
+        "trigger": "JUMP_BOOSTER_PANEL",
+        "required": 10,
+        "reward": 1
+    },
+    {
+        "name": "JUMP_BOOSTER_PANEL_25",
+        "trigger": "JUMP_BOOSTER_PANEL",
+        "required": 25,
+        "reward": 2
+    },
+    {
+        "name": "JUMP_BOOSTER_PANEL_50",
+        "trigger": "JUMP_BOOSTER_PANEL",
         "required": 50,
-        "reward": 3,
-        "oneshot": true
+        "reward": 5
     },
     {
-        "name": "REACH_SCORE_100",
-        "trigger": "SCORE_REACHED",
+        "name": "JUMP_BOOSTER_PANEL_100",
+        "trigger": "JUMP_BOOSTER_PANEL",
         "required": 100,
-        "reward": 5,
-        "oneshot": true
+        "reward": 10
     },
     {
-        "name": "REACH_SCORE_200",
-        "trigger": "SCORE_REACHED",
-        "required": 200,
-        "reward": 10,
-        "oneshot": true
+        "name": "JUMP_BOOSTER_PANEL_250",
+        "trigger": "JUMP_BOOSTER_PANEL",
+        "required": 250,
+        "reward": 25
     },
     {
-        "name": "REACH_SCORE_500",
-        "trigger": "SCORE_REACHED",
+        "name": "JUMP_BOOSTER_PANEL_500",
+        "trigger": "JUMP_BOOSTER_PANEL",
         "required": 500,
-        "reward": 15,
-        "oneshot": true
+        "reward": 50
     },
     {
-        "name": "REACH_SCORE_1000",
-        "trigger": "SCORE_REACHED",
+        "name": "JUMP_BOOSTER_PANEL_1000",
+        "trigger": "JUMP_BOOSTER_PANEL",
         "required": 1000,
-        "reward": 50,
-        "oneshot": true
+        "reward": 100
+    },
+    {
+        "name": "COVER_DISTANCE_500",
+        "trigger": "COVER_DISTANCE",
+        "required": 500,
+        "reward": 1
+    },
+    {
+        "name": "COVER_DISTANCE_1000",
+        "trigger": "COVER_DISTANCE",
+        "required": 1000,
+        "reward": 1
+    },
+    {
+        "name": "COVER_DISTANCE_2500",
+        "trigger": "COVER_DISTANCE",
+        "required": 2500,
+        "reward": 2
+    },
+    {
+        "name": "COVER_DISTANCE_5000",
+        "trigger": "COVER_DISTANCE",
+        "required": 5000,
+        "reward": 5
+    },
+    {
+        "name": "COVER_DISTANCE_10000",
+        "trigger": "COVER_DISTANCE",
+        "required": 10000,
+        "reward": 10
+    },
+    {
+        "name": "COVER_DISTANCE_25000",
+        "trigger": "COVER_DISTANCE",
+        "required": 25000,
+        "reward": 25
+    },
+    {
+        "name": "COVER_DISTANCE_50000",
+        "trigger": "COVER_DISTANCE",
+        "required": 50000,
+        "reward": 50
+    },
+    {
+        "name": "COVER_DISTANCE_100000",
+        "trigger": "COVER_DISTANCE",
+        "required": 100000,
+        "reward": 100
     },
     {
         "name": "COLLECT_RUBIES_10",
@@ -71,9 +126,9 @@
         "reward": 10
     },
     {
-        "name": "COLLECT_RUBIES_200",
+        "name": "COLLECT_RUBIES_250",
         "trigger": "RUBIES_COLLECTED",
-        "required": 200,
+        "required": 250,
         "reward": 20
     },
     {

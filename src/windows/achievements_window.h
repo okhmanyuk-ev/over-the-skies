@@ -6,11 +6,19 @@ namespace hcg001
 {
 	class AchievementsWindow : public Window
 	{
+	public:
+		static inline std::shared_ptr<Helpers::RubiesIndicator> RubiesIndicator = nullptr;
+
 	private:
 		class Item;
 
 	public:
 		AchievementsWindow();
+		~AchievementsWindow();
+
+	protected:	
+		void onOpenEnd() override;
+		void onCloseBegin() override;
 	};
 
 	class AchievementsWindow::Item : public Scene::Cullable<Scene::Rectangle>

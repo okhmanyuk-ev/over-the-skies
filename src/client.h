@@ -10,11 +10,6 @@ namespace hcg001
 {
 	namespace NetEvents
 	{
-		struct PrintEvent
-		{
-			std::string text;
-		};
-
 		struct HighscoresEvent
 		{
 			std::vector<int> uids;
@@ -118,7 +113,7 @@ namespace hcg001
 		GuildsMap mGuilds;
 
 	private:
-		std::string mPrevProfileDump;
+		nlohmann::json mPrevProfile;
 	};
 
 	class Channel::ChatMessage
@@ -161,6 +156,7 @@ namespace hcg001
 		void requireGuildInfo(int id);
 
 		void sendGuildContribution(int count);
+		void sendAchievementEarned(const std::string& name);
 		
 	public:
 		const Channel::GlobalChatMessages& getGlobalChatMessages() const;
