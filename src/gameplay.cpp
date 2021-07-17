@@ -80,7 +80,7 @@ Gameplay::Gameplay()
 	mRubiesIndicator->setInstantRefresh(false);
 	getGui()->attach(mRubiesIndicator);
 
-	mJumpParticles = std::make_shared<Shared::SceneHelpers::RectangleEmitter>();
+	mJumpParticles = std::make_shared<Scene::RectangleEmitter>();
 	mJumpParticles->setHolder(mRectangleParticlesHolder);
 	mJumpParticles->setRunning(false);
 	mJumpParticles->setBeginSize({ 8.0f, 8.0f });
@@ -327,7 +327,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		plane->setColor(Graphics::Color::Coral);
 		plane->setPowerjump(true);
 		
-		auto emitter = std::make_shared<Shared::SceneHelpers::RectangleEmitter>();
+		auto emitter = std::make_shared<Scene::RectangleEmitter>();
 		emitter->setHolder(mRectangleParticlesHolder);
 		emitter->setBeginSize({ 6.0f, 6.0f });
 		emitter->setDelay(1.0f / 30.0f);
@@ -360,7 +360,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		plane->attach(ruby);
 		plane->setRuby(ruby);
 
-		auto emitter = std::make_shared<Shared::SceneHelpers::RectangleEmitter>();
+		auto emitter = std::make_shared<Scene::RectangleEmitter>();
 		emitter->setHolder(mRectangleParticlesHolder);
 		emitter->setBeginSize({ 4.0f, 4.0f });
 		emitter->setDelay(1.0f / 10.0f);

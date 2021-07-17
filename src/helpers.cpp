@@ -170,7 +170,7 @@ AchievementNotify::AchievementNotify(const Achievements::Item& item)
 	tada->setPivot(0.5f);
 	mTadaHolder->attach(tada);
 
-	mTadaEmitter = std::make_shared<Shared::SceneHelpers::RectangleEmitter>();
+	mTadaEmitter = std::make_shared<Scene::RectangleEmitter>();
 	mTadaEmitter->setHolder(ParticlesHolder);
 	mTadaEmitter->setRunning(false);
 	mTadaEmitter->setBeginSize({ 8.0f, 8.0f });

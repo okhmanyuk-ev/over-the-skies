@@ -135,7 +135,7 @@ PayablePlayer::PayablePlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Sk
 	GRAPHICS->pop(4);
 	GRAPHICS->end();
 
-	auto emitter = std::make_shared<Shared::SceneHelpers::SpriteEmitter>();
+	auto emitter = std::make_shared<Scene::SpriteEmitter>();
 	emitter->setHolder(trailHolder);
 	emitter->setStretch(0.0f);
 	emitter->setPivot(0.5f);

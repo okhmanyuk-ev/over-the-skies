@@ -47,7 +47,7 @@ namespace hcg001
 		std::shared_ptr<Helpers::Label> mNickname;
 		std::shared_ptr<Scene::Label> mScoreLabel;
 		std::shared_ptr<Scene::Label> mRiskLabel = nullptr;
-		std::shared_ptr<Shared::SceneHelpers::RectangleEmitter> mJumpParticles;
+		std::shared_ptr<Scene::RectangleEmitter> mJumpParticles;
 		std::shared_ptr<Helpers::RubiesIndicator> mRubiesIndicator;
 
 	public:
