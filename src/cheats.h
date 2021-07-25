@@ -45,6 +45,12 @@ namespace hcg001
 				}
 				PROFILE->saveAsync();
 			}
+
+			if (ImGui::Button("FAKE ACHIEVEMENT EARNED EVENT"))
+			{
+				auto item = *ACHIEVEMENTS->getItems().begin();
+				EVENT->emit(Achievements::AchievementEarnedEvent{ item });
+			}
 		}
 
 		ImGui::Checkbox("DEV", &Enabled);
