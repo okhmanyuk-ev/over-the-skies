@@ -116,6 +116,9 @@ void TabsManager::show(int type)
 NoInternetContent::NoInternetContent()
 {
 	setStretch(1.0f);
+	setScale(0.95f);
+	setAnchor(0.5f);
+	setPivot(0.5f);
 
 	mLabel = std::make_shared<Helpers::Label>();
 	mLabel->setText(LOCALIZE("SOCIAL_NO_INTERNET"));
@@ -144,7 +147,8 @@ void NoInternetContent::runShowAction()
 {
 	runAction(Actions::Collection::Delayed(0.25f, Actions::Collection::MakeParallel(
 		Actions::Collection::Show(mIcon, 0.25f, Easing::CubicOut),
-		Actions::Collection::Show(mLabel, 0.25f, Easing::CubicOut)
+		Actions::Collection::Show(mLabel, 0.25f, Easing::CubicOut),
+		Actions::Collection::ChangeScale(shared_from_this(), { 1.0f, 1.0f }, 0.75f, Easing::CubicOut)
 	)));
 }
 

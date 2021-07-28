@@ -203,7 +203,7 @@ namespace hcg001::Helpers
 		void show(T type) { TabsManager::show((int)type); }
 	};
 
-	class NoInternetContent : public Scene::Node
+	class NoInternetContent : public Scene::Node, public std::enable_shared_from_this<NoInternetContent>
 	{
 	public:
 		NoInternetContent();
