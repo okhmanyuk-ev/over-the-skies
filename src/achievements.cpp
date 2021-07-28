@@ -5,7 +5,7 @@ using namespace hcg001;
 
 Achievements::Achievements()
 {
-	auto json = Common::Helpers::LoadJsonFromAsset({ "achievements.json" });
+	auto json = JSON("achievements.json");
 
 	for (auto field : json)
 	{
