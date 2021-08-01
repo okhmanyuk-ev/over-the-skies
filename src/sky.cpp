@@ -125,9 +125,9 @@ void Sky::changeColor(float top_hue, float bottom_hue)
 	runAction(Actions::Collection::ChangeColor(mBottomColor, bottom, ChangeDuration, Easing::QuadraticInOut));
 }
 
-void Sky::update()
+void Sky::update(Clock::Duration dTime)
 {
-	Scene::Rectangle::update();
+	Scene::Rectangle::update(dTime);
 	setVerticalGradient(mTopColor->getColor(), mBottomColor->getColor());
 }
 

@@ -18,7 +18,7 @@ namespace hcg001
 		void moveSky(const glm::vec2& offset);
 
 	protected:
-		void update() override;
+		void update(Clock::Duration dTime) override;
 
 	private:
 		std::shared_ptr<Scene::BloomLayer> mBloomLayer;

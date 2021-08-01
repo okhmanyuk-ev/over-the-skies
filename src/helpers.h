@@ -82,9 +82,9 @@ namespace hcg001::Helpers
 		}
 
 	protected:
-		void update() override
+		void update(Clock::Duration dTime) override
 		{
-			T::update();
+			T::update(dTime);
 			
 			if (mFirstCalled)
 				return;
@@ -130,9 +130,9 @@ namespace hcg001::Helpers
 		}
 
 	protected:
-		void update() override
+		void update(Clock::Duration dTime) override
 		{
-			T::update();
+			T::update(dTime);
 			
 			if (mFirstCalled)
 				return;

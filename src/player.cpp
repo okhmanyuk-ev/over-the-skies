@@ -19,10 +19,10 @@ void Player::makeSprite()
 	attach(mSprite);
 }
 
-void Player::update()
+void Player::update(Clock::Duration dTime)
 {
 	assert(mSprite != nullptr);
-	Scene::Node::update();
+	Scene::Node::update(dTime);
 	mSprite->setColor(getColor());
 }
 

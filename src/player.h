@@ -17,7 +17,7 @@ namespace hcg001
 		void setSpriteRotation(float value) { mSprite->setRotation(value); }
 
 	protected:
-		void update() override;
+		void update(Clock::Duration dTime) override;
 
 	private:
 		std::shared_ptr<Scene::Sprite> mSprite = nullptr;
