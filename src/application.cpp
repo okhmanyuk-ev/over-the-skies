@@ -7,7 +7,6 @@
 #include "plane.h"
 #include "skin.h"
 #include "profile.h"
-#include "cheats.h"
 #include "windows/daily_reward_window.h"
 #include "helpers.h"
 #include "client.h"
@@ -110,7 +109,7 @@ void Application::initialize()
 void Application::onFrame()
 {
 	adaptToScreen(getScene()->getRoot());
-	ShowCheatsMenu();
+	showCheats();
 	GAME_STATS("connected", CLIENT->isConnected());
 	GAME_STATS("event listeners", EVENT->getListenersCount());
 }
@@ -216,4 +215,64 @@ void Application::onEvent(const Achievements::AchievementEarnedEvent& e)
 		Actions::Collection::Kill(node)
 	));
 	getScene()->getRoot()->attach(node);
+}
+
+void Application::showCheats()
+{
+#if !defined(BUILD_DEVELOPER)
+	return;
+#endif	
+
+	static bool HideThisMenu = false;
+
+	if (HideThisMenu)
+		return;
+
+	ImGui::Begin("dev", nullptr, ImGui::User::ImGuiWindowFlags_ControlPanel);
+	ImGui::SetWindowPos(ImGui::User::BottomLeftCorner());
+
+	static bool Enabled = false;
+
+	if (Enabled)
+	{
+		if (ImGui::Button("HIDE THIS MENU"))
+			HideThisMenu = true;
+
+		ImGui::Separator();
+
+		if (ImGui::Button("CLEAR PROFILE"))
+		{
+			PROFILE->clear();
+		}
+
+		if (ImGui::Button("RUBIES +10"))
+		{
+			PROFILE->setRubies(PROFILE->getRubies() + 10);
+		}
+
+		if (ImGui::Button("DAILY REWARD WINDOW"))
+		{
+			auto window = std::make_shared<DailyRewardWindow>(2);
+			SCENE_MANAGER->pushWindow(window);
+		}
+
+		if (ImGui::Button("COMPLETE ALL ACHIEVEMENTS"))
+		{
+			for (auto item : ACHIEVEMENTS->getItems())
+			{
+				auto& progress = ACHIEVEMENTS->getProgress(item.name);
+				progress = item.required;
+			}
+			PROFILE->saveAsync();
+		}
+
+		if (ImGui::Button("FAKE ACHIEVEMENT EARNED EVENT"))
+		{
+			auto item = *ACHIEVEMENTS->getItems().begin();
+			EVENT->emit(Achievements::AchievementEarnedEvent{ item });
+		}
+	}
+
+	ImGui::Checkbox("DEV", &Enabled);
+	ImGui::End();
 }
