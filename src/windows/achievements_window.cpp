@@ -171,8 +171,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 
 		ruby->setBatchGroup("");
 		ruby->setAdaptingEnabled(false);
-		ruby->setSize(ruby->getSize() * ruby->getScale());
-		ruby->setScale(1.0f);
+		ruby->bakeAdaption();
 		RubiesIndicator->collectRubyAnim(ruby);
 		refresh(true);
 	});

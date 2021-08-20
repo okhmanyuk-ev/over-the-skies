@@ -160,21 +160,16 @@ AchievementNotify::AchievementNotify(const Achievements::Item& item)
 	setRounding(1.0f);
 	setColor(Pallete::WindowItem);
 
-	mTadaHolder = std::make_shared<Scene::Node>();
-	mTadaHolder->setAnchor({ 0.0f, 0.5f });
-	mTadaHolder->setPivot(0.5f);
-	mTadaHolder->setPosition({ 38.0f, 0.0f });
-	mTadaHolder->setScale(0.0f);
-	attach(mTadaHolder);
+	mTada = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
+	mTada->setTexture(TEXTURE("textures/tada.png"));
+	mTada->setAdaptSize(32.0f);
+	mTada->setAnchor({ 0.0f, 0.5f });
+	mTada->setPivot(0.5f);
+	mTada->setPosition({ 38.0f, 0.0f });
+	mTada->setScale(0.0f);
+	attach(mTada);
 
-	auto tada = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
-	tada->setTexture(TEXTURE("textures/tada.png"));
-	tada->setAdaptSize(32.0f);
-	tada->setAnchor(0.5f);
-	tada->setPivot(0.5f);
-	mTadaHolder->attach(tada);
-
-	mTadaEmitter = std::make_shared<Scene::RectangleEmitter>();
+	mTadaEmitter = std::make_shared<Scene::RectangleEmitter>(); // TODO: wtf
 	mTadaEmitter->setHolder(ParticlesHolder);
 	mTadaEmitter->setRunning(false);
 	mTadaEmitter->setBeginSize({ 8.0f, 8.0f });
@@ -184,7 +179,7 @@ AchievementNotify::AchievementNotify(const Achievements::Item& item)
 	mTadaEmitter->setDistance(48.0f);
 	mTadaEmitter->setMinDuration(0.25f);
 	mTadaEmitter->setMaxDuration(0.75f);
-	tada->attach(mTadaEmitter);
+	mTada->attach(mTadaEmitter);
 
 	auto title = std::make_shared<Label>();
 	title->setColor(Pallete::YellowLabel);
@@ -217,7 +212,7 @@ AchievementNotify::AchievementNotify(const Achievements::Item& item)
 void AchievementNotify::showTada()
 {
 	runAction(Actions::Collection::MakeSequence(
-		Actions::Collection::ChangeScale(mTadaHolder, { 1.0f, 1.0f }, 0.25f, Easing::BackOut),
+		Actions::Collection::ChangeScale(mTada, { 1.0f, 1.0f }, 0.25f, Easing::BackOut),
 		Actions::Collection::Execute([this] {
 			//mTadaEmitter->emit(16);
 		})

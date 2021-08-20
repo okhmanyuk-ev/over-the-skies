@@ -1,7 +1,6 @@
 #include "global_chat_window.h"
 #include "helpers.h"
 #include "input_window.h"
-#include "cheats.h"
 
 using namespace hcg001;
 

@@ -228,7 +228,7 @@ namespace hcg001::Helpers
 		void showTada();
 
 	private:
-		std::shared_ptr<Scene::Node> mTadaHolder;
+		std::shared_ptr<Scene::Adaptive<Scene::Sprite>> mTada;
 		std::shared_ptr<Scene::RectangleEmitter> mTadaEmitter;
 	};
 
