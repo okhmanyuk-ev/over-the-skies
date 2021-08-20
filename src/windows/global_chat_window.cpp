@@ -154,7 +154,8 @@ GlobalChatWindow::GlobalChatWindow()
 	top_gradient->setHeight(6.0f);
 	top_gradient->setAnchor({ 0.5f, 0.0f });
 	top_gradient->setPivot({ 0.5f, 0.0f });
-	top_gradient->setVerticalGradient({ Helpers::Pallete::WindowBody, 1.0f }, { Helpers::Pallete::WindowBody, 0.0f });
+	top_gradient->getEdgeColor(Scene::Rectangle::Edge::Top)->setColor({ Helpers::Pallete::WindowBody, 1.0f });
+	top_gradient->getEdgeColor(Scene::Rectangle::Edge::Bottom)->setColor({ Helpers::Pallete::WindowBody, 0.0f });
 	mChatWidget->attach(top_gradient);
 
 	auto bottom_gradient = std::make_shared<Scene::Rectangle>();
@@ -162,7 +163,8 @@ GlobalChatWindow::GlobalChatWindow()
 	bottom_gradient->setHeight(6.0f);
 	bottom_gradient->setAnchor({ 0.5f, 1.0f });
 	bottom_gradient->setPivot({ 0.5f, 1.0f });
-	bottom_gradient->setVerticalGradient({ Helpers::Pallete::WindowBody, 0.0f }, { Helpers::Pallete::WindowBody, 1.0f });
+	bottom_gradient->getEdgeColor(Scene::Rectangle::Edge::Top)->setColor({ Helpers::Pallete::WindowBody, 0.0f });
+	bottom_gradient->getEdgeColor(Scene::Rectangle::Edge::Bottom)->setColor({ Helpers::Pallete::WindowBody, 1.0f });
 	mChatWidget->attach(bottom_gradient);
 }
 

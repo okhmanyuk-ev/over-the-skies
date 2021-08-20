@@ -44,15 +44,6 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
     Scene::Label::DefaultFont = FONT("default");
 	Scene::Scrollbox::DefaultInertiaFriction = 0.05f;
 
-#if defined(BUILD_DEVELOPER)
-	CONSOLE->execute("hud_show_fps 1");
-	CONSOLE->execute("hud_show_drawcalls 1");
-	CONSOLE->execute("hud_show_batches 1");
-#else
-	CONSOLE_DEVICE->setEnabled(false);
-	STATS->setEnabled(false);
-#endif
-
 	CACHE->makeAtlases();
 
 	FRAME->addOne([this] {

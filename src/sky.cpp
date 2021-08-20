@@ -6,13 +6,13 @@ using namespace hcg001;
 
 Sky::Sky()
 {
-	setStretch({ 1.0f, 1.0f });
-	mTopColor->setColor(Graphics::Color::Black);
-	mBottomColor->setColor(Graphics::Color::Black);
+	setStretch(1.0f);
+	getEdgeColor(Scene::Rectangle::Edge::Top)->setColor(Graphics::Color::Black);
+	getEdgeColor(Scene::Rectangle::Edge::Bottom)->setColor(Graphics::Color::Black);
 
 	runAction(Actions::Collection::ExecuteInfinite([this] {
-		auto top = mTopColor->getColor() * 255.0f;
-		auto bottom = mBottomColor->getColor() * 255.0f;
+		auto top = getEdgeColor(Scene::Rectangle::Edge::Top)->getColor() * 255.0f;
+		auto bottom = getEdgeColor(Scene::Rectangle::Edge::Bottom)->getColor() * 255.0f;
 
 		GAME_STATS("sky top color",
 			std::to_string(static_cast<int>(top.r)) + " " +
@@ -121,14 +121,8 @@ void Sky::changeColor(float top_hue, float bottom_hue)
 
 	const float ChangeDuration = 2.5f;
 
-	runAction(Actions::Collection::ChangeColor(mTopColor, top, ChangeDuration, Easing::QuadraticInOut));
-	runAction(Actions::Collection::ChangeColor(mBottomColor, bottom, ChangeDuration, Easing::QuadraticInOut));
-}
-
-void Sky::update(Clock::Duration dTime)
-{
-	Scene::Rectangle::update(dTime);
-	setVerticalGradient(mTopColor->getColor(), mBottomColor->getColor());
+	runAction(Actions::Collection::ChangeColor(getEdgeColor(Scene::Rectangle::Edge::Top), top, ChangeDuration, Easing::QuadraticInOut));
+	runAction(Actions::Collection::ChangeColor(getEdgeColor(Scene::Rectangle::Edge::Bottom), bottom, ChangeDuration, Easing::QuadraticInOut));
 }
 
 void Sky::spawnAsteroid(float speed, float normalized_spread)

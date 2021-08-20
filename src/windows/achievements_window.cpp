@@ -63,7 +63,8 @@ AchievementsWindow::AchievementsWindow()
 	top_gradient->setHeight(Item::VerticalMargin);
 	top_gradient->setAnchor({ 0.5f, 0.0f });
 	top_gradient->setPivot({ 0.5f, 0.0f });
-	top_gradient->setVerticalGradient({ Helpers::Pallete::WindowBody, 1.0f }, { Helpers::Pallete::WindowBody, 0.0f });
+	top_gradient->getEdgeColor(Scene::Rectangle::Edge::Top)->setColor({ Helpers::Pallete::WindowBody, 1.0f });
+	top_gradient->getEdgeColor(Scene::Rectangle::Edge::Bottom)->setColor({ Helpers::Pallete::WindowBody, 0.0f });
 	scrollbox->attach(top_gradient);
 
 	auto bottom_gradient = std::make_shared<Scene::Rectangle>();
@@ -71,7 +72,8 @@ AchievementsWindow::AchievementsWindow()
 	bottom_gradient->setHeight(Item::VerticalMargin);
 	bottom_gradient->setAnchor({ 0.5f, 1.0f });
 	bottom_gradient->setPivot({ 0.5f, 1.0f });
-	bottom_gradient->setVerticalGradient({ Helpers::Pallete::WindowBody, 0.0f }, { Helpers::Pallete::WindowBody, 1.0f });
+	bottom_gradient->getEdgeColor(Scene::Rectangle::Edge::Top)->setColor({ Helpers::Pallete::WindowBody, 0.0f });
+	bottom_gradient->getEdgeColor(Scene::Rectangle::Edge::Bottom)->setColor({ Helpers::Pallete::WindowBody, 1.0f });
 	scrollbox->attach(bottom_gradient);
 
 	auto safe_area = std::make_shared<Shared::SceneHelpers::SafeArea>();
