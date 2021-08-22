@@ -222,6 +222,7 @@ void Gameplay::camera(float dTime)
 void Gameplay::jump(bool powerjump)
 {
 	AUDIO->play(SOUND("sounds/click.wav"));
+	PLATFORM->haptic();
 	mVelocity.y = -10.0f;
 
 	if (powerjump)
