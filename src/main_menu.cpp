@@ -125,57 +125,57 @@ MainMenu::MainMenu()
 
 	const glm::vec2 TopButtonSize = { 72.0f, 28.0f };
 
-	auto shop_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
+	auto shop_button = std::make_shared<Helpers::AdaptiveSpriteButton>();
 	shop_button->setTexture(TEXTURE("textures/shop.png"));
 	shop_button->setAdaptSize(TopButtonSize);
 	shop_button->setPosition({ 108.0f, 24.0f });
 	shop_button->setPivot({ 0.0f, 0.5f });
-	shop_button->setClickCallback([] {
+	shop_button->setActiveCallback([] {
 		auto window = std::make_shared<ShopWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
     getGui()->attach(shop_button);
 
-	auto options_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
+	auto options_button = std::make_shared<Helpers::AdaptiveSpriteButton>();
 	options_button->setTexture(TEXTURE("textures/options.png"));
 	options_button->setAdaptSize({ 24.0f, 24.0f });
 	options_button->setPosition({ -16.0f, 24.0f });
 	options_button->setAnchor({ 1.0f, 0.0f });
 	options_button->setPivot({ 1.0f, 0.5f });
-	options_button->setClickCallback([] {
+	options_button->setActiveCallback([] {
 		auto window = std::make_shared<OptionsWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
 	getGui()->attach(options_button);
 
-	auto achievements_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
+	auto achievements_button = std::make_shared<Helpers::AdaptiveSpriteButton>();
 	achievements_button->setTexture(TEXTURE("textures/cup.png"));
 	achievements_button->setAdaptSize(TopButtonSize);
 	achievements_button->setPosition({ 168.0f, 24.0f });
 	achievements_button->setPivot({ 0.0f, 0.5f });
-	achievements_button->setClickCallback([] {
+	achievements_button->setActiveCallback([] {
 		auto window = std::make_shared<AchievementsWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
 	getGui()->attach(achievements_button);
 
-	auto guilds_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
+	auto guilds_button = std::make_shared<Helpers::AdaptiveSpriteButton>();
 	guilds_button->setTexture(TEXTURE("textures/guilds.png"));
 	guilds_button->setAdaptSize(TopButtonSize);
 	guilds_button->setPosition({ 216.0f, 24.0f });
 	guilds_button->setPivot({ 0.0f, 0.5f });
-	guilds_button->setClickCallback([] {
+	guilds_button->setActiveCallback([] {
 		auto window = std::make_shared<GuildsWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
 	getGui()->attach(guilds_button);
 
-	auto global_chat_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Adaptive<Scene::Clickable<Scene::Sprite>>>>();
+	auto global_chat_button = std::make_shared<Helpers::AdaptiveSpriteButton>();
 	global_chat_button->setTexture(TEXTURE("textures/chat.png"));
 	global_chat_button->setAdaptSize(TopButtonSize);
 	global_chat_button->setPosition({ 276.0f, 24.0f });
 	global_chat_button->setPivot({ 0.0f, 0.5f });
-	global_chat_button->setClickCallback([] {
+	global_chat_button->setActiveCallback([] {
 		auto window = std::make_shared<GlobalChatWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});

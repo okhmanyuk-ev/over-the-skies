@@ -146,9 +146,9 @@ NoInternetContent::NoInternetContent()
 void NoInternetContent::runShowAction()
 {
 	runAction(Actions::Collection::Delayed(0.25f, Actions::Collection::MakeParallel(
-		Actions::Collection::Show(mIcon, 0.25f, Easing::CubicOut),
-		Actions::Collection::Show(mLabel, 0.25f, Easing::CubicOut),
-		Actions::Collection::ChangeScale(shared_from_this(), { 1.0f, 1.0f }, 0.75f, Easing::CubicOut)
+		Actions::Collection::Show(mIcon, 0.5f, Easing::CubicOut),
+		Actions::Collection::Show(mLabel, 0.5f, Easing::CubicOut),
+		Actions::Collection::ChangeScale(shared_from_this(), { 1.0f, 1.0f }, 2.0f, Easing::CubicOut)
 	)));
 }
 

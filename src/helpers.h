@@ -50,8 +50,11 @@ namespace hcg001::Helpers
 
 	private:
 		bool mAdaptiveFontSize = true;
-	};	
-	
+	};
+
+	using SpriteButton = Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::SpriteButton>;
+	using AdaptiveSpriteButton = Shared::SceneHelpers::BouncingButtonBehavior<Scene::Adaptive<Shared::SceneHelpers::SpriteButton>>;
+
 	class TextInputField : public Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::ClippableStencil<Scene::Rectangle>>>
 	{
 	public:
