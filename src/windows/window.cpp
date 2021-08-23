@@ -5,6 +5,7 @@ using namespace hcg001;
 Window::Window(bool has_close_button)
 {
 	mBackground = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
+	mBackground->setSlicedSpriteOptimizationEnabled(false); // this enables nice clipping
 	mBackground->setRounding(12.0f);
 	mBackground->setAbsoluteRounding(true);
 	mBackground->setAnchor(0.5f);
