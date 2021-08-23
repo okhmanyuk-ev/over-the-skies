@@ -144,6 +144,8 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	progressbar->setSize({ 148.0f, 4.0f });
 	progressbar->setPosition({ 48.0f, 42.0f });
 	progressbar->setProgress((float)progress / (float)required);
+	progressbar->setBatchGroup("achievement_progressbar");
+	progressbar->getProgressContent()->setBatchGroup("achievement_progressbar_content");
 	attach(progressbar);
 
 	auto ruby = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
