@@ -98,6 +98,8 @@ void Gameplay::onTap()
 	if (!mCanStart)
 		return;
 
+	PLATFORM->haptic(Platform::System::HapticType::Low);
+
 	if (!mReady)
 	{
 		start();
@@ -222,7 +224,7 @@ void Gameplay::camera(float dTime)
 void Gameplay::jump(bool powerjump)
 {
 	//AUDIO->play(SOUND("sounds/click.wav"));
-	PLATFORM->haptic(Platform::System::HapticType::Medium);
+	PLATFORM->haptic(Platform::System::HapticType::High);
 	mVelocity.y = -10.0f;
 
 	if (powerjump)
