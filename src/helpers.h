@@ -55,16 +55,10 @@ namespace hcg001::Helpers
 	using SpriteButton = Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::SpriteButton>;
 	using AdaptiveSpriteButton = Shared::SceneHelpers::BouncingButtonBehavior<Scene::Adaptive<Shared::SceneHelpers::SpriteButton>>;
 
-	class TextInputField : public Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::ClippableStencil<Scene::Rectangle>>>
+	class TextInputField : public Scene::ClippableScissor<Button>
 	{
 	public:
 		TextInputField(const utf8_string& input_window_title);
-
-	public:
-		auto getLabel() const { return mLabel; }
-
-	private:
-		std::shared_ptr<Label> mLabel;
 	};
 
 	template <class T> class ProfileListenable : public T, public Common::Event::Listenable<NetEvents::ProfileReceived>

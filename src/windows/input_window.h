@@ -30,7 +30,7 @@ namespace hcg001
 		static inline int StackCount = 0; // should be maximum 1
 
 	private:
-		std::shared_ptr<Helpers::Label> mLabel;
+		std::shared_ptr<Scene::Label> mLabel;
 		ChangeTextCallback mChangeTextCallback;
 		std::shared_ptr<Helpers::Button> mApplyButton;
 		std::shared_ptr<Helpers::Button> mCancelButton;

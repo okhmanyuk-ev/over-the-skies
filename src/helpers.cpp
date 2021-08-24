@@ -34,21 +34,18 @@ void Button::setButtonColor(const glm::vec3& color)
 TextInputField::TextInputField(const utf8_string& input_window_title)
 {
 	setRounding(0.5f);
-	setColor(Pallete::InputField);
+	setButtonColor(Pallete::InputField);
+	setAdaptiveFontSize(false);
+	getLabel()->setFontSize(18.0f);
 
-	setClickCallback([this, input_window_title] {
-		auto text = mLabel->getText();
+	setActiveCallback([this, input_window_title] {
+		auto text = getLabel()->getText();
 		auto callback = [this](auto text) {
-			mLabel->setText(text);
+			getLabel()->setText(text);
 		};
 		auto input_window = std::make_shared<InputWindow>(input_window_title, text, callback);
 		SCENE_MANAGER->pushWindow(input_window);
 	});
-
-	mLabel = std::make_shared<Label>();
-	mLabel->setAnchor(0.5f);
-	mLabel->setPivot(0.5f);
-	attach(mLabel);
 }
 
 float hcg001::Helpers::SmoothValueSetup(float src, float dst, Clock::Duration dTime)
@@ -146,8 +143,8 @@ NoInternetContent::NoInternetContent()
 void NoInternetContent::runShowAction()
 {
 	runAction(Actions::Collection::Delayed(0.25f, Actions::Collection::MakeParallel(
-		Actions::Collection::Show(mIcon, 0.5f, Easing::CubicOut),
-		Actions::Collection::Show(mLabel, 0.5f, Easing::CubicOut),
+		Actions::Collection::Show(mIcon, 1.0f, Easing::CubicOut),
+		Actions::Collection::Show(mLabel, 1.0f, Easing::CubicOut),
 		Actions::Collection::ChangeScale(shared_from_this(), { 1.0f, 1.0f }, 2.0f, Easing::CubicOut)
 	)));
 }

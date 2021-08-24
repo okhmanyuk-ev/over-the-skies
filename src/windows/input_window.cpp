@@ -14,24 +14,23 @@ InputWindow::InputWindow(const utf8_string& title, const utf8_string& text, Chan
 	getBackground()->setAnchor({ 0.5f, 0.25f });
 	getTitle()->setText(title);
 
-	//setCloseOnMissclick(false);
-
-	auto label_bg = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::Rectangle>>>();
-	label_bg->setStretch({ 1.0f, 0.0f });
-	label_bg->setMargin({ 16.0f, 0.0f });
-	label_bg->setAnchor({ 0.5f, 0.0f });
-	label_bg->setPivot({ 0.5f, 0.0f });
-	label_bg->setHeight(DefaultLabelBgHeight);
-	label_bg->setY(12.0f);
-	label_bg->setRounding(8.0f);
-	label_bg->setAbsoluteRounding(true);
-	label_bg->setColor(Helpers::Pallete::InputField);
-	label_bg->setClickCallback([] {
+	auto button = std::make_shared<Helpers::Button>();
+	button->setStretch({ 1.0f, 0.0f });
+	button->setMargin({ 16.0f, 0.0f });
+	button->setAnchor({ 0.5f, 0.0f });
+	button->setPivot({ 0.5f, 0.0f });
+	button->setHeight(DefaultLabelBgHeight);
+	button->setY(12.0f);
+	button->setRounding(8.0f);
+	button->setAbsoluteRounding(true);
+	button->setColor(Helpers::Pallete::InputField);
+	button->setAdaptiveFontSize(false);
+	button->setActiveCallback([] {
 		PLATFORM->showVirtualKeyboard();
 	});
-	getBody()->attach(label_bg);
+	getBody()->attach(button);
 
-	mLabel = std::make_shared<Helpers::Label>();
+	mLabel = button->getLabel();
 	mLabel->setAnchor(0.5f);
 	mLabel->setPivot(0.5f);
 	mLabel->setStretch({ 1.0f, 0.0f });
@@ -40,16 +39,15 @@ InputWindow::InputWindow(const utf8_string& title, const utf8_string& text, Chan
 	mLabel->setMultilineAlign(Graphics::TextMesh::Align::Center);
 	mLabel->setFontSize(24.0f);
 	mLabel->setText(text);
-	label_bg->attach(mLabel);
-
-	runAction(Actions::Collection::ExecuteInfinite([this, label_bg, MinLabelBgHeight, DefaultWindowHeight, DefaultLabelBgHeight](auto delta) {
+	
+	runAction(Actions::Collection::ExecuteInfinite([this, button, MinLabelBgHeight, DefaultWindowHeight, DefaultLabelBgHeight](auto delta) {
 		auto label_bg_h = DefaultLabelBgHeight;
 		label_bg_h += mLabel->getAbsoluteHeight();
 		label_bg_h = glm::max(MinLabelBgHeight, label_bg_h);
-		label_bg->setHeight(Helpers::SmoothValueSetup(label_bg->getHeight(), label_bg_h, delta));
+		button->setHeight(Helpers::SmoothValueSetup(button->getHeight(), label_bg_h, delta));
 		
 		auto win_h = DefaultWindowHeight;
-		win_h += label_bg->getAbsoluteHeight();
+		win_h += button->getAbsoluteHeight();
 		getBackground()->setHeight(win_h);
 	}));
 
