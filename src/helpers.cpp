@@ -226,7 +226,7 @@ RubiesIndicator::RubiesIndicator()
 	setSize(24.0f);
 	
 	mLabel = std::make_shared<Label>();
-	mLabel->setFontSize(20.0f);
+	mLabel->setFontSize(22.0f);
 	mLabel->setText(std::to_string(PROFILE->getRubies()));
 	mLabel->setAnchor({ 1.0f, 0.5f });
 	mLabel->setPivot({ 0.0f, 0.5f });

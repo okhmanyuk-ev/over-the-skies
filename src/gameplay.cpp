@@ -68,12 +68,12 @@ Gameplay::Gameplay()
 		)
 	));
 	
-	mScoreLabel = std::make_shared<Scene::Label>();
-	mScoreLabel->setFont(FONT("default"));
+	mScoreLabel = std::make_shared<Helpers::Label>();
 	mScoreLabel->setAnchor({ 1.0f, 0.0f });
 	mScoreLabel->setPivot({ 1.0f, 0.5f });
 	mScoreLabel->setPosition({ -16.0f, 24.0f });
 	mScoreLabel->setText("0");
+	mScoreLabel->setFontSize(22.0f);
     getGui()->attach(mScoreLabel);
 	
 	mRubiesIndicator = std::make_shared<Helpers::RubiesIndicator>();

@@ -156,8 +156,22 @@ void Sky::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
 			Actions::Collection::Execute([holder] {
 				auto size = glm::linearRand(4.0f, 6.0f);
 				
-				auto star = std::make_shared<Scene::Circle>();
-				//star->setRounding(0.75f);
+				static std::shared_ptr<Renderer::RenderTarget> star_texture = nullptr;
+
+				if (star_texture == nullptr)
+				{
+					star_texture = std::make_shared<Renderer::RenderTarget>(64, 64);
+					GRAPHICS->begin();
+					GRAPHICS->pushRenderTarget(star_texture);
+					GRAPHICS->pushViewport(star_texture);
+					GRAPHICS->pushOrthoMatrix(1.0f, 1.0f);
+					GRAPHICS->drawRoundedSlicedRectangle(glm::mat4(1.0f), { Graphics::Color::White, 1.0f }, { 1.0f, 1.0f }, 0.5f, false);
+					GRAPHICS->pop(3);
+					GRAPHICS->end();
+				}
+
+				auto star = std::make_shared<Scene::Sprite>();
+				star->setTexture(star_texture);
 				star->setAnchor(glm::linearRand(glm::vec2(0.0f), glm::vec2(1.0f)));
 				star->setPivot(0.5f);
 				star->setSize(size);
