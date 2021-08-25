@@ -60,6 +60,19 @@ Application::~Application()
 
 void Application::initialize()
 {
+	auto light_texture = std::make_shared<Renderer::RenderTarget>(32, 32);
+
+	GRAPHICS->begin();
+	GRAPHICS->pushRenderTarget(light_texture);
+	GRAPHICS->pushViewport(light_texture);
+	GRAPHICS->pushOrthoMatrix(1.0f, 1.0f);
+	GRAPHICS->clear();
+	GRAPHICS->drawCircle(glm::mat4(1.0f), { Graphics::Color::White, 1.0f }, { Graphics::Color::White, 0.0f });
+	GRAPHICS->pop(3);
+	GRAPHICS->end();
+	
+	CACHE->loadTexture(light_texture, "light");
+
 	auto root = getScene()->getRoot();
 
 	Helpers::gSky = std::make_shared<Sky>();

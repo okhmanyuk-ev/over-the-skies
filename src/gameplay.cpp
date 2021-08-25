@@ -80,16 +80,20 @@ Gameplay::Gameplay()
 	mRubiesIndicator->setInstantRefresh(false);
 	getGui()->attach(mRubiesIndicator);
 
-	mJumpParticles = std::make_shared<Scene::RectangleEmitter>();
+	mJumpParticles = std::make_shared<Scene::Emitter>();
 	mJumpParticles->setHolder(mRectangleParticlesHolder);
 	mJumpParticles->setRunning(false);
-	mJumpParticles->setBeginSize({ 8.0f, 8.0f });
 	mJumpParticles->setStretch({ 1.0f, 0.0f });
 	mJumpParticles->setPivot({ 0.5f, 0.5f });
 	mJumpParticles->setAnchor({ 0.5f, 1.0f });
 	mJumpParticles->setDistance(48.0f);
 	mJumpParticles->setMinDuration(0.25f);
 	mJumpParticles->setMaxDuration(0.75f);
+	mJumpParticles->setCreateParticleCallback([] {
+		auto particle = std::make_shared<Scene::Rectangle>();
+		particle->setSize(8.0f);
+		return particle;
+	});
 	mPlayer->attach(mJumpParticles);
 }
 
@@ -294,15 +298,15 @@ void Gameplay::spawnPlanes()
 	{
 		auto pos = mPlayer->getPosition();
 		pos.y += 96.0f;
-		spawnPlane(pos, anim_delay, false, false, false);
+		spawnPlane(pos, anim_delay, std::nullopt, false, false);
 		anim_delay += AnimWait;
 
 		pos.y -= 56.0f;
 		pos.x += 96.0f;
-		spawnPlane(pos, anim_delay, false, false, false);
+		spawnPlane(pos, anim_delay, PlaneBonus::Magnet, false, false);
 		anim_delay += AnimWait;
 
-		spawnPlane(getNextPos(), anim_delay, false, true, false);
+		spawnPlane(getNextPos(), anim_delay, PlaneBonus::Ruby, true, false);
 		anim_delay += AnimWait;
 	}
 
@@ -314,12 +318,18 @@ void Gameplay::spawnPlanes()
 		bool has_ruby = Common::Helpers::Chance(0.05f);
 		bool powerjump = Common::Helpers::Chance(0.1f);
 		bool moving = Common::Helpers::Chance(0.75f * getDifficulty());
-		spawnPlane(getNextPos(), anim_delay, has_ruby, powerjump, moving);
+
+		std::optional<PlaneBonus> bonus;
+
+		if (has_ruby)
+			bonus = PlaneBonus::Ruby;
+
+		spawnPlane(getNextPos(), anim_delay, bonus, powerjump, moving);
 		anim_delay += AnimWait;
 	}
 }
 
-void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby, bool powerjump, bool moving)
+void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<PlaneBonus> bonus, bool powerjump, bool moving)
 {
 	mLastPlanePos = pos;
 
@@ -335,15 +345,19 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		plane->setColor(Graphics::Color::Coral);
 		plane->setPowerjump(true);
 		
-		auto emitter = std::make_shared<Scene::RectangleEmitter>();
+		auto emitter = std::make_shared<Scene::Emitter>();
 		emitter->setHolder(mRectangleParticlesHolder);
-		emitter->setBeginSize({ 6.0f, 6.0f });
 		emitter->setDelay(1.0f / 30.0f);
 		emitter->setStretch({ 0.75f, 0.0f });
 		emitter->setPivot(0.5f);
 		emitter->setAnchor({ 0.5f, 1.0f });
 		emitter->setDirection({ 0.0f, 1.0f });
-		emitter->setBeginColor({ Graphics::Color::FloralWhite, 1.0f });
+		emitter->setCreateParticleCallback([] {
+			auto particle = std::make_shared<Scene::Rectangle>();
+			particle->setSize(6.0f);
+			particle->setColor(Graphics::Color::FloralWhite);
+			return particle;
+		});
 		plane->attach(emitter);
 	}
 
@@ -356,21 +370,25 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 
 	mPlaneHolder->attach(plane);
 
-	if (has_ruby)
+	if (bonus == PlaneBonus::Ruby)
 	{
 		auto tripple_ruby = Common::Helpers::Chance(0.33f);
 
 		auto addEmitterForRuby = [this](auto ruby) {
-			auto emitter = std::make_shared<Scene::RectangleEmitter>();
+			auto emitter = std::make_shared<Scene::Emitter>();
 			emitter->setHolder(mRectangleParticlesHolder);
-			emitter->setBeginSize({ 4.0f, 4.0f });
-			emitter->setDelay(1.0f / 10.0f);
+			emitter->setSpawnrate(10.0f);
 			emitter->setStretch({ 0.75f, 0.0f });
-			emitter->setPivot(0.5f);
 			emitter->setAnchor({ 0.5f, 0.0f });
+			emitter->setPivot(0.5f);
 			emitter->setDirection({ 0.0f, -1.0f });
 			emitter->setDistance(24.0f);
-			emitter->setBeginColor({ Graphics::Color::HotPink, 1.0f });
+			emitter->setCreateParticleCallback([] {
+				auto particle = std::make_shared<Scene::Rectangle>();
+				particle->setSize(4.0f);
+				particle->setColor(Graphics::Color::HotPink);
+				return particle;
+			});
 			ruby->attach(emitter);
 		};
 
@@ -409,6 +427,18 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 		plane->attach(ruby);
 		plane->addRuby(ruby);
 		addEmitterForRuby(ruby);
+	}
+
+	if (bonus == PlaneBonus::Magnet)
+	{
+		auto magnet = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
+		magnet->setAdaptSize(20.0f);
+		magnet->setBatchGroup("plane_magnet");
+		magnet->setTexture(TEXTURE("textures/magnet.png"));
+		magnet->setPivot({ 0.5f, 1.0f });
+		magnet->setAnchor({ 0.5f, 0.0f });
+		magnet->setPosition({ 0.0f, -4.0f });
+		plane->attach(magnet);
 	}
 
 	if (moving)

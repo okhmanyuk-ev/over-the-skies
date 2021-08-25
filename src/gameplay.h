@@ -11,6 +11,13 @@ namespace hcg001
 {
 	class Gameplay : public Scene::Tappable<Screen>
 	{
+	public:
+		enum class PlaneBonus
+		{
+			Ruby,
+			Magnet
+		};
+
 	private:
 		const float MaxFallVelocity = 20.0f;
 
@@ -29,7 +36,7 @@ namespace hcg001
 		void collide(std::shared_ptr<Plane> plane);
 		void removeFarPlanes();
 		void spawnPlanes();
-		void spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby, bool powerjump, bool moving);
+		void spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<PlaneBonus> bonus, bool powerjump, bool moving);
 		void spawnJumpParticles();
 		void start();
 		void gameover();
@@ -47,7 +54,7 @@ namespace hcg001
 		std::shared_ptr<Helpers::Label> mNickname;
 		std::shared_ptr<Scene::Label> mScoreLabel;
 		std::shared_ptr<Scene::Label> mRiskLabel = nullptr;
-		std::shared_ptr<Scene::RectangleEmitter> mJumpParticles;
+		std::shared_ptr<Scene::Emitter> mJumpParticles;
 		std::shared_ptr<Helpers::RubiesIndicator> mRubiesIndicator;
 
 	public:

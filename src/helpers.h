@@ -226,7 +226,6 @@ namespace hcg001::Helpers
 
 	private:
 		std::shared_ptr<Scene::Adaptive<Scene::Sprite>> mTada;
-		std::shared_ptr<Scene::RectangleEmitter> mTadaEmitter;
 	};
 
 	class RubiesIndicator : public Scene::Sprite,

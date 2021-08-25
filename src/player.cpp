@@ -135,20 +135,24 @@ PayablePlayer::PayablePlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Sk
 	GRAPHICS->pop(4);
 	GRAPHICS->end();
 
-	auto emitter = std::make_shared<Scene::SpriteEmitter>();
+	auto emitter = std::make_shared<Scene::Emitter>();
 	emitter->setHolder(trailHolder);
 	emitter->setStretch(0.0f);
 	emitter->setPivot(0.5f);
 	emitter->setAnchor(0.5f);
-	emitter->setTexture(circle_texture);			
-	emitter->setBlendMode(Renderer::BlendStates::Additive);
-	emitter->setSampler(Renderer::Sampler::Linear);
 	emitter->setDelay(1.0f / 120.0f);
 	emitter->setDirection({ 0.0f, 0.0f });
-	emitter->setBeginColor({ 1.0f, 0.25f, 1.0f, 1.0f });
+	//emitter->setBeginColor({ 1.0f, 0.25f, 1.0f, 1.0f });
 	emitter->setEndColor({ 0.25f, 0.25f, 1.0f, 1.0f });
 	//emitter->setBeginScale({ 1.0f, 1.0f });
 	//emitter->setEndScale({ 1.0f, 1.0f });
+	emitter->setCreateParticleCallback([circle_texture] {
+		auto particle = std::make_shared<Scene::Sprite>();
+		particle->setTexture(circle_texture);
+		particle->setBlendMode(Renderer::BlendStates::Additive);
+		particle->setSampler(Renderer::Sampler::Linear);
+		return particle;
+	});
 	attach(emitter);
 
 	makeSprite();

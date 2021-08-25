@@ -166,7 +166,7 @@ AchievementNotify::AchievementNotify(const Achievements::Item& item)
 	mTada->setScale(0.0f);
 	attach(mTada);
 
-	mTadaEmitter = std::make_shared<Scene::RectangleEmitter>(); // TODO: wtf
+	/*mTadaEmitter = std::make_shared<Scene::RectangleEmitter>(); // TODO: wtf
 	mTadaEmitter->setHolder(ParticlesHolder);
 	mTadaEmitter->setRunning(false);
 	mTadaEmitter->setBeginSize({ 8.0f, 8.0f });
@@ -176,7 +176,7 @@ AchievementNotify::AchievementNotify(const Achievements::Item& item)
 	mTadaEmitter->setDistance(48.0f);
 	mTadaEmitter->setMinDuration(0.25f);
 	mTadaEmitter->setMaxDuration(0.75f);
-	mTada->attach(mTadaEmitter);
+	mTada->attach(mTadaEmitter);*/
 
 	auto title = std::make_shared<Label>();
 	title->setColor(Pallete::YellowLabel);
