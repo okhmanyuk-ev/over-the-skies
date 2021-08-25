@@ -316,17 +316,14 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 	mLastPlanePos = pos;
 
 	auto plane = std::make_shared<Plane>();
+	plane->setBatchGroup("plane");
 	if (!powerjump)
 	{
-		plane->setBatchGroup("plane");
-		plane->setTexture(TEXTURE("textures/plane.png"));
-		plane->setSize({ 64.0f, 8.0f });
+		plane->setWidth(64.0f);
 	}
 	else
 	{
-		plane->setBatchGroup("plane_small");
-		plane->setTexture(TEXTURE("textures/plane_small.png"));
-		plane->setSize({ 48.0f, 8.0f });
+		plane->setWidth(48.0f);
 		plane->setColor(Graphics::Color::Coral);
 		plane->setPowerjump(true);
 		
