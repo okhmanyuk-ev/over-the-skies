@@ -247,7 +247,7 @@ void RubiesIndicator::refresh()
 	mLabel->setText(std::to_string(PROFILE->getRubies()));
 }
 
-void RubiesIndicator::collectRubyAnim(std::shared_ptr<Scene::Node> ruby)
+void RubiesIndicator::collectRubyAnim(std::shared_ptr<Scene::Node> ruby, float delay)
 {
 	auto pos = unproject(ruby->project({ 0.0f, 0.0f }));
 	ruby->setAnchor({ 0.0f, 0.0f });
@@ -261,6 +261,7 @@ void RubiesIndicator::collectRubyAnim(std::shared_ptr<Scene::Node> ruby)
 	auto rubies_count = PROFILE->getRubies();
 
 	runAction(Actions::Collection::MakeSequence(
+		Actions::Collection::Wait(delay),
 		Actions::Collection::MakeParallel(
 			Actions::Collection::ChangePosition(ruby, { 0.0f, 0.0f }, MoveDuration, Easing::QuarticInOut),
 			Actions::Collection::ChangeSize(ruby, getAbsoluteSize(), MoveDuration, Easing::QuarticInOut)

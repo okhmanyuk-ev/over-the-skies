@@ -241,7 +241,7 @@ namespace hcg001::Helpers
 
 	public:
 		void refresh();
-		void collectRubyAnim(std::shared_ptr<Scene::Node> ruby);
+		void collectRubyAnim(std::shared_ptr<Scene::Node> ruby, float delay = 0.0f);
 		void makeHidden();
 		void show();
 		void hide();

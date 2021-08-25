@@ -10,9 +10,9 @@ namespace hcg001
 		Plane();
 
 	public:
-		bool hasRuby() const { return mRuby != nullptr; }
-		auto getRuby() const { return mRuby; }
-		void setRuby(std::shared_ptr<Scene::Sprite> value) { mRuby = value; }
+		bool hasRubies() const { return !mRubies.empty(); }
+		const auto& getRubies() const { return mRubies; }
+		void addRuby(std::shared_ptr<Scene::Sprite> value) { mRubies.push_back(value); }
 
 		bool isCrashed() const { return mCrashed; }
 		void setCrashed(bool value) { mCrashed = value; }
@@ -24,7 +24,7 @@ namespace hcg001
 		void setMoving(bool value) { mMoving = value; }
 
 	private:
-		std::shared_ptr<Scene::Sprite> mRuby = nullptr;
+		std::vector<std::shared_ptr<Scene::Sprite>> mRubies;
 		bool mPowerjump = false;
 		bool mMoving = false;
 		bool mCrashed = false;

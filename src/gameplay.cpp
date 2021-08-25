@@ -262,12 +262,20 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 		Actions::Collection::Kill(plane)
 	));
 
-	if (plane->hasRuby())
+	if (plane->hasRubies())
 	{
-		PROFILE->increaseRubies(1);
 		ACHIEVEMENTS->hit("RUBIES_COLLECTED");
-		mRubiesIndicator->collectRubyAnim(plane->getRuby());
-		mRubiesCollected += 1;
+		float delay = 0.0f;
+		for (auto ruby : plane->getRubies())
+		{
+			auto _ruby = std::static_pointer_cast<Scene::Adaptive<Scene::Sprite>>(ruby);
+			_ruby->bakeAdaption();
+			_ruby->setAdaptingEnabled(false);
+			PROFILE->increaseRubies(1);
+			mRubiesIndicator->collectRubyAnim(_ruby, delay);
+			mRubiesCollected += 1;
+			delay += 0.125f;
+		}
 	}
 }
 
@@ -350,27 +358,57 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, bool has_ruby,
 
 	if (has_ruby)
 	{
-		auto ruby = std::make_shared<Scene::Sprite>();
+		auto tripple_ruby = Common::Helpers::Chance(0.33f);
+
+		auto addEmitterForRuby = [this](auto ruby) {
+			auto emitter = std::make_shared<Scene::RectangleEmitter>();
+			emitter->setHolder(mRectangleParticlesHolder);
+			emitter->setBeginSize({ 4.0f, 4.0f });
+			emitter->setDelay(1.0f / 10.0f);
+			emitter->setStretch({ 0.75f, 0.0f });
+			emitter->setPivot(0.5f);
+			emitter->setAnchor({ 0.5f, 0.0f });
+			emitter->setDirection({ 0.0f, -1.0f });
+			emitter->setDistance(24.0f);
+			emitter->setBeginColor({ Graphics::Color::HotPink, 1.0f });
+			ruby->attach(emitter);
+		};
+
+		if (tripple_ruby)
+		{
+			auto left_ruby = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
+			left_ruby->setAdaptSize(14.0f);
+			left_ruby->setBatchGroup("plane_ruby");
+			left_ruby->setTexture(TEXTURE("textures/ruby.png"));
+			left_ruby->setPivot({ 1.25f, 1.0f });
+			left_ruby->setAnchor({ 0.5f, 0.0f });
+			left_ruby->setPosition({ 0.0f, -6.0f });
+			plane->addRuby(left_ruby);
+			plane->attach(left_ruby);
+			addEmitterForRuby(left_ruby);
+
+			auto right_ruby = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
+			right_ruby->setAdaptSize(14.0f);
+			right_ruby->setBatchGroup("plane_ruby");
+			right_ruby->setTexture(TEXTURE("textures/ruby.png"));
+			right_ruby->setPivot({ -0.25f, 1.0f });
+			right_ruby->setAnchor({ 0.5f, 0.0f });
+			right_ruby->setPosition({ 0.0f, -6.0f });
+			plane->addRuby(right_ruby);
+			plane->attach(right_ruby);
+			addEmitterForRuby(right_ruby);
+		}
+
+		auto ruby = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
+		ruby->setAdaptSize(18.0f);
 		ruby->setBatchGroup("plane_ruby");
 		ruby->setTexture(TEXTURE("textures/ruby.png"));
 		ruby->setPivot({ 0.5f, 1.0f });
 		ruby->setAnchor({ 0.5f, 0.0f });
 		ruby->setPosition({ 0.0f, -4.0f });
-		ruby->setSize(18.0f);
 		plane->attach(ruby);
-		plane->setRuby(ruby);
-
-		auto emitter = std::make_shared<Scene::RectangleEmitter>();
-		emitter->setHolder(mRectangleParticlesHolder);
-		emitter->setBeginSize({ 4.0f, 4.0f });
-		emitter->setDelay(1.0f / 10.0f);
-		emitter->setStretch({ 0.75f, 0.0f });
-		emitter->setPivot(0.5f);
-		emitter->setAnchor({ 0.5f, 0.0f });
-		emitter->setDirection({ 0.0f, -1.0f });
-		emitter->setDistance(24.0f);
-		emitter->setBeginColor({ Graphics::Color::HotPink, 1.0f });
-		ruby->attach(emitter);
+		plane->addRuby(ruby);
+		addEmitterForRuby(ruby);
 	}
 
 	if (moving)
