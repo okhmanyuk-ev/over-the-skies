@@ -95,6 +95,13 @@ Gameplay::Gameplay()
 		return particle;
 	});
 	mPlayer->attach(mJumpParticles);
+
+	mBonusesHolder = std::make_shared<Scene::Rectangle>();
+	mBonusesHolder->setRounding(1.0f);
+	mBonusesHolder->setSize({ 32.0f, 128.0f });
+	mBonusesHolder->setPosition({ 16.0f, 64.0f });
+	mBonusesHolder->setColor({ Graphics::Color::Black, 0.25f });
+	getGui()->attach(mBonusesHolder);
 }
 
 void Gameplay::onTap()
@@ -281,6 +288,10 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 			delay += 0.125f;
 		}
 	}
+	if (plane->getMagnet() != nullptr)
+	{
+		//
+	}
 }
 
 void Gameplay::spawnPlanes()
@@ -438,6 +449,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 		magnet->setPivot({ 0.5f, 1.0f });
 		magnet->setAnchor({ 0.5f, 0.0f });
 		magnet->setPosition({ 0.0f, -4.0f });
+		plane->setMagnet(magnet);
 		plane->attach(magnet);
 	}
 

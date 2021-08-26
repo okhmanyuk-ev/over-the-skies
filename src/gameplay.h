@@ -56,6 +56,7 @@ namespace hcg001
 		std::shared_ptr<Scene::Label> mRiskLabel = nullptr;
 		std::shared_ptr<Scene::Emitter> mJumpParticles;
 		std::shared_ptr<Helpers::RubiesIndicator> mRubiesIndicator;
+		std::shared_ptr<Scene::Rectangle> mBonusesHolder;
 
 	public:
 		auto getScore() const { return mScore; }

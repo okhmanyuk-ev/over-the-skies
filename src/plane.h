@@ -23,8 +23,12 @@ namespace hcg001
 		bool isMoving() const { return mMoving; }
 		void setMoving(bool value) { mMoving = value; }
 
+		auto getMagnet() const { return mMagnet; }
+		void setMagnet(std::shared_ptr<Scene::Sprite> value) { mMagnet = value; }
+
 	private:
 		std::vector<std::shared_ptr<Scene::Sprite>> mRubies;
+		std::shared_ptr<Scene::Sprite> mMagnet = nullptr;
 		bool mPowerjump = false;
 		bool mMoving = false;
 		bool mCrashed = false;
