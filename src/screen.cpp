@@ -9,7 +9,7 @@ Screen::Screen()
 	setStretch(1.0f);
 	setAnchor(0.5f);
 	setPivot(0.5f);
-	setAlpha(0.0f);
+	getRenderLayerColor()->setAlpha(0.0f);
 
 	mContent = std::make_shared<Scene::Node>();
 	mContent->setStretch(1.0f);
@@ -40,7 +40,7 @@ void Screen::onLeaveBegin()
 void Screen::onLeaveEnd()
 {
 	setEnabled(false);
-	setAlpha(0.0f);
+	getRenderLayerColor()->setAlpha(0.0f);
 }
 
 void Screen::onWindowAppearing()
@@ -56,7 +56,7 @@ void Screen::onWindowDisappearing()
 std::unique_ptr<Actions::Action> Screen::createEnterAction()
 {
 	return Actions::Collection::MakeParallel(
-		Actions::Collection::Show(shared_from_this(), 0.25f),
+		Actions::Collection::Show(getRenderLayerColor(), 0.25f),
 		Actions::Collection::ChangeScale(mContent, { 1.0f, 1.0f }, 0.25f, Easing::QuadraticOut)
 	);
 };
@@ -64,7 +64,7 @@ std::unique_ptr<Actions::Action> Screen::createEnterAction()
 std::unique_ptr<Actions::Action> Screen::createLeaveAction()
 {
 	return Actions::Collection::MakeParallel(
-		Actions::Collection::Hide(shared_from_this(), 0.25f),
+		Actions::Collection::Hide(getRenderLayerColor(), 0.25f),
 		Actions::Collection::ChangeScale(mContent, { 0.95f, 0.95f }, 0.25f, Easing::QuadraticOut)
 	);
 };

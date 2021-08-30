@@ -4,7 +4,7 @@
 
 namespace hcg001
 {
-	class Screen : public Scene::RenderLayer<Shared::SceneManager::Screen>, public std::enable_shared_from_this<Screen>
+	class Screen : public Scene::RenderLayer<Shared::SceneManager::Screen>
 	{
 	public:
 		Screen();

@@ -7,7 +7,7 @@
 
 namespace hcg001
 {
-	class MainMenu : public Screen
+	class MainMenu : public Screen, public std::enable_shared_from_this<MainMenu>
 	{
 	private:
 		const float ItemSize = 96.0f;
