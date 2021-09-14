@@ -48,14 +48,6 @@ TextInputField::TextInputField(const utf8_string& input_window_title)
 	});
 }
 
-float hcg001::Helpers::SmoothValueSetup(float src, float dst, Clock::Duration dTime)
-{
-	auto delta = dst - src;
-	auto _dTime = Clock::ToSeconds(dTime);
-	const float speed = 10.0f;
-	return src + (delta * _dTime * speed);
-}
-
 WaitingIndicator::WaitingIndicator()
 {
 	setSize(24.0f);

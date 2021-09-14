@@ -44,7 +44,7 @@ InputWindow::InputWindow(const utf8_string& title, const utf8_string& text, Chan
 		auto label_bg_h = DefaultLabelBgHeight;
 		label_bg_h += mLabel->getAbsoluteHeight();
 		label_bg_h = glm::max(MinLabelBgHeight, label_bg_h);
-		button->setHeight(Helpers::SmoothValueSetup(button->getHeight(), label_bg_h, delta));
+		button->setHeight(Common::Helpers::SmoothValueAssign(button->getHeight(), label_bg_h, delta));
 		
 		auto win_h = DefaultWindowHeight;
 		win_h += button->getAbsoluteHeight();
