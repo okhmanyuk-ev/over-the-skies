@@ -144,8 +144,7 @@ void Gameplay::update(Clock::Duration delta)
 		mPlayer->setSpriteRotation(angle);
 	}
 
-	auto dTime = Clock::ToSeconds(delta);
-	camera(dTime);
+	camera(delta);
 	removeFarPlanes();
 	spawnPlanes();
 
@@ -211,12 +210,11 @@ void Gameplay::physics(float dTime)
 	}
 }
 
-void Gameplay::camera(float dTime)
+void Gameplay::camera(Clock::Duration dTime)
 {
 	if (mMaxY < -mPlayer->getY())
 		mMaxY = -mPlayer->getY();
 
-	auto pos = mGameField->getPosition();
 	glm::vec2 target;
 	target.x = -mPlayer->getX() + (getAbsoluteWidth() * 0.33f);
 	target.y = mMaxY - (getAbsoluteHeight() * 0.66f);
@@ -224,9 +222,7 @@ void Gameplay::camera(float dTime)
 	if (target.y < 0.0f)
 		target.y = 0.0f;
 
-	const float Speed = 8.0f;
-
-	pos += (target - pos) * dTime * Speed;
+	auto pos = Common::Helpers::SmoothValueAssign(mGameField->getPosition(), target, dTime, 0.08f);
 
 	mGameField->setPosition(pos);
 	Helpers::gSky->moveSky(pos);

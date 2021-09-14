@@ -30,7 +30,7 @@ namespace hcg001
 		
 	private:
 		void physics(float dTime);
-		void camera(float dTime);
+		void camera(Clock::Duration dTime);
 		void jump(bool powerjump);
 		void downslide();
 		void collide(std::shared_ptr<Plane> plane);
