@@ -133,7 +133,7 @@ PayablePlayer::PayablePlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Sk
 	//emitter->setEndScale({ 1.0f, 1.0f });
 	emitter->setCreateParticleCallback([] {
 		static auto texture = GRAPHICS->makeGenericTexture({ 24, 24 }, [] {
-			GRAPHICS->drawCircle(glm::mat4(1.0f), { Graphics::Color::White, 1.0f }, { Graphics::Color::White, 0.0f });
+			GRAPHICS->drawCircle({ Graphics::Color::White, 1.0f }, { Graphics::Color::White, 0.0f });
 		});
 
 		auto particle = std::make_shared<Scene::Sprite>();

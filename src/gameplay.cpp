@@ -458,7 +458,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 		emitter->setDistance(32.0f);
 		emitter->setCreateParticleCallback([] {
 			static auto texture = GRAPHICS->makeGenericTexture({ 32, 32 }, [] {
-				GRAPHICS->drawCircle(glm::mat4(1.0f), { Graphics::Color::White, 1.0f }, { Graphics::Color::Blue, 0.0f });
+				GRAPHICS->drawCircle({ Graphics::Color::White, 1.0f }, { Graphics::Color::Blue, 0.0f });
 			});
 			auto particle = std::make_shared<Scene::Sprite>();
 			particle->setBatchGroup("magnet_particle");

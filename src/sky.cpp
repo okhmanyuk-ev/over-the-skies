@@ -157,7 +157,7 @@ void Sky::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
 				auto size = glm::linearRand(4.0f, 6.0f);
 				
 				static auto texture = GRAPHICS->makeGenericTexture({ 64, 64 }, [] {
-					GRAPHICS->drawRoundedSlicedRectangle(glm::mat4(1.0f), { Graphics::Color::White, 1.0f }, { 1.0f, 1.0f }, 0.5f, false);
+					GRAPHICS->drawRoundedSlicedRectangle({ Graphics::Color::White, 1.0f }, { 1.0f, 1.0f }, 0.5f, false);
 				});
 
 				auto star = std::make_shared<Scene::Sprite>();
