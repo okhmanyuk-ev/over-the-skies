@@ -393,6 +393,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 			emitter->setCreateParticleCallback([] {
 				auto particle = std::make_shared<Scene::Rectangle>();
 				particle->setSize(4.0f);
+				particle->setBatchGroup("ruby_particle");
 				particle->setColor(Graphics::Color::HotPink);
 				return particle;
 			});
@@ -447,6 +448,25 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 		magnet->setPosition({ 0.0f, -4.0f });
 		plane->setMagnet(magnet);
 		plane->attach(magnet);
+
+		auto emitter = std::make_shared<Scene::Emitter>();
+		emitter->setHolder(mRectangleParticlesHolder);
+		emitter->setSpawnrate(60.0f);
+		emitter->setStretch({ 0.75f, 0.0f });
+		emitter->setAnchor(0.5f);
+		emitter->setPivot(0.5f);
+		emitter->setDistance(32.0f);
+		emitter->setCreateParticleCallback([] {
+			static auto texture = GRAPHICS->makeGenericTexture({ 32, 32 }, [] {
+				GRAPHICS->drawCircle(glm::mat4(1.0f), { Graphics::Color::White, 1.0f }, { Graphics::Color::Blue, 0.0f });
+			});
+			auto particle = std::make_shared<Scene::Sprite>();
+			particle->setBatchGroup("magnet_particle");
+			particle->setTexture(texture);
+			particle->setBlendMode(Renderer::BlendStates::Additive);
+			return particle;
+		});
+		magnet->attach(emitter);
 	}
 
 	if (moving)

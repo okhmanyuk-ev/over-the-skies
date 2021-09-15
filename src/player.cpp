@@ -120,21 +120,6 @@ PayablePlayer::PayablePlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Sk
 	trail->setNarrowing(true);
 	attach(trail);*/
 
-	auto circle_texture = std::make_shared<Renderer::RenderTarget>(24, 24);
-
-	auto model = glm::mat4(1.0f);
-	model = glm::scale(model, { (float)circle_texture->getWidth(), (float)circle_texture->getHeight(), 1.0f });
-
-	GRAPHICS->begin();
-	GRAPHICS->pushRenderTarget(circle_texture);
-	GRAPHICS->pushOrthoMatrix(circle_texture);
-	GRAPHICS->pushBlendMode(Renderer::BlendStates::AlphaBlend);
-	GRAPHICS->pushViewport(circle_texture);
-	GRAPHICS->clear();
-	GRAPHICS->drawCircle(model, { Graphics::Color::White, 1.0f }, { Graphics::Color::White, 0.0f });
-	GRAPHICS->pop(4);
-	GRAPHICS->end();
-
 	auto emitter = std::make_shared<Scene::Emitter>();
 	emitter->setHolder(trailHolder);
 	emitter->setStretch(0.0f);
@@ -146,9 +131,13 @@ PayablePlayer::PayablePlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Sk
 	emitter->setEndColor({ 0.25f, 0.25f, 1.0f, 1.0f });
 	//emitter->setBeginScale({ 1.0f, 1.0f });
 	//emitter->setEndScale({ 1.0f, 1.0f });
-	emitter->setCreateParticleCallback([circle_texture] {
+	emitter->setCreateParticleCallback([] {
+		static auto texture = GRAPHICS->makeGenericTexture({ 24, 24 }, [] {
+			GRAPHICS->drawCircle(glm::mat4(1.0f), { Graphics::Color::White, 1.0f }, { Graphics::Color::White, 0.0f });
+		});
+
 		auto particle = std::make_shared<Scene::Sprite>();
-		particle->setTexture(circle_texture);
+		particle->setTexture(texture);
 		particle->setBlendMode(Renderer::BlendStates::Additive);
 		particle->setSampler(Renderer::Sampler::Linear);
 		return particle;
