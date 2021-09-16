@@ -451,14 +451,16 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 
 		auto emitter = std::make_shared<Scene::Emitter>();
 		emitter->setHolder(mRectangleParticlesHolder);
-		emitter->setSpawnrate(60.0f);
-		emitter->setStretch({ 0.75f, 0.0f });
+		emitter->setSpawnrate(30.0f);
+	//	emitter->setStretch({ 0.75f, 0.0f });
 		emitter->setAnchor(0.5f);
 		emitter->setPivot(0.5f);
 		emitter->setDistance(32.0f);
+		emitter->setMinDuration(1.0f);
+		emitter->setMaxDuration(3.0f);
 		emitter->setCreateParticleCallback([] {
 			static auto texture = GRAPHICS->makeGenericTexture({ 32, 32 }, [] {
-				GRAPHICS->drawCircle({ Graphics::Color::White, 1.0f }, { Graphics::Color::Blue, 0.0f });
+				GRAPHICS->drawCircle({ Graphics::Color::White, 1.0f }, { Graphics::Color::Yellow, 0.0f });
 			});
 			auto particle = std::make_shared<Scene::Sprite>();
 			particle->setBatchGroup("magnet_particle");
