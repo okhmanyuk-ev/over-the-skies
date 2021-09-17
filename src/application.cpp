@@ -262,6 +262,15 @@ void Application::showCheats()
 			auto item = *ACHIEVEMENTS->getItems().begin();
 			EVENT->emit(Achievements::AchievementEarnedEvent{ item });
 		}
+
+		if (ImGui::Button("ADD BLUR NODE"))
+		{
+			auto blur = std::make_shared<Shared::SceneHelpers::MovableByHand<Shared::SceneHelpers::Outlined<Shared::SceneHelpers::Blur>>>();
+			blur->setSize(192.0f);
+			blur->setAnchor(0.5f);
+			blur->setPivot(0.5f);
+			getScene()->getRoot()->attach(blur);
+		}
 	}
 
 	ImGui::Checkbox("DEV", &Enabled);
