@@ -5,7 +5,7 @@
 
 namespace hcg001
 {
-	class Window : public Shared::SceneHelpers::BackblurredStandardWindow
+	class Window : public Shared::SceneHelpers::StandardWindow
 	{
 	public:
 		Window(bool has_close_button = true);

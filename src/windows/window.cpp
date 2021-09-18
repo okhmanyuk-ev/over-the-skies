@@ -2,7 +2,7 @@
 
 using namespace hcg001;
 
-Window::Window(bool has_close_button)
+Window::Window(bool has_close_button) : StandardWindow({ Flag::Blur })
 {
 	mBackground = std::make_shared<Scene::ClippableStencil<Scene::Rectangle>>();
 	mBackground->setSlicedSpriteOptimizationEnabled(false); // this enables nice clipping
