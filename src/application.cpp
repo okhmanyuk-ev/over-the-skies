@@ -265,10 +265,13 @@ void Application::showCheats()
 
 		if (ImGui::Button("ADD BLUR NODE"))
 		{
-			auto blur = std::make_shared<Shared::SceneHelpers::MovableByHand<Shared::SceneHelpers::Outlined<Shared::SceneHelpers::Blur>>>();
+			auto blur = std::make_shared<Scene::Clickable<Shared::SceneHelpers::MovableByHand<Shared::SceneHelpers::Outlined<Shared::SceneHelpers::Blur>>>>();
 			blur->setSize(192.0f);
 			blur->setAnchor(0.5f);
 			blur->setPivot(0.5f);
+			blur->setClickCallback([blur] {
+				blur->runAction(Actions::Collection::Kill(blur));
+			});
 			getScene()->getRoot()->attach(blur);
 		}
 	}
