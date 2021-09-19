@@ -263,13 +263,22 @@ void Application::showCheats()
 			EVENT->emit(Achievements::AchievementEarnedEvent{ item });
 		}
 
-		if (ImGui::Button("ADD BLURRED GLASS"))
+		if (ImGui::Button("SPAWN BLURRED GLASS"))
 		{
 			auto blur = std::make_shared<Shared::SceneHelpers::BlurredGlassDemo>();
 			blur->setSize(192.0f);
 			blur->setAnchor(0.5f);
 			blur->setPivot(0.5f);
 			getScene()->getRoot()->attach(blur);
+		}
+
+		if (ImGui::Button("SPAWN SHOCKWAVE"))
+		{
+			auto shockwave = Shared::SceneHelpers::Shockwave::MakeAnimated();
+			shockwave->setSize(192.0f);
+			shockwave->setAnchor(0.5f);
+			shockwave->setPivot(0.5f);
+			getScene()->getRoot()->attach(shockwave);
 		}
 	}
 
