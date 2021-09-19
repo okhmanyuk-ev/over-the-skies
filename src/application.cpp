@@ -263,9 +263,9 @@ void Application::showCheats()
 			EVENT->emit(Achievements::AchievementEarnedEvent{ item });
 		}
 
-		if (ImGui::Button("ADD BLUR NODE"))
+		if (ImGui::Button("ADD BLURRED GLASS"))
 		{
-			auto blur = std::make_shared<Shared::SceneHelpers::BlurDemo>();
+			auto blur = std::make_shared<Shared::SceneHelpers::BlurredGlassDemo>();
 			blur->setSize(192.0f);
 			blur->setAnchor(0.5f);
 			blur->setPivot(0.5f);
