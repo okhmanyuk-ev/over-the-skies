@@ -284,14 +284,28 @@ void Application::showCheats()
 			getScene()->getRoot()->attach(gray);
 		}
 
-		if (ImGui::Button("SPAWN SHOCKWAVE"))
-		{
-			auto shockwave = Shared::SceneHelpers::Shockwave::MakeAnimated();
+		auto spawnShockwave = [this](float duration) {
+			auto shockwave = Shared::SceneHelpers::Shockwave::MakeAnimated(duration);
 			shockwave->setSize(256.0f);
 			shockwave->setAnchor(0.5f);
 			shockwave->setPivot(0.5f);
 			shockwave->setScale(4.0f);
 			getScene()->getRoot()->attach(shockwave);
+		};
+
+		if (ImGui::Button("SPAWN SHOCKWAVE"))
+		{
+			spawnShockwave(1.0f);
+		}
+
+		if (ImGui::Button("SPAWN SHOCKWAVE (LONG)"))
+		{
+			spawnShockwave(5.0f);
+		}
+
+		if (ImGui::Button("SPAWN SHOCKWAVE (VERY LONG)"))
+		{
+			spawnShockwave(10.0f);
 		}
 	}
 
