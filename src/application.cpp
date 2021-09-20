@@ -272,6 +272,18 @@ void Application::showCheats()
 			getScene()->getRoot()->attach(blur);
 		}
 
+		if (ImGui::Button("SPAWN GRAY GLASS"))
+		{
+			auto gray = std::make_shared<Scene::Clickable<Shared::SceneHelpers::MovableByHand<Shared::SceneHelpers::Outlined<Scene::GrayscaledGlass>>>>();
+			gray->setClickCallback([gray] {
+				gray->runAction(Actions::Collection::Kill(gray));
+			});
+			gray->setSize(192.0f);
+			gray->setAnchor(0.5f);
+			gray->setPivot(0.5f);
+			getScene()->getRoot()->attach(gray);
+		}
+
 		if (ImGui::Button("SPAWN SHOCKWAVE"))
 		{
 			auto shockwave = Shared::SceneHelpers::Shockwave::MakeAnimated();
