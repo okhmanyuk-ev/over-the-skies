@@ -275,9 +275,10 @@ void Application::showCheats()
 		if (ImGui::Button("SPAWN SHOCKWAVE"))
 		{
 			auto shockwave = Shared::SceneHelpers::Shockwave::MakeAnimated();
-			shockwave->setSize(192.0f);
+			shockwave->setSize(256.0f);
 			shockwave->setAnchor(0.5f);
 			shockwave->setPivot(0.5f);
+			shockwave->setScale(3.0f);
 			getScene()->getRoot()->attach(shockwave);
 		}
 	}
