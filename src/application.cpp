@@ -278,7 +278,7 @@ void Application::showCheats()
 			shockwave->setSize(256.0f);
 			shockwave->setAnchor(0.5f);
 			shockwave->setPivot(0.5f);
-			shockwave->setScale(3.0f);
+			shockwave->setScale(4.0f);
 			getScene()->getRoot()->attach(shockwave);
 		}
 	}
