@@ -265,47 +265,27 @@ void Application::showCheats()
 
 		if (ImGui::Button("SPAWN BLURRED GLASS"))
 		{
-			auto blur = std::make_shared<Shared::SceneHelpers::BlurredGlassDemo>();
-			blur->setSize(192.0f);
-			blur->setAnchor(0.5f);
-			blur->setPivot(0.5f);
-			getScene()->getRoot()->attach(blur);
+			CONSOLE->execute("spawn_blur_glass");
 		}
 
 		if (ImGui::Button("SPAWN GRAY GLASS"))
 		{
-			auto gray = std::make_shared<Scene::Clickable<Shared::SceneHelpers::MovableByHand<Shared::SceneHelpers::Outlined<Scene::GrayscaledGlass>>>>();
-			gray->setClickCallback([gray] {
-				gray->runAction(Actions::Collection::Kill(gray));
-			});
-			gray->setSize(192.0f);
-			gray->setAnchor(0.5f);
-			gray->setPivot(0.5f);
-			getScene()->getRoot()->attach(gray);
+			CONSOLE->execute("spawn_gray_glass");
 		}
-
-		auto spawnShockwave = [this](float duration) {
-			auto shockwave = Shared::SceneHelpers::Shockwave::MakeAnimated(duration);
-			shockwave->setSize(256.0f);
-			shockwave->setAnchor(0.5f);
-			shockwave->setPivot(0.5f);
-			shockwave->setScale(4.0f);
-			getScene()->getRoot()->attach(shockwave);
-		};
 
 		if (ImGui::Button("SPAWN SHOCKWAVE"))
 		{
-			spawnShockwave(1.0f);
+			CONSOLE->execute("spawn_shockwave");
 		}
 
 		if (ImGui::Button("SPAWN SHOCKWAVE (LONG)"))
 		{
-			spawnShockwave(5.0f);
+			CONSOLE->execute("spawn_shockwave 5.0");
 		}
 
 		if (ImGui::Button("SPAWN SHOCKWAVE (VERY LONG)"))
 		{
-			spawnShockwave(10.0f);
+			CONSOLE->execute("spawn_shockwave 10.0");
 		}
 	}
 
