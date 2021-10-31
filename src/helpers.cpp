@@ -115,8 +115,7 @@ NoInternetContent::NoInternetContent()
 	mLabel->setAnchor(0.5f);
 	mLabel->setPivot({ 0.5f, 0.0f });
 	mLabel->setY(8.0f);
-	mLabel->setMultiline(true);
-	mLabel->setMultilineAlign(Graphics::TextMesh::Align::Center);
+	mLabel->setAlign(Graphics::TextMesh::Align::Center);
 	mLabel->setStretch({ 1.0f, 0.0f });
 	mLabel->setMargin({ 48.0f, 0.0f });
 	mLabel->setAlpha(0.0f);
