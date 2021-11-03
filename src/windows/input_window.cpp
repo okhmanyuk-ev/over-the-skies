@@ -35,6 +35,7 @@ InputWindow::InputWindow(const utf8_string& title, const utf8_string& text, Chan
 	mLabel->setPivot(0.5f);
 	mLabel->setStretch({ 1.0f, 0.0f });
 	mLabel->setMargin({ 16.0f, 0.0f });
+	mLabel->setMultiline(true);
 	mLabel->setAlign(Graphics::TextMesh::Align::Center);
 	mLabel->setFontSize(24.0f);
 	mLabel->setText(text);

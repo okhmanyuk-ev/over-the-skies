@@ -74,6 +74,7 @@ std::shared_ptr<Scene::Node> GlobalChatWidget::createMessageNode(int index) cons
 	label->setPivot(0.5f);
 	label->setStretch({ 1.0f, 0.0f });
 	label->setMargin({ 24.0f, 0.0f });
+	label->setMultiline(true);
 	label->setText(profile->getNickName() + ": " + msg->getText());
 	rect->attach(label);
 
