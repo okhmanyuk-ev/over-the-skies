@@ -28,5 +28,6 @@ namespace hcg001
 	private:
 		std::shared_ptr<Scene::Node> mContent;
 		std::shared_ptr<Shared::SceneHelpers::SafeArea> mGui;
+		std::shared_ptr<Scene::BlurredGlass> mBlur;
 	};
 }

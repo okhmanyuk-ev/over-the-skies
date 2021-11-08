@@ -17,6 +17,10 @@ Screen::Screen()
 	mContent->setPivot(0.5f);
 	attach(mContent);
 
+	mBlur = std::make_shared<Scene::BlurredGlass>();
+	mBlur->setStretch(1.0f);
+	attach(mBlur);
+
 	mGui = std::make_shared<Shared::SceneHelpers::SafeArea>();
 	attach(mGui);
 }
@@ -24,23 +28,28 @@ Screen::Screen()
 void Screen::onEnterBegin()
 {
 	setEnabled(true);
+	setRenderLayerEnabled(true);
 	mContent->setScale(0.95f);
+	mBlur->setBlurIntensity(1.0f);
 }
 
 void Screen::onEnterEnd()
 {
 	setInteractions(true);
+	setRenderLayerEnabled(false);
 }
 
 void Screen::onLeaveBegin()
 {
 	setInteractions(false);
+	setRenderLayerEnabled(true);
 }
 
 void Screen::onLeaveEnd()
 {
 	setEnabled(false);
 	getRenderLayerColor()->setAlpha(0.0f);
+	setRenderLayerEnabled(false);
 }
 
 void Screen::onWindowAppearing()
@@ -55,16 +64,22 @@ void Screen::onWindowDisappearing()
 
 std::unique_ptr<Actions::Action> Screen::createEnterAction()
 {
+	const float Duration = 0.25f;
+
 	return Actions::Collection::MakeParallel(
-		Actions::Collection::Show(getRenderLayerColor(), 0.25f),
-		Actions::Collection::ChangeScale(mContent, { 1.0f, 1.0f }, 0.25f, Easing::QuadraticOut)
+		Actions::Collection::Show(getRenderLayerColor(), Duration, Easing::Linear),
+		Actions::Collection::ChangeBlurIntensity(mBlur, 0.0f, Duration, Easing::CubicIn),
+		Actions::Collection::ChangeScale(mContent, { 1.0f, 1.0f }, Duration, Easing::CubicIn)
 	);
 };
 
 std::unique_ptr<Actions::Action> Screen::createLeaveAction()
 {
+	const float Duration = 0.25f;
+
 	return Actions::Collection::MakeParallel(
-		Actions::Collection::Hide(getRenderLayerColor(), 0.25f),
-		Actions::Collection::ChangeScale(mContent, { 0.95f, 0.95f }, 0.25f, Easing::QuadraticOut)
+		Actions::Collection::Hide(getRenderLayerColor(), Duration, Easing::Linear),
+		Actions::Collection::ChangeBlurIntensity(mBlur, 1.0f, Duration, Easing::CubicOut),
+		Actions::Collection::ChangeScale(mContent, { 0.95f, 0.95f }, Duration, Easing::CubicOut)
 	);
 };
