@@ -26,7 +26,6 @@ AchievementsWindow::AchievementsWindow()
 	scrollbox->setStretch(1.0f);
 	scrollbox->getBounding()->setStretch(1.0f);
 	scrollbox->setVerticalMargin(48.0f);
-	scrollbox->setSensitivity({ 0.0f, 1.0f });
 	getBody()->attach(scrollbox);
 
 	std::vector<std::shared_ptr<Scene::Node>> items;
