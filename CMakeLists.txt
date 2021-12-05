@@ -52,6 +52,7 @@ if(WIN32)
 elseif(APPLE)
     set(CMAKE_MACOSX_BUNDLE YES)
     set(CMAKE_OSX_SYSROOT iphoneos)
+    set(CMAKE_XCODE_BUILD_SYSTEM 12)
 
     file(GLOB IOS_SRC 
         ios/*.m
