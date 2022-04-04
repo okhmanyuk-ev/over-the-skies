@@ -283,7 +283,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 		padlock->setEnabled(locked);
 		image->attach(padlock);
 
-		auto footer = std::make_shared< Shared::SceneHelpers::Smoother<Scene::Node>>();
+		auto footer = std::make_shared<Scene::Node>();
 		footer->setAnchor({ 0.5f, 1.0f });
 		footer->setPivot({ 0.5f, 0.0f });
 		footer->setPosition({ 0.0f, 24.0f });
