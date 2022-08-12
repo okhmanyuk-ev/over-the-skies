@@ -465,7 +465,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 			auto particle = std::make_shared<Scene::Sprite>();
 			particle->setBatchGroup("magnet_particle");
 			particle->setTexture(texture);
-			particle->setBlendMode(Renderer::BlendStates::Additive);
+			particle->setBlendMode(skygfx::BlendStates::Additive);
 			return particle;
 		});
 		magnet->attach(emitter);

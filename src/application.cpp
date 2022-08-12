@@ -39,7 +39,7 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 
 	STATS->setAlignment(Shared::StatsSystem::Align::BottomRight);
 
-	Scene::Sprite::DefaultSampler = Renderer::Sampler::Linear;
+	Scene::Sprite::DefaultSampler = skygfx::Sampler::Linear;
 	Scene::Sprite::DefaultTexture = TEXTURE("textures/default.png");
     Scene::Label::DefaultFont = FONT("default");
 	Scene::Scrollbox::DefaultInertiaFriction = 0.05f;

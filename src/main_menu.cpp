@@ -264,7 +264,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 		auto image = std::make_shared<Scene::Sprite>();
 		image->setBatchGroup("main_menu_item_image");
 		image->setTexture(TEXTURE(path));
-		image->setSampler(Renderer::Sampler::Linear);
+		image->setSampler(skygfx::Sampler::Linear);
 		image->setSize(SkinSize);
 		image->setAnchor(0.5f);
 		image->setPivot(0.5f);

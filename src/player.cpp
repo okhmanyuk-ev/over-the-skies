@@ -15,7 +15,7 @@ void Player::makeSprite()
 	mSprite->setStretch(1.0f);
 	mSprite->setAnchor({ 0.5f, 0.5f });
 	mSprite->setPivot({ 0.5f, 0.5f });
-	mSprite->setSampler(Renderer::Sampler::Linear);
+	mSprite->setSampler(skygfx::Sampler::Linear);
 	attach(mSprite);
 }
 
@@ -138,8 +138,8 @@ PayablePlayer::PayablePlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Sk
 
 		auto particle = std::make_shared<Scene::Sprite>();
 		particle->setTexture(texture);
-		particle->setBlendMode(Renderer::BlendStates::Additive);
-		particle->setSampler(Renderer::Sampler::Linear);
+		particle->setBlendMode(skygfx::BlendStates::Additive);
+		particle->setSampler(skygfx::Sampler::Linear);
 		return particle;
 	});
 	attach(emitter);

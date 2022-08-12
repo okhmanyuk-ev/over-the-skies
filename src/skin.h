@@ -1,7 +1,7 @@
 #pragma once
 
 #include <map>
-#include <renderer/texture.h>
+#include <string>
 
 namespace hcg001
 {
