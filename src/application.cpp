@@ -23,6 +23,9 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 	PLATFORM->rescale(1.5f);
 #endif
 
+	// limit maximum time delta to avoid animation breaks
+	FRAME->setTimeDeltaLimit(Clock::FromSeconds(1.0f / 30.0f));
+
 	ENGINE->addSystem<Client>(std::make_shared<Client>());
 	ENGINE->addSystem<Profile>(std::make_shared<Profile>());
 	ENGINE->addSystem<Achievements>(std::make_shared<Achievements>());
