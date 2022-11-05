@@ -116,6 +116,8 @@ void Channel::auth()
 	auto platform = "ios";
 #elif defined(PLATFORM_ANDROID)
 	auto platform = "android";
+#elif defined(PLATFORM_MAC)
+	auto platform = "mac";
 #endif
 	sendEvent("auth", {
 		{ "platform", platform },

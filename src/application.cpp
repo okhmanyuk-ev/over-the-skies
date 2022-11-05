@@ -19,8 +19,12 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 	PLATFORM->setTitle(PRODUCT_NAME);
 	PLATFORM->resize(360, 640);
 	RENDERER->setVsync(true);
-#if !defined(PLATFORM_MOBILE)
+#if defined(PLATFORM_WINDOWS)
 	PLATFORM->rescale(1.5f);
+#endif
+
+#if defined(PLATFORM_MAC)
+	std::static_pointer_cast<Shared::ConsoleDevice>(CONSOLE_DEVICE)->setHiddenButtonEnabled(false);
 #endif
 
 	// limit maximum time delta to avoid animation breaks

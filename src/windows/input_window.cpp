@@ -140,26 +140,26 @@ void InputWindow::onEvent(const Platform::Input::Keyboard::Event& e)
 
 	auto text = mLabel->getText();
 
-	if (e.key == Platform::Input::Keyboard::Key::Backspace)
-	{
-		if (!text.empty())
-		{
-			text.pop_back();
-			mLabel->setText(text);
-		}
-		return;
-	}
-
-	if (e.key == Platform::Input::Keyboard::Key::Shift)
+	if (e.key != Platform::Input::Keyboard::Key::Backspace)
 		return;
 
-	if (e.key == Platform::Input::Keyboard::Key::Ctrl)
+	if (text.empty())
 		return;
 
-	if (PLATFORM->isKeyPressed(Platform::Input::Keyboard::Key::Ctrl))
+	text.pop_back();
+	mLabel->setText(text);
+}
+
+void InputWindow::onEvent(const Platform::Input::Keyboard::CharEvent& e)
+{
+	auto& io = ImGui::GetIO();
+
+	if (io.WantCaptureKeyboard)
 		return;
 
-	mLabel->setText(text + e.asciiChar);
+	auto text = mLabel->getText();
+
+	mLabel->setText(text + e.codepoint);
 }
 
 void InputWindow::onOpenBegin()

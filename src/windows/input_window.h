@@ -9,7 +9,8 @@ namespace hcg001
 	class InputWindow : public Window,
 		public Common::Event::Listenable<Platform::System::VirtualKeyboardTextChanged>,
 		public Common::Event::Listenable<Platform::System::VirtualKeyboardEnterPressed>,
-		public Common::Event::Listenable<Platform::Input::Keyboard::Event>
+		public Common::Event::Listenable<Platform::Input::Keyboard::Event>,
+		public Common::Event::Listenable<Platform::Input::Keyboard::CharEvent>
 	{
 	public:
 		using ChangeTextCallback = std::function<void(const utf8_string&)>;
@@ -21,6 +22,7 @@ namespace hcg001
 		void onEvent(const Platform::System::VirtualKeyboardTextChanged& e) override;
 		void onEvent(const Platform::System::VirtualKeyboardEnterPressed& e) override;
 		void onEvent(const Platform::Input::Keyboard::Event& e) override;
+		void onEvent(const Platform::Input::Keyboard::CharEvent& e) override;
 
 	protected:
 		void onOpenBegin() override;
