@@ -17,11 +17,15 @@ using namespace hcg001;
 Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Flag::Scene, Flag::Network })
 {
 	PLATFORM->setTitle(PRODUCT_NAME);
+#if defined(PLATFORM_MAC)
+	PLATFORM->resize(720, 1280);
+#else
 	PLATFORM->resize(360, 640);
-	RENDERER->setVsync(true);
+#endif
 #if defined(PLATFORM_WINDOWS)
 	PLATFORM->rescale(1.5f);
 #endif
+	RENDERER->setVsync(true);
 
 #if defined(PLATFORM_MAC)
 	std::static_pointer_cast<Shared::ConsoleDevice>(CONSOLE_DEVICE)->setHiddenButtonEnabled(false);
