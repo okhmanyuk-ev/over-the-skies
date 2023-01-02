@@ -7,6 +7,7 @@ using namespace hcg001;
 
 Channel::Channel()
 {
+#ifndef EMSCRIPTEN
 	setShowEventLogs(true);
 
 	//addMessageReader("file", [this](auto& buf) { readFileMessage(buf);	});
@@ -106,10 +107,12 @@ Channel::Channel()
 	FRAME->addOne([this] {
 		auth();
 	});
+#endif
 }
 
 void Channel::auth()
 {
+#ifndef EMSCRIPTEN
 #if defined(PLATFORM_WINDOWS)
 	auto platform = "win";
 #elif defined(PLATFORM_IOS)
@@ -123,10 +126,12 @@ void Channel::auth()
 		{ "platform", platform },
 		{ "uuid", PLATFORM->getUUID() } 
 	});
+#endif
 }
 
 void Channel::commit()
 {
+#ifndef EMSCRIPTEN
 	nlohmann::json profile;
 	PROFILE->write(profile);
 
@@ -141,22 +146,27 @@ void Channel::commit()
 	mProfiles.erase(mUID);
 	mProfiles.insert({ mUID, PROFILE });
 	EVENT->emit(NetEvents::ProfileReceived({ mUID }));
+#endif
 }
 
 void Channel::requestHighscores()
 {
+#ifndef EMSCRIPTEN
 	sendEvent("request_highscores");
 	sendEvent("request_guilds_top");
+#endif
 }
 
 void Channel::requestProfile(int uid)
 {
+#ifndef EMSCRIPTEN
 	if (mProfiles.count(uid) > 0)
 		mProfiles.erase(uid);
 
 	sendEvent("request_profile", {
 		{ "uid", uid }
 	});
+#endif
 }
 
 void Channel::clearProfiles()
@@ -166,21 +176,27 @@ void Channel::clearProfiles()
 
 void Channel::sendChatMessage(const std::string& text)
 {
+#ifndef EMSCRIPTEN
 	sendEvent("global_chat_message", {
 		{ "text", text }
 	});
+#endif
 }
 
 void Channel::createGuild(const std::string& title)
 {
+#ifndef EMSCRIPTEN
 	sendEvent("create_guild", {
 		{ "title", title }
 	});
+#endif
 }
 
 void Channel::requestGuildList()
 {
+#ifndef EMSCRIPTEN
 	sendEvent("request_guild_list");
+#endif
 }
 
 void Channel::clearGuilds()
@@ -190,21 +206,27 @@ void Channel::clearGuilds()
 
 void Channel::requestGuildInfo(int id)
 {
+#ifndef EMSCRIPTEN
 	sendEvent("request_guild_info", {
 		{ "id", id }
 	});
+#endif
 }
 
 void Channel::exitGuild()
 {
+#ifndef EMSCRIPTEN
 	sendEvent("exit_guild");
+#endif
 }
 
 void Channel::joinGuild(int id)
 {
+#ifndef EMSCRIPTEN
 	sendEvent("join_guild", {
 		{ "id", id }
 	});
+#endif
 }
 
 void Channel::readFileMessage(BitBuffer& buf)
@@ -279,13 +301,16 @@ Channel::ChatMessage::ChatMessage(int uid, const std::string& text) :
 
 // client
 
-Client::Client() : 
+Client::Client()
+#ifndef EMSCRIPTEN
+ : 
 	//Shared::NetworkingWS::Client("ws://hcg001.ddns.net:27015")
 	Shared::NetworkingWS::Client("ws://192.168.0.106:27015")
+#endif
 {
-	//
 }
 
+#ifndef EMSCRIPTEN
 std::shared_ptr<Shared::NetworkingWS::Channel> Client::createChannel()
 {
 	return std::make_shared<hcg001::Channel>();
@@ -295,33 +320,41 @@ void Client::onFrame()
 {
 	Shared::NetworkingWS::Client::onFrame();
 }
+#endif
 
 void Client::commit()
 {
+#ifndef EMSCRIPTEN
 	if (!isConnected())
 		return;
 
 	getMyChannel()->commit();
+#endif
 }
 
 void Client::requestHighscores()
 {
+#ifndef EMSCRIPTEN
 	if (!isConnected())
 		return;
 
 	getMyChannel()->requestHighscores();
+#endif
 }
 
 void Client::requestProfile(int uid)
 {
+#ifndef EMSCRIPTEN
 	if (!isConnected())
 		return;
 
 	getMyChannel()->requestProfile(uid);
+#endif
 }
 
 void Client::requireProfile(int uid)
 {
+#ifndef EMSCRIPTEN
 	if (!isConnected())
 		return;
 
@@ -329,58 +362,72 @@ void Client::requireProfile(int uid)
 		return;
 
 	requestProfile(uid);
+#endif
 }
 
 void Client::sendChatMessage(const std::string& text)
 {
+#ifndef EMSCRIPTEN
 	if (!isConnected())
 		return;
 
 	getMyChannel()->sendChatMessage(text);
+#endif
 }
 
 void Client::createGuild(const std::string& title)
 {
+#ifndef EMSCRIPTEN
 	if (!isConnected())
 		return;
 
 	getMyChannel()->createGuild(title);
+#endif
 }
 
 void Client::requestGuildList()
 {
+#ifndef EMSCRIPTEN
 	if (!isConnected())
 		return;
 
 	getMyChannel()->requestGuildList();
+#endif
 }
 
 void Client::exitGuild()
 {
+#ifndef EMSCRIPTEN
 	if (!isConnected())
 		return;
 
 	getMyChannel()->exitGuild();
+#endif
 }
 
 void Client::joinGuild(int id)
 {
+#ifndef EMSCRIPTEN
 	if (!isConnected())
 		return;
 
 	getMyChannel()->joinGuild(id);
+#endif
 }
 
 void Client::requestGuildInfo(int id)
 {
+#ifndef EMSCRIPTEN
 	if (!isConnected())
 		return;
 
 	getMyChannel()->requestGuildInfo(id);
+#endif
 }
 
 void Client::requireGuildInfo(int id)
 {
+#ifndef EMSCRIPTEN
 	if (!isConnected())
 		return;
 
@@ -388,10 +435,12 @@ void Client::requireGuildInfo(int id)
 		return;
 
 	requestGuildInfo(id);
+#endif
 }
 
 void Client::sendGuildContribution(int count)
 {
+#ifndef EMSCRIPTEN
 	if (!isConnected())
 		return;
 
@@ -399,28 +448,39 @@ void Client::sendGuildContribution(int count)
 		return;
 
 	getMyChannel()->sendEvent("guild_contribution", { { "count", count } });
+#endif
 }
 
 void Client::sendAchievementEarned(const std::string& name)
 {
+#ifndef EMSCRIPTEN
 	if (!isConnected())
 		return;
 
 	getMyChannel()->sendEvent("achievement_earned", {
 		{ "name", name }
 	});
+#endif
 }
 
 const Channel::GlobalChatMessages& Client::getGlobalChatMessages() const
 {
+#ifndef EMSCRIPTEN
 	assert(isConnected());
 	return getMyChannel()->getGlobalChatMessages();
+#else
+	return {};
+#endif
 }
 
 const Channel::ProfilesMap& Client::getProfiles() const 
 { 
+#ifndef EMSCRIPTEN
 	assert(isConnected());
 	return getMyChannel()->getProfiles(); 
+#else
+	return {};
+#endif
 }
 
 bool Client::hasProfile(int uid)
@@ -437,16 +497,22 @@ Channel::ProfilePtr Client::getProfile(int uid)
 
 void Client::clearProfiles()
 {
+#ifndef EMSCRIPTEN
 	if (!isConnected())
 		return; 
 
 	getMyChannel()->clearProfiles();
+#endif
 }
 
 const Channel::GuildsMap& Client::getGuilds() const
 {
+#ifndef EMSCRIPTEN
 	assert(isConnected());
 	return getMyChannel()->getGuilds();
+#else
+	return {};
+#endif
 }
 
 bool Client::hasGuild(int uid)
@@ -462,14 +528,20 @@ Channel::GuildPtr Client::getGuild(int uid)
 
 void Client::clearGuilds()
 {
+#ifndef EMSCRIPTEN
 	if (!isConnected())
 		return;
 
 	getMyChannel()->clearGuilds();
+#endif
 }
 
 int Client::getUID() const
 {
+#ifndef EMSCRIPTEN
 	assert(isConnected());
 	return getMyChannel()->getUID();
+#else
+	return 0;
+#endif
 }

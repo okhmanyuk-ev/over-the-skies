@@ -112,7 +112,9 @@ void Application::onFrame()
 {
 	adaptToScreen(getScene()->getRoot());
 	showCheats();
+#ifndef EMSCRIPTEN
 	GAME_STATS("connected", CLIENT->isConnected());
+#endif
 	GAME_STATS("event listeners", EVENT->getListenersCount());
 }
 

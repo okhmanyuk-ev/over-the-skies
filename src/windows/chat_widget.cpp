@@ -62,7 +62,9 @@ void ChatWidget::message(int msgid)
 
 void ChatWidget::refreshMessages()
 {
+#ifndef EMSCRIPTEN
 	if (!CLIENT->isConnected())
+#endif
 		return;
 	
 	//STATS_INDICATE_GROUP("chat", "chat items size", mItems.size());
@@ -247,7 +249,9 @@ void ChatWidget::scrollToBack(bool animated)
 
 void ChatWidget::addMessages(int topIndex, int bottomIndex)
 {
+#ifndef EMSCRIPTEN
 	assert(CLIENT->isConnected());
+#endif
 	assert(topIndex <= bottomIndex);
 
 	// check range for profiles
