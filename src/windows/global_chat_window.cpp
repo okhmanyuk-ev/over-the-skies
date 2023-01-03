@@ -139,11 +139,7 @@ GlobalChatWindow::GlobalChatWindow()
 			no_internet_content->runShowAction();
 		}),
 		Actions::Collection::Wait([] {
-#ifndef EMSCRIPTEN
 			return !CLIENT->isConnected();
-#else
-			return true;
-#endif
 		}),
 		Actions::Collection::Execute([this, chat_button, no_internet_content] {
 			no_internet_content->setEnabled(false);

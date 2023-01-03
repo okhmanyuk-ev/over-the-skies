@@ -6,14 +6,6 @@
 
 #define CLIENT ENGINE->getSystem<hcg001::Client>()
 
-#ifdef EMSCRIPTEN
-namespace Shared::NetworkingWS
-{
-	class Client {};
-	class SimpleChannel {};
-}
-#endif
-
 namespace hcg001
 {
 	namespace NetEvents
@@ -143,15 +135,11 @@ namespace hcg001
 	public:
 		Client();
 
-#ifndef EMSCRIPTEN
 	protected:
 		std::shared_ptr<Shared::NetworkingWS::Channel> createChannel() override;
-#endif
 
-#ifndef EMSCRIPTEN
 	public:
 		void onFrame() override;
-#endif
 
 	public:
 		void commit();
@@ -173,10 +161,8 @@ namespace hcg001
 	public:
 		const Channel::GlobalChatMessages& getGlobalChatMessages() const;
 
-#ifndef EMSCRIPTEN
 	private:
 		auto getMyChannel() const { return std::dynamic_pointer_cast<Channel>(getChannel()); }
-#endif
 
 	public:
 		const Channel::ProfilesMap& getProfiles() const;
