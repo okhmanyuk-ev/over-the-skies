@@ -72,8 +72,8 @@ namespace hcg001
 			return std::make_shared<FootballPlayer>(trailHolder);
 		else if (skin == Skin::Vynil)
 			return std::make_shared<VynilPlayer>(trailHolder);
-		else if (skin == Skin::Payable)
-			return std::make_shared<PayablePlayer>(trailHolder);
+	//	else if (skin == Skin::Payable)
+	//		return std::make_shared<PayablePlayer>(trailHolder);
 		else
 		{
 			assert(false);

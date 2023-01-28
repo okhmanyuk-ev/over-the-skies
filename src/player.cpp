@@ -110,7 +110,7 @@ VynilPlayer::VynilPlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Skin::
 	makeSprite();
 }
 
-PayablePlayer::PayablePlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Skin::Payable)
+PayablePlayer::PayablePlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Skin::/*Payable*/Vynil)
 {
 	/*auto trail = std::make_shared<Scene::Trail>(trailHolder);
 	trail->setAnchor({ 0.5f, 0.5f });
