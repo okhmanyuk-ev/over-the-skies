@@ -1,12 +1,9 @@
 #include "main_menu.h"
 #include "profile.h"
 #include "helpers.h"
-#include "social_panel.h"
 #include "windows/shop_window.h"
 #include "windows/options_window.h"
 #include "windows/achievements_window.h"
-#include "windows/guilds_window.h"
-#include "windows/global_chat_window.h"
 #include "gameplay.h"
 #include "gameover_menu.h"
 #include "buy_skin_menu.h"
@@ -23,12 +20,6 @@ MainMenu::MainMenu()
 	title->setPosition({ 0.0f, -32.0f });
 	title->setText(LOCALIZE("MAIN_MENU_TITLE"));
 	getContent()->attach(title);
-
-	auto social_panel = std::make_shared<SocialPanel>();
-	social_panel->setAnchor(0.5f);
-	social_panel->setPivot(0.5f);
-	social_panel->setPosition({ 0.0f, -96.0f + 16.0f });
-	getContent()->attach(social_panel);
 
 	const glm::vec2 ButtonSize = { 192.0f, 48.0f };
 
@@ -158,28 +149,6 @@ MainMenu::MainMenu()
 		SCENE_MANAGER->pushWindow(window);
 	});
 	getGui()->attach(achievements_button);
-
-	auto guilds_button = std::make_shared<Helpers::AdaptiveSpriteButton>();
-	guilds_button->setTexture(TEXTURE("textures/guilds.png"));
-	guilds_button->setAdaptSize(TopButtonSize);
-	guilds_button->setPosition({ 216.0f, 24.0f });
-	guilds_button->setPivot({ 0.0f, 0.5f });
-	guilds_button->setActiveCallback([] {
-		auto window = std::make_shared<GuildsWindow>();
-		SCENE_MANAGER->pushWindow(window);
-	});
-	getGui()->attach(guilds_button);
-
-	auto global_chat_button = std::make_shared<Helpers::AdaptiveSpriteButton>();
-	global_chat_button->setTexture(TEXTURE("textures/chat.png"));
-	global_chat_button->setAdaptSize(TopButtonSize);
-	global_chat_button->setPosition({ 276.0f, 24.0f });
-	global_chat_button->setPivot({ 0.0f, 0.5f });
-	global_chat_button->setActiveCallback([] {
-		auto window = std::make_shared<GlobalChatWindow>();
-		SCENE_MANAGER->pushWindow(window);
-	});
-	getGui()->attach(global_chat_button);
 
 	mRubiesIndicator = std::make_shared<Helpers::RubiesIndicator>();
 	mRubiesIndicator->setInstantRefresh(true);

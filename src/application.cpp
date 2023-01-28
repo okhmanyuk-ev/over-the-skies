@@ -9,7 +9,6 @@
 #include "profile.h"
 #include "windows/daily_reward_window.h"
 #include "helpers.h"
-#include "client.h"
 #include "achievements.h"
 
 using namespace hcg001;
@@ -34,7 +33,6 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 	// limit maximum time delta to avoid animation breaks
 	FRAME->setTimeDeltaLimit(Clock::FromSeconds(1.0f / 30.0f));
 
-	ENGINE->addSystem<Client>(std::make_shared<Client>());
 	ENGINE->addSystem<Profile>(std::make_shared<Profile>());
 	ENGINE->addSystem<Achievements>(std::make_shared<Achievements>());
 
@@ -65,7 +63,6 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 Application::~Application()
 {
 	PROFILE->save();
-	ENGINE->removeSystem<Client>();
 	ENGINE->removeSystem<Achievements>();
 }
 
@@ -112,7 +109,6 @@ void Application::onFrame()
 {
 	adaptToScreen(getScene()->getRoot());
 	showCheats();
-	GAME_STATS("connected", CLIENT->isConnected());
 	GAME_STATS("event listeners", EVENT->getListenersCount());
 }
 
@@ -188,15 +184,8 @@ void Application::adaptToScreen(std::shared_ptr<Scene::Node> node)
 	node->setStretch(1.0f / node->getScale());
 }
 
-void Application::onEvent(const Shared::Profile::ProfileSavedEvent& e)
-{
-	CLIENT->commit();
-}
-
 void Application::onEvent(const Achievements::AchievementEarnedEvent& e)
 {
-	CLIENT->sendAchievementEarned(e.item.name);
-
 	auto node = std::make_shared<Helpers::AchievementNotify>(e.item);
 	node->setAnchor({ 0.5f, 0.0f });
 	node->setPivot({ 0.5f, 1.0f });

@@ -1,21 +1,13 @@
 #pragma once
 
 #include "screen.h"
-#include "client.h"
 
 namespace hcg001
 {
-	class GameoverMenu : public Scene::Clickable<Screen>,
-		public Common::Event::Listenable<NetEvents::HighscoresEvent>
+	class GameoverMenu : public Scene::Clickable<Screen>
 	{
 	public:
 		GameoverMenu(int score);
-
-	private:
-		void onEvent(const NetEvents::HighscoresEvent& e) override;
-
-	protected:
-		void onEnterBegin() override;
 
 	private:
 		std::shared_ptr<Scene::Label> mScoreLabel;

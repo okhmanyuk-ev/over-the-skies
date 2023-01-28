@@ -98,54 +98,5 @@ GameoverMenu::GameoverMenu(int score)
 			SCENE_MANAGER->pushWindow(input_window);
 		});
 	});
-
-	/*mHighscoresRect = std::make_shared<Scene::Rectangle>();
-	mHighscoresRect->setAbsoluteRounding(true);
-	mHighscoresRect->setRounding(16.0f);
-	mHighscoresRect->setSize({ 256.0f, 128.0f });
-	mHighscoresRect->setAnchor(0.5f);
-	mHighscoresRect->setPivot(0.5f);
-	mHighscoresRect->setAlpha(0.25f);
-	mHighscoresRect->setY(64.0f);
-	getContent()->attach(mHighscoresRect);*/
 }
 
-void GameoverMenu::onEvent(const NetEvents::HighscoresEvent& e)
-{
-	/*std::vector<std::shared_ptr<Scene::Node>> items;
-
-	for (int i = 0; i < e.uids.size(); i++)
-	{
-		auto uid = e.uids.at(i);
-
-		CLIENT->requestProfile(uid);
-
-		auto label = std::make_shared<Helpers::Label>();
-		label->setText(std::to_string(i) + ") " + std::to_string(uid));
-		label->setAnchor(0.5f);
-		label->setPivot(0.5f);
-		items.push_back(label);
-
-		auto wait_func = [uid] { 
-			return Client::Profiles.count(uid) == 0; 
-		};
-
-		label->runAction(Actions::Collection::Delayed(wait_func, Actions::Collection::Execute([uid, label] {
-			auto name_chars = Client::Profiles.at(uid).at("nickname");
-			auto name = utf8_string(name_chars.begin(), name_chars.end());
-			label->setText(name);
-		})));
-	}
-
-	glm::vec2 cell_size = { mHighscoresRect->getWidth(), 32.0f };
-	auto grid = Shared::SceneHelpers::MakeVerticalGrid(cell_size, items);
-
-	mHighscoresRect->attach(grid);*/
-}
-
-void GameoverMenu::onEnterBegin()
-{
-	Scene::Clickable<Screen>::onEnterBegin();
-
-	//CLIENT->requestHighscores();
-}

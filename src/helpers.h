@@ -1,7 +1,6 @@
 #pragma once
 
 #include <shared/all.h>
-#include "client.h"
 #include "profile.h"
 #include "achievements.h"
 #include "sky.h"
@@ -59,107 +58,6 @@ namespace hcg001::Helpers
 	{
 	public:
 		TextInputField(const utf8_string& input_window_title);
-	};
-
-	template <class T> class ProfileListenable : public T, public Common::Event::Listenable<NetEvents::ProfileReceived>
-	{
-	public:
-		using ProfileCallback = std::function<void(Channel::ProfilePtr)>;
-
-	private:
-		void onEvent(const NetEvents::ProfileReceived& e) override
-		{
-			if (e.uid != mProfileUID)
-				return;
-
-			mFirstCalled = true;
-
-			if (mProfileCallback)
-				mProfileCallback(CLIENT->getProfile(mProfileUID));
-		}
-
-	protected:
-		void update(Clock::Duration dTime) override
-		{
-			T::update(dTime);
-			
-			if (mFirstCalled)
-				return;
-			
-			mFirstCalled = true;
-
-			if (!CLIENT->hasProfile(mProfileUID))
-				return;
-
-			if (mProfileCallback)
-				mProfileCallback(CLIENT->getProfile(mProfileUID));
-		}
-
-	public:
-		auto getProfileUID() const { return mProfileUID; }
-		void setProfileUID(int value) { mProfileUID = value; }
-		
-		auto getProfileCallback() const { return mProfileCallback; }
-		void setProfileCallback(ProfileCallback value) { mProfileCallback = value; }
-
-	private:
-		int mProfileUID = 0;
-		ProfileCallback mProfileCallback;
-		bool mFirstCalled = false;
-	};
-
-	template <class T> class GuildInfoListenable : public T, 
-		public Common::Event::Listenable<Channel::GuildInfoReceivedEvent>
-	{
-	public:
-		using GuildCallback = std::function<void(Channel::GuildPtr)>;
-
-	private:
-		void onEvent(const Channel::GuildInfoReceivedEvent& e) override
-		{
-			if (e.id != mGuildID)
-				return;
-
-			mFirstCalled = true;
-
-			if (mGuildCallback)
-				mGuildCallback(CLIENT->getGuild(mGuildID));
-		}
-
-	protected:
-		void update(Clock::Duration dTime) override
-		{
-			T::update(dTime);
-			
-			if (mFirstCalled)
-				return;
-			
-			mFirstCalled = true;
-
-			if (!CLIENT->hasGuild(mGuildID))
-				return;
-
-			if (mGuildCallback)
-				mGuildCallback(CLIENT->getGuild(mGuildID));
-		}
-
-	public:
-		auto getGuildID() const { return mGuildID; }
-		void setGuildID(int value) { mGuildID = value; }
-		
-		auto getGuildCallback() const { return mGuildCallback; }
-		void setGuildCallback(GuildCallback value) { mGuildCallback = value; }
-
-	private:
-		int mGuildID = 0;
-		GuildCallback mGuildCallback;
-		bool mFirstCalled = false;
-	};
-
-	class WaitingIndicator : public Scene::Node
-	{
-	public:
-		WaitingIndicator();
 	};
 
 	class TabsManager

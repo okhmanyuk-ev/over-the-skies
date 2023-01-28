@@ -48,31 +48,6 @@ TextInputField::TextInputField(const utf8_string& input_window_title)
 	});
 }
 
-WaitingIndicator::WaitingIndicator()
-{
-	setSize(24.0f);
-
-	auto circle = std::make_shared<Scene::Circle>();
-	circle->setStretch(1.0f);
-	circle->setAnchor(0.5f);
-	circle->setPivot(0.5f);
-	circle->setFill(0.2f);
-	circle->setPie(0.66f);
-	attach(circle);
-
-	runAction(Actions::Collection::RepeatInfinite([circle] {
-		return Actions::Collection::ChangeRadialAnchor(circle, 0.0f, 1.0f, 1.0f);
-		
-		/*const auto PieMin = 0.125f;
-		const auto PieMax = 1.0f - 0.125f;
-
-		return Actions::Collection::MakeSequence(
-			Actions::Collection::ChangeCirclePie(circle, PieMin, PieMax, 1.0f, Easing::CubicInOut),
-			Actions::Collection::ChangeCirclePie(circle, PieMax, PieMin, 1.0f, Easing::CubicInOut)
-		);*/
-	}));
-}
-
 // tabs manager
 
 void TabsManager::addContent(int type, std::shared_ptr<Item> node)

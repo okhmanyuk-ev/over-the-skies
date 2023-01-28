@@ -1,7 +1,6 @@
 #include "gameplay.h"
 #include "profile.h"
 #include "helpers.h"
-#include "client.h"
 #include "achievements.h"
 #include "gameover_menu.h"
 
@@ -535,7 +534,6 @@ void Gameplay::gameover()
 	mGameovered = true;
 	ACHIEVEMENTS->hit("GAME_COMPLETED");
 	PROFILE->saveAsync();
-	CLIENT->sendGuildContribution(mRubiesCollected);
 	auto gameover_screen = std::make_shared<GameoverMenu>(getScore());
 	SCENE_MANAGER->switchScreen(gameover_screen);
 }
