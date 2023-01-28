@@ -51,7 +51,6 @@ namespace hcg001
 		std::shared_ptr<Scene::Node> mPlayerTrailHolder;
 		std::shared_ptr<Scene::Node> mRectangleParticlesHolder;
 		std::shared_ptr<Player> mPlayer;
-		std::shared_ptr<Helpers::Label> mNickname;
 		std::shared_ptr<Scene::Label> mScoreLabel;
 		std::shared_ptr<Scene::Label> mRiskLabel = nullptr;
 		std::shared_ptr<Scene::Emitter> mJumpParticles;

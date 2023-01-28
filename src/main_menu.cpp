@@ -2,7 +2,6 @@
 #include "profile.h"
 #include "helpers.h"
 #include "windows/shop_window.h"
-#include "windows/options_window.h"
 #include "windows/achievements_window.h"
 #include "gameplay.h"
 #include "gameover_menu.h"
@@ -116,7 +115,7 @@ MainMenu::MainMenu()
 
 	const glm::vec2 TopButtonSize = { 72.0f, 28.0f };
 
-	auto shop_button = std::make_shared<Helpers::AdaptiveSpriteButton>();
+	/*auto shop_button = std::make_shared<Helpers::AdaptiveSpriteButton>();
 	shop_button->setTexture(TEXTURE("textures/shop.png"));
 	shop_button->setAdaptSize(TopButtonSize);
 	shop_button->setPosition({ 108.0f, 24.0f });
@@ -125,19 +124,7 @@ MainMenu::MainMenu()
 		auto window = std::make_shared<ShopWindow>();
 		SCENE_MANAGER->pushWindow(window);
 	});
-    getGui()->attach(shop_button);
-
-	auto options_button = std::make_shared<Helpers::AdaptiveSpriteButton>();
-	options_button->setTexture(TEXTURE("textures/options.png"));
-	options_button->setAdaptSize({ 24.0f, 24.0f });
-	options_button->setPosition({ -16.0f, 24.0f });
-	options_button->setAnchor({ 1.0f, 0.0f });
-	options_button->setPivot({ 1.0f, 0.5f });
-	options_button->setActiveCallback([] {
-		auto window = std::make_shared<OptionsWindow>();
-		SCENE_MANAGER->pushWindow(window);
-	});
-	getGui()->attach(options_button);
+    getGui()->attach(shop_button);*/
 
 	auto achievements_button = std::make_shared<Helpers::AdaptiveSpriteButton>();
 	achievements_button->setTexture(TEXTURE("textures/cup.png"));
@@ -179,7 +166,6 @@ void MainMenu::refresh()
 	mScrollbox->setSensitivity({ 1.0f, 0.0f });
 	mScrollbox->setAnchor(0.5f);
 	mScrollbox->setPivot(0.5f);
-	mScrollbox->setPosition({ 0.0f, 84.0f - 16.0f });
 	mScrollbox->setHorizontalStretch(1.0f);
 	mScrollbox->setHeight(ItemSize + ScrollPadding);
 	mScrollbox->setInertiaFriction(0.1f);

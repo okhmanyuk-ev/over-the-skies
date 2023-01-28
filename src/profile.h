@@ -48,20 +48,7 @@ namespace hcg001
 		auto getDailyRewardTime() const { return mDailyRewardTime; }
 		void setDailyRewardTime(long long value) { mDailyRewardTime = value; }
 
-		auto getNickName() const { return mNickName; }
-		void setNickName(const utf8_string& value) { mNickName = value; }
-
-		// guild_id data not stored in local profile,
-		// it will receive from server every game start
-		int getGuildId() const { return mGuildId; }
-		void setGuildId(int value) { mGuildId = value; }
-
-		bool isInGuild() const { return getGuildId() != NoneGuild; }
-
 		auto& getAchievementsProgress() { return mAchievementsProgress; }
-
-		bool isNicknameChanged() const { return mNicknameChanged; }
-		void setNicknameChanged(bool value) { mNicknameChanged = value; }
 
 		bool isAchievementRewardTaken(const std::string& achievement_id) const;
 		void achievementRewardTake(const std::string& achievement_id);
@@ -73,10 +60,7 @@ namespace hcg001
 		std::set<int> mSkins = { 0 };
 		int mDailyRewardDay = 0;
 		long long mDailyRewardTime = 0;
-		utf8_string mNickName = "Guest";
-		int mGuildId = NoneGuild;
 		std::map<std::string, int> mAchievementsProgress;
-		bool mNicknameChanged = false;
 		std::set<std::string> mAchievementRewardTaken;
 	};
 }

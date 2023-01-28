@@ -19,12 +19,6 @@ void Profile::read(const nlohmann::json& json)
 	if (json.contains("dailyreward_time"))
 		mDailyRewardTime = json["dailyreward_time"];
 
-	if (json.contains("nickname"))
-	{
-		auto nickname = json["nickname"].get<std::vector<utf8_string::value_type>>();
-		mNickName.assign(nickname.begin(), nickname.end());
-	}
-
 	if (json.contains("current_skin"))
 	{
 		mCurrentSkin = (Skin)json["current_skin"].get<int>();
@@ -40,8 +34,6 @@ void Profile::read(const nlohmann::json& json)
 		}
 	}
 
-	mNicknameChanged = json.value("nickname_changed", false);
-
 	if (json.contains("achievement_reward_taken"))
 		mAchievementRewardTaken = json["achievement_reward_taken"].get<std::set<std::string>>();
 
@@ -54,9 +46,7 @@ void Profile::write(nlohmann::json& json)
 	json["skins"] = mSkins;
 	json["dailyreward_day"] = mDailyRewardDay;
 	json["dailyreward_time"] = mDailyRewardTime;
-	json["nickname"] = std::vector<utf8_string::value_type>(mNickName.begin(), mNickName.end());
 	json["current_skin"] = (int)mCurrentSkin;
-	json["nickname_changed"] = mNicknameChanged;
 
 	for (const auto& [name, progress] : mAchievementsProgress)
 	{
@@ -74,9 +64,7 @@ void Profile::makeDefault()
 	mHighScore = 0;
 	setRubies(0);
 	mSkins = { 0 };
-	mNickName = "Guest";
 	mAchievementsProgress.clear();
-	mNicknameChanged = false;
 	mAchievementRewardTaken.clear();
 }
 

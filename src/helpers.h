@@ -54,61 +54,6 @@ namespace hcg001::Helpers
 	using SpriteButton = Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::SpriteButton>;
 	using AdaptiveSpriteButton = Shared::SceneHelpers::BouncingButtonBehavior<Scene::Adaptive<Shared::SceneHelpers::SpriteButton>>;
 
-	class TextInputField : public Scene::ClippableScissor<Button>
-	{
-	public:
-		TextInputField(const utf8_string& input_window_title);
-	};
-
-	class TabsManager
-	{
-	public:
-		class Item;
-
-	public:
-		void addContent(int type, std::shared_ptr<Item> node);
-		void addButton(int type, std::shared_ptr<Item> node);
-		void show(int type);
-
-	public:
-		const auto& getContents() const { return mContents; }
-
-	private:
-		std::map<int, std::shared_ptr<Item>> mContents;
-		std::map<int, std::shared_ptr<Item>> mButtons;
-		std::optional<int> mCurrentPage;
-	};
-
-	class TabsManager::Item
-	{
-	public:
-		virtual void onJoin() = 0;
-		virtual void onEnter() = 0;
-		virtual void onLeave() = 0;
-	};
-
-	template <class T> class MappedTabsManager : public TabsManager
-	{
-		static_assert(std::is_enum<T>::value, "T must be enum");
-	public:
-		void addContent(T type, std::shared_ptr<Item> node) { TabsManager::addContent((int)type, node); }
-		void addButton(T type, std::shared_ptr<Item> node) { TabsManager::addButton((int)type, node); }
-		void show(T type) { TabsManager::show((int)type); }
-	};
-
-	class NoInternetContent : public Scene::Node, public std::enable_shared_from_this<NoInternetContent>
-	{
-	public:
-		NoInternetContent();
-
-	public:
-		void runShowAction();
-
-	private:
-		std::shared_ptr<Helpers::Label> mLabel;
-		std::shared_ptr<Scene::Adaptive<Scene::Sprite>> mIcon;
-	};
-
 	class AchievementNotify : public Scene::ClippableStencil<Scene::Rectangle>
 	{
 	public:

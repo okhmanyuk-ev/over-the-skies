@@ -35,21 +35,11 @@ Gameplay::Gameplay()
 	mPlayer = createPlayer(PROFILE->getCurrentSkin(), mPlayerTrailHolder);
 	mPlayer->setAlpha(0.0f);
 
-	mNickname = std::make_shared<Helpers::Label>();
-	mNickname->setText(PROFILE->getNickName());
-	mNickname->setPivot(0.5f);
-	mNickname->setColor(Graphics::Color::ToNormalized(220, 220, 170));
-	mNickname->setAlpha(0.0f);
-	mNickname->setEnabled(PROFILE->isNicknameChanged());
-
 	runAction(Actions::Collection::Delayed([this] { return !isTransformReady(); },
 		Actions::Collection::MakeSequence(
 			Actions::Collection::Execute([this] {
 				mPlayer->setPosition({ getAbsoluteWidth() / 2.0f, (-getAbsoluteHeight() / 2.0f) - 32.0f });
 				mGameField->attach(mPlayer);
-
-				mNickname->setPosition(mPlayer->getPosition() + glm::vec2({ 0.0f, -32.0f }));
-				mGameField->attach(mNickname);
 			}),
 			Actions::Collection::Wait([this] { return !mPlayer->isTransformReady(); }),
 			Actions::Collection::Delayed(0.25f, Actions::Collection::MakeSequence(
@@ -61,8 +51,7 @@ Gameplay::Gameplay()
 				),
 				Actions::Collection::Execute([this] {
 					mCanStart = true;
-				}),
-				Actions::Collection::Show(mNickname, 0.5f)
+				})
 			))
 		)
 	));
@@ -518,11 +507,6 @@ void Gameplay::start()
 	runAction(Actions::Collection::MakeSequence(
 		Actions::Collection::Hide(mReadyLabel, 0.5f),
 		Actions::Collection::Kill(mReadyLabel)
-	));
-	mNickname->clearActions();
-	runAction(Actions::Collection::MakeSequence(
-		Actions::Collection::Hide(mNickname, 0.5f),
-		Actions::Collection::Kill(mNickname)
 	));
 }
 

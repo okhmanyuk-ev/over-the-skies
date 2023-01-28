@@ -1,5 +1,4 @@
 #include "helpers.h"
-#include "windows/input_window.h"
 
 using namespace hcg001::Helpers;
 
@@ -29,91 +28,6 @@ void Button::setButtonColor(const glm::vec3& color)
 	setInactiveColor({ glm::rgbColor(glm::vec3(0.0f, 0.0f, 0.25f)), 1.0f });
 	setHighlightColor({ color * 1.5f, 1.0f });
 	refresh();
-}
-
-TextInputField::TextInputField(const utf8_string& input_window_title)
-{
-	setRounding(0.5f);
-	setButtonColor(Pallete::InputField);
-	setAdaptiveFontSize(false);
-	getLabel()->setFontSize(18.0f);
-
-	setActiveCallback([this, input_window_title] {
-		auto text = getLabel()->getText();
-		auto callback = [this](auto text) {
-			getLabel()->setText(text);
-		};
-		auto input_window = std::make_shared<InputWindow>(input_window_title, text, callback);
-		SCENE_MANAGER->pushWindow(input_window);
-	});
-}
-
-// tabs manager
-
-void TabsManager::addContent(int type, std::shared_ptr<Item> node)
-{
-	mContents.insert({ type, node });
-	node->onJoin();
-}
-
-void TabsManager::addButton(int type, std::shared_ptr<Item> node)
-{
-	mButtons.insert({ type, node });
-	node->onJoin();
-}
-
-void TabsManager::show(int type)
-{
-	if (mCurrentPage.has_value())
-	{
-		mContents.at(mCurrentPage.value())->onLeave();
-		mButtons.at(mCurrentPage.value())->onLeave();
-	}
-
-	mContents.at(type)->onEnter();
-	mButtons.at(type)->onEnter();
-	mCurrentPage = type;
-}
-
-// no internet content
-
-NoInternetContent::NoInternetContent()
-{
-	setStretch(1.0f);
-	setScale(0.95f);
-	setAnchor(0.5f);
-	setPivot(0.5f);
-
-	mLabel = std::make_shared<Helpers::Label>();
-	mLabel->setText(LOCALIZE("SOCIAL_NO_INTERNET"));
-	//mLabel->setFontSize(24.0f);
-	mLabel->setAnchor(0.5f);
-	mLabel->setPivot({ 0.5f, 0.0f });
-	mLabel->setY(8.0f);
-	mLabel->setMultiline(true);
-	mLabel->setAlign(Graphics::TextMesh::Align::Center);
-	mLabel->setStretch({ 1.0f, 0.0f });
-	mLabel->setMargin({ 48.0f, 0.0f });
-	mLabel->setAlpha(0.0f);
-	attach(mLabel);
-
-	mIcon = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
-	mIcon->setTexture(TEXTURE("textures/no_internet.png"));
-	mIcon->setAnchor(0.5f);
-	mIcon->setPivot({ 0.5f, 1.0f });
-	mIcon->setY(-8.0f);
-	mIcon->setAdaptSize(64.0f);
-	mIcon->setAlpha(0.0f);
-	attach(mIcon);
-}
-
-void NoInternetContent::runShowAction()
-{
-	runAction(Actions::Collection::Delayed(0.25f, Actions::Collection::MakeParallel(
-		Actions::Collection::Show(mIcon, 1.0f, Easing::CubicOut),
-		Actions::Collection::Show(mLabel, 1.0f, Easing::CubicOut),
-		Actions::Collection::ChangeScale(shared_from_this(), { 1.0f, 1.0f }, 2.0f, Easing::CubicOut)
-	)));
 }
 
 // achievement notify
