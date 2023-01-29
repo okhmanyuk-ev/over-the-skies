@@ -139,9 +139,3 @@ target_include_directories(${PROJECT_NAME} PUBLIC src)
 add_subdirectory(sky)
 target_link_libraries(${PROJECT_NAME} sky)
 copy_required_libs(${PROJECT_NAME})
-
-# server
-
-if(WIN32)
-	add_subdirectory(server)
-endif()
