@@ -84,12 +84,12 @@ Gameplay::Gameplay()
 	});
 	mPlayer->attach(mJumpParticles);
 
-	mBonusesHolder = std::make_shared<Scene::Rectangle>();
+	/*mBonusesHolder = std::make_shared<Scene::Rectangle>();
 	mBonusesHolder->setRounding(1.0f);
 	mBonusesHolder->setSize({ 32.0f, 128.0f });
 	mBonusesHolder->setPosition({ 16.0f, 64.0f });
 	mBonusesHolder->setColor({ Graphics::Color::Black, 0.25f });
-	getGui()->attach(mBonusesHolder);
+	getGui()->attach(mBonusesHolder);*/
 }
 
 void Gameplay::onTap()
@@ -298,7 +298,7 @@ void Gameplay::spawnPlanes()
 
 		pos.y -= 56.0f;
 		pos.x += 96.0f;
-		spawnPlane(pos, anim_delay, PlaneBonus::Magnet, false, false);
+		spawnPlane(pos, anim_delay, /*PlaneBonus::Magnet*/std::nullopt, false, false);
 		anim_delay += AnimWait;
 
 		spawnPlane(getNextPos(), anim_delay, PlaneBonus::Ruby, true, false);
