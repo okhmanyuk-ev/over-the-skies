@@ -142,6 +142,22 @@ void Sky::spawnAsteroid(float speed, float normalized_spread)
 		Actions::Collection::Kill(asteroid)
 	));
 
+	auto emitter = std::make_shared<Scene::Emitter>();
+	emitter->setHolder(mAsteroidsHolder);
+	emitter->setPivot(0.5f);
+	emitter->setAnchor(0.5f);
+	emitter->setDistance(8.0f);
+	emitter->setMinDuration(0.25f);
+	emitter->setMaxDuration(0.75f);
+	emitter->setMinDelay(0.125f / 8.0f);
+	emitter->setMaxDelay(0.125f / 4.0f);
+	emitter->setCreateParticleCallback([] {
+		auto particle = std::make_shared<Scene::Rectangle>();
+		particle->setSize(2.0f);
+		return particle;
+	});
+	asteroid->attach(emitter);
+
 	mAsteroidsHolder->attach(asteroid);
 }
 
