@@ -27,22 +27,18 @@ Sky::Sky()
 
 	mBloomLayer = std::make_shared<Scene::BloomLayer>();
 	mBloomLayer->setStretch(1.0f);
-	mBloomLayer->setDownscaleFactor(2.0f);
-	mBloomLayer->setGlowIntensity(2.0f);
 	mBloomLayer->setBrightThreshold(0.0f);
+	mBloomLayer->setIntensity(2.0f);
 	attach(mBloomLayer);
 
 	CONSOLE->registerCVar("r_bloom_enabled", { "bool" }, CVAR_GETTER_BOOL_FUNC(mBloomLayer->isPostprocessEnabled),
 		CVAR_SETTER_BOOL_FUNC(mBloomLayer->setPostprocessEnabled));
 
-	CONSOLE->registerCVar("r_bloom_blur_passes", { "int" }, CVAR_GETTER_INT_FUNC(mBloomLayer->getBlurPasses),
-		CVAR_SETTER_INT_FUNC(mBloomLayer->setBlurPasses));
+	CONSOLE->registerCVar("r_bloom_intensity", { "float" }, CVAR_GETTER_FLOAT_FUNC(mBloomLayer->getIntensity),
+		CVAR_SETTER_FLOAT_FUNC(mBloomLayer->setIntensity));
 
-	CONSOLE->registerCVar("r_bloom_glow_intensity", { "float" }, CVAR_GETTER_FLOAT_FUNC(mBloomLayer->getGlowIntensity),
-		CVAR_SETTER_FLOAT_FUNC(mBloomLayer->setGlowIntensity));
-
-	CONSOLE->registerCVar("r_bloom_downscale_factor", { "float" }, CVAR_GETTER_FLOAT_FUNC(mBloomLayer->getDownscaleFactor),
-		CVAR_SETTER_FLOAT_FUNC(mBloomLayer->setDownscaleFactor));
+	CONSOLE->registerCVar("r_bloom_bright_threshold", { "float" }, CVAR_GETTER_FLOAT_FUNC(mBloomLayer->getBrightThreshold),
+		CVAR_SETTER_FLOAT_FUNC(mBloomLayer->setBrightThreshold));
 
 	// stars holder
 
@@ -65,7 +61,7 @@ Sky::Sky()
 	mBloomLayer->attach(mStarsBottomRight);
 
 	mStarsTopRight = std::make_shared<Scene::Node>();
-	mStarsTopRight->setStretch({ 1.0f, 1.0f });
+	mStarsTopRight->setStretch(1.0f);
 	mStarsTopRight->setAnchor({ 1.0f, 0.0f });
 	mStarsTopRight->setPivot({ 0.0f, 1.0f });
 	mBloomLayer->attach(mStarsTopRight);
@@ -78,7 +74,7 @@ Sky::Sky()
 	// asteroids
 
 	mAsteroidsHolder = std::make_shared<Scene::Node>();
-	mAsteroidsHolder->setStretch({ 1.0f, 1.0f });
+	mAsteroidsHolder->setStretch(1.0f);
 	mBloomLayer->attach(mAsteroidsHolder);
 
 	runAction(Actions::Collection::RepeatInfinite([this] {
