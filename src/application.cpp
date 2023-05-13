@@ -287,6 +287,11 @@ void Application::showCheats()
 		{
 			CONSOLE->execute("spawn_shockwave 10.0");
 		}
+
+		if (ImGui::Button("TOGGLE BLOOM"))
+		{
+			CONSOLE->execute("if r_bloom_enabled 1 \"r_bloom_enabled 0\" \"r_bloom_enabled 1\"");
+		}
 	}
 
 	ImGui::Checkbox("DEV", &Enabled);
