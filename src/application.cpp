@@ -24,7 +24,6 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 #if defined(PLATFORM_WINDOWS)
 	PLATFORM->rescale(1.5f);
 #endif
-	RENDERER->setVsync(true);
 
 #if defined(PLATFORM_MAC)
 	std::static_pointer_cast<Shared::ConsoleDevice>(CONSOLE_DEVICE)->setHiddenButtonEnabled(false);

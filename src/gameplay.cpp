@@ -210,7 +210,7 @@ void Gameplay::camera(Clock::Duration dTime)
 	if (target.y < 0.0f)
 		target.y = 0.0f;
 
-	auto pos = Common::Helpers::SmoothValueAssign(mGameField->getPosition(), target, dTime, 0.08f);
+	auto pos = Common::Helpers::SmoothValue(mGameField->getPosition(), target, dTime, 0.08f);
 
 	mGameField->setPosition(pos);
 	Helpers::gSky->moveSky(pos);
