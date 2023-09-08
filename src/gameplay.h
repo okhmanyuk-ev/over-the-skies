@@ -18,6 +18,13 @@ namespace hcg001
 			Magnet
 		};
 
+		enum class JumpType
+		{
+			Normal,
+			PowerJump,
+			FallJump
+		};
+
 	private:
 		const float MaxFallVelocity = 20.0f;
 
@@ -31,7 +38,7 @@ namespace hcg001
 	private:
 		void physics(float dTime);
 		void camera(Clock::Duration dTime);
-		void jump(bool powerjump);
+		void jump(JumpType jump_type);
 		void downslide();
 		void collide(std::shared_ptr<Plane> plane);
 		void removeFarPlanes();

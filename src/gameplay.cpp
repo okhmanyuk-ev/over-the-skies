@@ -162,7 +162,7 @@ void Gameplay::physics(float dTime)
 	float next_l = mPlayer->getX() - (mPlayer->getWidth() * mPlayer->getHorizontalPivot());
 	float next_r = mPlayer->getX() + (mPlayer->getWidth() * mPlayer->getHorizontalPivot());
 
-	if (mVelocity.y > 0.0f && mDownslide) // if move down 
+	if (mVelocity.y > 0.0f) // if move down
 	{
 		glm::vec2 min = { glm::min(prev_l, next_l), prev_y };
 		glm::vec2 max = { glm::max(prev_r, next_r), next_y };
@@ -216,17 +216,21 @@ void Gameplay::camera(Clock::Duration dTime)
 	Helpers::gSky->moveSky(pos);
 }
 
-void Gameplay::jump(bool powerjump)
+void Gameplay::jump(JumpType jump_type)
 {
 	//AUDIO->play(SOUND("sounds/click.wav"));
 	PLATFORM->haptic(Platform::System::HapticType::High);
 	mVelocity.y = -10.0f;
 
-	if (powerjump)
+	if (jump_type == JumpType::PowerJump)
+	{
 		mVelocity.y *= 1.75f;
-
-	if (powerjump)
 		ACHIEVEMENTS->hit("JUMP_BOOSTER_PANEL");
+	}
+	else if (jump_type == JumpType::FallJump)
+	{
+		mVelocity.y /= 3.0f;
+	}
 }
 
 void Gameplay::downslide()
@@ -242,7 +246,11 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 {
 	plane->setCrashed(true);
 	mVelocity.x = 3.0f;
-	jump(plane->isPowerjump());
+
+	auto jump_type = mDownslide ? (plane->isPowerjump() ? JumpType::PowerJump :
+		JumpType::Normal) : JumpType::FallJump;
+
+	jump(jump_type);
 
 	if (plane->isPowerjump() && plane->isMoving())
 		showRiskLabel(LOCALIZE("RISK_PERFECT"));

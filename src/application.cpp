@@ -18,11 +18,10 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 	PLATFORM->setTitle(PRODUCT_NAME);
 #if defined(PLATFORM_MAC)
 	PLATFORM->resize(720, 1280);
+#elif defined(PLATFORM_WINDOWS)
+	PLATFORM->resize(540, 960);
 #else
 	PLATFORM->resize(360, 640);
-#endif
-#if defined(PLATFORM_WINDOWS)
-	PLATFORM->rescale(1.5f);
 #endif
 
 #if defined(PLATFORM_MAC)
