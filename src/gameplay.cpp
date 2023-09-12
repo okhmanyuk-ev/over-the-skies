@@ -63,7 +63,7 @@ Gameplay::Gameplay()
 	mScoreLabel->setText("0");
 	mScoreLabel->setFontSize(22.0f);
     getGui()->attach(mScoreLabel);
-	
+
 	mRubiesIndicator = std::make_shared<Helpers::RubiesIndicator>();
 	mRubiesIndicator->setInstantRefresh(false);
 	getGui()->attach(mRubiesIndicator);
@@ -106,6 +106,14 @@ void Gameplay::onTap()
 	}
 
 	downslide();
+}
+
+void Gameplay::onEvent(const Platform::Input::Keyboard::Event& e)
+{
+	if (e.type != Platform::Input::Keyboard::Event::Type::Pressed)
+		return;
+
+	tap();
 }
 
 void Gameplay::update(Clock::Duration delta)

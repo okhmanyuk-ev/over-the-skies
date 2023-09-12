@@ -9,7 +9,8 @@
 
 namespace hcg001
 {
-	class Gameplay : public Scene::Tappable<Screen>
+	class Gameplay : public Scene::Tappable<Screen>,
+		public Common::Event::Listenable<Platform::Input::Keyboard::Event>
 	{
 	public:
 		enum class PlaneBonus
@@ -33,6 +34,7 @@ namespace hcg001
 
 	protected:
 		void onTap() override;
+		void onEvent(const Platform::Input::Keyboard::Event& e) override;
 		void update(Clock::Duration delta) override;
 		
 	private:
