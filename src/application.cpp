@@ -290,6 +290,11 @@ void Application::showCheats()
 		{
 			CONSOLE->execute("if r_bloom_enabled 1 \"r_bloom_enabled 0\" \"r_bloom_enabled 1\"");
 		}
+
+		if (ImGui::Button("SPAWN ASTEROIDS"))
+		{
+			Helpers::gSky->spawnSomeAsteroids();
+		}
 	}
 
 	ImGui::Checkbox("DEV", &Enabled);

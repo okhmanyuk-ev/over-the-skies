@@ -16,6 +16,7 @@ namespace hcg001
 	public:
 		void changeColor(float top_hue = -1.0f, float bottom_hue = -1.0f);
 		void moveSky(const glm::vec2& offset);
+		void spawnSomeAsteroids();
 
 	private:
 		std::shared_ptr<Scene::BloomLayer> mBloomLayer;

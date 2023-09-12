@@ -80,21 +80,8 @@ Sky::Sky()
 	runAction(Actions::Collection::RepeatInfinite([this] {
 		auto delay = glm::linearRand(10.0f, 20.0f);
 		return Actions::Collection::Delayed(delay,
-			Actions::Collection::Insert([this] {
-				auto seq = Actions::Collection::MakeSequence();
-				auto global_spread = glm::linearRand(0.0f, 1.0f);
-				auto speed = glm::linearRand(256.0f + 128.0f, 512.0f + 256.0f);
-				auto count = glm::linearRand(1, 3);
-				for (int i = 0; i < count; i++)
-				{
-					auto local_spread = glm::linearRand(-0.125f, 0.125f);
-					seq->add(Actions::Collection::Delayed(glm::linearRand(0.0f, 0.25f),
-						Actions::Collection::Execute([this, speed, global_spread, local_spread] {
-							spawnAsteroid(speed, global_spread + local_spread);
-						})
-					));
-				}
-				return std::move(seq);
+			Actions::Collection::Execute([this] {
+				spawnSomeAsteroids();
 			})
 		);
 	}));
@@ -240,4 +227,22 @@ void Sky::moveSky(const glm::vec2& offset)
 	moveStars(mStarsTopLeft, stars_delta);
 	moveStars(mStarsBottomRight, stars_delta);
 	moveStars(mStarsTopRight, stars_delta);
+}
+
+void Sky::spawnSomeAsteroids()
+{
+	auto seq = Actions::Collection::MakeSequence();
+	auto global_spread = glm::linearRand(0.0f, 1.0f);
+	auto speed = glm::linearRand(256.0f + 128.0f, 512.0f + 256.0f);
+	auto count = glm::linearRand(1, 3);
+	for (int i = 0; i < count; i++)
+	{
+		auto local_spread = glm::linearRand(-0.125f, 0.125f);
+		seq->add(Actions::Collection::Delayed(glm::linearRand(0.0f, 0.25f),
+			Actions::Collection::Execute([this, speed, global_spread, local_spread] {
+				spawnAsteroid(speed, global_spread + local_spread);
+			})
+		));
+	}
+	runAction(std::move(seq));
 }
