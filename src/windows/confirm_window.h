@@ -7,8 +7,8 @@ namespace hcg001
 	class ConfirmWindow : public Window
 	{
 	public:
-		ConfirmWindow(const utf8_string& title, const utf8_string& yes_text, 
-			const utf8_string& no_text);
+		ConfirmWindow(const tiny_utf8::string& title, const tiny_utf8::string& yes_text,
+			const tiny_utf8::string& no_text);
 
 	public:
 		void setYesCallback(std::function<void()> value) { mYesCallback = value; }

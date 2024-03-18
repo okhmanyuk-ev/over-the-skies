@@ -2,8 +2,8 @@
 
 using namespace hcg001;
 
-ConfirmWindow::ConfirmWindow(const utf8_string& title, const utf8_string& yes_text,
-	const utf8_string& no_text) : Window()
+ConfirmWindow::ConfirmWindow(const tiny_utf8::string& title, const tiny_utf8::string& yes_text,
+	const tiny_utf8::string& no_text) : Window()
 {
 	getBackground()->setSize({ 314.0f, 96.0f });
 	getTitle()->setText(title);

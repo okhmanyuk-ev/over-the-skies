@@ -538,7 +538,7 @@ void Gameplay::gameover()
 	SCENE_MANAGER->switchScreen(gameover_screen);
 }
 
-void Gameplay::showRiskLabel(const utf8_string& text)
+void Gameplay::showRiskLabel(const tiny_utf8::string& text)
 {
 	if (mRiskLabel != nullptr)
 	{
