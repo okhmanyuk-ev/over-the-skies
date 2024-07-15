@@ -37,7 +37,7 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 	PROFILE->load();
 
 	PLATFORM->initializeBilling({
-		{ "rubies.001", [this] { 
+		{ "rubies.001", [this] {
 			addRubies(500);
 		} }
 	});
@@ -72,7 +72,7 @@ void Application::initialize()
 	root->attach(Helpers::gSky, Scene::Node::AttachDirection::Front);
 
 	Actions::Run(Actions::Collection::MakeSequence(
-		Actions::Collection::WaitOneFrame(),
+		Actions::Collection::WaitGlobalFrame(),
 		Actions::Collection::Wait(0.25f),
 		Actions::Collection::Execute([] {
 			//sky->changeColor(Graphics::Color::Hsv::HueBlue, Graphics::Color::Hsv::HueRed);
@@ -84,13 +84,13 @@ void Application::initialize()
 					Helpers::gSky->changeColor();
 				})
 			);
-		})	
+		})
 	));
 
 	Helpers::gMainMenu = std::make_shared<MainMenu>();
 
 	Actions::Run(Actions::Collection::MakeSequence(
-		Actions::Collection::WaitOneFrame(),
+		Actions::Collection::WaitGlobalFrame(),
 		Actions::Collection::Execute([this] {
 			SCENE_MANAGER->switchScreen(Helpers::gMainMenu, [this] {
 				tryShowDailyReward();

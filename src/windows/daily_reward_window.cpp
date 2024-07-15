@@ -47,7 +47,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 		auto title = std::make_shared<Scene::Label>();
 		title->setFont(FONT("default"));
 		title->setFontSize(16.0f);
-		title->setText(LOCALIZE_FMT("DAILYREWARD_DAY", day));
+		title->setText(fmt::format(LOCALIZE("DAILYREWARD_DAY").c_str(), day));
 		title->setAnchor({ 0.5f, 0.0f });
 		title->setPivot({ 0.5f, 0.0f });
 		title->setY(4.0f);

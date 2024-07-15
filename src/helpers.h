@@ -42,13 +42,6 @@ namespace hcg001::Helpers
 
 	public:
 		void setButtonColor(const glm::vec3& color);
-
-	public:
-		auto isAdaptiveFontSize() const { return mAdaptiveFontSize; }
-		void setAdaptiveFontSize(bool value) { mAdaptiveFontSize = value; }
-
-	private:
-		bool mAdaptiveFontSize = true;
 	};
 
 	using SpriteButton = Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::SpriteButton>;

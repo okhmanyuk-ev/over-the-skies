@@ -12,12 +12,6 @@ Button::Button()
 {
 	setRounding(0.5f);
 	setHighlightEnabled(false);
-	runAction(Actions::Collection::ExecuteInfinite([this] {
-		if (!mAdaptiveFontSize)
-			return;
-
-		getLabel()->setFontSize(getAbsoluteHeight() * (18.0f / 28.0f));
-	}));
 	setButtonColor(Pallete::ButtonColor);
 	refresh();
 }

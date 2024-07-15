@@ -69,7 +69,7 @@ GameoverMenu::GameoverMenu(int score)
 	getContent()->attach(tap_label);
 
 	Actions::Run(
-		Actions::Collection::RepeatInfinite([this, tap_label]() -> Actions::Collection::UAction {
+		Actions::Collection::RepeatInfinite([this, tap_label]() -> std::unique_ptr<Actions::Action> {
 			if (getState() != State::Entered)
 				return nullptr;
 
