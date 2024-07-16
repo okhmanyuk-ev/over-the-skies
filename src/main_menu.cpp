@@ -22,10 +22,8 @@ MainMenu::MainMenu()
 
 	const glm::vec2 ButtonSize = { 192.0f, 48.0f };
 
-	auto play_button = std::make_shared<Helpers::Button>();	
+	auto play_button = std::make_shared<Helpers::Button>();
 	play_button->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
-	play_button->setAdaptiveFontSize(false);
-	play_button->getLabel()->setFontSize(20.0f);
 	play_button->getLabel()->setText(LOCALIZE("MAIN_MENU_PLAY"));
 	play_button->setClickCallback([this] {
 		if (PROFILE->isSkinLocked(mChoosedSkin))
@@ -45,8 +43,6 @@ MainMenu::MainMenu()
 
 	auto unlock_button = std::make_shared<Helpers::Button>();
 	unlock_button->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
-	unlock_button->setAdaptiveFontSize(false);
-	unlock_button->getLabel()->setFontSize(20.0f);
 	unlock_button->getLabel()->setText(LOCALIZE("MAIN_MENU_UNLOCK"));
 	unlock_button->setClickCallback([this, unlock_button] {
 		if (!PROFILE->isSkinLocked(mChoosedSkin))
@@ -76,7 +72,7 @@ MainMenu::MainMenu()
 
 		if (mButtonsAnimating)
 			return;
-		
+
 		auto locked = PROFILE->isSkinLocked(mChoosedSkin);
 
 		const float Duration = 0.33f;
@@ -86,7 +82,7 @@ MainMenu::MainMenu()
 		{
 			mPlayButtonVisible = false;
 			mButtonsAnimating = true;
-			
+
 			runAction(Actions::Collection::MakeSequence(
 				Actions::Collection::MakeParallel(
 					Actions::Collection::ChangeHorizontalAnchor(play_button, -0.5f, Duration, EasingFunction),
@@ -172,7 +168,7 @@ void MainMenu::refresh()
 	mScrollbox->setScrollPosition(prev_scroll_pos);
 
 	mItems = createScrollItems();
-	
+
 	auto row = Shared::SceneHelpers::MakeHorizontalGrid({ SlotWidth, ItemSize }, mItems);
 	row->setAnchor(0.5f);
 	row->setPivot(0.5f);
@@ -315,7 +311,7 @@ void MainMenu::menuPhysics(float dTime)
 
 	if (mScrollbox->isTouching())
 		return;
-		
+
 	if (glm::length(mScrollbox->getSpeed()) >= 2.0f)
 		return;
 
@@ -357,7 +353,7 @@ void MainMenu::menuPhysics(float dTime)
 
 	auto nearest_projected = unproject(nearest->project(nearest->getAbsoluteSize() / 2.0f));
 	auto offset = distance * dTime * 10.0f / mScrollbox->getHorizontalScrollSpace();
-	
+
 	if (nearest_projected.x < slot_projected.x)
 		mScrollbox->setHorizontalScrollPosition(mScrollbox->getHorizontalScrollPosition() - offset);
 	else
