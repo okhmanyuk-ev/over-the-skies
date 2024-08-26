@@ -60,7 +60,7 @@ Gameplay::Gameplay()
 	mScoreLabel->setAnchor({ 1.0f, 0.0f });
 	mScoreLabel->setPivot({ 1.0f, 0.5f });
 	mScoreLabel->setPosition({ -16.0f, 24.0f });
-	mScoreLabel->setText("0");
+	mScoreLabel->setText(L"0");
 	mScoreLabel->setFontSize(22.0f);
     getGui()->attach(mScoreLabel);
 
@@ -538,7 +538,7 @@ void Gameplay::gameover()
 	SCENE_MANAGER->switchScreen(gameover_screen);
 }
 
-void Gameplay::showRiskLabel(const tiny_utf8::string& text)
+void Gameplay::showRiskLabel(const std::wstring& text)
 {
 	if (mRiskLabel != nullptr)
 	{
@@ -573,7 +573,7 @@ void Gameplay::setScore(int count)
 		ACHIEVEMENTS->hit("COVER_DISTANCE", count - mScore);
 
 	mScore = count;
-	mScoreLabel->setText(std::to_string(mScore));
+	mScoreLabel->setText(std::to_wstring(mScore));
 
 	if (mScore > PROFILE->getHighScore())
 		PROFILE->setHighScore(mScore);

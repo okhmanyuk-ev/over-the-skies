@@ -243,7 +243,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 		auto price = std::make_shared<Scene::Label>();
 		price->setFont(FONT("default"));
 		price->setFontSize(16.0f);
-		price->setText(std::to_string(SkinCost.at(skin)));
+		price->setText(std::to_wstring(SkinCost.at(skin)));
 		price->setAnchor({ 0.0f, 0.5f });
 		price->setPivot({ 0.0f, 0.5f });
 		price->setEnabled(locked);

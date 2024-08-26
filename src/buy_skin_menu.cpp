@@ -24,7 +24,6 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 
 	mBuyButton = std::make_shared<Helpers::Button>();
 	mBuyButton->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
-	mBuyButton->getLabel()->setAdaptingEnabled(false);
 	mBuyButton->getLabel()->setFontSize(20.0f);
 	mBuyButton->getLabel()->setText(LOCALIZE("BUY_SKIN_BUY"));
 	mBuyButton->setClickCallback([this, skin] {
@@ -45,11 +44,10 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 
 	mCancelButton = std::make_shared<Helpers::Button>();
 	mCancelButton->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
-	mCancelButton->getLabel()->setAdaptingEnabled(false);
 	mCancelButton->getLabel()->setFontSize(20.0f);
 	mCancelButton->getLabel()->setText(LOCALIZE("BUY_SKIN_CANCEL"));
 	mCancelButton->setClickCallback([this] {
-		SCENE_MANAGER->switchScreenBack(); 
+		SCENE_MANAGER->switchScreenBack();
 	});
 	mCancelButton->setSize({ 128.0f, 48.0f });
 	mCancelButton->setAnchor({ 0.5f, 1.25f });
@@ -60,8 +58,6 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 
 	auto rubies = std::make_shared<Helpers::RubiesIndicator>();
 	getGui()->attach(rubies);
-
-	//
 
 	mTitle->setHorizontalAnchor(0.5f);
 	mImage->setHorizontalAnchor(0.5f);

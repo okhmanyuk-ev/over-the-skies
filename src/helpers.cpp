@@ -77,7 +77,7 @@ AchievementNotify::AchievementNotify(const Achievements::Item& item)
 	progress_label->setAnchor({ 0.0f, 0.0f });
 	progress_label->setPivot({ 0.0f, 1.0f });
 	progress_label->setFontSize(12.0f);
-	progress_label->setText(fmt::format("{}/{}", progress, required));
+	progress_label->setText(fmt::format(L"{}/{}", progress, required));
 	progressbar->attach(progress_label);
 }
 
@@ -99,10 +99,10 @@ RubiesIndicator::RubiesIndicator()
 	setPivot({ 0.0f, 0.5f });
 	setPosition({ 16.0f, 24.0f });
 	setSize(24.0f);
-	
+
 	mLabel = std::make_shared<Label>();
 	mLabel->setFontSize(22.0f);
-	mLabel->setText(std::to_string(PROFILE->getRubies()));
+	mLabel->setText(std::to_wstring(PROFILE->getRubies()));
 	mLabel->setAnchor({ 1.0f, 0.5f });
 	mLabel->setPivot({ 0.0f, 0.5f });
 	mLabel->setPosition({ 8.0f, 0.0f });
@@ -119,7 +119,7 @@ void RubiesIndicator::onEvent(const Profile::RubiesChangedEvent& e)
 
 void RubiesIndicator::refresh()
 {
-	mLabel->setText(std::to_string(PROFILE->getRubies()));
+	mLabel->setText(std::to_wstring(PROFILE->getRubies()));
 }
 
 void RubiesIndicator::collectRubyAnim(std::shared_ptr<Scene::Node> ruby, float delay)
@@ -143,7 +143,7 @@ void RubiesIndicator::collectRubyAnim(std::shared_ptr<Scene::Node> ruby, float d
 		),
 		Actions::Collection::Kill(ruby),
 		Actions::Collection::Execute([this, rubies_count] {
-			mLabel->setText(std::to_string(rubies_count));
+			mLabel->setText(std::to_wstring(rubies_count));
 		}),
 		Actions::Collection::Shake(mLabel, 2.0f, 0.2f)
 	));

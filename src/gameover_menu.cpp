@@ -13,7 +13,7 @@ GameoverMenu::GameoverMenu(int score)
 	mScoreLabel->setFontSize(56.0f);
 	mScoreLabel->setAnchor({ 0.5f, 0.25f });
 	mScoreLabel->setPivot({ 0.5f, 0.5f });
-	mScoreLabel->setText(std::to_string(score));
+	mScoreLabel->setText(std::to_wstring(score));
 	getContent()->attach(mScoreLabel);
 
 	// crown
@@ -35,7 +35,7 @@ GameoverMenu::GameoverMenu(int score)
 	mHighScoreLabel->setAnchor({ 1.0f, 0.5f });
 	mHighScoreLabel->setPivot({ 0.0f, 0.5f });
 	mHighScoreLabel->setHorizontalPosition(8.0f);
-	mHighScoreLabel->setText(std::to_string(PROFILE->getHighScore()));
+	mHighScoreLabel->setText(std::to_wstring(PROFILE->getHighScore()));
 	crown->attach(mHighScoreLabel);
 
 	// ruby
@@ -56,7 +56,7 @@ GameoverMenu::GameoverMenu(int score)
 	mRubyScoreLabel->setAnchor({ 1.0f, 0.5f });
 	mRubyScoreLabel->setPivot({ 0.0f, 0.5f });
 	mRubyScoreLabel->setHorizontalPosition(8.0f);
-	mRubyScoreLabel->setText(std::to_string(PROFILE->getRubies()));
+	mRubyScoreLabel->setText(std::to_wstring(PROFILE->getRubies()));
 	ruby->attach(mRubyScoreLabel);
 
 	auto tap_label = std::make_shared<Scene::Label>();

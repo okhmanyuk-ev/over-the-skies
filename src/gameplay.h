@@ -49,7 +49,7 @@ namespace hcg001
 		void spawnJumpParticles();
 		void start();
 		void gameover();
-		void showRiskLabel(const tiny_utf8::string& text);
+		void showRiskLabel(const std::wstring& text);
 		void setScore(int count);
 		float getDifficulty() const;
 

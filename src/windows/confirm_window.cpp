@@ -2,8 +2,8 @@
 
 using namespace hcg001;
 
-ConfirmWindow::ConfirmWindow(const tiny_utf8::string& title, const tiny_utf8::string& yes_text,
-	const tiny_utf8::string& no_text) : Window()
+ConfirmWindow::ConfirmWindow(const std::wstring& title, const std::wstring& yes_text,
+	const std::wstring& no_text) : Window()
 {
 	getBackground()->setSize({ 314.0f, 96.0f });
 	getTitle()->setText(title);
@@ -29,6 +29,6 @@ ConfirmWindow::ConfirmWindow(const tiny_utf8::string& title, const tiny_utf8::st
 	no_button->setClickCallback([this] {
 		if (mNoCallback)
 			mNoCallback();
-	}); 
+	});
 	getBody()->attach(no_button);
 }

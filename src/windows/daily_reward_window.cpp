@@ -64,7 +64,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 		auto value = std::make_shared<Scene::Label>();
 		value->setFont(FONT("default"));
 		value->setFontSize(16.0f);
-		value->setText(std::to_string(DailyRewardMap.at(day)));
+		value->setText(std::to_wstring(DailyRewardMap.at(day)));
 		value->setAnchor({ 0.5f, 1.0f });
 		value->setPivot({ 0.5f, 1.0f });
 		value->setY(-4.0f);

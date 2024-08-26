@@ -118,7 +118,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	num_label->setPosition({ 24.0f, 0.0f });
 	num_label->setPivot(0.5f);
 	num_label->setAnchor({ 0.0f, 0.5f });
-	num_label->setText(std::to_string(num));
+	num_label->setText(std::to_wstring(num));
 	attach(num_label);
 
 	auto title = std::make_shared<Helpers::Label>();
@@ -136,7 +136,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	auto progress_label = std::make_shared<Helpers::Label>();
 	progress_label->setPosition({ 48.0f, 28.0f });
 	progress_label->setFontSize(12.0f);
-	progress_label->setText(fmt::format("{}/{}", progress, required));
+	progress_label->setText(fmt::format(L"{}/{}", progress, required));
 	attach(progress_label);
 
 	auto progressbar = std::make_shared<Shared::SceneHelpers::Progressbar>();
@@ -166,7 +166,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	mButton->setActive(completed);
 	mButton->setButtonColor(glm::rgbColor(glm::vec3(150.0f, 0.5f, 0.5f)));
 	//mButton->getLabel()->setText(LOCALIZE("ACHIEVEMENTS_WINDOW_CLAIM"));
-	mButton->getLabel()->setText(std::to_string(achievement.reward));
+	mButton->getLabel()->setText(std::to_wstring(achievement.reward));
 	mButton->setClickCallback([this, name, ruby, achievement] {
 		PROFILE->achievementRewardTake(name);
 		PROFILE->increaseRubies(achievement.reward);
