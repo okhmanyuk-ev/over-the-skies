@@ -19,10 +19,9 @@ namespace hcg001
 		void onFrame() override;
 		void addRubies(int count);
 		void tryShowDailyReward();
-		void adaptToScreen(std::shared_ptr<Scene::Node> node);
 		void showCheats();
 
 	private:
-		void onEvent(const Achievements::AchievementEarnedEvent& e) override;		
+		void onEvent(const Achievements::AchievementEarnedEvent& e) override;
 	};
 }

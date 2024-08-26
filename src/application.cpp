@@ -46,6 +46,7 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 
 	STATS->setAlignment(Shared::StatsSystem::Align::BottomRight);
 
+	getScene()->setScreenAdaption(glm::vec2{ 360.0f, 640.0f });
 	Scene::Sprite::DefaultSampler = skygfx::Sampler::Linear;
 	Scene::Sprite::DefaultTexture = TEXTURE("textures/default.png");
     Scene::Label::DefaultFont = FONT("default");
@@ -105,7 +106,6 @@ void Application::initialize()
 
 void Application::onFrame()
 {
-	adaptToScreen(getScene()->getRoot());
 	showCheats();
 	GAME_STATS("event listeners", EVENT->getListenersCount());
 }
@@ -162,7 +162,7 @@ void Application::tryShowDailyReward()
 	auto window = std::make_shared<DailyRewardWindow>(current_day);
 	window->setClaimCallback([this, current_day, now] {
 		auto rubies_count = DailyRewardWindow::DailyRewardMap.at(current_day);
-		
+
 		PROFILE->setDailyRewardTime(now);
 		PROFILE->setDailyRewardDay(current_day);
 		PROFILE->saveAsync();
@@ -170,16 +170,6 @@ void Application::tryShowDailyReward()
 		addRubies(rubies_count);
 	});
 	SCENE_MANAGER->pushWindow(window);
-}
-
-void Application::adaptToScreen(std::shared_ptr<Scene::Node> node)
-{
-	glm::vec2 size = { (float)PLATFORM->getLogicalWidth(), (float)PLATFORM->getLogicalHeight() };
-	glm::vec2 dimensions = { 360.0f, 640.0f };
-
-	auto scale = size / dimensions;
-	node->setScale(glm::min(scale.x, scale.y));
-	node->setStretch(1.0f / node->getScale());
 }
 
 void Application::onEvent(const Achievements::AchievementEarnedEvent& e)
