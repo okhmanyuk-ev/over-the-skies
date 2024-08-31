@@ -50,7 +50,7 @@ MainMenu::MainMenu()
 
 		if (PROFILE->getRubies() < SkinCost.at(mChoosedSkin))
 		{
-			auto label = Shared::SceneHelpers::MakeFastPopupLabel(shared_from_this(), unlock_button, LOCALIZE("MAIN_MENU_NOT_ENOUG_RUBIES"), 20.0f);
+			auto label = Shared::SceneHelpers::MakePopupLabel(shared_from_this(), unlock_button, LOCALIZE("MAIN_MENU_NOT_ENOUG_RUBIES"), 20.0f);
 			label->setOrigin({ 0.0f, unlock_button->getHeight() });
 			return;
 		}
