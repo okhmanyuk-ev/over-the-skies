@@ -6,12 +6,12 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 {
 	getBackground()->setSize({ 314.0f, 286.0f });
 	getTitle()->setText(LOCALIZE("DAILYREWARD_TITLE"));
-
 	setCloseOnMissclick(false);
 
-	const glm::vec2 PlashkaSize = { 74.0f, 96.0f };
+	auto makePlashka = [this, current_day](int day) {
+		auto holder = std::make_shared<Scene::Node>();
+		holder->setSize({ 74.0f, 96.0f });
 
-	auto makePlashka = [this, PlashkaSize, current_day](int day) {
 		auto rect = std::make_shared<Scene::Rectangle>();
 		rect->setBatchGroup(fmt::format("plashka_rect_{}", (size_t)this));
 		rect->setRounding(4.0f);
@@ -21,6 +21,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 		rect->setAnchor(0.5f);
 		rect->setPivot(0.5f);
 		rect->setAlpha(0.66f);
+		holder->attach(rect);
 
 		auto color = glm::vec3(Graphics::Color::Hsv::HueGreen, 0.0f, 0.5f);
 
@@ -28,7 +29,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 			color.y = 0.33f;
 
 		rect->setColor(glm::rgbColor(color));
-		
+
 		if (day == current_day)
 		{
 			rect->runAction(Actions::Collection::RepeatInfinite([rect] {
@@ -70,33 +71,20 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 		value->setY(-4.0f);
 		rect->attach(value);
 
-		return rect;
+		return holder;
 	};
 
-	auto sub_grid1 = Shared::SceneHelpers::MakeHorizontalGrid(PlashkaSize, {
-		makePlashka(1),
-		makePlashka(2),
-		makePlashka(3),
-		makePlashka(4),
-	});
-	sub_grid1->setAnchor(0.5f);
-	sub_grid1->setPivot(0.5f);
-
-	auto sub_grid2 = Shared::SceneHelpers::MakeHorizontalGrid(PlashkaSize, {
-		makePlashka(5),
-		makePlashka(6),
-		makePlashka(7)
-	});
-	sub_grid2->setAnchor(0.5f);
-	sub_grid2->setPivot(0.5f);
-
-	auto grid = Shared::SceneHelpers::MakeVerticalGrid(sub_grid1->getSize(), {
-		sub_grid1,
-		sub_grid2
-	});
+	auto grid = std::make_shared<Scene::AutoSized<Scene::Grid>>();
+	grid->setMaxItemsInRow(4);
+	grid->setDirection(Scene::Grid::Direction::RightDown);
+	for (int i = 0; i < 7; i++)
+	{
+		grid->attach(makePlashka(i + 1));
+	}
 	grid->setAnchor({ 0.5f, 0.0f });
 	grid->setPivot({ 0.5f, 0.0f });
 	grid->setY(8.0f);
+	grid->setAlign(0.5f);
 	getBody()->attach(grid);
 
 	auto ok_button = std::make_shared<Helpers::Button>();

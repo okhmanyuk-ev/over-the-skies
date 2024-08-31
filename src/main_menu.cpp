@@ -169,23 +169,24 @@ void MainMenu::refresh()
 
 	mItems = createScrollItems();
 
-	auto row = Shared::SceneHelpers::MakeHorizontalGrid({ SlotWidth, ItemSize }, mItems);
+	auto row = std::make_shared<Scene::AutoSized<Scene::Row>>();
+	for (auto node : mItems)
+	{
+		auto cell = std::make_shared<Scene::Node>();
+		cell->setSize({ SlotWidth, ItemSize });
+		row->attach(cell);
+		cell->attach(node);
+	}
+	row->setSize({ SlotWidth * mItems.size(), ItemSize });
 	row->setAnchor(0.5f);
 	row->setPivot(0.5f);
-
-	auto content = mScrollbox->getContent();
-
-	content->setWidth(row->getWidth() + ItemSize);
-	content->setHeight(mScrollbox->getHeight());
-	content->attach(row);
-
-	auto bounding = mScrollbox->getBounding();
-
-	bounding->setAnchor(0.5f);
-	bounding->setPivot(0.5f);
-	bounding->setVerticalStretch(1.0f);
-	bounding->setWidth(SlotWidth);
-
+	mScrollbox->getContent()->setWidth(row->getWidth() + ItemSize);
+	mScrollbox->getContent()->setHeight(mScrollbox->getHeight());
+	mScrollbox->getContent()->attach(row);
+	mScrollbox->getBounding()->setAnchor(0.5f);
+	mScrollbox->getBounding()->setPivot(0.5f);
+	mScrollbox->getBounding()->setVerticalStretch(1.0f);
+	mScrollbox->getBounding()->setWidth(SlotWidth);
 	getContent()->attach(mScrollbox);
 }
 
