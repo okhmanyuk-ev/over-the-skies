@@ -16,12 +16,12 @@ namespace hcg001
 		AchievementsWindow();
 		~AchievementsWindow();
 
-	protected:	
+	protected:
 		void onOpenEnd() override;
 		void onCloseBegin() override;
 	};
 
-	class AchievementsWindow::Item : public Scene::Cullable<Scene::Rectangle>
+	class AchievementsWindow::Item : public Scene::Node
 	{
 	public:
 		static inline const float VerticalMargin = 8.0f;

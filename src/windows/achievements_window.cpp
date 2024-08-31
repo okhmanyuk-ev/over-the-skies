@@ -22,40 +22,22 @@ AchievementsWindow::AchievementsWindow()
 	ok_button->setY(-24.0f);
 	getBody()->attach(ok_button);
 
-	auto scrollbox = std::make_shared<Scene::ClippableScissor<Scene::Scrollbox>>();
-	scrollbox->setStretch(1.0f);
-	scrollbox->getBounding()->setStretch(1.0f);
-	scrollbox->setVerticalMargin(48.0f);
-	getBody()->attach(scrollbox);
-
 	std::vector<std::shared_ptr<Scene::Node>> items;
-
 	int num = 0;
-
 	for (auto achievement : ACHIEVEMENTS->getItems())
 	{
 		num += 1;
-
 		auto item = std::make_shared<Item>(num, achievement.name);
-		item->setAnchor(0.5f);
-		item->setPivot(0.5f);
-		item->setCullTarget(scrollbox);
 		items.push_back(item);
 	}
 
-	const glm::vec2 ItemSize = { 314.0f, 64.0f };
-
-	auto grid = Shared::SceneHelpers::MakeVerticalGrid(ItemSize, items);
-	grid->setY(Item::VerticalMargin / 2.0f);
-	grid->setHeight(grid->getHeight() + Item::VerticalMargin);
-
-	scrollbox->getContent()->setSize(grid->getSize());
-	scrollbox->getContent()->attach(grid);
-
-    auto scrollbar = std::make_shared<Shared::SceneHelpers::VerticalScrollbar>();
-	scrollbar->setX(-4.0f);
-    scrollbar->setScrollbox(scrollbox);
-    scrollbox->attach(scrollbar);
+	auto scrollbox = Shared::SceneHelpers::MakeVerticalOptimizedItemList(items);
+	scrollbox->setStretch(1.0f);
+	scrollbox->getBounding()->setAnchor(0.5f);
+	scrollbox->getBounding()->setPivot(0.5f);
+	scrollbox->getBounding()->setVerticalMargin(Item::VerticalMargin);
+	scrollbox->setVerticalMargin(48.0f);
+	getBody()->attach(scrollbox);
 
 	auto top_gradient = std::make_shared<Scene::Rectangle>();
 	top_gradient->setStretch({ 1.0f, 0.0f });
@@ -106,12 +88,18 @@ void AchievementsWindow::onCloseBegin()
 AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 {
 	setStretch({ 1.0f, 0.0f });
-	setMargin({ 16.0f, VerticalMargin });
 	setHeight(64.0f);
-	setRounding(8.0f);
-	setAbsoluteRounding(true);
-	setColor(Helpers::Pallete::WindowItem);
-	setBatchGroup("achievement_item");
+
+	auto rect = std::make_shared<Scene::Rectangle>();
+	rect->setStretch(1.0f);
+	rect->setAnchor(0.5f);
+	rect->setPivot(0.5f);
+	rect->setRounding(8.0f);
+	rect->setAbsoluteRounding(true);
+	rect->setColor(Helpers::Pallete::WindowItem);
+	rect->setMargin({ 16.0f, VerticalMargin });
+	rect->setBatchGroup("achievement_item");
+	attach(rect);
 
 	auto num_label = std::make_shared<Helpers::Label>();
 	num_label->setFontSize(24.0f);
@@ -119,14 +107,14 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	num_label->setPivot(0.5f);
 	num_label->setAnchor({ 0.0f, 0.5f });
 	num_label->setText(std::to_wstring(num));
-	attach(num_label);
+	rect->attach(num_label);
 
 	auto title = std::make_shared<Helpers::Label>();
 	title->setPosition({ 48.0f, 8.0f });
 	title->setFontSize(16.0f);
 	title->setText(LOCALIZE("ACHIEVEMENT_" + name));
 	title->setColor(Helpers::Pallete::YellowLabel);
-	attach(title);
+	rect->attach(title);
 
 	auto progress = ACHIEVEMENTS->getProgress(name);
 	auto required = ACHIEVEMENTS->getRequired(name);
@@ -137,7 +125,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	progress_label->setPosition({ 48.0f, 28.0f });
 	progress_label->setFontSize(12.0f);
 	progress_label->setText(fmt::format(L"{}/{}", progress, required));
-	attach(progress_label);
+	rect->attach(progress_label);
 
 	auto progressbar = std::make_shared<Shared::SceneHelpers::Progressbar>();
 	progressbar->setSize({ 148.0f, 4.0f });
@@ -145,7 +133,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	progressbar->setProgress((float)progress / (float)required);
 	progressbar->setBatchGroup("achievement_progressbar");
 	progressbar->getProgressContent()->setBatchGroup("achievement_progressbar_content");
-	attach(progressbar);
+	rect->attach(progressbar);
 
 	auto ruby = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
 	ruby->setTexture(TEXTURE("textures/ruby.png"));
@@ -159,7 +147,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	mButtonHolder->setAnchor({ 1.0f, 0.5f });
 	mButtonHolder->setPivot({ 1.0f, 0.5f });
 	mButtonHolder->setX(-44.0f);
-	attach(mButtonHolder);
+	rect->attach(mButtonHolder);
 
 	mButton = std::make_shared<Helpers::Button>();
 	mButton->setTouchMask(1 << 1);
