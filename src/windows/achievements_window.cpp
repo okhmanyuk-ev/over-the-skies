@@ -31,13 +31,37 @@ AchievementsWindow::AchievementsWindow()
 		items.push_back(item);
 	}
 
-	auto scrollbox = Shared::SceneHelpers::MakeVerticalOptimizedItemList(items);
+	auto scrollbox = std::make_shared<Scene::ClippableScissor<Scene::Scrollbox>>();
+	scrollbox->getContent()->setAutoHeightEnabled(true);
+	scrollbox->getBounding()->setStretch(1.0f);
+	scrollbox->getContent()->setStretch({ 1.0f, 0.0f });
 	scrollbox->setStretch(1.0f);
 	scrollbox->getBounding()->setAnchor(0.5f);
 	scrollbox->getBounding()->setPivot(0.5f);
 	scrollbox->getBounding()->setVerticalMargin(Item::VerticalMargin);
 	scrollbox->setVerticalMargin(48.0f);
 	getBody()->attach(scrollbox);
+
+	auto scrollbar = std::make_shared<Shared::SceneHelpers::VerticalScrollbar>();
+	scrollbar->setX(-4.0f);
+	scrollbar->setScrollbox(scrollbox);
+	scrollbox->attach(scrollbar);
+
+	auto column = std::make_shared<Scene::CulledList<Scene::AutoSized<Scene::Column>>>();
+	column->setAutoWidthEnabled(false);
+	column->setStretch({ 1.0f, 0.0f });
+	column->setCullTarget(scrollbox);
+
+	for (auto item : items)
+	{
+		auto cell = std::make_shared<Scene::AutoSized<Scene::Node>>();
+		cell->setAutoWidthEnabled(false);
+		cell->setStretch({ 1.0f, 0.0f });
+		cell->attach(item);
+		column->attach(cell);
+	}
+
+	scrollbox->getContent()->attach(column);
 
 	auto top_gradient = std::make_shared<Scene::Rectangle>();
 	top_gradient->setStretch({ 1.0f, 0.0f });

@@ -76,6 +76,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 
 	auto grid = std::make_shared<Scene::AutoSized<Scene::Grid>>();
 	grid->setMaxItemsInRow(4);
+	grid->setBreakToFitSize(false);
 	grid->setDirection(Scene::Grid::Direction::RightDown);
 	for (int i = 0; i < 7; i++)
 	{

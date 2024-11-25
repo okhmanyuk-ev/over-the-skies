@@ -285,6 +285,9 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			if (!mScrollbox->isTransformReady())
 				return;
 
+			if (!image->isTransformReady())
+				return;
+
 			auto skin_projected = unproject(image->project(image->getAbsoluteSize() / 2.0f));
 			auto slot_projected = unproject(mScrollbox->project(mScrollbox->getAbsoluteSize() / 2.0f));
 			auto distance = glm::distance(skin_projected, slot_projected);
