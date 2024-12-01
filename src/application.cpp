@@ -67,6 +67,18 @@ Application::~Application()
 
 void Application::initialize()
 {
+	auto lang = Shared::LocalizationSystem::Language::English;
+	const auto& args = getStartupKeyValues();
+
+	if (args.contains("lang"))
+	{
+		auto value = args.at("lang");
+		if (value == "ru")
+			lang = Shared::LocalizationSystem::Language::Russian;
+	}
+
+	LOCALIZATION->setLanguage(lang);
+
 	auto root = getScene()->getRoot();
 
 	Helpers::gSky = std::make_shared<Sky>();

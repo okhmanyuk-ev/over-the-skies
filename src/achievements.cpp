@@ -14,7 +14,7 @@ Achievements::Achievements()
 		item.trigger = field["trigger"];
 		item.required = field["required"];
 		item.reward = field["reward"];
-		mItems.push_back(item);		
+		mItems.push_back(item);
 	}
 }
 
