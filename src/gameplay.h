@@ -13,6 +13,9 @@ namespace hcg001
 		public Common::Event::Listenable<Platform::Input::Keyboard::Event>
 	{
 	public:
+		using Super = Scene::Tappable<Screen>;
+
+	public:
 		enum class PlaneBonus
 		{
 			Ruby,
@@ -36,7 +39,10 @@ namespace hcg001
 		void onTap() override;
 		void onEvent(const Platform::Input::Keyboard::Event& e) override;
 		void update(Clock::Duration delta) override;
-		
+
+		void onEnterBegin() override;
+		void onLeaveEnd() override;
+
 	private:
 		void physics(float dTime);
 		void camera(Clock::Duration dTime);

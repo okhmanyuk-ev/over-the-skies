@@ -10,9 +10,7 @@
 #include "windows/daily_reward_window.h"
 #include "helpers.h"
 #include "achievements.h"
-#ifdef EMSCRIPTEN
-#include <emscripten.h>
-#endif
+#include "yandex.h"
 
 using namespace hcg001;
 
@@ -70,25 +68,7 @@ Application::~Application()
 
 void Application::initialize()
 {
-#ifdef EMSCRIPTEN
-	EM_ASM(
-		var script = document.createElement('script');
-		script.src = '/sdk.js';
-		script.type = 'text/javascript';
-		script.onload = function() {
-			YaGames.init().then(ysdk => {
-				window.ysdk = ysdk;
-				window.ysdk.features.LoadingAPI.ready();
-			}).catch (error => {
-				console.error("Yandex SDK: ", error);
-			});
-		};
-		script.onerror = function() {
-			console.error("Cannot load yandex SDK.");
-		};
-		document.head.appendChild(script);
-	);
-#endif
+	Yandex::InitSdk();
 	auto lang = Shared::LocalizationSystem::Language::English;
 	const auto& args = getStartupKeyValues();
 

@@ -3,6 +3,7 @@
 #include "helpers.h"
 #include "achievements.h"
 #include "gameover_menu.h"
+#include "yandex.h"
 
 using namespace hcg001;
 
@@ -118,7 +119,7 @@ void Gameplay::onEvent(const Platform::Input::Keyboard::Event& e)
 
 void Gameplay::update(Clock::Duration delta)
 {
-	Scene::Tappable<Screen>::update(delta);
+	Super::update(delta);
 
 	if (!mReady)
 		return;
@@ -147,6 +148,18 @@ void Gameplay::update(Clock::Duration delta)
 	setScore(int(mMaxY / 100.0f));
 
 	GAME_STATS("difficulty", getDifficulty());
+}
+
+void Gameplay::onEnterBegin()
+{
+	Super::onEnterBegin();
+	Yandex::GameplayStart();
+}
+
+void Gameplay::onLeaveEnd()
+{
+	Super::onLeaveEnd();
+	Yandex::GameplayStop();
 }
 
 void Gameplay::physics(float dTime)
