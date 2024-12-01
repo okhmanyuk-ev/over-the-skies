@@ -39,10 +39,10 @@ if(WIN32)
     #else()
     #    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
     #endif()
-    
+
     add_definitions(-DNOMINMAX)
-	
-    add_executable(${PROJECT_NAME} 
+
+    add_executable(${PROJECT_NAME}
         ${ALL_SRC}
     )
 
@@ -112,7 +112,7 @@ elseif(APPLE)
             "-framework FBSDKLoginKit"
             "-framework FBSDKShareKit"
         )
-	endif()    
+	endif()
 elseif(ANDROID)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")
 
@@ -136,6 +136,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC src)
 
 # sky
 
+if(EMSCRIPTEN)
+	set(EMSCRIPTEN_SHELL_FILE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/emscripten/shell.html)
+endif()
 add_subdirectory(sky)
 target_link_libraries(${PROJECT_NAME} sky)
 copy_required_libs(${PROJECT_NAME})

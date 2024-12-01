@@ -1,0 +1,1 @@
+npx @yandex-games/sdk-dev-proxy -p output -i 212472 --port 443
