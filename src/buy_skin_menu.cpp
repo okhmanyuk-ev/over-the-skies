@@ -15,12 +15,30 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	mTitle->setText(LOCALIZE("BUY_SKIN_TITLE"));
 	getContent()->attach(mTitle);
 
-	mImage = std::make_shared<Scene::Sprite>();
-	mImage->setTexture(TEXTURE(SkinPath.at(skin)));
-	mImage->setAnchor({ 1.5f, 0.5f });
-	mImage->setPivot({ 0.5f, 0.5f });
-	mImage->setSize({ 96.0f, 96.0f });
-	getContent()->attach(mImage);
+	auto column = std::make_shared<Scene::AutoSized<Scene::Column>>();
+	column->setAnchor(0.5f);
+	column->setPivot(0.5f);
+	getContent()->attach(column);
+
+	auto image = std::make_shared<Scene::Sprite>();
+	image->setTexture(TEXTURE(SkinPath.at(skin)));
+	image->setAnchor({ 0.5f, 0.0f });
+	image->setPivot({ 0.5f, 0.0f });
+	image->setSize({ 96.0f, 96.0f });
+	column->attach(image);
+
+	auto padding = std::make_shared<Scene::Node>();
+	padding->setHeight(32.0f);
+	column->attach(padding);
+
+	auto cost = SkinCost.at(skin);
+	auto cost_title = std::make_shared<Shared::SceneHelpers::RichLabel>();
+	cost_title->setFont(FONT("default"));
+	cost_title->setFontSize(24.0f);
+	cost_title->setText(std::format(L"<icon=textures/ruby.png> {}", cost));
+	cost_title->setAnchor({ 0.5f, 0.0f });
+	cost_title->setPivot({ 0.5f, 0.0f });
+	column->attach(cost_title);
 
 	mBuyButton = std::make_shared<Helpers::Button>();
 	mBuyButton->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
@@ -60,7 +78,6 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	getGui()->attach(rubies);
 
 	mTitle->setHorizontalAnchor(0.5f);
-	mImage->setHorizontalAnchor(0.5f);
 	mBuyButton->setVerticalAnchor(0.75f);
 	mCancelButton->setVerticalAnchor(0.75f);
 }

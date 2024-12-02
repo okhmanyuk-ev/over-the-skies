@@ -13,7 +13,7 @@ MainMenu::MainMenu()
 {
 	auto title = std::make_shared<Scene::Label>();
 	title->setFont(FONT("default"));
-	title->setFontSize(34.0f);
+	title->setFontSize(38.0f);
 	title->setAnchor({ 0.5f, 0.25f });
 	title->setPivot(0.5f);
 	title->setPosition({ 0.0f, -32.0f });
@@ -192,8 +192,8 @@ void MainMenu::refresh()
 
 std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 {
-	const float SkinSize = 24.0f;
-	const float SkinSizeChoosed = 42.0f;
+	const float SkinSize = 32.0f;
+	const float SkinSizeChoosed = 64.0f;
 
 	std::vector<std::shared_ptr<Scene::Node>> result;
 
@@ -216,7 +216,6 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 		auto image = std::make_shared<Scene::Sprite>();
 		image->setBatchGroup("main_menu_item_image");
 		image->setTexture(TEXTURE(path));
-		image->setSampler(skygfx::Sampler::Linear);
 		image->setSize(SkinSize);
 		image->setAnchor(0.5f);
 		image->setPivot(0.5f);
@@ -225,10 +224,10 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 		if (locked)
 			image->setColor({ 0.5f, 0.5f, 0.5f });
 
-		auto padlock = std::make_shared<Scene::Sprite>();
+		auto padlock = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
 		padlock->setBatchGroup("main_menu_item_padlock");
 		padlock->setTexture(TEXTURE("textures/padlock.png"));
-		padlock->setScale({ 0.04f, 0.04f });
+		padlock->setAdaptSize(18.0f);
 		padlock->setAnchor({ 0.5f, 0.0f });
 		padlock->setPivot({ 0.5f, 1.0f });
 		padlock->setPosition({ 0.0f, -16.0f });
@@ -241,34 +240,18 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 		footer->setPosition({ 0.0f, 24.0f });
 		image->attach(footer);
 
-		auto price = std::make_shared<Scene::Label>();
-		price->setFont(FONT("default"));
-		price->setFontSize(16.0f);
-		price->setText(std::to_wstring(SkinCost.at(skin)));
-		price->setAnchor({ 0.0f, 0.5f });
-		price->setPivot({ 0.0f, 0.5f });
-		price->setEnabled(locked);
-		footer->attach(price);
+		auto cost = SkinCost.at(skin);
 
-		const float PriceRubyPadding = 6.0f;
-
-		auto ruby = std::make_shared<Scene::Sprite>();
-		ruby->setTexture(TEXTURE("textures/ruby.png"));
-		ruby->setSize(16.0f);
-		ruby->setAnchor({ 1.0f, 0.5f });
-		ruby->setPivot({ 0.0f, 0.5f });
-		ruby->setPosition({ PriceRubyPadding, 0.0f });
-		ruby->setEnabled(locked);
-		price->attach(ruby);
-
-		auto name = std::make_shared<Scene::Label>();
-		name->setFont(FONT("default"));
-		name->setFontSize(16.0f);
-		name->setText(LOCALIZE("SKIN_NAME_" + std::to_string((int)skin)));
-		name->setAnchor(0.5f);
-		name->setPivot(0.5f);
-		name->setEnabled(!locked);
-		footer->attach(name);
+		auto title = std::make_shared<Shared::SceneHelpers::RichLabel>();
+		title->setFont(FONT("default"));
+		title->setFontSize(20.0f);
+		if (locked)
+			title->setText(std::format(L"<icon=textures/ruby.png> {}", cost));
+		else
+			title->setText(LOCALIZE("SKIN_NAME_" + std::to_string((int)skin)));
+		title->setAnchor(0.5f);
+		title->setPivot(0.5f);
+		footer->attach(title);
 
 		auto hideFarNode = [this, item](auto node) {
 			if (!mScrollbox->isTransformReady())
@@ -281,7 +264,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			node->setAlpha(alpha);
 		};
 
-		image->runAction(Actions::Collection::ExecuteInfinite([this, image, SkinSize, SkinSizeChoosed, hideFarNode, footer, price, ruby, name, PriceRubyPadding, locked] {
+		image->runAction(Actions::Collection::ExecuteInfinite([this, image, SkinSize, SkinSizeChoosed, hideFarNode, footer, title, locked] {
 			if (!mScrollbox->isTransformReady())
 				return;
 
@@ -293,15 +276,8 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			auto distance = glm::distance(skin_projected, slot_projected);
 			auto size = glm::lerp(SkinSize, SkinSizeChoosed, glm::smoothstep(ItemSize, 0.0f, distance));
 			image->setSize(size);
-			//auto scale = glm::lerp(1.0f, 1.75f, glm::smoothstep(ItemSize, 0.0f, distance));
-			//image->setScale(scale);
 
-			if (locked)
-				footer->setWidth(price->getWidth() + ruby->getWidth() + PriceRubyPadding);
-
-			hideFarNode(ruby);
-			hideFarNode(price);
-			hideFarNode(name);
+			hideFarNode(title);
 		}));
 	}
 

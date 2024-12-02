@@ -133,12 +133,19 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	num_label->setText(std::to_wstring(num));
 	rect->attach(num_label);
 
-	auto title = std::make_shared<Helpers::Label>();
-	title->setPosition({ 48.0f, 8.0f });
+	auto title_holder = std::make_shared<Scene::AutoSized<Scene::Node>>();
+	title_holder->setWidth(164.0f);
+	title_holder->setPosition({ 48.0f, 8.0f });
+	title_holder->setAutoWidthEnabled(false);
+	rect->attach(title_holder);
+
+	auto title = std::make_shared<Scene::AutoScaled<Helpers::Label>>();
+	title->setAnchor({ 0.0f, 0.5f });
+	title->setPivot({ 0.0f, 0.5f });
 	title->setFontSize(16.0f);
 	title->setText(LOCALIZE("ACHIEVEMENT_" + name));
 	title->setColor(Helpers::Pallete::YellowLabel);
-	rect->attach(title);
+	title_holder->attach(title);
 
 	auto progress = ACHIEVEMENTS->getProgress(name);
 	auto required = ACHIEVEMENTS->getRequired(name);

@@ -53,13 +53,21 @@ AchievementNotify::AchievementNotify(const Achievements::Item& item)
 	mTadaEmitter->setMaxDuration(0.75f);
 	mTada->attach(mTadaEmitter);*/
 
-	auto title = std::make_shared<Label>();
-	title->setColor(Pallete::YellowLabel);
+	auto title_holder = std::make_shared<Scene::AutoSized<Scene::Node>>();
+	title_holder->setWidth(164.0f);
+	title_holder->setPosition({ 64.0f, -4.0f });
+	title_holder->setAutoWidthEnabled(false);
+	title_holder->setAnchor({ 0.0f, 0.5f });
+	title_holder->setPivot({ 0.0f, 1.0f });
+	attach(title_holder);
+
+	auto title = std::make_shared<Scene::AutoScaled<Helpers::Label>>();
 	title->setAnchor({ 0.0f, 0.5f });
-	title->setPivot({ 0.0f, 1.0f });
-	title->setPosition({ 64.0f, -4.0f });
+	title->setColor(Pallete::YellowLabel);
+	title->setPivot({ 0.0f, 0.5f });
 	title->setText(LOCALIZE("ACHIEVEMENT_" + item.name));
-	attach(title);
+	title->setColor(Helpers::Pallete::YellowLabel);
+	title_holder->attach(title);
 
 	auto progress = ACHIEVEMENTS->getProgress(item.name);
 	auto required = item.required;

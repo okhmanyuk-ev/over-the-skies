@@ -261,7 +261,8 @@ void Application::showCheats()
 
 		if (ImGui::Button("FAKE ACHIEVEMENT EARNED EVENT"))
 		{
-			auto item = *ACHIEVEMENTS->getItems().begin();
+			//auto item = *ACHIEVEMENTS->getItems().begin();
+			auto item = ACHIEVEMENTS->getItemByName("COVER_DISTANCE_100000").value();
 			EVENT->emit(Achievements::AchievementEarnedEvent{ item });
 		}
 

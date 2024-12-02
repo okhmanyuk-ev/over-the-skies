@@ -14,7 +14,6 @@ namespace hcg001
 
 	private:
 		std::shared_ptr<Scene::Label> mTitle = nullptr;
-		std::shared_ptr<Scene::Sprite> mImage = nullptr;
 		std::shared_ptr<Helpers::Button> mBuyButton = nullptr;
 		std::shared_ptr<Helpers::Button> mCancelButton = nullptr;
 	};
