@@ -11,7 +11,7 @@ Gameplay::Gameplay()
 {
 	mReadyLabel = std::make_shared<Scene::Label>();
 	mReadyLabel->setFont(FONT("default"));
-	mReadyLabel->setFontSize(28.0f);
+	mReadyLabel->setFontSize(32.0f);
 	mReadyLabel->setAnchor({ 0.5f, 0.25f });
 	mReadyLabel->setPivot(0.5f);
 	mReadyLabel->setText(LOCALIZE("READY_MENU_TITLE"));
@@ -563,7 +563,7 @@ void Gameplay::showRiskLabel(const std::wstring& text)
 
 	mRiskLabel = std::make_shared<Scene::Label>();
 	mRiskLabel->setFont(FONT("default"));
-	mRiskLabel->setFontSize(28.0f);
+	mRiskLabel->setFontSize(32.0f);
 	mRiskLabel->setText(text);
 	mRiskLabel->setAnchor({ 0.5f, 0.33f });
 	mRiskLabel->setVerticalPivot(0.5f);
