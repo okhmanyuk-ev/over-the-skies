@@ -1,6 +1,7 @@
 #include "gameover_menu.h"
 #include "helpers.h"
 #include "main_menu.h"
+#include "yandex.h"
 
 using namespace hcg001;
 
@@ -83,5 +84,6 @@ GameoverMenu::GameoverMenu(int score)
 	setClickCallback([] {
 		SCENE_MANAGER->switchScreen(Helpers::gMainMenu);
 	});
-}
 
+	Yandex::SendHighScore(score);
+}

@@ -371,7 +371,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 		plane->setWidth(48.0f);
 		plane->setColor(Graphics::Color::Coral);
 		plane->setPowerjump(true);
-		
+
 		auto emitter = std::make_shared<Scene::Emitter>();
 		emitter->setHolder(mRectangleParticlesHolder);
 		emitter->setDelay(1.0f / 30.0f);
@@ -500,7 +500,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 		plane->runAction(Actions::Collection::RepeatInfinite([plane, Center, side] {
 			const float Duration = 0.25f;
 			const float Distance = 32.0f;
-			
+
 			float firstSide = Center + (side ? Distance : -Distance);
 			float secondSide = Center - (side ? Distance : -Distance);
 

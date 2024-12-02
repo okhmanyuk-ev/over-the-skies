@@ -94,10 +94,9 @@ void Sky::changeColor(float top_hue, float bottom_hue)
 
 	if (top_hue >= 0.0f)
 		top_hsv = glm::vec3(top_hue, 0.75f, 0.125f);
-	
+
 	if (bottom_hue >= 0.0f)
 		bottom_hsv = glm::vec3(bottom_hue, 0.25f, 0.5f);
-	
 
 	auto top = glm::rgbColor(top_hsv);
 	auto bottom = glm::rgbColor(bottom_hsv);
@@ -154,7 +153,7 @@ void Sky::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
 		return Actions::Collection::MakeSequence(
 			Actions::Collection::Execute([holder] {
 				auto size = glm::linearRand(4.0f, 6.0f);
-				
+
 				static auto texture = GRAPHICS->makeGenericTexture({ 64, 64 }, [] {
 					GRAPHICS->drawRoundedSlicedRectangle({ Graphics::Color::White, 1.0f }, { 1.0f, 1.0f }, 0.5f, false);
 				});
@@ -193,7 +192,7 @@ void Sky::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
 }
 
 void Sky::moveSky(const glm::vec2& offset)
-{	
+{
 	mAsteroidsHolder->setPosition(offset / 2.0f);
 
 	if (offset.y < mLastPos.y)

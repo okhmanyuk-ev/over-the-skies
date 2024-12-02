@@ -10,4 +10,5 @@ namespace hcg001::Yandex
 	void InitSdk();
 	void GameplayStart();
 	void GameplayStop();
+	void SendHighScore(int value);
 }
