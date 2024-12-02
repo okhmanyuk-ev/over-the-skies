@@ -109,6 +109,9 @@ void Application::initialize()
 		Actions::Collection::Execute([this] {
 			SCENE_MANAGER->switchScreen(Helpers::gMainMenu, [this] {
 				tryShowDailyReward();
+				Actions::Run(Actions::Collection::Delayed(3.0f, Actions::Collection::Execute([] {
+					Helpers::gSky->spawnSomeAsteroids();
+				})));
 			});
 		})
 	));

@@ -247,6 +247,9 @@ void Gameplay::jump(JumpType jump_type)
 	{
 		mVelocity.y *= 1.75f;
 		ACHIEVEMENTS->hit("JUMP_BOOSTER_PANEL");
+
+		if (Common::Helpers::Chance(0.5f))
+			Helpers::gSky->spawnSomeAsteroids();
 	}
 	else if (jump_type == JumpType::FallJump)
 	{
