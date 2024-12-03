@@ -247,9 +247,6 @@ void Gameplay::jump(JumpType jump_type)
 	{
 		mVelocity.y *= 1.75f;
 		ACHIEVEMENTS->hit("JUMP_BOOSTER_PANEL");
-
-		if (Common::Helpers::Chance(0.5f))
-			Helpers::gSky->spawnSomeAsteroids();
 	}
 	else if (jump_type == JumpType::FallJump)
 	{
@@ -551,7 +548,9 @@ void Gameplay::gameover()
 	ACHIEVEMENTS->hit("GAME_COMPLETED");
 	PROFILE->saveAsync();
 	auto gameover_screen = std::make_shared<GameoverMenu>(getScore());
-	SCENE_MANAGER->switchScreen(gameover_screen);
+	SCENE_MANAGER->switchScreen(gameover_screen, [] {
+		Helpers::gSky->spawnSomeAsteroids();
+	});
 }
 
 void Gameplay::showRiskLabel(const std::wstring& text)
