@@ -5,10 +5,12 @@
 
 using namespace hcg001;
 
+#define YANDEX
+
 void Yandex::InitSdk()
 {
 	sky::Log("Yandex::InitSdk()");
-#ifdef EMSCRIPTEN
+#if defined(EMSCRIPTEN) & defined(YANDEX)
 	EM_ASM(
 		var script = document.createElement('script');
 		script.src = '/sdk.js';
@@ -35,7 +37,7 @@ void Yandex::InitSdk()
 
 void Yandex::GameplayStart()
 {
-#ifdef EMSCRIPTEN
+#if defined(EMSCRIPTEN) & defined(YANDEX)
 	EM_ASM(
 		window.ysdk.features.GameplayAPI.start();
 	);
@@ -44,7 +46,7 @@ void Yandex::GameplayStart()
 
 void Yandex::GameplayStop()
 {
-#ifdef EMSCRIPTEN
+#if defined(EMSCRIPTEN) & defined(YANDEX)
 	EM_ASM(
 		window.ysdk.features.GameplayAPI.stop();
 	);
@@ -53,7 +55,7 @@ void Yandex::GameplayStop()
 
 void Yandex::SendHighScore(int value)
 {
-#ifdef EMSCRIPTEN
+#if defined(EMSCRIPTEN) & defined(YANDEX)
 	EM_ASM({
 		let score = $0;
 		window.ylb.getLeaderboardPlayerEntry('score').then(res => {
