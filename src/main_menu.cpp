@@ -138,7 +138,7 @@ MainMenu::MainMenu()
 	getGui()->attach(mRubiesIndicator);
 
 	runAction(Actions::Collection::Delayed([this] { return isTransformReady(); }, Actions::Collection::Execute([this] {
-		mScrollTarget = mSkinItems.at(PROFILE->getCurrentSkin());
+	//	mScrollTarget = mSkinItems.at(PROFILE->getCurrentSkin());
 	})));
 }
 
@@ -163,37 +163,34 @@ void MainMenu::refresh()
 	mScrollbox->setAnchor(0.5f);
 	mScrollbox->setPivot(0.5f);
 	mScrollbox->setHorizontalStretch(1.0f);
-	mScrollbox->setHeight(ItemSize + ScrollPadding);
+	mScrollbox->setHeight(ItemSize.y);
 	mScrollbox->setInertiaFriction(0.1f);
 	mScrollbox->setScrollPosition(prev_scroll_pos);
+	mScrollbox->getContent()->setAutoWidthEnabled(true);
+	mScrollbox->getContent()->setAutoHeightEnabled(true);
+	mScrollbox->getBounding()->setAnchor(0.5f);
+	mScrollbox->getBounding()->setPivot(0.5f);
+	mScrollbox->getBounding()->setStretch({ 0.0f, 1.0f });
+	mScrollbox->getBounding()->setWidth(ItemSize.x);
+	mScrollbox->setPage(ItemSize);
+	getContent()->attach(mScrollbox);
 
 	mItems = createScrollItems();
 
 	auto row = std::make_shared<Scene::AutoSized<Scene::Row>>();
 	for (auto node : mItems)
 	{
-		auto cell = std::make_shared<Scene::Node>();
-		cell->setSize({ SlotWidth, ItemSize });
-		row->attach(cell);
-		cell->attach(node);
+		row->attach(node);
 	}
-	row->setSize({ SlotWidth * mItems.size(), ItemSize });
 	row->setAnchor(0.5f);
 	row->setPivot(0.5f);
-	mScrollbox->getContent()->setWidth(row->getWidth() + ItemSize);
-	mScrollbox->getContent()->setHeight(mScrollbox->getHeight());
+
 	mScrollbox->getContent()->attach(row);
-	mScrollbox->getBounding()->setAnchor(0.5f);
-	mScrollbox->getBounding()->setPivot(0.5f);
-	mScrollbox->getBounding()->setVerticalStretch(1.0f);
-	mScrollbox->getBounding()->setWidth(SlotWidth);
-	getContent()->attach(mScrollbox);
 }
 
 std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 {
 	const float SkinSize = 32.0f;
-	const float SkinSizeChoosed = 64.0f;
 
 	std::vector<std::shared_ptr<Scene::Node>> result;
 
@@ -201,17 +198,9 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 	{
 		auto locked = PROFILE->isSkinLocked(skin);
 
-		auto item = std::make_shared<Scene::Cullable<Scene::Clickable<Scene::Node>>>();
-		item->setStretch(1.0f);
-		item->setPivot(0.5f);
-		item->setAnchor(0.5f);
-		item->setTouchMask(1 << 1);
-		item->setClickCallback([this, item] {
-			mScrollTarget = item;
-		});
+		auto item = std::make_shared<Scene::Cullable<Scene::Node>>();
+		item->setSize(ItemSize);
 		result.push_back(item);
-
-		mSkinItems[skin] = item;
 
 		auto image = std::make_shared<Scene::Sprite>();
 		image->setBatchGroup("main_menu_item_image");
@@ -260,11 +249,11 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			auto item_projected = unproject(item->project(item->getAbsoluteSize() / 2.0f));
 			auto slot_projected = unproject(mScrollbox->project(mScrollbox->getAbsoluteSize() / 2.0f));
 			auto distance = glm::distance(item_projected, slot_projected);
-			auto alpha = glm::smoothstep(ItemSize, ItemSize / 2.0f, distance);
+			auto alpha = glm::smoothstep(ItemSize.x, ItemSize.x / 2.0f, distance);
 			node->setAlpha(alpha);
 		};
 
-		image->runAction(Actions::Collection::ExecuteInfinite([this, image, SkinSize, SkinSizeChoosed, hideFarNode, footer, title, locked] {
+		image->runAction(Actions::Collection::ExecuteInfinite([this, image, SkinSize, hideFarNode, footer, title, locked] {
 			if (!mScrollbox->isTransformReady())
 				return;
 
@@ -274,7 +263,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			auto skin_projected = unproject(image->project(image->getAbsoluteSize() / 2.0f));
 			auto slot_projected = unproject(mScrollbox->project(mScrollbox->getAbsoluteSize() / 2.0f));
 			auto distance = glm::distance(skin_projected, slot_projected);
-			auto size = glm::lerp(SkinSize, SkinSizeChoosed, glm::smoothstep(ItemSize, 0.0f, distance));
+			auto size = glm::lerp(SkinSize, SkinSize * 2.0f, glm::smoothstep(ItemSize.x, 0.0f, distance));
 			image->setSize(size);
 
 			hideFarNode(title);
@@ -302,42 +291,19 @@ void MainMenu::menuPhysics(float dTime)
 	float distance = 99999.0f;
 	std::shared_ptr<Scene::Node> nearest = nullptr;
 
-	if (mScrollTarget)
+	for (int i = 0; i < mItems.size(); i++)
 	{
-		nearest = mScrollTarget;
-		auto nearest_projected = unproject(nearest->project(nearest->getAbsoluteSize() / 2.0f));
-		distance = glm::distance(slot_projected, nearest_projected);
+		auto node = mItems.at(i);
+		auto node_projected = unproject(node->project(node->getAbsoluteSize() / 2.0f));
+		auto d = glm::distance(slot_projected, node_projected);
 
-		if (distance <= SlotWidth / 2.0f)
-			mScrollTarget = nullptr;
-	}
-	else
-	{
-		for (int i = 0; i < mItems.size(); i++)
-		{
-			auto node = mItems.at(i);
-			auto node_projected = unproject(node->project(node->getAbsoluteSize() / 2.0f));
-			auto d = glm::distance(slot_projected, node_projected);
+		if (distance <= d)
+			continue;
 
-			if (distance <= d)
-				continue;
-
-			distance = d;
-			nearest = node;
-			mChoosedSkin = static_cast<Skin>(i);
-		}
+		distance = d;
+		nearest = node;
+		mChoosedSkin = static_cast<Skin>(i);
 	}
 
-	if (nearest == nullptr)
-		return;
-
-	auto nearest_projected = unproject(nearest->project(nearest->getAbsoluteSize() / 2.0f));
-	auto offset = distance * dTime * 10.0f / mScrollbox->getHorizontalScrollSpace();
-
-	if (nearest_projected.x < slot_projected.x)
-		mScrollbox->setHorizontalScrollPosition(mScrollbox->getHorizontalScrollPosition() - offset);
-	else
-		mScrollbox->setHorizontalScrollPosition(mScrollbox->getHorizontalScrollPosition() + offset);
-
-	mDecideButtons = distance <= 32.0f && mScrollTarget == nullptr;
+	mDecideButtons = distance <= 32.0f;
 }

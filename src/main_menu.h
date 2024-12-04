@@ -10,10 +10,7 @@ namespace hcg001
 	class MainMenu : public Screen, public std::enable_shared_from_this<MainMenu>
 	{
 	private:
-		const float ItemSize = 96.0f;
-		const float ItemSpaceBetween = 16.0f;
-		const float ScrollPadding = 48.0f;
-		const float SlotWidth = ItemSize + ItemSpaceBetween;
+		const glm::vec2 ItemSize = { 96.0f + 16.0f, 96.0f + 48.0f };
 
 	public:
 		MainMenu();
@@ -31,13 +28,11 @@ namespace hcg001
 
 	private:
 		Skin mChoosedSkin = Skin::Ball;
-		std::shared_ptr<Scene::Node> mScrollTarget = nullptr;
 		std::vector<std::shared_ptr<Scene::Node>> mItems;
 		std::shared_ptr<Scene::Scrollbox> mScrollbox;
 		bool mDecideButtons = false;
 		bool mButtonsAnimating = false;
 		bool mPlayButtonVisible = false;
-		std::map<Skin, std::shared_ptr<Scene::Node>> mSkinItems;
 		std::shared_ptr<Helpers::RubiesIndicator> mRubiesIndicator = nullptr;
 	};
 }
