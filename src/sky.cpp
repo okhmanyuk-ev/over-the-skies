@@ -87,16 +87,10 @@ Sky::Sky()
 	}));
 }
 
-void Sky::changeColor(float top_hue, float bottom_hue)
+void Sky::changeColor(std::optional<float> top_hue, std::optional<float> bottom_hue)
 {
-	auto top_hsv = glm::vec3(glm::linearRand(0.0f, 360.0f), 0.75f, 0.125f);
-	auto bottom_hsv = glm::vec3(glm::linearRand(0.0f, 360.0f), 0.25f, 0.5f);
-
-	if (top_hue >= 0.0f)
-		top_hsv = glm::vec3(top_hue, 0.75f, 0.125f);
-
-	if (bottom_hue >= 0.0f)
-		bottom_hsv = glm::vec3(bottom_hue, 0.25f, 0.5f);
+	auto top_hsv = glm::vec3(top_hue.value_or(glm::linearRand(0.0f, 360.0f)), 0.75f, 0.125f);
+	auto bottom_hsv = glm::vec3(bottom_hue.value_or(glm::linearRand(0.0f, 360.0f)), 0.25f, 0.5f);
 
 	auto top = glm::rgbColor(top_hsv);
 	auto bottom = glm::rgbColor(bottom_hsv);
