@@ -231,7 +231,7 @@ void Gameplay::camera(Clock::Duration dTime)
 	if (target.y < 0.0f)
 		target.y = 0.0f;
 
-	auto pos = Common::Helpers::SmoothValue(mGameField->getPosition(), target, dTime, 0.08f);
+	auto pos = sky::ease_towards(mGameField->getPosition(), target, dTime, 0.08f);
 
 	mGameField->setPosition(pos);
 	Helpers::gSky->moveSky(pos);
@@ -339,9 +339,9 @@ void Gameplay::spawnPlanes()
 
 	while (mLastPlanePos.y >= mPlayer->getY())
 	{
-		bool has_ruby = Common::Helpers::Chance(0.05f);
-		bool powerjump = Common::Helpers::Chance(0.1f);
-		bool moving = Common::Helpers::Chance(0.75f * getDifficulty());
+		bool has_ruby = sky::chance(0.05f);
+		bool powerjump = sky::chance(0.1f);
+		bool moving = sky::chance(0.75f * getDifficulty());
 
 		std::optional<PlaneBonus> bonus;
 
@@ -396,7 +396,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 
 	if (bonus == PlaneBonus::Ruby)
 	{
-		auto tripple_ruby = Common::Helpers::Chance(0.33f);
+		auto tripple_ruby = sky::chance(0.33f);
 
 		auto addEmitterForRuby = [this](auto ruby) {
 			auto emitter = std::make_shared<Scene::Emitter>();
@@ -493,7 +493,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 		plane->setMoving(true);
 
 		const float Center = plane->getX();
-		bool side = Common::Helpers::Chance(0.5f);
+		bool side = sky::chance(0.5f);
 		plane->runAction(Actions::Collection::RepeatInfinite([plane, Center, side] {
 			const float Duration = 0.25f;
 			const float Distance = 32.0f;
@@ -566,7 +566,7 @@ void Gameplay::showRiskLabel(const std::wstring& text)
 	mRiskLabel->setText(text);
 	mRiskLabel->setAnchor({ 0.5f, 0.33f });
 	mRiskLabel->setVerticalPivot(0.5f);
-	mRiskLabel->setHorizontalPivot(Common::Helpers::Chance(0.5f) ? 1.0f : 0.0f);
+	mRiskLabel->setHorizontalPivot(sky::chance(0.5f) ? 1.0f : 0.0f);
 	mRiskLabel->setAlpha(0.0f);
 	getContent()->attach(mRiskLabel);
 

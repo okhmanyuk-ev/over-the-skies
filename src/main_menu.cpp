@@ -242,18 +242,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 		title->setPivot(0.5f);
 		footer->attach(title);
 
-		auto hideFarNode = [this, item](auto node) {
-			if (!mScrollbox->isTransformReady())
-				return;
-
-			auto item_projected = unproject(item->project(item->getAbsoluteSize() / 2.0f));
-			auto slot_projected = unproject(mScrollbox->project(mScrollbox->getAbsoluteSize() / 2.0f));
-			auto distance = glm::distance(item_projected, slot_projected);
-			auto alpha = glm::smoothstep(ItemSize.x, ItemSize.x / 2.0f, distance);
-			node->setAlpha(alpha);
-		};
-
-		image->runAction(Actions::Collection::ExecuteInfinite([this, image, SkinSize, hideFarNode, footer, title, locked] {
+		image->runAction(Actions::Collection::ExecuteInfinite([this, image, SkinSize, footer, title, locked] {
 			if (!mScrollbox->isTransformReady())
 				return;
 
@@ -265,8 +254,6 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			auto distance = glm::distance(skin_projected, slot_projected);
 			auto size = glm::lerp(SkinSize, SkinSize * 2.0f, glm::smoothstep(ItemSize.x, 0.0f, distance));
 			image->setSize(size);
-
-			hideFarNode(title);
 		}));
 	}
 
