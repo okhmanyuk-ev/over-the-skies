@@ -198,7 +198,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 	{
 		auto locked = PROFILE->isSkinLocked(skin);
 
-		auto item = std::make_shared<Scene::Cullable<Scene::Node>>();
+		auto item = std::make_shared<Scene::Node>();
 		item->setSize(ItemSize);
 		result.push_back(item);
 
