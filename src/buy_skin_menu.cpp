@@ -32,7 +32,7 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	column->attach(padding);
 
 	auto cost = SkinCost.at(skin);
-	auto cost_title = std::make_shared<Shared::SceneHelpers::RichLabel>();
+	auto cost_title = std::make_shared<Scene::RichLabel>();
 	cost_title->setFont(FONT("default"));
 	cost_title->setFontSize(24.0f);
 	cost_title->setText(std::format(L"<icon=textures/ruby.png> {}", cost));

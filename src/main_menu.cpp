@@ -231,7 +231,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 
 		auto cost = SkinCost.at(skin);
 
-		auto title = std::make_shared<Shared::SceneHelpers::RichLabel>();
+		auto title = std::make_shared<Scene::RichLabel>();
 		title->setFont(FONT("default"));
 		title->setFontSize(20.0f);
 		if (locked)
