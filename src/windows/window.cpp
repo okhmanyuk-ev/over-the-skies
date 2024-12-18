@@ -31,7 +31,7 @@ Window::Window(bool has_close_button)// : Shared::SceneHelpers::StandardWindow({
 	//header_bg->setAlpha(0.25f);
 	header->attach(header_bg);
 
-	mTitle = std::make_shared<Helpers::Label>();
+	mTitle = std::make_shared<Scene::Label>();
 	mTitle->setColor(Helpers::Pallete::WindowTitle);
 	mTitle->setFontSize(20.0f);
 	mTitle->setAnchor(0.5f);

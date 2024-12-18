@@ -57,7 +57,7 @@ Gameplay::Gameplay()
 		)
 	));
 
-	mScoreLabel = std::make_shared<Helpers::Label>();
+	mScoreLabel = std::make_shared<Scene::Label>();
 	mScoreLabel->setAnchor({ 1.0f, 0.0f });
 	mScoreLabel->setPivot({ 1.0f, 0.5f });
 	mScoreLabel->setPosition({ -16.0f, 24.0f });

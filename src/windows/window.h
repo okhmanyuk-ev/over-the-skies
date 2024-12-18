@@ -18,6 +18,6 @@ namespace hcg001
 	private:
 		std::shared_ptr<Scene::ClippableStencil<Scene::Rectangle>> mBackground;
 		std::shared_ptr<Scene::Node> mBody;
-		std::shared_ptr<Helpers::Label> mTitle;
+		std::shared_ptr<Scene::Label> mTitle;
 	};
 }

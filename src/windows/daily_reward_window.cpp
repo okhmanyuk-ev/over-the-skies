@@ -10,8 +10,8 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 
 	auto makePlashka = [this, current_day](int day) {
 		auto [holder, collection] = Shared::SceneHelpers::CreateNodesFromXml(R"(
-			<Node size="74, 96">
-				<Rectangle id="rect" stretch="1.0" anchor="0.5" pivot="0.5" margin="4" rounding="4" absolute_rounding="true" alpha="0.66">
+			<Node size="74,96">
+				<Rectangle id="rect" stretch="1" anchor="0.5" pivot="0.5" margin="4" rounding="4" absolute_rounding="true" alpha="0.66">
 					<Label id="title" font_size="16" anchor="0.5,0" pivot="0.5,0" y="4"/>
 					<Sprite id="img" anchor="0.5" pivot="0.5" size="36" texture="textures/dailyreward_rubies.png"/>
 					<Label id="value" font_size="16" anchor="0.5,1" pivot="0.5,1" y="-4"/>

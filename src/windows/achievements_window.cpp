@@ -125,7 +125,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	rect->setBatchGroup("achievement_item");
 	attach(rect);
 
-	auto num_label = std::make_shared<Helpers::Label>();
+	auto num_label = std::make_shared<Scene::Label>();
 	num_label->setFontSize(24.0f);
 	num_label->setPosition({ 24.0f, 0.0f });
 	num_label->setPivot(0.5f);
@@ -139,7 +139,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	title_holder->setAutoWidthEnabled(false);
 	rect->attach(title_holder);
 
-	auto title = std::make_shared<Scene::AutoScaled<Helpers::Label>>();
+	auto title = std::make_shared<Scene::AutoScaled<Scene::Label>>();
 	title->setAnchor({ 0.0f, 0.5f });
 	title->setPivot({ 0.0f, 0.5f });
 	title->setFontSize(16.0f);
@@ -152,7 +152,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	auto achievement = ACHIEVEMENTS->getItemByName(name).value();
 	bool completed = progress >= required;
 
-	auto progress_label = std::make_shared<Helpers::Label>();
+	auto progress_label = std::make_shared<Scene::Label>();
 	progress_label->setPosition({ 48.0f, 28.0f });
 	progress_label->setFontSize(12.0f);
 	progress_label->setText(fmt::format(L"{}/{}", progress, required));

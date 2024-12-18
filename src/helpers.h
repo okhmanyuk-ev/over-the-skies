@@ -29,12 +29,6 @@ namespace hcg001::Helpers
 	inline std::shared_ptr<Sky> gSky = nullptr;
 	inline std::shared_ptr<MainMenu> gMainMenu = nullptr;
 
-	class Label : public Scene::Label
-	{
-	public:
-		Label();
-	};
-
 	class Button : public Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::RectangleButton>
 	{
 	public:
@@ -80,7 +74,7 @@ namespace hcg001::Helpers
 		void hide();
 
 	private:
-		std::shared_ptr<Label> mLabel;
+		std::shared_ptr<Scene::Label> mLabel;
 
 	public:
 		void setInstantRefresh(bool value) { mInstantRefresh = value; }

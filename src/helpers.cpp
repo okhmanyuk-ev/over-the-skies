@@ -2,12 +2,6 @@
 
 using namespace hcg001::Helpers;
 
-Label::Label()
-{
-	setFont(FONT("default"));
-	setFontSize(18.0f);
-}
-
 Button::Button()
 {
 	setRounding(0.5f);
@@ -61,7 +55,8 @@ AchievementNotify::AchievementNotify(const Achievements::Item& item)
 	title_holder->setPivot({ 0.0f, 1.0f });
 	attach(title_holder);
 
-	auto title = std::make_shared<Scene::AutoScaled<Helpers::Label>>();
+	auto title = std::make_shared<Scene::AutoScaled<Scene::Label>>();
+	title->setFontSize(18.0f);
 	title->setAnchor({ 0.0f, 0.5f });
 	title->setColor(Pallete::YellowLabel);
 	title->setPivot({ 0.0f, 0.5f });
@@ -80,7 +75,7 @@ AchievementNotify::AchievementNotify(const Achievements::Item& item)
 	progressbar->setProgress((float)progress / (float)required);
 	attach(progressbar);
 
-	auto progress_label = std::make_shared<Helpers::Label>();
+	auto progress_label = std::make_shared<Scene::Label>();
 	progress_label->setPosition({ 0.0f, -4.0f });
 	progress_label->setAnchor({ 0.0f, 0.0f });
 	progress_label->setPivot({ 0.0f, 1.0f });
@@ -108,7 +103,7 @@ RubiesIndicator::RubiesIndicator()
 	setPosition({ 16.0f, 24.0f });
 	setSize(24.0f);
 
-	mLabel = std::make_shared<Label>();
+	mLabel = std::make_shared<Scene::Label>();
 	mLabel->setFontSize(22.0f);
 	mLabel->setText(std::to_wstring(PROFILE->getRubies()));
 	mLabel->setAnchor({ 1.0f, 0.5f });
