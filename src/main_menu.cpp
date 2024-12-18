@@ -1,7 +1,6 @@
 #include "main_menu.h"
 #include "profile.h"
 #include "helpers.h"
-#include "windows/shop_window.h"
 #include "windows/achievements_window.h"
 #include "gameplay.h"
 #include "gameover_menu.h"
