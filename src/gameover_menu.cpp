@@ -24,7 +24,7 @@ GameoverMenu::GameoverMenu(int score)
 
 	auto tap_label = std::static_pointer_cast<Scene::Label>(collection.at("tap_label"));
 	runAction(Actions::Collection::Delayed([this] { return getState() != State::Entered; },
-		Actions::Collection::RepeatInfinite([this, tap_label] {
+		Actions::Collection::RepeatInfinite([tap_label] {
 			return Actions::Collection::MakeSequence(
 				Actions::Collection::Show(tap_label, 0.75f),
 				Actions::Collection::Hide(tap_label, 0.75f)

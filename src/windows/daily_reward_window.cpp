@@ -9,26 +9,28 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	setCloseOnMissclick(false);
 
 	auto makePlashka = [this, current_day](int day) {
-		auto holder = std::make_shared<Scene::Node>();
-		holder->setSize({ 74.0f, 96.0f });
+		auto [holder, collection] = Shared::SceneHelpers::CreateNodesFromXml(R"(
+			<Node size="74, 96">
+				<Rectangle id="rect" stretch="1.0" anchor="0.5" pivot="0.5" margin="4" rounding="4" absolute_rounding="true" alpha="0.66">
+					<Label id="title" font_size="16" anchor="0.5,0" pivot="0.5,0" y="4"/>
+					<Sprite id="img" anchor="0.5" pivot="0.5" size="36" texture="textures/dailyreward_rubies.png"/>
+					<Label id="value" font_size="16" anchor="0.5,1" pivot="0.5,1" y="-4"/>
+				</Rectangle>
+			</Node>
+		)");
 
-		auto rect = std::make_shared<Scene::Rectangle>();
+		auto rect = std::static_pointer_cast<Scene::Rectangle>(collection.at("rect"));
 		rect->setBatchGroup(fmt::format("plashka_rect_{}", (size_t)this));
-		rect->setRounding(4.0f);
-		rect->setAbsoluteRounding(true);
-		rect->setStretch(1.0f);
-		rect->setMargin(4.0f);
-		rect->setAnchor(0.5f);
-		rect->setPivot(0.5f);
-		rect->setAlpha(0.66f);
-		holder->attach(rect);
+		rect->setColor(glm::rgbColor(glm::vec3(Graphics::Color::Hsv::HueGreen, day <= current_day ? 0.33f : 0.0f, 0.5f)));
 
-		auto color = glm::vec3(Graphics::Color::Hsv::HueGreen, 0.0f, 0.5f);
+		auto title = std::static_pointer_cast<Scene::Label>(collection.at("title"));
+		title->setText(fmt::format(LOCALIZE("DAILYREWARD_DAY").c_str(), day));
 
-		if (day <= current_day)
-			color.y = 0.33f;
+		auto img = std::static_pointer_cast<Scene::Sprite>(collection.at("img"));
+		img->setBatchGroup(fmt::format("plashka_img_{}", (size_t)this));
 
-		rect->setColor(glm::rgbColor(color));
+		auto value = std::static_pointer_cast<Scene::Label>(collection.at("value"));
+		value->setText(std::to_wstring(DailyRewardMap.at(day)));
 
 		if (day == current_day)
 		{
@@ -44,32 +46,6 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 				);
 			}));
 		}
-
-		auto title = std::make_shared<Scene::Label>();
-		title->setFont(FONT("default"));
-		title->setFontSize(16.0f);
-		title->setText(fmt::format(LOCALIZE("DAILYREWARD_DAY").c_str(), day));
-		title->setAnchor({ 0.5f, 0.0f });
-		title->setPivot({ 0.5f, 0.0f });
-		title->setY(4.0f);
-		rect->attach(title);
-
-		auto img = std::make_shared<Scene::Sprite>();
-		img->setBatchGroup(fmt::format("plashka_img_{}", (size_t)this));
-		img->setAnchor(0.5f);
-		img->setPivot(0.5f);
-		img->setTexture(TEXTURE("textures/dailyreward_rubies.png"));
-		img->setSize(36.0f);
-		rect->attach(img);
-
-		auto value = std::make_shared<Scene::Label>();
-		value->setFont(FONT("default"));
-		value->setFontSize(16.0f);
-		value->setText(std::to_wstring(DailyRewardMap.at(day)));
-		value->setAnchor({ 0.5f, 1.0f });
-		value->setPivot({ 0.5f, 1.0f });
-		value->setY(-4.0f);
-		rect->attach(value);
 
 		return holder;
 	};
