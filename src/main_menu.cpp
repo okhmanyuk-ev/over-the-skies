@@ -11,19 +11,19 @@ using namespace hcg001;
 MainMenu::MainMenu()
 {
 	auto title = std::make_shared<Scene::Label>();
-	title->setFont(FONT("default"));
+	title->setFont(sky::GetFont("default"));
 	title->setFontSize(38.0f);
 	title->setAnchor({ 0.5f, 0.25f });
 	title->setPivot(0.5f);
 	title->setPosition({ 0.0f, -32.0f });
-	title->setText(LOCALIZE("MAIN_MENU_TITLE"));
+	title->setText(sky::Localize("MAIN_MENU_TITLE"));
 	getContent()->attach(title);
 
 	const glm::vec2 ButtonSize = { 192.0f, 48.0f };
 
 	auto play_button = std::make_shared<Helpers::Button>();
 	play_button->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
-	play_button->getLabel()->setText(LOCALIZE("MAIN_MENU_PLAY"));
+	play_button->getLabel()->setText(sky::Localize("MAIN_MENU_PLAY"));
 	play_button->setClickCallback([this] {
 		if (PROFILE->isSkinLocked(mChoosedSkin))
 			return;
@@ -42,14 +42,14 @@ MainMenu::MainMenu()
 
 	auto unlock_button = std::make_shared<Helpers::Button>();
 	unlock_button->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
-	unlock_button->getLabel()->setText(LOCALIZE("MAIN_MENU_UNLOCK"));
+	unlock_button->getLabel()->setText(sky::Localize("MAIN_MENU_UNLOCK"));
 	unlock_button->setClickCallback([this, unlock_button] {
 		if (!PROFILE->isSkinLocked(mChoosedSkin))
 			return;
 
 		if (PROFILE->getRubies() < SkinCost.at(mChoosedSkin))
 		{
-			auto label = Shared::SceneHelpers::MakePopupLabel(shared_from_this(), unlock_button, LOCALIZE("MAIN_MENU_NOT_ENOUG_RUBIES"), 20.0f);
+			auto label = Shared::SceneHelpers::MakePopupLabel(shared_from_this(), unlock_button, sky::Localize("MAIN_MENU_NOT_ENOUG_RUBIES"), 20.0f);
 			label->setOrigin({ 0.0f, unlock_button->getHeight() });
 			return;
 		}
@@ -105,13 +105,13 @@ MainMenu::MainMenu()
 	}));
 
 	runAction(Actions::Collection::ExecuteInfinite([this](auto delta) {
-		menuPhysics(Clock::ToSeconds(delta));
+		menuPhysics(sky::ToSeconds(delta));
 	}));
 
 	const glm::vec2 TopButtonSize = { 72.0f, 28.0f };
 
 	/*auto shop_button = std::make_shared<Helpers::AdaptiveSpriteButton>();
-	shop_button->setTexture(TEXTURE("textures/shop.png"));
+	shop_button->setTexture(sky::GetTexture("textures/shop.png"));
 	shop_button->setAdaptSize(TopButtonSize);
 	shop_button->setPosition({ 108.0f, 24.0f });
 	shop_button->setPivot({ 0.0f, 0.5f });
@@ -122,7 +122,7 @@ MainMenu::MainMenu()
     getGui()->attach(shop_button);*/
 
 	auto achievements_button = std::make_shared<Helpers::AdaptiveSpriteButton>();
-	achievements_button->setTexture(TEXTURE("textures/cup.png"));
+	achievements_button->setTexture(sky::GetTexture("textures/cup.png"));
 	achievements_button->setAdaptSize(TopButtonSize);
 	achievements_button->setPosition({ 168.0f, 24.0f });
 	achievements_button->setPivot({ 0.0f, 0.5f });
@@ -203,7 +203,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 
 		auto image = std::make_shared<Scene::Sprite>();
 		image->setBatchGroup("main_menu_item_image");
-		image->setTexture(TEXTURE(path));
+		image->setTexture(sky::GetTexture(path));
 		image->setSize(SkinSize);
 		image->setAnchor(0.5f);
 		image->setPivot(0.5f);
@@ -214,7 +214,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 
 		auto padlock = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
 		padlock->setBatchGroup("main_menu_item_padlock");
-		padlock->setTexture(TEXTURE("textures/padlock.png"));
+		padlock->setTexture(sky::GetTexture("textures/padlock.png"));
 		padlock->setAdaptSize(18.0f);
 		padlock->setAnchor({ 0.5f, 0.0f });
 		padlock->setPivot({ 0.5f, 1.0f });
@@ -231,12 +231,12 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 		auto cost = SkinCost.at(skin);
 
 		auto title = std::make_shared<Scene::RichLabel>();
-		title->setFont(FONT("default"));
+		title->setFont(sky::GetFont("default"));
 		title->setFontSize(20.0f);
 		if (locked)
 			title->setText(std::format(L"<icon=textures/ruby.png> {}", cost));
 		else
-			title->setText(LOCALIZE("SKIN_NAME_" + std::to_string((int)skin)));
+			title->setText(sky::Localize("SKIN_NAME_" + std::to_string((int)skin)));
 		title->setAnchor(0.5f);
 		title->setPivot(0.5f);
 		footer->attach(title);

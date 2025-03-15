@@ -14,7 +14,7 @@
 
 using namespace hcg001;
 
-Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Flag::Scene, Flag::Network })
+Application::Application()
 {
 	PLATFORM->setTitle(PRODUCT_NAME);
 #if defined(PLATFORM_MAC)
@@ -30,10 +30,10 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 #endif
 
 	// limit maximum time delta to avoid animation breaks
-	FRAME->setTimeDeltaLimit(Clock::FromSeconds(1.0f / 30.0f));
+	SCHEDULER->setTimeDeltaLimit(sky::FromSeconds(1.0f / 30.0f));
 
-	ENGINE->addSystem<Profile>(std::make_shared<Profile>());
-	ENGINE->addSystem<Achievements>(std::make_shared<Achievements>());
+	sky::Locator<Profile>::Init();
+	sky::Locator<Achievements>::Init();
 
 	PROFILE->load();
 
@@ -43,19 +43,18 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 		} }
 	});
 
-	PRECACHE_FONT_ALIAS("fonts/sansation.ttf", "default");
+	sky::PrecacheFont("fonts/sansation.ttf", "default");
+	sky::GetService<Shared::StatsSystem>()->setAlignment(Shared::StatsSystem::Align::BottomRight);
 
-	STATS->setAlignment(Shared::StatsSystem::Align::BottomRight);
-
-	getScene()->setScreenAdaption(glm::vec2{ 360.0f, 640.0f });
+	sky::GetService<Scene::Scene>()->setScreenAdaption(glm::vec2{ 360.0f, 640.0f });
 	Scene::Sprite::DefaultSampler = skygfx::Sampler::Linear;
-	Scene::Sprite::DefaultTexture = TEXTURE("textures/default.png");
-    Scene::Label::DefaultFont = FONT("default");
+	Scene::Sprite::DefaultTexture = sky::GetTexture("textures/default.png");
+    Scene::Label::DefaultFont = sky::GetFont("default");
 	Scene::Scrollbox::DefaultInertiaFriction = 0.05f;
 
-	CACHE->makeAtlases();
+	sky::GetService<sky::Cache>()->makeAtlases();
 
-	FRAME->addOne([this] {
+	SCHEDULER->addOne([this] {
 		initialize();
 	});
 }
@@ -63,25 +62,26 @@ Application::Application() : Shared::Application(PROJECT_NAME, { Flag::Audio, Fl
 Application::~Application()
 {
 	PROFILE->save();
-	ENGINE->removeSystem<Achievements>();
+	sky::Locator<Profile>::Reset();
+	sky::Locator<Achievements>::Reset();
 }
 
 void Application::initialize()
 {
 	Yandex::InitSdk();
-	auto lang = Shared::LocalizationSystem::Language::English;
-	const auto& args = getStartupKeyValues();
+	auto lang = sky::Localization::Language::English;
+	const auto& args = sky::GetService<sky::Application>()->getStartupKeyValues();
 
 	if (args.contains("lang"))
 	{
 		auto value = args.at("lang");
 		if (value == "ru")
-			lang = Shared::LocalizationSystem::Language::Russian;
+			lang = sky::Localization::Language::Russian;
 	}
 
-	LOCALIZATION->setLanguage(lang);
+	sky::GetService<sky::Localization>()->setLanguage(lang);
 
-	auto root = getScene()->getRoot();
+	auto root = sky::GetService<Scene::Scene>()->getRoot();
 
 	Helpers::gSky = std::make_shared<Sky>();
 	root->attach(Helpers::gSky, Scene::Node::AttachDirection::Front);
@@ -124,7 +124,7 @@ void Application::initialize()
 void Application::onFrame()
 {
 	showCheats();
-	GAME_STATS("event listeners", EVENT->getListenersCount());
+	sky::Indicator("event listeners", sky::GetService<sky::Dispatcher>()->getListenersCount());
 }
 
 void Application::addRubies(int count)
@@ -138,7 +138,7 @@ void Application::addRubies(int count)
 			break;
 
 		auto ruby = std::make_shared<Scene::Sprite>();
-		ruby->setTexture(TEXTURE("textures/ruby.png"));
+		ruby->setTexture(sky::GetTexture("textures/ruby.png"));
 		ruby->setPivot(0.5f);
 		ruby->setAnchor(0.5f);
 		ruby->setSize(24.0f);
@@ -148,7 +148,7 @@ void Application::addRubies(int count)
 			Actions::Collection::Wait(i * (0.125f / 1.25f)),
 			Actions::Collection::Show(ruby, 0.25f, Easing::CubicIn),
 			Actions::Collection::Execute([this, ruby] {
-				FRAME->addOne([this, ruby] {
+				SCHEDULER->addOne([this, ruby] {
 					Helpers::gMainMenu->getRubiesIndicator()->collectRubyAnim(ruby);
 				});
 			})
@@ -161,7 +161,7 @@ void Application::tryShowDailyReward()
 {
 	const long long OneDay = 60 * 60 * 24;
 
-	auto now = Clock::SystemNowSeconds();
+	auto now = sky::SystemNowSeconds();
 
 	auto current_day = PROFILE->getDailyRewardDay();
 	auto delta = now - PROFILE->getDailyRewardTime();
@@ -210,14 +210,14 @@ void Application::onEvent(const Achievements::AchievementEarnedEvent& e)
 		),
 		Actions::Collection::Kill(node)
 	));
-	getScene()->getRoot()->attach(node);
+	sky::GetService<Scene::Scene>()->getRoot()->attach(node);
 }
 
 void Application::showCheats()
 {
 #if !defined(BUILD_DEVELOPER)
 	return;
-#endif	
+#endif
 
 	static bool HideThisMenu = false;
 
@@ -266,37 +266,37 @@ void Application::showCheats()
 		{
 			//auto item = *ACHIEVEMENTS->getItems().begin();
 			auto item = ACHIEVEMENTS->getItemByName("COVER_DISTANCE_100000").value();
-			EVENT->emit(Achievements::AchievementEarnedEvent{ item });
+			sky::Emit(Achievements::AchievementEarnedEvent{ item });
 		}
 
 		if (ImGui::Button("SPAWN BLURRED GLASS"))
 		{
-			CONSOLE->execute("spawn_blur_glass");
+			sky::GetService<sky::CommandProcessor>()->execute("spawn_blur_glass");
 		}
 
 		if (ImGui::Button("SPAWN GRAY GLASS"))
 		{
-			CONSOLE->execute("spawn_gray_glass");
+			sky::GetService<sky::CommandProcessor>()->execute("spawn_gray_glass");
 		}
 
 		if (ImGui::Button("SPAWN SHOCKWAVE"))
 		{
-			CONSOLE->execute("spawn_shockwave");
+			sky::GetService<sky::CommandProcessor>()->execute("spawn_shockwave");
 		}
 
 		if (ImGui::Button("SPAWN SHOCKWAVE (LONG)"))
 		{
-			CONSOLE->execute("spawn_shockwave 5.0");
+			sky::GetService<sky::CommandProcessor>()->execute("spawn_shockwave 5.0");
 		}
 
 		if (ImGui::Button("SPAWN SHOCKWAVE (VERY LONG)"))
 		{
-			CONSOLE->execute("spawn_shockwave 10.0");
+			sky::GetService<sky::CommandProcessor>()->execute("spawn_shockwave 10.0");
 		}
 
 		if (ImGui::Button("TOGGLE BLOOM"))
 		{
-			CONSOLE->execute("if r_bloom_enabled 1 \"r_bloom_enabled 0\" \"r_bloom_enabled 1\"");
+			sky::GetService<sky::CommandProcessor>()->execute("if r_bloom_enabled 1 \"r_bloom_enabled 0\" \"r_bloom_enabled 1\"");
 		}
 
 		if (ImGui::Button("SPAWN ASTEROIDS"))

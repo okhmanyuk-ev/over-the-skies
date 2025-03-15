@@ -3,7 +3,7 @@
 #include <shared/all.h>
 #include "skin.h"
 
-#define PROFILE ENGINE->getSystem<hcg001::Profile>()
+#define PROFILE sky::GetService<hcg001::Profile>()
 
 namespace hcg001
 {

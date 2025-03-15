@@ -3,7 +3,7 @@
 #include <shared/all.h>
 #include "profile.h"
 
-#define ACHIEVEMENTS ENGINE->getSystem<hcg001::Achievements>()
+#define ACHIEVEMENTS sky::GetService<hcg001::Achievements>()
 
 namespace hcg001
 {

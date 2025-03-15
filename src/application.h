@@ -1,14 +1,14 @@
 #pragma once
 
-#include <shared/all.h>
+#include <sky/sky.h>
 #include "helpers.h"
 #include "achievements.h"
 
 namespace hcg001
 {
-	class Application : public Shared::Application,
-		public Common::FrameSystem::Frameable,
-		public Common::Event::Listenable<Achievements::AchievementEarnedEvent>
+	class Application :
+		public sky::Scheduler::Frameable,
+		public sky::Listenable<Achievements::AchievementEarnedEvent>
 	{
 	public:
 		Application();

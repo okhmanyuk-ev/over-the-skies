@@ -74,7 +74,7 @@ void Profile::setRubies(int value)
 		return;
 
 	mRubies = value;
-	EVENT->emit(RubiesChangedEvent());
+	sky::Emit(RubiesChangedEvent());
 }
 
 bool Profile::isAchievementRewardTaken(const std::string& achievement_id) const

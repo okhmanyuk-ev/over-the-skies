@@ -8,10 +8,10 @@ using namespace hcg001;
 AchievementsWindow::AchievementsWindow()
 {
 	getBackground()->setSize({ 314.0f, 512.0f });
-	getTitle()->setText(LOCALIZE("ACHIEVEMENTS_WINDOW_TITLE"));
+	getTitle()->setText(sky::Localize("ACHIEVEMENTS_WINDOW_TITLE"));
 
 	auto ok_button = std::make_shared<Helpers::Button>();
-	ok_button->getLabel()->setText(LOCALIZE("WINDOW_OK"));
+	ok_button->getLabel()->setText(sky::Localize("WINDOW_OK"));
 	ok_button->getLabel()->setFontSize(18.0f);
 	ok_button->setClickCallback([] {
 		SCENE_MANAGER->popWindow();
@@ -143,7 +143,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	title->setAnchor({ 0.0f, 0.5f });
 	title->setPivot({ 0.0f, 0.5f });
 	title->setFontSize(16.0f);
-	title->setText(LOCALIZE("ACHIEVEMENT_" + name));
+	title->setText(sky::Localize("ACHIEVEMENT_" + name));
 	title->setColor(Helpers::Pallete::YellowLabel);
 	title_holder->attach(title);
 
@@ -167,7 +167,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	rect->attach(progressbar);
 
 	auto ruby = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
-	ruby->setTexture(TEXTURE("textures/ruby.png"));
+	ruby->setTexture(sky::GetTexture("textures/ruby.png"));
 	ruby->setAnchor({ 0.0f, 0.5f });
 	ruby->setPivot({ 1.0f, 0.5f });
 	ruby->setX(-3.0f);
@@ -184,7 +184,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	mButton->setTouchMask(1 << 1);
 	mButton->setActive(completed);
 	mButton->setButtonColor(glm::rgbColor(glm::vec3(150.0f, 0.5f, 0.5f)));
-	//mButton->getLabel()->setText(LOCALIZE("ACHIEVEMENTS_WINDOW_CLAIM"));
+	//mButton->getLabel()->setText(sky::Localize("ACHIEVEMENTS_WINDOW_CLAIM"));
 	mButton->getLabel()->setText(std::to_wstring(achievement.reward));
 	mButton->setClickCallback([this, name, ruby, achievement] {
 		PROFILE->achievementRewardTake(name);
@@ -207,7 +207,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	mButton->getLabel()->attach(ruby);
 
 	mCheck = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
-	mCheck->setTexture(TEXTURE("textures/check.png"));
+	mCheck->setTexture(sky::GetTexture("textures/check.png"));
 	mCheck->setAnchor(0.5f);
 	mCheck->setPivot(0.5f);
 	mCheck->setAdaptSize(32.0f);

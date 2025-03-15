@@ -7,19 +7,19 @@ using namespace hcg001;
 Sky::Sky()
 {
 	setStretch(1.0f);
-	getEdgeColor(Scene::Rectangle::Edge::Top)->setColor(Graphics::Color::Black);
-	getEdgeColor(Scene::Rectangle::Edge::Bottom)->setColor(Graphics::Color::Black);
+	getEdgeColor(Scene::Rectangle::Edge::Top)->setColor(sky::Color::Black);
+	getEdgeColor(Scene::Rectangle::Edge::Bottom)->setColor(sky::Color::Black);
 
 	runAction(Actions::Collection::ExecuteInfinite([this] {
 		auto top = getEdgeColor(Scene::Rectangle::Edge::Top)->getColor() * 255.0f;
 		auto bottom = getEdgeColor(Scene::Rectangle::Edge::Bottom)->getColor() * 255.0f;
 
-		GAME_STATS("sky top color",
+		sky::Indicator("sky top color",
 			std::to_string(static_cast<int>(top.r)) + " " +
 			std::to_string(static_cast<int>(top.g)) + " " +
 			std::to_string(static_cast<int>(top.b)));
 
-		GAME_STATS("sky bottom color",
+		sky::Indicator("sky bottom color",
 			std::to_string(static_cast<int>(bottom.r)) + " " +
 			std::to_string(static_cast<int>(bottom.g)) + " " +
 			std::to_string(static_cast<int>(bottom.b)));
@@ -31,14 +31,14 @@ Sky::Sky()
 	mBloomLayer->setIntensity(2.0f);
 	attach(mBloomLayer);
 
-	CONSOLE->registerCVar("r_bloom_enabled", { "bool" }, CVAR_GETTER_BOOL_FUNC(mBloomLayer->isPostprocessEnabled),
-		CVAR_SETTER_BOOL_FUNC(mBloomLayer->setPostprocessEnabled));
-
-	CONSOLE->registerCVar("r_bloom_intensity", { "float" }, CVAR_GETTER_FLOAT_FUNC(mBloomLayer->getIntensity),
-		CVAR_SETTER_FLOAT_FUNC(mBloomLayer->setIntensity));
-
-	CONSOLE->registerCVar("r_bloom_bright_threshold", { "float" }, CVAR_GETTER_FLOAT_FUNC(mBloomLayer->getBrightThreshold),
-		CVAR_SETTER_FLOAT_FUNC(mBloomLayer->setBrightThreshold));
+	//sky::GetService<sky::CommandProcessor>()->registerCVar("r_bloom_enabled", { "bool" }, CVAR_GETTER_BOOL_FUNC(mBloomLayer->isPostprocessEnabled),
+	//	CVAR_SETTER_BOOL_FUNC(mBloomLayer->setPostprocessEnabled));
+	//
+	//sky::GetService<sky::CommandProcessor>()->registerCVar("r_bloom_intensity", { "float" }, CVAR_GETTER_FLOAT_FUNC(mBloomLayer->getIntensity),
+	//	CVAR_SETTER_FLOAT_FUNC(mBloomLayer->setIntensity));
+	//
+	//sky::GetService<sky::CommandProcessor>()->registerCVar("r_bloom_bright_threshold", { "float" }, CVAR_GETTER_FLOAT_FUNC(mBloomLayer->getBrightThreshold),
+	//	CVAR_SETTER_FLOAT_FUNC(mBloomLayer->setBrightThreshold));
 
 	// stars holder
 

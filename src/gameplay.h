@@ -5,12 +5,12 @@
 #include "player.h"
 #include "skin.h"
 #include "helpers.h"
-#include <common/timestep_fixer.h>
+#include <sky/timestep_fixer.h>
 
 namespace hcg001
 {
 	class Gameplay : public Scene::Tappable<Screen>,
-		public Common::Event::Listenable<Platform::Input::Keyboard::Event>
+		public sky::Listenable<Platform::Input::Keyboard::Event>
 	{
 	public:
 		using Super = Scene::Tappable<Screen>;
@@ -38,14 +38,14 @@ namespace hcg001
 	protected:
 		void onTap() override;
 		void onEvent(const Platform::Input::Keyboard::Event& e) override;
-		void update(Clock::Duration delta) override;
+		void update(sky::Duration delta) override;
 
 		void onEnterBegin() override;
 		void onLeaveEnd() override;
 
 	private:
 		void physics(float dTime);
-		void camera(Clock::Duration dTime);
+		void camera(sky::Duration dTime);
 		void jump(JumpType jump_type);
 		void downslide();
 		void collide(std::shared_ptr<Plane> plane);

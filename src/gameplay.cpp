@@ -10,11 +10,11 @@ using namespace hcg001;
 Gameplay::Gameplay()
 {
 	mReadyLabel = std::make_shared<Scene::Label>();
-	mReadyLabel->setFont(FONT("default"));
+	mReadyLabel->setFont(sky::GetFont("default"));
 	mReadyLabel->setFontSize(32.0f);
 	mReadyLabel->setAnchor({ 0.5f, 0.25f });
 	mReadyLabel->setPivot(0.5f);
-	mReadyLabel->setText(LOCALIZE("READY_MENU_TITLE"));
+	mReadyLabel->setText(sky::Localize("READY_MENU_TITLE"));
 	getContent()->attach(mReadyLabel);
 
 	mGameField = std::make_shared<Scene::Node>();
@@ -117,14 +117,14 @@ void Gameplay::onEvent(const Platform::Input::Keyboard::Event& e)
 	tap();
 }
 
-void Gameplay::update(Clock::Duration delta)
+void Gameplay::update(sky::Duration delta)
 {
 	Super::update(delta);
 
 	if (!mReady)
 		return;
 
-	physics(Clock::ToSeconds(delta));
+	physics(sky::ToSeconds(delta));
 
 	auto projected_player_pos = unproject(mPlayer->project(mPlayer->getAbsoluteSize() / 2.0f));
 
@@ -147,7 +147,7 @@ void Gameplay::update(Clock::Duration delta)
 
 	setScore(int(mMaxY / 100.0f));
 
-	GAME_STATS("difficulty", getDifficulty());
+	sky::Indicator("difficulty", getDifficulty());
 }
 
 void Gameplay::onEnterBegin()
@@ -219,7 +219,7 @@ void Gameplay::physics(float dTime)
 	}
 }
 
-void Gameplay::camera(Clock::Duration dTime)
+void Gameplay::camera(sky::Duration dTime)
 {
 	if (mMaxY < -mPlayer->getY())
 		mMaxY = -mPlayer->getY();
@@ -274,9 +274,9 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 	jump(jump_type);
 
 	if (plane->isPowerjump() && plane->isMoving())
-		showRiskLabel(LOCALIZE("RISK_PERFECT"));
+		showRiskLabel(sky::Localize("RISK_PERFECT"));
 	else if (plane->isPowerjump())
-		showRiskLabel(LOCALIZE("RISK_GREAT"));
+		showRiskLabel(sky::Localize("RISK_GREAT"));
 
 	mDownslide = false;
 	spawnJumpParticles();
@@ -366,7 +366,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 	else
 	{
 		plane->setWidth(48.0f);
-		plane->setColor(Graphics::Color::Coral);
+		plane->setColor(sky::Color::Coral);
 		plane->setPowerjump(true);
 
 		auto emitter = std::make_shared<Scene::Emitter>();
@@ -379,7 +379,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 		emitter->setCreateParticleCallback([] {
 			auto particle = std::make_shared<Scene::Rectangle>();
 			particle->setSize(6.0f);
-			particle->setColor(Graphics::Color::FloralWhite);
+			particle->setColor(sky::Color::FloralWhite);
 			return particle;
 		});
 		plane->attach(emitter);
@@ -411,7 +411,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 				auto particle = std::make_shared<Scene::Rectangle>();
 				particle->setSize(4.0f);
 				particle->setBatchGroup("ruby_particle");
-				particle->setColor(Graphics::Color::HotPink);
+				particle->setColor(sky::Color::HotPink);
 				return particle;
 			});
 			ruby->attach(emitter);
@@ -422,7 +422,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 			auto left_ruby = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
 			left_ruby->setAdaptSize(14.0f);
 			left_ruby->setBatchGroup("plane_ruby");
-			left_ruby->setTexture(TEXTURE("textures/ruby.png"));
+			left_ruby->setTexture(sky::GetTexture("textures/ruby.png"));
 			left_ruby->setPivot({ 1.25f, 1.0f });
 			left_ruby->setAnchor({ 0.5f, 0.0f });
 			left_ruby->setPosition({ 0.0f, -6.0f });
@@ -433,7 +433,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 			auto right_ruby = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
 			right_ruby->setAdaptSize(14.0f);
 			right_ruby->setBatchGroup("plane_ruby");
-			right_ruby->setTexture(TEXTURE("textures/ruby.png"));
+			right_ruby->setTexture(sky::GetTexture("textures/ruby.png"));
 			right_ruby->setPivot({ -0.25f, 1.0f });
 			right_ruby->setAnchor({ 0.5f, 0.0f });
 			right_ruby->setPosition({ 0.0f, -6.0f });
@@ -445,7 +445,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 		auto ruby = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
 		ruby->setAdaptSize(18.0f);
 		ruby->setBatchGroup("plane_ruby");
-		ruby->setTexture(TEXTURE("textures/ruby.png"));
+		ruby->setTexture(sky::GetTexture("textures/ruby.png"));
 		ruby->setPivot({ 0.5f, 1.0f });
 		ruby->setAnchor({ 0.5f, 0.0f });
 		ruby->setPosition({ 0.0f, -4.0f });
@@ -459,7 +459,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 		auto magnet = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
 		magnet->setAdaptSize(20.0f);
 		magnet->setBatchGroup("plane_magnet");
-		magnet->setTexture(TEXTURE("textures/magnet.png"));
+		magnet->setTexture(sky::GetTexture("textures/magnet.png"));
 		magnet->setPivot({ 0.5f, 1.0f });
 		magnet->setAnchor({ 0.5f, 0.0f });
 		magnet->setPosition({ 0.0f, -4.0f });
@@ -477,7 +477,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 		emitter->setMaxDuration(3.0f);
 		emitter->setCreateParticleCallback([] {
 			static auto texture = GRAPHICS->makeGenericTexture({ 32, 32 }, [] {
-				GRAPHICS->drawCircle({ Graphics::Color::White, 1.0f }, { Graphics::Color::Yellow, 0.0f });
+				GRAPHICS->drawCircle({ sky::GetColor(sky::Color::White), 1.0f }, { sky::GetColor(sky::Color::Yellow), 0.0f });
 			});
 			auto particle = std::make_shared<Scene::Sprite>();
 			particle->setBatchGroup("magnet_particle");
@@ -561,7 +561,7 @@ void Gameplay::showRiskLabel(const std::wstring& text)
 	}
 
 	mRiskLabel = std::make_shared<Scene::Label>();
-	mRiskLabel->setFont(FONT("default"));
+	mRiskLabel->setFont(sky::GetFont("default"));
 	mRiskLabel->setFontSize(32.0f);
 	mRiskLabel->setText(text);
 	mRiskLabel->setAnchor({ 0.5f, 0.33f });

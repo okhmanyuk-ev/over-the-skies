@@ -27,7 +27,7 @@ AchievementNotify::AchievementNotify(const Achievements::Item& item)
 	setColor(Pallete::WindowItem);
 
 	mTada = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
-	mTada->setTexture(TEXTURE("textures/tada.png"));
+	mTada->setTexture(sky::GetTexture("textures/tada.png"));
 	mTada->setAdaptSize(32.0f);
 	mTada->setAnchor({ 0.0f, 0.5f });
 	mTada->setPivot(0.5f);
@@ -60,7 +60,7 @@ AchievementNotify::AchievementNotify(const Achievements::Item& item)
 	title->setAnchor({ 0.0f, 0.5f });
 	title->setColor(Pallete::YellowLabel);
 	title->setPivot({ 0.0f, 0.5f });
-	title->setText(LOCALIZE("ACHIEVEMENT_" + item.name));
+	title->setText(sky::Localize("ACHIEVEMENT_" + item.name));
 	title->setColor(Helpers::Pallete::YellowLabel);
 	title_holder->attach(title);
 
@@ -98,7 +98,7 @@ void AchievementNotify::showTada()
 
 RubiesIndicator::RubiesIndicator()
 {
-	setTexture(TEXTURE("textures/ruby.png"));
+	setTexture(sky::GetTexture("textures/ruby.png"));
 	setPivot({ 0.0f, 0.5f });
 	setPosition({ 16.0f, 24.0f });
 	setSize(24.0f);

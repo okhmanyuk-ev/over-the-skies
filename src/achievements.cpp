@@ -5,7 +5,7 @@ using namespace hcg001;
 
 Achievements::Achievements()
 {
-	auto json = JSON("achievements.json");
+	auto json = sky::GetJson("achievements.json");
 
 	for (auto field : json)
 	{
@@ -38,7 +38,7 @@ void Achievements::hit(const std::string& trigger, int count)
 			continue;
 
 		progress = item.required;
-		EVENT->emit(AchievementEarnedEvent{item});
+		sky::Emit(AchievementEarnedEvent{item});
 	}
 }
 

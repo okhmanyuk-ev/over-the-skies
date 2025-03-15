@@ -5,7 +5,7 @@ using namespace hcg001;
 DailyRewardWindow::DailyRewardWindow(int current_day)
 {
 	getBackground()->setSize({ 314.0f, 286.0f });
-	getTitle()->setText(LOCALIZE("DAILYREWARD_TITLE"));
+	getTitle()->setText(sky::Localize("DAILYREWARD_TITLE"));
 	setCloseOnMissclick(false);
 
 	auto makePlashka = [this, current_day](int day) {
@@ -21,10 +21,10 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 
 		auto rect = std::static_pointer_cast<Scene::Rectangle>(collection.at("rect"));
 		rect->setBatchGroup(fmt::format("plashka_rect_{}", (size_t)this));
-		rect->setColor(glm::rgbColor(glm::vec3(Graphics::Color::Hsv::HueGreen, day <= current_day ? 0.33f : 0.0f, 0.5f)));
+		rect->setColor(glm::rgbColor(glm::vec3(sky::HsvColors::HueGreen, day <= current_day ? 0.33f : 0.0f, 0.5f)));
 
 		auto title = std::static_pointer_cast<Scene::Label>(collection.at("title"));
-		title->setText(fmt::format(LOCALIZE("DAILYREWARD_DAY").c_str(), day));
+		title->setText(sky::format(sky::Localize("DAILYREWARD_DAY"), day));
 
 		auto img = std::static_pointer_cast<Scene::Sprite>(collection.at("img"));
 		img->setBatchGroup(fmt::format("plashka_img_{}", (size_t)this));
@@ -35,8 +35,8 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 		if (day == current_day)
 		{
 			rect->runAction(Actions::Collection::RepeatInfinite([rect] {
-				const auto Color1 = glm::rgbColor(glm::vec3(Graphics::Color::Hsv::HueGreen, 0.0f, 0.5f));
-				const auto Color2 = glm::rgbColor(glm::vec3(Graphics::Color::Hsv::HueGreen, 0.5f, 0.5f));
+				const auto Color1 = glm::rgbColor(glm::vec3(sky::HsvColors::HueGreen, 0.0f, 0.5f));
+				const auto Color2 = glm::rgbColor(glm::vec3(sky::HsvColors::HueGreen, 0.5f, 0.5f));
 				const float Duration = 0.5f;
 				const auto Easing = Easing::QuadraticInOut;
 
@@ -65,7 +65,7 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	getBody()->attach(grid);
 
 	auto ok_button = std::make_shared<Helpers::Button>();
-	ok_button->getLabel()->setText(LOCALIZE("DAILYREWARD_CLAIM"));
+	ok_button->getLabel()->setText(sky::Localize("DAILYREWARD_CLAIM"));
 	ok_button->setClickCallback([this] {
 		SCENE_MANAGER->popWindow(mClaimCallback);
 	});

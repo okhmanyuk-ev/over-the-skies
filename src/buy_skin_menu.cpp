@@ -8,11 +8,11 @@ using namespace hcg001;
 BuySkinMenu::BuySkinMenu(Skin skin)
 {
 	mTitle = std::make_shared<Scene::Label>();
-	mTitle->setFont(FONT("default"));
+	mTitle->setFont(sky::GetFont("default"));
 	mTitle->setFontSize(34.0f);
 	mTitle->setAnchor({ -0.5f, 0.25f });
 	mTitle->setPivot({ 0.5f, 0.5f });
-	mTitle->setText(LOCALIZE("BUY_SKIN_TITLE"));
+	mTitle->setText(sky::Localize("BUY_SKIN_TITLE"));
 	getContent()->attach(mTitle);
 
 	auto column = std::make_shared<Scene::AutoSized<Scene::Column>>();
@@ -21,7 +21,7 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	getContent()->attach(column);
 
 	auto image = std::make_shared<Scene::Sprite>();
-	image->setTexture(TEXTURE(SkinPath.at(skin)));
+	image->setTexture(sky::GetTexture(SkinPath.at(skin)));
 	image->setAnchor({ 0.5f, 0.0f });
 	image->setPivot({ 0.5f, 0.0f });
 	image->setSize({ 96.0f, 96.0f });
@@ -33,7 +33,7 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 
 	auto cost = SkinCost.at(skin);
 	auto cost_title = std::make_shared<Scene::RichLabel>();
-	cost_title->setFont(FONT("default"));
+	cost_title->setFont(sky::GetFont("default"));
 	cost_title->setFontSize(24.0f);
 	cost_title->setText(std::format(L"<icon=textures/ruby.png> {}", cost));
 	cost_title->setAnchor({ 0.5f, 0.0f });
@@ -43,7 +43,7 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	mBuyButton = std::make_shared<Helpers::Button>();
 	mBuyButton->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
 	mBuyButton->getLabel()->setFontSize(20.0f);
-	mBuyButton->getLabel()->setText(LOCALIZE("BUY_SKIN_BUY"));
+	mBuyButton->getLabel()->setText(sky::Localize("BUY_SKIN_BUY"));
 	mBuyButton->setClickCallback([this, skin] {
 		PROFILE->decreaseRubies(SkinCost.at(skin));
 		auto skins = PROFILE->getSkins();
@@ -63,7 +63,7 @@ BuySkinMenu::BuySkinMenu(Skin skin)
 	mCancelButton = std::make_shared<Helpers::Button>();
 	mCancelButton->setActiveColor({ 1.0f, 1.0f, 1.0f, 0.33f });
 	mCancelButton->getLabel()->setFontSize(20.0f);
-	mCancelButton->getLabel()->setText(LOCALIZE("BUY_SKIN_CANCEL"));
+	mCancelButton->getLabel()->setText(sky::Localize("BUY_SKIN_CANCEL"));
 	mCancelButton->setClickCallback([this] {
 		SCENE_MANAGER->switchScreenBack();
 	});

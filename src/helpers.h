@@ -18,7 +18,7 @@ namespace hcg001::Helpers
 
 		const auto WindowHead = glm::rgbColor(glm::vec3(Hue, 0.75f + 0.125f, 0.25f));
 		const auto WindowBody = glm::rgbColor(glm::vec3(Hue, 0.75f + 0.125f, 0.125f));
-		const auto WindowTitle = Graphics::Color::ToNormalized(255, 255, 255);
+		const auto WindowTitle = sky::ColorToNormalized(255, 255, 255);
 		const auto WindowItem = glm::rgbColor(glm::vec3(Hue, 0.4f, 0.25f));
 		const auto YellowLabel = glm::rgbColor(glm::vec3(60.0f, 0.25f, 1.0f));
 		const auto ButtonColor = glm::rgbColor(glm::vec3(Hue, 0.75f + 0.125f, 0.25f + 0.125f));
@@ -57,7 +57,7 @@ namespace hcg001::Helpers
 	};
 
 	class RubiesIndicator : public Scene::Sprite,
-		public Common::Event::Listenable<Profile::RubiesChangedEvent>,
+		public sky::Listenable<Profile::RubiesChangedEvent>,
 		public std::enable_shared_from_this<RubiesIndicator>
 	{
 	public:

@@ -11,7 +11,7 @@ Player::Player(Skin skin) : mSkin(skin)
 void Player::makeSprite()
 {
 	mSprite = std::make_shared<Scene::Sprite>(); // we should use sprite as child and rotate only this child
-	mSprite->setTexture(TEXTURE(SkinPath.at(mSkin)));
+	mSprite->setTexture(sky::GetTexture(SkinPath.at(mSkin)));
 	mSprite->setStretch(1.0f);
 	mSprite->setAnchor({ 0.5f, 0.5f });
 	mSprite->setPivot({ 0.5f, 0.5f });
@@ -19,7 +19,7 @@ void Player::makeSprite()
 	attach(mSprite);
 }
 
-void Player::update(Clock::Duration dTime)
+void Player::update(sky::Duration dTime)
 {
 	assert(mSprite != nullptr);
 	Scene::Node::update(dTime);
@@ -42,7 +42,7 @@ BallPlayer::BallPlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Skin::Ba
 SnowflakePlayer::SnowflakePlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Skin::Snowflake)
 {
 	auto trail = std::make_shared<Scene::Trail>(trailHolder);
-	trail->setColor(Graphics::Color::ToNormalized(193, 255, 255));
+	trail->setColor(sky::ColorToNormalized(193, 255, 255));
 	trail->setAnchor({ 0.5f, 0.5f });
 	trail->setPivot({ 0.5f, 0.5f });
 	trail->setStretch({ 0.9f, 0.9f });
@@ -58,7 +58,7 @@ BasketballPlayer::BasketballPlayer(std::weak_ptr<Scene::Node> trailHolder) : Pla
 	/*auto emitter = std::make_shared<Shared::SceneHelpers::SpriteEmitter>(trailHolder);
 	emitter->setPivot({ 0.5f, 0.5f });
 	emitter->setAnchor({ 0.5f, 0.5f });
-	emitter->setTexture(TEXTURE("textures/point_light_texture.png"));
+	emitter->setTexture(sky::GetTexture("textures/point_light_texture.png"));
 	emitter->setDelay(1.0f / 60.0f);
 	emitter->setBeginSize({ 32.0f, 32.0f });
 	emitter->setDistance(4.0f);
@@ -77,7 +77,7 @@ BasketballPlayer::BasketballPlayer(std::weak_ptr<Scene::Node> trailHolder) : Pla
 	trail->setPivot({ 0.5f, 0.5f });
 	trail->setStretch({ 0.9f, 0.9f });
 	trail->setLifetime(0.2f);
-	trail->setColor(Graphics::Color::ToNormalized(244, 211, 173));
+	trail->setColor(sky::ColorToNormalized(244, 211, 173));
 	trail->setNarrowing(true);
 	attach(trail);
 
@@ -133,7 +133,7 @@ PayablePlayer::PayablePlayer(std::weak_ptr<Scene::Node> trailHolder) : Player(Sk
 	//emitter->setEndScale({ 1.0f, 1.0f });
 	emitter->setCreateParticleCallback([] {
 		static auto texture = GRAPHICS->makeGenericTexture({ 24, 24 }, [] {
-			GRAPHICS->drawCircle({ Graphics::Color::White, 1.0f }, { Graphics::Color::White, 0.0f });
+			GRAPHICS->drawCircle({ sky::GetColor(sky::Color::White), 1.0f }, { sky::GetColor(sky::Color::White), 0.0f });
 		});
 
 		auto particle = std::make_shared<Scene::Sprite>();
