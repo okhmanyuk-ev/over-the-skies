@@ -5,7 +5,7 @@
 
 using namespace hcg001;
 
-#define YANDEX
+//#define YANDEX
 
 void Yandex::InitSdk()
 {
