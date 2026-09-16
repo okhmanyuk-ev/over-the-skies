@@ -166,7 +166,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	progressbar->getProgressContent()->setBatchGroup("achievement_progressbar_content");
 	rect->attach(progressbar);
 
-	auto ruby = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
+	auto ruby = std::make_shared<hcg001::Adaptive<Scene::Sprite>>();
 	ruby->setTexture(sky::GetTexture("textures/ruby.png"));
 	ruby->setAnchor({ 0.0f, 0.5f });
 	ruby->setPivot({ 1.0f, 0.5f });
@@ -181,7 +181,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	rect->attach(mButtonHolder);
 
 	mButton = std::make_shared<Helpers::Button>();
-	mButton->setTouchMask(1 << 1);
+	mButton->setTouchTransparent(true);
 	mButton->setActive(completed);
 	mButton->setButtonColor(glm::rgbColor(glm::vec3(150.0f, 0.5f, 0.5f)));
 	//mButton->getLabel()->setText(sky::Localize("ACHIEVEMENTS_WINDOW_CLAIM"));
@@ -189,7 +189,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	mButton->setClickCallback([this, name, ruby, achievement] {
 		PROFILE->achievementRewardTake(name);
 		PROFILE->increaseRubies(achievement.reward);
-		PROFILE->saveAsync();
+		PROFILE->save();
 
 		ruby->setBatchGroup("");
 		ruby->setAdaptingEnabled(false);
@@ -206,7 +206,7 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 
 	mButton->getLabel()->attach(ruby);
 
-	mCheck = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
+	mCheck = std::make_shared<hcg001::Adaptive<Scene::Sprite>>();
 	mCheck->setTexture(sky::GetTexture("textures/check.png"));
 	mCheck->setAnchor(0.5f);
 	mCheck->setPivot(0.5f);
@@ -230,13 +230,13 @@ void AchievementsWindow::Item::refresh(bool anim)
 
 	if (mButton->isEnabled() && reward_taken)
 	{
-		runAction(Actions::Collection::MakeSequence(
-			Actions::Collection::ChangeScale(mButtonHolder, { 0.0f, 0.0f }, 0.25f, Easing::CubicOut),
-			Actions::Collection::Execute([this, reward_taken] {
+		runAction(sky::Actions::Sequence(
+			sky::Actions::ChangeScale(mButtonHolder, { 0.0f, 0.0f }, 0.25f, Easing::CubicOut),
+			[this, reward_taken] {
 				mButton->setEnabled(false);
 				mCheck->setEnabled(true);
-			}),
-			Actions::Collection::ChangeScale(mButtonHolder, { 1.0f, 1.0f }, 0.25f, Easing::BackOut)
+			},
+			sky::Actions::ChangeScale(mButtonHolder, { 1.0f, 1.0f }, 0.25f, Easing::BackOut)
 		));
 	}
 }

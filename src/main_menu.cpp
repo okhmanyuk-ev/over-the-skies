@@ -5,6 +5,7 @@
 #include "gameplay.h"
 #include "gameover_menu.h"
 #include "buy_skin_menu.h"
+#include "adaptive.h"
 
 using namespace hcg001;
 
@@ -65,7 +66,7 @@ MainMenu::MainMenu()
 
 	getContent()->attach(unlock_button);
 
-	runAction(Actions::Collection::ExecuteInfinite([this, play_button, unlock_button] {
+	runAction(sky::Actions::ExecuteInfinite([this, play_button, unlock_button] {
 		if (!mDecideButtons)
 			return;
 
@@ -82,29 +83,29 @@ MainMenu::MainMenu()
 			mPlayButtonVisible = false;
 			mButtonsAnimating = true;
 
-			runAction(Actions::Collection::MakeSequence(
-				Actions::Collection::MakeParallel(
-					Actions::Collection::ChangeHorizontalAnchor(play_button, -0.5f, Duration, EasingFunction),
-					Actions::Collection::ChangeHorizontalAnchor(unlock_button, 0.5f, Duration, EasingFunction)
+			runAction(sky::Actions::Sequence(
+				sky::Actions::Concurrent(
+					sky::Actions::ChangeHorizontalAnchor(play_button, -0.5f, Duration, EasingFunction),
+					sky::Actions::ChangeHorizontalAnchor(unlock_button, 0.5f, Duration, EasingFunction)
 				),
-				Actions::Collection::Execute([this] { mButtonsAnimating = false; })
+				[this] { mButtonsAnimating = false; }
 			));
 		}
 		else if (!mPlayButtonVisible && !locked)
 		{
 			mPlayButtonVisible = true;
 			mButtonsAnimating = true;
-			runAction(Actions::Collection::MakeSequence(
-				Actions::Collection::MakeParallel(
-					Actions::Collection::ChangeHorizontalAnchor(play_button, 0.5f, Duration, EasingFunction),
-					Actions::Collection::ChangeHorizontalAnchor(unlock_button, 1.5f, Duration, EasingFunction)
+			runAction(sky::Actions::Sequence(
+				sky::Actions::Concurrent(
+					sky::Actions::ChangeHorizontalAnchor(play_button, 0.5f, Duration, EasingFunction),
+					sky::Actions::ChangeHorizontalAnchor(unlock_button, 1.5f, Duration, EasingFunction)
 				),
-				Actions::Collection::Execute([this] { mButtonsAnimating = false; })
+				[this] { mButtonsAnimating = false; }
 			));
 		}
 	}));
 
-	runAction(Actions::Collection::ExecuteInfinite([this](auto delta) {
+	runAction(sky::Actions::ExecuteInfinite([this](auto delta) {
 		menuPhysics(sky::ToSeconds(delta));
 	}));
 
@@ -136,9 +137,9 @@ MainMenu::MainMenu()
 	mRubiesIndicator->setInstantRefresh(true);
 	getGui()->attach(mRubiesIndicator);
 
-	runAction(Actions::Collection::Delayed([this] { return isTransformReady(); }, Actions::Collection::Execute([this] {
+	runAction(sky::Actions::Delayed([this] { return isTransformReady(); }, [this] {
 	//	mScrollTarget = mSkinItems.at(PROFILE->getCurrentSkin());
-	})));
+	}));
 }
 
 void MainMenu::onEnterBegin()
@@ -212,7 +213,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 		if (locked)
 			image->setColor({ 0.5f, 0.5f, 0.5f });
 
-		auto padlock = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
+		auto padlock = std::make_shared<hcg001::Adaptive<Scene::Sprite>>();
 		padlock->setBatchGroup("main_menu_item_padlock");
 		padlock->setTexture(sky::GetTexture("textures/padlock.png"));
 		padlock->setAdaptSize(18.0f);
@@ -253,7 +254,7 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 			Shared::SceneHelpers::RecursiveAlphaSet(node, alpha);
 		};
 
-		image->runAction(Actions::Collection::ExecuteInfinite([this, hideFarNode, image, SkinSize, footer, title, locked] {
+		image->runAction(sky::Actions::ExecuteInfinite([this, hideFarNode, image, SkinSize, footer, title, locked] {
 			if (!mScrollbox->isTransformReady())
 				return;
 

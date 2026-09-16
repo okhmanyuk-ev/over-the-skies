@@ -26,7 +26,7 @@ AchievementNotify::AchievementNotify(const Achievements::Item& item)
 	setRounding(1.0f);
 	setColor(Pallete::WindowItem);
 
-	mTada = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
+	mTada = std::make_shared<hcg001::Adaptive<Scene::Sprite>>();
 	mTada->setTexture(sky::GetTexture("textures/tada.png"));
 	mTada->setAdaptSize(32.0f);
 	mTada->setAnchor({ 0.0f, 0.5f });
@@ -86,11 +86,11 @@ AchievementNotify::AchievementNotify(const Achievements::Item& item)
 
 void AchievementNotify::showTada()
 {
-	runAction(Actions::Collection::MakeSequence(
-		Actions::Collection::ChangeScale(mTada, { 1.0f, 1.0f }, 0.25f, Easing::BackOut),
-		Actions::Collection::Execute([this] {
+	runAction(sky::Actions::Sequence(
+		sky::Actions::ChangeScale(mTada, { 1.0f, 1.0f }, 0.25f, Easing::BackOut),
+		[this] {
 			//mTadaEmitter->emit(16);
-		})
+		}
 	));
 }
 
@@ -138,17 +138,17 @@ void RubiesIndicator::collectRubyAnim(std::shared_ptr<Scene::Node> ruby, float d
 
 	auto rubies_count = PROFILE->getRubies();
 
-	runAction(Actions::Collection::MakeSequence(
-		Actions::Collection::Wait(delay),
-		Actions::Collection::MakeParallel(
-			Actions::Collection::ChangePosition(ruby, { 0.0f, 0.0f }, MoveDuration, Easing::QuarticInOut),
-			Actions::Collection::ChangeSize(ruby, getAbsoluteSize(), MoveDuration, Easing::QuarticInOut)
+	runAction(sky::Actions::Sequence(
+		sky::Actions::Wait(delay),
+		sky::Actions::Concurrent(
+			sky::Actions::ChangePosition(ruby, { 0.0f, 0.0f }, MoveDuration, Easing::QuarticInOut),
+			sky::Actions::ChangeSize(ruby, getAbsoluteSize(), MoveDuration, Easing::QuarticInOut)
 		),
-		Actions::Collection::Kill(ruby),
-		Actions::Collection::Execute([this, rubies_count] {
+		sky::Actions::Kill(ruby),
+		[this, rubies_count] {
 			mLabel->setText(std::to_wstring(rubies_count));
-		}),
-		Actions::Collection::Shake(mLabel, 2.0f, 0.2f)
+		},
+		sky::Actions::Shake(mLabel, 2.0f, 0.2f)
 	));
 }
 
@@ -160,12 +160,12 @@ void RubiesIndicator::makeHidden()
 
 void RubiesIndicator::show()
 {
-	runAction(Actions::Collection::Show(shared_from_this(), 0.25f));
-	runAction(Actions::Collection::Show(mLabel, 0.25f));
+	runAction(sky::Actions::Show(shared_from_this(), 0.25f));
+	runAction(sky::Actions::Show(mLabel, 0.25f));
 }
 
 void RubiesIndicator::hide()
 {
-	runAction(Actions::Collection::Hide(shared_from_this(), 0.25f));
-	runAction(Actions::Collection::Hide(mLabel, 0.25f));
+	runAction(sky::Actions::Hide(shared_from_this(), 0.25f));
+	runAction(sky::Actions::Hide(mLabel, 0.25f));
 }

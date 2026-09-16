@@ -40,7 +40,7 @@ Window::Window(bool has_close_button)// : Shared::SceneHelpers::StandardWindow({
 
 	if (has_close_button)
 	{
-		auto close_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<Scene::Adaptive<Scene::Sprite>>>>();
+		auto close_button = std::make_shared<Shared::SceneHelpers::BouncingButtonBehavior<Scene::Clickable<hcg001::Adaptive<Scene::Sprite>>>>();
 		close_button->setTexture(sky::GetTexture("textures/close2.png"));
 		close_button->setAdaptSize(22.0f);
 		close_button->setAnchor({ 1.0f, 0.5f });

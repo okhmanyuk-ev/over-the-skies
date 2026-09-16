@@ -34,15 +34,15 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 
 		if (day == current_day)
 		{
-			rect->runAction(Actions::Collection::RepeatInfinite([rect] {
+			rect->runAction(sky::Actions::RepeatInfinite([rect] {
 				const auto Color1 = glm::rgbColor(glm::vec3(sky::HsvColors::HueGreen, 0.0f, 0.5f));
 				const auto Color2 = glm::rgbColor(glm::vec3(sky::HsvColors::HueGreen, 0.5f, 0.5f));
 				const float Duration = 0.5f;
 				const auto Easing = Easing::QuadraticInOut;
 
-				return Actions::Collection::MakeSequence(
-					Actions::Collection::ChangeColor(rect, Color1, Duration, Easing),
-					Actions::Collection::ChangeColor(rect, Color2, Duration, Easing)
+				return sky::Actions::Sequence(
+					sky::Actions::ChangeColorRgb(rect, Color1, Duration, Easing),
+					sky::Actions::ChangeColorRgb(rect, Color2, Duration, Easing)
 				);
 			}));
 		}

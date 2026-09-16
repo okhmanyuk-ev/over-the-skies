@@ -7,7 +7,7 @@
 namespace hcg001
 {
 	class Application :
-		public sky::Scheduler::Frameable,
+		public sky::Updatable,
 		public sky::Listenable<Achievements::AchievementEarnedEvent>
 	{
 	public:

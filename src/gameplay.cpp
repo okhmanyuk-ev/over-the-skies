@@ -4,6 +4,7 @@
 #include "achievements.h"
 #include "gameover_menu.h"
 #include "yandex.h"
+#include "adaptive.h"
 
 using namespace hcg001;
 
@@ -36,23 +37,23 @@ Gameplay::Gameplay()
 	mPlayer = createPlayer(PROFILE->getCurrentSkin(), mPlayerTrailHolder);
 	mPlayer->setAlpha(0.0f);
 
-	runAction(Actions::Collection::Delayed([this] { return !isTransformReady(); },
-		Actions::Collection::MakeSequence(
-			Actions::Collection::Execute([this] {
+	runAction(sky::Actions::Delayed([this] { return !isTransformReady(); },
+		sky::Actions::Sequence(
+			[this] {
 				mPlayer->setPosition({ getAbsoluteWidth() / 2.0f, (-getAbsoluteHeight() / 2.0f) - 32.0f });
 				mGameField->attach(mPlayer);
-			}),
-			Actions::Collection::Wait([this] { return !mPlayer->isTransformReady(); }),
-			Actions::Collection::Delayed(0.25f, Actions::Collection::MakeSequence(
-				Actions::Collection::Execute([this] {
+			},
+			sky::Actions::Wait([this] { return !mPlayer->isTransformReady(); }),
+			sky::Actions::Delayed(0.25f, sky::Actions::Sequence(
+				[this] {
 					spawnPlanes();
-				}),
-				Actions::Collection::Delayed(0.25f,
-					Actions::Collection::Show(mPlayer, 0.25f)
+				},
+				sky::Actions::Delayed(0.25f,
+					sky::Actions::Show(mPlayer, 0.25f)
 				),
-				Actions::Collection::Execute([this] {
+				[this] {
 					mCanStart = true;
-				})
+				}
 			))
 		)
 	));
@@ -281,9 +282,9 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 	mDownslide = false;
 	spawnJumpParticles();
 
-	plane->runAction(Actions::Collection::MakeSequence(
-		Actions::Collection::ChangeScale(plane, { 0.0f, 0.0f }, 0.25f, Easing::BackIn),
-		Actions::Collection::Kill(plane)
+	plane->runAction(sky::Actions::Sequence(
+		sky::Actions::ChangeScale(plane, { 0.0f, 0.0f }, 0.25f, Easing::BackIn),
+		sky::Actions::Kill(plane)
 	));
 
 	if (plane->hasRubies())
@@ -292,7 +293,7 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 		float delay = 0.0f;
 		for (auto ruby : plane->getRubies())
 		{
-			auto _ruby = std::static_pointer_cast<Scene::Adaptive<Scene::Sprite>>(ruby);
+			auto _ruby = std::static_pointer_cast<hcg001::Adaptive<Scene::Sprite>>(ruby);
 			_ruby->bakeAdaption();
 			_ruby->setAdaptingEnabled(false);
 			PROFILE->increaseRubies(1);
@@ -388,8 +389,8 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 	plane->setPivot(0.5f);
 	plane->setPosition(pos);
 	plane->setScale(0.0f);
-	plane->runAction(Actions::Collection::Delayed(anim_delay,
-		Actions::Collection::ChangeScale(plane, { 1.0f, 1.0f }, 0.5f / 1.25f, Easing::BackOut)
+	plane->runAction(sky::Actions::Delayed(anim_delay,
+		sky::Actions::ChangeScale(plane, { 1.0f, 1.0f }, 0.5f / 1.25f, Easing::BackOut)
 	));
 
 	mPlaneHolder->attach(plane);
@@ -419,7 +420,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 
 		if (tripple_ruby)
 		{
-			auto left_ruby = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
+			auto left_ruby = std::make_shared<hcg001::Adaptive<Scene::Sprite>>();
 			left_ruby->setAdaptSize(14.0f);
 			left_ruby->setBatchGroup("plane_ruby");
 			left_ruby->setTexture(sky::GetTexture("textures/ruby.png"));
@@ -430,7 +431,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 			plane->attach(left_ruby);
 			addEmitterForRuby(left_ruby);
 
-			auto right_ruby = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
+			auto right_ruby = std::make_shared<hcg001::Adaptive<Scene::Sprite>>();
 			right_ruby->setAdaptSize(14.0f);
 			right_ruby->setBatchGroup("plane_ruby");
 			right_ruby->setTexture(sky::GetTexture("textures/ruby.png"));
@@ -442,7 +443,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 			addEmitterForRuby(right_ruby);
 		}
 
-		auto ruby = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
+		auto ruby = std::make_shared<hcg001::Adaptive<Scene::Sprite>>();
 		ruby->setAdaptSize(18.0f);
 		ruby->setBatchGroup("plane_ruby");
 		ruby->setTexture(sky::GetTexture("textures/ruby.png"));
@@ -456,7 +457,7 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 
 	if (bonus == PlaneBonus::Magnet)
 	{
-		auto magnet = std::make_shared<Scene::Adaptive<Scene::Sprite>>();
+		auto magnet = std::make_shared<hcg001::Adaptive<Scene::Sprite>>();
 		magnet->setAdaptSize(20.0f);
 		magnet->setBatchGroup("plane_magnet");
 		magnet->setTexture(sky::GetTexture("textures/magnet.png"));
@@ -494,18 +495,18 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 
 		const float Center = plane->getX();
 		bool side = sky::chance(0.5f);
-		plane->runAction(Actions::Collection::RepeatInfinite([plane, Center, side] {
+		plane->runAction(sky::Actions::RepeatInfinite([plane, Center, side] {
 			const float Duration = 0.25f;
 			const float Distance = 32.0f;
 
 			float firstSide = Center + (side ? Distance : -Distance);
 			float secondSide = Center - (side ? Distance : -Distance);
 
-			return Actions::Collection::MakeSequence(
-				Actions::Collection::ChangeHorizontalPosition(plane, firstSide, Duration),
-				Actions::Collection::ChangeHorizontalPosition(plane, Center, Duration),
-				Actions::Collection::ChangeHorizontalPosition(plane, secondSide, Duration),
-				Actions::Collection::ChangeHorizontalPosition(plane, Center, Duration)
+			return sky::Actions::Sequence(
+				sky::Actions::ChangeHorizontalPosition(plane, firstSide, Duration),
+				sky::Actions::ChangeHorizontalPosition(plane, Center, Duration),
+				sky::Actions::ChangeHorizontalPosition(plane, secondSide, Duration),
+				sky::Actions::ChangeHorizontalPosition(plane, Center, Duration)
 			);
 		}));
 	}
@@ -533,9 +534,9 @@ void Gameplay::removeFarPlanes()
 
 void Gameplay::start()
 {
-	runAction(Actions::Collection::MakeSequence(
-		Actions::Collection::Hide(mReadyLabel, 0.5f),
-		Actions::Collection::Kill(mReadyLabel)
+	runAction(sky::Actions::Sequence(
+		sky::Actions::Hide(mReadyLabel, 0.5f),
+		sky::Actions::Kill(mReadyLabel)
 	));
 }
 
@@ -546,7 +547,7 @@ void Gameplay::gameover()
 
 	mGameovered = true;
 	ACHIEVEMENTS->hit("GAME_COMPLETED");
-	PROFILE->saveAsync();
+	PROFILE->save();
 	auto gameover_screen = std::make_shared<GameoverMenu>(getScore());
 	SCENE_MANAGER->switchScreen(gameover_screen, [] {
 		Helpers::gSky->spawnSomeAsteroids();
@@ -557,7 +558,7 @@ void Gameplay::showRiskLabel(const std::wstring& text)
 {
 	if (mRiskLabel != nullptr)
 	{
-		mRiskLabel->runAction(Actions::Collection::Kill(mRiskLabel));
+		mRiskLabel->runAction(sky::Actions::Kill(mRiskLabel));
 	}
 
 	mRiskLabel = std::make_shared<Scene::Label>();
@@ -570,15 +571,15 @@ void Gameplay::showRiskLabel(const std::wstring& text)
 	mRiskLabel->setAlpha(0.0f);
 	getContent()->attach(mRiskLabel);
 
-	mRiskLabel->runAction(Actions::Collection::MakeSequence(
-		Actions::Collection::Show(mRiskLabel, 0.125f),
-		Actions::Collection::Wait(1.0f),
-		Actions::Collection::Hide(mRiskLabel, 0.5f),
-		Actions::Collection::Kill(mRiskLabel)
+	mRiskLabel->runAction(sky::Actions::Sequence(
+		sky::Actions::Show(mRiskLabel, 0.125f),
+		sky::Actions::Wait(1.0f),
+		sky::Actions::Hide(mRiskLabel, 0.5f),
+		sky::Actions::Kill(mRiskLabel)
 	));
 
 	mRiskLabel->runAction(
-		Actions::Collection::ChangeHorizontalPivot(mRiskLabel, 0.5f, 0.75f, Easing::ElasticOut)
+		sky::Actions::ChangeHorizontalPivot(mRiskLabel, 0.5f, 0.75f, Easing::ElasticOut)
 	);
 }
 

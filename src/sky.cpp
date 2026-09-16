@@ -10,7 +10,7 @@ Sky::Sky()
 	getEdgeColor(Scene::Rectangle::Edge::Top)->setColor(sky::Color::Black);
 	getEdgeColor(Scene::Rectangle::Edge::Bottom)->setColor(sky::Color::Black);
 
-	runAction(Actions::Collection::ExecuteInfinite([this] {
+	runAction(sky::Actions::ExecuteInfinite([this] {
 		auto top = getEdgeColor(Scene::Rectangle::Edge::Top)->getColor() * 255.0f;
 		auto bottom = getEdgeColor(Scene::Rectangle::Edge::Bottom)->getColor() * 255.0f;
 
@@ -77,13 +77,11 @@ Sky::Sky()
 	mAsteroidsHolder->setStretch(1.0f);
 	mBloomLayer->attach(mAsteroidsHolder);
 
-	runAction(Actions::Collection::RepeatInfinite([this] {
+	runAction(sky::Actions::RepeatInfinite([this] {
 		auto delay = glm::linearRand(10.0f, 20.0f);
-		return Actions::Collection::Delayed(delay,
-			Actions::Collection::Execute([this] {
-				spawnSomeAsteroids();
-			})
-		);
+		return sky::Actions::Delayed(delay, [this] {
+			spawnSomeAsteroids();
+		});
 	}));
 }
 
@@ -97,8 +95,8 @@ void Sky::changeColor(std::optional<float> top_hue, std::optional<float> bottom_
 
 	const float ChangeDuration = 2.5f;
 
-	runAction(Actions::Collection::ChangeColor(getEdgeColor(Scene::Rectangle::Edge::Top), top, ChangeDuration, Easing::QuadraticInOut));
-	runAction(Actions::Collection::ChangeColor(getEdgeColor(Scene::Rectangle::Edge::Bottom), bottom, ChangeDuration, Easing::QuadraticInOut));
+	runAction(sky::Actions::ChangeColorRgb(getEdgeColor(Scene::Rectangle::Edge::Top), top, ChangeDuration, Easing::QuadraticInOut));
+	runAction(sky::Actions::ChangeColorRgb(getEdgeColor(Scene::Rectangle::Edge::Bottom), bottom, ChangeDuration, Easing::QuadraticInOut));
 }
 
 void Sky::spawnAsteroid(float speed, float normalized_spread)
@@ -117,9 +115,9 @@ void Sky::spawnAsteroid(float speed, float normalized_spread)
 	const float Duration = 5.0f;
 	const glm::vec2 Direction = { -0.75f, 1.0f };
 
-	asteroid->runAction(Actions::Collection::MakeSequence(
-		Actions::Collection::ChangePositionByDirection(asteroid, Direction, speed, Duration),
-		Actions::Collection::Kill(asteroid)
+	asteroid->runAction(sky::Actions::Sequence(
+		sky::Actions::ChangePositionByDirection(asteroid, Direction, speed, Duration),
+		sky::Actions::Kill(asteroid)
 	));
 
 	auto emitter = std::make_shared<Scene::Emitter>();
@@ -143,9 +141,9 @@ void Sky::spawnAsteroid(float speed, float normalized_spread)
 
 void Sky::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
 {
-	Actions::Run(Actions::Collection::RepeatInfinite([holder] {
-		return Actions::Collection::MakeSequence(
-			Actions::Collection::Execute([holder] {
+	sky::RunAction(sky::Actions::RepeatInfinite([holder] {
+		return sky::Actions::Sequence(
+			[holder] {
 				auto size = glm::linearRand(4.0f, 6.0f);
 
 				auto star = std::make_shared<Scene::Rectangle>();
@@ -161,21 +159,21 @@ void Sky::placeStarsToHolder(std::shared_ptr<Scene::Node> holder)
 				const float HoldDuration = 0.5f;
 				const float StarAlpha = 0.75f;
 
-				star->runAction(Actions::Collection::MakeSequence(
-					Actions::Collection::MakeParallel(
-						Actions::Collection::ChangeScale(star, { 1.0f, 1.0f }, ShowDuration, Easing::QuadraticOut),
-						Actions::Collection::ChangeAlpha(star, StarAlpha, ShowDuration, Easing::QuadraticOut)
+				star->runAction(sky::Actions::Sequence(
+					sky::Actions::Concurrent(
+						sky::Actions::ChangeScale(star, { 1.0f, 1.0f }, ShowDuration, Easing::QuadraticOut),
+						sky::Actions::ChangeAlpha(star, StarAlpha, ShowDuration, Easing::QuadraticOut)
 					),
-					Actions::Collection::Delayed(HoldDuration,
-						Actions::Collection::MakeParallel(
-							Actions::Collection::ChangeScale(star, { 0.0f, 0.0f }, ShowDuration, Easing::QuadraticIn),
-							Actions::Collection::Hide(star, ShowDuration, Easing::QuadraticIn)
+					sky::Actions::Delayed(HoldDuration,
+						sky::Actions::Concurrent(
+							sky::Actions::ChangeScale(star, { 0.0f, 0.0f }, ShowDuration, Easing::QuadraticIn),
+							sky::Actions::Hide(star, ShowDuration, Easing::QuadraticIn)
 						)
 					),
-					Actions::Collection::Kill(star)
+					sky::Actions::Kill(star)
 				));
-			}),
-			Actions::Collection::Wait(0.25f)
+			},
+			sky::Actions::Wait(0.25f)
 		);
 	}));
 }
@@ -219,18 +217,18 @@ void Sky::moveSky(const glm::vec2& offset)
 
 void Sky::spawnSomeAsteroids()
 {
-	auto seq = Actions::Collection::MakeSequence();
+	std::list<sky::Action> seq;
 	auto global_spread = glm::linearRand(0.0f, 1.0f);
 	auto speed = glm::linearRand(256.0f + 128.0f, 512.0f + 256.0f);
 	auto count = glm::linearRand(1, 3);
 	for (int i = 0; i < count; i++)
 	{
 		auto local_spread = glm::linearRand(-0.125f, 0.125f);
-		seq->add(Actions::Collection::Delayed(glm::linearRand(0.0f, 0.25f),
-			Actions::Collection::Execute([this, speed, global_spread, local_spread] {
+		seq.push_back(sky::Actions::Delayed(glm::linearRand(0.0f, 0.25f),
+			[this, speed, global_spread, local_spread] {
 				spawnAsteroid(speed, global_spread + local_spread);
-			})
+			}
 		));
 	}
-	runAction(std::move(seq));
+	runAction(sky::Actions::Sequence(std::move(seq)));
 }

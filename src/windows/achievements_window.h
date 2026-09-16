@@ -1,6 +1,7 @@
 #pragma once
 
 #include "window.h"
+#include "../adaptive.h"
 
 namespace hcg001
 {
@@ -33,7 +34,7 @@ namespace hcg001
 		void refresh(bool anim = false);
 
 	private:
-		std::shared_ptr<Scene::Adaptive<Scene::Sprite>> mCheck;
+		std::shared_ptr<hcg001::Adaptive<Scene::Sprite>> mCheck;
 		std::shared_ptr<Helpers::Button> mButton;
 		std::shared_ptr<Scene::Node> mButtonHolder;
 		std::string mName;

@@ -23,11 +23,11 @@ GameoverMenu::GameoverMenu(int score)
 	getContent()->attach(node);
 
 	auto tap_label = std::static_pointer_cast<Scene::Label>(collection.at("tap_label"));
-	runAction(Actions::Collection::Delayed([this] { return getState() != State::Entered; },
-		Actions::Collection::RepeatInfinite([tap_label] {
-			return Actions::Collection::MakeSequence(
-				Actions::Collection::Show(tap_label, 0.75f),
-				Actions::Collection::Hide(tap_label, 0.75f)
+	runAction(sky::Actions::Delayed([this] { return getState() != State::Entered; },
+		sky::Actions::RepeatInfinite([tap_label] {
+			return sky::Actions::Sequence(
+				sky::Actions::Show(tap_label, 0.75f),
+				sky::Actions::Hide(tap_label, 0.75f)
 			);
 		})
 	));

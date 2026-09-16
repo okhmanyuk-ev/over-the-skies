@@ -11,6 +11,7 @@
 #include "helpers.h"
 #include "achievements.h"
 #include "yandex.h"
+#include <sky/sky.h>
 
 using namespace hcg001;
 
@@ -30,7 +31,7 @@ Application::Application()
 #endif
 
 	// limit maximum time delta to avoid animation breaks
-	SCHEDULER->setTimeDeltaLimit(sky::FromSeconds(1.0f / 30.0f));
+	sky::Scheduler::Instance->setTimeDeltaLimit(sky::FromSeconds(1.0f / 30.0f));
 
 	sky::Locator<Profile>::Init();
 	sky::Locator<Achievements>::Init();
@@ -54,7 +55,7 @@ Application::Application()
 
 	sky::GetService<sky::Cache>()->makeAtlases();
 
-	SCHEDULER->addOne([this] {
+	sky::RunAction([this] {
 		initialize();
 	});
 }
@@ -86,34 +87,32 @@ void Application::initialize()
 	Helpers::gSky = std::make_shared<Sky>();
 	root->attach(Helpers::gSky, Scene::Node::AttachDirection::Front);
 
-	Actions::Run(Actions::Collection::MakeSequence(
-		Actions::Collection::WaitGlobalFrame(),
-		Actions::Collection::Wait(0.25f),
-		Actions::Collection::Execute([] {
+	sky::RunAction(sky::Actions::Sequence(
+		sky::Actions::WaitGlobalFrame(),
+		sky::Actions::Wait(0.25f),
+		[] {
 			//sky->changeColor(Graphics::Color::Hsv::HueBlue, Graphics::Color::Hsv::HueRed);
 			Helpers::gSky->changeColor(205.0f, 15.0f);
-		}),
-		Actions::Collection::RepeatInfinite([] {
-			return Actions::Collection::Delayed(10.0f,
-				Actions::Collection::Execute([] {
-					Helpers::gSky->changeColor();
-				})
-			);
+		},
+		sky::Actions::RepeatInfinite([] {
+			return sky::Actions::Delayed(10.0f, [] {
+				Helpers::gSky->changeColor();
+			});
 		})
 	));
 
 	Helpers::gMainMenu = std::make_shared<MainMenu>();
 
-	Actions::Run(Actions::Collection::MakeSequence(
-		Actions::Collection::WaitGlobalFrame(),
-		Actions::Collection::Execute([this] {
+	sky::RunAction(sky::Actions::Sequence(
+		sky::Actions::WaitGlobalFrame(),
+		[this] {
 			SCENE_MANAGER->switchScreen(Helpers::gMainMenu, [this] {
 				tryShowDailyReward();
-				Actions::Run(Actions::Collection::Delayed(3.0f, Actions::Collection::Execute([] {
+				sky::RunAction(sky::Actions::Delayed(3.0f, [] {
 					Helpers::gSky->spawnSomeAsteroids();
-				})));
+				}));
 			});
-		})
+		}
 	));
 
 	auto tada_particles_holder = std::make_shared<Scene::Node>();
@@ -130,7 +129,7 @@ void Application::onFrame()
 void Application::addRubies(int count)
 {
 	PROFILE->increaseRubies(count);
-	PROFILE->saveAsync();
+	PROFILE->save();
 
 	for (int i = 0; i < count; i++)
 	{
@@ -144,14 +143,14 @@ void Application::addRubies(int count)
 		ruby->setSize(24.0f);
 		ruby->setPosition(glm::linearRand(glm::vec2(-64.0f), glm::vec2(64.0f)));
 		ruby->setAlpha(0.0f);
-		ruby->runAction(Actions::Collection::MakeSequence(
-			Actions::Collection::Wait(i * (0.125f / 1.25f)),
-			Actions::Collection::Show(ruby, 0.25f, Easing::CubicIn),
-			Actions::Collection::Execute([this, ruby] {
-				SCHEDULER->addOne([this, ruby] {
+		ruby->runAction(sky::Actions::Sequence(
+			sky::Actions::Wait(i * (0.125f / 1.25f)),
+			sky::Actions::Show(ruby, 0.25f, Easing::CubicIn),
+			[this, ruby] {
+				sky::RunAction([this, ruby] {
 					Helpers::gMainMenu->getRubiesIndicator()->collectRubyAnim(ruby);
 				});
-			})
+			}
 		));
 		Helpers::gMainMenu->attach(ruby);
 	}
@@ -182,7 +181,7 @@ void Application::tryShowDailyReward()
 
 		PROFILE->setDailyRewardTime(now);
 		PROFILE->setDailyRewardDay(current_day);
-		PROFILE->saveAsync();
+		PROFILE->save();
 
 		addRubies(rubies_count);
 	});
@@ -194,21 +193,21 @@ void Application::onEvent(const Achievements::AchievementEarnedEvent& e)
 	auto node = std::make_shared<Helpers::AchievementNotify>(e.item);
 	node->setAnchor({ 0.5f, 0.0f });
 	node->setPivot({ 0.5f, 1.0f });
-	node->runAction(Actions::Collection::MakeSequence(
-		Actions::Collection::MakeParallel(
-			Actions::Collection::ChangeVerticalPivot(node, 0.5f, 0.25f, Easing::CubicOut),
-			Actions::Collection::ChangeVerticalAnchor(node, 0.125f, 0.25f, Easing::CubicOut)
+	node->runAction(sky::Actions::Sequence(
+		sky::Actions::Concurrent(
+			sky::Actions::ChangeVerticalPivot(node, 0.5f, 0.25f, Easing::CubicOut),
+			sky::Actions::ChangeVerticalAnchor(node, 0.125f, 0.25f, Easing::CubicOut)
 		),
-		Actions::Collection::Wait(0.25f),
-		Actions::Collection::Execute([node] {
+		sky::Actions::Wait(0.25f),
+		[node] {
 			node->showTada();
-		}),
-		Actions::Collection::Wait(2.0f),
-		Actions::Collection::MakeParallel(
-			Actions::Collection::ChangeVerticalPivot(node, 1.0f, 0.25f, Easing::CubicIn),
-			Actions::Collection::ChangeVerticalAnchor(node, 0.0f, 0.25f, Easing::CubicIn)
+		},
+		sky::Actions::Wait(2.0f),
+		sky::Actions::Concurrent(
+			sky::Actions::ChangeVerticalPivot(node, 1.0f, 0.25f, Easing::CubicIn),
+			sky::Actions::ChangeVerticalAnchor(node, 0.0f, 0.25f, Easing::CubicIn)
 		),
-		Actions::Collection::Kill(node)
+		sky::Actions::Kill(node)
 	));
 	sky::GetService<Scene::Scene>()->getRoot()->attach(node);
 }
@@ -259,7 +258,7 @@ void Application::showCheats()
 				auto& progress = ACHIEVEMENTS->getProgress(item.name);
 				progress = item.required;
 			}
-			PROFILE->saveAsync();
+			PROFILE->save();
 		}
 
 		if (ImGui::Button("FAKE ACHIEVEMENT EARNED EVENT"))
