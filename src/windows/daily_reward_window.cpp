@@ -9,28 +9,21 @@ DailyRewardWindow::DailyRewardWindow(int current_day)
 	setCloseOnMissclick(false);
 
 	auto makePlashka = [this, current_day](int day) {
-		auto [holder, collection] = Shared::SceneHelpers::CreateNodesFromXml(R"(
+		auto [holder, collection] = Shared::SceneHelpers::CreateNodesFromXml(fmt::format(R"(
 			<Node size="74,96">
-				<Rectangle id="rect" stretch="1" anchor="0.5" pivot="0.5" margin="4" rounding="4" absolute_rounding="true" alpha="0.66">
-					<Label id="title" font_size="16" anchor="0.5,0" pivot="0.5,0" y="4"/>
-					<Sprite id="img" anchor="0.5" pivot="0.5" size="36" texture="textures/dailyreward_rubies.png"/>
-					<Label id="value" font_size="16" anchor="0.5,1" pivot="0.5,1" y="-4"/>
+				<Rectangle id="rect" stretch="1" anchor="0.5" pivot="0.5" margin="4" rounding="4" absolute_rounding="true" alpha="0.66" batch_group="daily_reward_item">
+					<Label font_size="16" anchor="0.5,0" pivot="0.5,0" y="4" text="{title_text}"/>
+					<Sprite anchor="0.5" pivot="0.5" size="36" texture="textures/dailyreward_rubies.png" batch_group="daily_reward_img"/>
+					<Label font_size="16" anchor="0.5,1" pivot="0.5,1" y="-4" text="{value_text}"/>
 				</Rectangle>
 			</Node>
-		)");
+		)",
+			fmt::arg("title_text", sky::to_string(sky::format(sky::Localize("DAILYREWARD_DAY"), day))),
+			fmt::arg("value_text", DailyRewardMap.at(day))
+		));
 
 		auto rect = std::static_pointer_cast<Scene::Rectangle>(collection.at("rect"));
-		rect->setBatchGroup(fmt::format("plashka_rect_{}", (size_t)this));
 		rect->setColor(glm::rgbColor(glm::vec3(sky::HsvColors::HueGreen, day <= current_day ? 0.33f : 0.0f, 0.5f)));
-
-		auto title = std::static_pointer_cast<Scene::Label>(collection.at("title"));
-		title->setText(sky::format(sky::Localize("DAILYREWARD_DAY"), day));
-
-		auto img = std::static_pointer_cast<Scene::Sprite>(collection.at("img"));
-		img->setBatchGroup(fmt::format("plashka_img_{}", (size_t)this));
-
-		auto value = std::static_pointer_cast<Scene::Label>(collection.at("value"));
-		value->setText(std::to_wstring(DailyRewardMap.at(day)));
 
 		if (day == current_day)
 		{
