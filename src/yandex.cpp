@@ -1,5 +1,5 @@
 #include "yandex.h"
-#ifdef EMSCRIPTEN
+#ifdef PLATFORM_EMSCRIPTEN
 #include <emscripten.h>
 #endif
 
@@ -10,7 +10,7 @@ using namespace hcg001;
 void Yandex::InitSdk()
 {
 	sky::Log("Yandex::InitSdk()");
-#if defined(EMSCRIPTEN) & defined(YANDEX)
+#if defined(PLATFORM_EMSCRIPTEN) & defined(YANDEX)
 	EM_ASM(
 		var script = document.createElement('script');
 		script.src = '/sdk.js';
@@ -37,7 +37,7 @@ void Yandex::InitSdk()
 
 void Yandex::GameplayStart()
 {
-#if defined(EMSCRIPTEN) & defined(YANDEX)
+#if defined(PLATFORM_EMSCRIPTEN) & defined(YANDEX)
 	EM_ASM(
 		window.ysdk.features.GameplayAPI.start();
 	);
@@ -46,7 +46,7 @@ void Yandex::GameplayStart()
 
 void Yandex::GameplayStop()
 {
-#if defined(EMSCRIPTEN) & defined(YANDEX)
+#if defined(PLATFORM_EMSCRIPTEN) & defined(YANDEX)
 	EM_ASM(
 		window.ysdk.features.GameplayAPI.stop();
 	);
@@ -55,7 +55,7 @@ void Yandex::GameplayStop()
 
 void Yandex::SendHighScore(int value)
 {
-#if defined(EMSCRIPTEN) & defined(YANDEX)
+#if defined(PLATFORM_EMSCRIPTEN) & defined(YANDEX)
 	EM_ASM({
 		let score = $0;
 		window.ylb.getLeaderboardPlayerEntry('score').then(res => {
