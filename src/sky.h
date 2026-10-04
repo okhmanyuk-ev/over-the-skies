@@ -26,6 +26,10 @@ namespace hcg001
 		std::shared_ptr<Scene::Node> mStarsTopRight;
 		std::shared_ptr<Scene::Node> mAsteroidsHolder;
 
+		std::optional<sky::CVar<bool>> mCVarBloomEnabled;
+		std::optional<sky::CVar<float>> mCVarBloomIntensity;
+		std::optional<sky::CVar<float>> mCVarBloomBrightThreshold;
+
 	private:
 		glm::vec2 mLastPos = { 0.0f, 0.0f };
 	};

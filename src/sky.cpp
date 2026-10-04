@@ -31,14 +31,17 @@ Sky::Sky()
 	mBloomLayer->setIntensity(2.0f);
 	attach(mBloomLayer);
 
-	//sky::GetService<sky::CommandProcessor>()->registerCVar("r_bloom_enabled", { "bool" }, CVAR_GETTER_BOOL_FUNC(mBloomLayer->isPostprocessEnabled),
-	//	CVAR_SETTER_BOOL_FUNC(mBloomLayer->setPostprocessEnabled));
-	//
-	//sky::GetService<sky::CommandProcessor>()->registerCVar("r_bloom_intensity", { "float" }, CVAR_GETTER_FLOAT_FUNC(mBloomLayer->getIntensity),
-	//	CVAR_SETTER_FLOAT_FUNC(mBloomLayer->setIntensity));
-	//
-	//sky::GetService<sky::CommandProcessor>()->registerCVar("r_bloom_bright_threshold", { "float" }, CVAR_GETTER_FLOAT_FUNC(mBloomLayer->getBrightThreshold),
-	//	CVAR_SETTER_FLOAT_FUNC(mBloomLayer->setBrightThreshold));
+	mCVarBloomEnabled.emplace("r_bloom_enabled",
+		std::bind(&Scene::BloomLayer::isPostprocessEnabled, mBloomLayer),
+		std::bind(&Scene::BloomLayer::setPostprocessEnabled, mBloomLayer, std::placeholders::_1));
+
+	mCVarBloomIntensity.emplace("r_bloom_intensity",
+		std::bind(&Scene::BloomLayer::getIntensity, mBloomLayer),
+		std::bind(&Scene::BloomLayer::setIntensity, mBloomLayer, std::placeholders::_1));
+
+	mCVarBloomBrightThreshold.emplace("r_bloom_bright_threshold",
+		std::bind(&Scene::BloomLayer::getBrightThreshold, mBloomLayer),
+		std::bind(&Scene::BloomLayer::setBrightThreshold, mBloomLayer, std::placeholders::_1));
 
 	// stars holder
 
