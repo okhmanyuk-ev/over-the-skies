@@ -166,12 +166,13 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 	progressbar->getProgressContent()->setBatchGroup("achievement_progressbar_content");
 	rect->attach(progressbar);
 
-	auto ruby = std::make_shared<hcg001::Adaptive<Scene::Sprite>>();
+	auto ruby = std::make_shared<Scene::Sprite>();
 	ruby->setTexture(sky::GetTexture("textures/ruby.png"));
+	ruby->applyTextureSize();
+	Helpers::FitToSize(ruby, 12.0f);
 	ruby->setAnchor({ 0.0f, 0.5f });
 	ruby->setPivot({ 1.0f, 0.5f });
 	ruby->setX(-3.0f);
-	ruby->setAdaptSize(12.0f);
 	ruby->setBatchGroup("achievement_ruby");
 
 	mButtonHolder = std::make_shared<Scene::Node>();
@@ -192,8 +193,6 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 		PROFILE->save();
 
 		ruby->setBatchGroup("");
-		ruby->setAdaptingEnabled(false);
-		ruby->bakeAdaption();
 		RubiesIndicator->collectRubyAnim(ruby);
 		refresh(true);
 	});
@@ -206,11 +205,12 @@ AchievementsWindow::Item::Item(int num, const std::string& name) : mName(name)
 
 	mButton->getLabel()->attach(ruby);
 
-	mCheck = std::make_shared<hcg001::Adaptive<Scene::Sprite>>();
+	mCheck = std::make_shared<Scene::Sprite>();
 	mCheck->setTexture(sky::GetTexture("textures/check.png"));
+	mCheck->applyTextureSize();
+	Helpers::FitToSize(mCheck, 32.0f);
 	mCheck->setAnchor(0.5f);
 	mCheck->setPivot(0.5f);
-	mCheck->setAdaptSize(32.0f);
 	mCheck->setBatchGroup("achievement_check");
 	mButtonHolder->attach(mCheck);
 

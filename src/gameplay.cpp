@@ -4,7 +4,6 @@
 #include "achievements.h"
 #include "gameover_menu.h"
 #include "yandex.h"
-#include "adaptive.h"
 
 using namespace hcg001;
 
@@ -293,9 +292,7 @@ void Gameplay::collide(std::shared_ptr<Plane> plane)
 		float delay = 0.0f;
 		for (auto ruby : plane->getRubies())
 		{
-			auto _ruby = std::static_pointer_cast<hcg001::Adaptive<Scene::Sprite>>(ruby);
-			_ruby->bakeAdaption();
-			_ruby->setAdaptingEnabled(false);
+			auto _ruby = std::static_pointer_cast<Scene::Sprite>(ruby);
 			PROFILE->increaseRubies(1);
 			mRubiesIndicator->collectRubyAnim(_ruby, delay);
 			mRubiesCollected += 1;
@@ -420,10 +417,11 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 
 		if (tripple_ruby)
 		{
-			auto left_ruby = std::make_shared<hcg001::Adaptive<Scene::Sprite>>();
-			left_ruby->setAdaptSize(14.0f);
+			auto left_ruby = std::make_shared<Scene::Sprite>();
 			left_ruby->setBatchGroup("plane_ruby");
 			left_ruby->setTexture(sky::GetTexture("textures/ruby.png"));
+			left_ruby->applyTextureSize();
+			Helpers::FitToSize(left_ruby, 14.0f);
 			left_ruby->setPivot({ 1.25f, 1.0f });
 			left_ruby->setAnchor({ 0.5f, 0.0f });
 			left_ruby->setPosition({ 0.0f, -6.0f });
@@ -431,10 +429,11 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 			plane->attach(left_ruby);
 			addEmitterForRuby(left_ruby);
 
-			auto right_ruby = std::make_shared<hcg001::Adaptive<Scene::Sprite>>();
-			right_ruby->setAdaptSize(14.0f);
+			auto right_ruby = std::make_shared<Scene::Sprite>();
 			right_ruby->setBatchGroup("plane_ruby");
 			right_ruby->setTexture(sky::GetTexture("textures/ruby.png"));
+			right_ruby->applyTextureSize();
+			Helpers::FitToSize(right_ruby, 14.0f);
 			right_ruby->setPivot({ -0.25f, 1.0f });
 			right_ruby->setAnchor({ 0.5f, 0.0f });
 			right_ruby->setPosition({ 0.0f, -6.0f });
@@ -443,10 +442,11 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 			addEmitterForRuby(right_ruby);
 		}
 
-		auto ruby = std::make_shared<hcg001::Adaptive<Scene::Sprite>>();
-		ruby->setAdaptSize(18.0f);
+		auto ruby = std::make_shared<Scene::Sprite>();
 		ruby->setBatchGroup("plane_ruby");
 		ruby->setTexture(sky::GetTexture("textures/ruby.png"));
+		ruby->applyTextureSize();
+		Helpers::FitToSize(ruby, 18.0f);
 		ruby->setPivot({ 0.5f, 1.0f });
 		ruby->setAnchor({ 0.5f, 0.0f });
 		ruby->setPosition({ 0.0f, -4.0f });
@@ -457,10 +457,11 @@ void Gameplay::spawnPlane(const glm::vec2& pos, float anim_delay, std::optional<
 
 	if (bonus == PlaneBonus::Magnet)
 	{
-		auto magnet = std::make_shared<hcg001::Adaptive<Scene::Sprite>>();
-		magnet->setAdaptSize(20.0f);
+		auto magnet = std::make_shared<Scene::Sprite>();
 		magnet->setBatchGroup("plane_magnet");
 		magnet->setTexture(sky::GetTexture("textures/magnet.png"));
+		magnet->applyTextureSize();
+		Helpers::FitToSize(magnet, 20.0f);
 		magnet->setPivot({ 0.5f, 1.0f });
 		magnet->setAnchor({ 0.5f, 0.0f });
 		magnet->setPosition({ 0.0f, -4.0f });

@@ -4,7 +4,6 @@
 #include "profile.h"
 #include "achievements.h"
 #include "sky.h"
-#include "adaptive.h"
 
 namespace hcg001
 {
@@ -40,7 +39,6 @@ namespace hcg001::Helpers
 	};
 
 	using SpriteButton = Shared::SceneHelpers::BouncingButtonBehavior<Shared::SceneHelpers::SpriteButton>;
-	using AdaptiveSpriteButton = Shared::SceneHelpers::BouncingButtonBehavior<hcg001::Adaptive<Shared::SceneHelpers::SpriteButton>>;
 
 	class AchievementNotify : public Scene::ClippableStencil<Scene::Rectangle>
 	{
@@ -54,7 +52,7 @@ namespace hcg001::Helpers
 		void showTada();
 
 	private:
-		std::shared_ptr<hcg001::Adaptive<Scene::Sprite>> mTada;
+		std::shared_ptr<Scene::Sprite> mTada;
 	};
 
 	class RubiesIndicator : public Scene::Sprite,
@@ -83,4 +81,7 @@ namespace hcg001::Helpers
 	private:
 		bool mInstantRefresh = true;
 	};
+
+	void FitToSize(std::shared_ptr<Scene::Sprite> node, const glm::vec2& size);
+	void FitToSize(std::shared_ptr<Scene::Sprite> node, float size);
 }

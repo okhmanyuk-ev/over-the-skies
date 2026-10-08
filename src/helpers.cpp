@@ -26,9 +26,10 @@ AchievementNotify::AchievementNotify(const Achievements::Item& item)
 	setRounding(1.0f);
 	setColor(Pallete::WindowItem);
 
-	mTada = std::make_shared<hcg001::Adaptive<Scene::Sprite>>();
+	mTada = std::make_shared<Scene::Sprite>();
 	mTada->setTexture(sky::GetTexture("textures/tada.png"));
-	mTada->setAdaptSize(32.0f);
+	mTada->applyTextureSize();
+	FitToSize(mTada, 32.0f);
 	mTada->setAnchor({ 0.0f, 0.5f });
 	mTada->setPivot(0.5f);
 	mTada->setPosition({ 38.0f, 0.0f });
@@ -168,4 +169,16 @@ void RubiesIndicator::hide()
 {
 	runAction(sky::Actions::Hide(shared_from_this(), 0.25f));
 	runAction(sky::Actions::Hide(mLabel, 0.25f));
+}
+
+void hcg001::Helpers::FitToSize(std::shared_ptr<Scene::Sprite> node, const glm::vec2& size)
+{
+	auto scale = size / node->getSize();
+	auto min_scale = glm::min(scale.x, scale.y);
+	node->setSize(node->getSize() * min_scale);
+}
+
+void hcg001::Helpers::FitToSize(std::shared_ptr<Scene::Sprite> node, float size)
+{
+	FitToSize(node, glm::vec2{ size, size });
 }

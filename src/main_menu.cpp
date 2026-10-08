@@ -5,7 +5,6 @@
 #include "gameplay.h"
 #include "gameover_menu.h"
 #include "buy_skin_menu.h"
-#include "adaptive.h"
 
 using namespace hcg001;
 
@@ -122,9 +121,10 @@ MainMenu::MainMenu()
 	});
     getGui()->attach(shop_button);*/
 
-	auto achievements_button = std::make_shared<Helpers::AdaptiveSpriteButton>();
+	auto achievements_button = std::make_shared<Helpers::SpriteButton>();
 	achievements_button->setTexture(sky::GetTexture("textures/cup.png"));
-	achievements_button->setAdaptSize(TopButtonSize);
+	achievements_button->applyTextureSize();
+	Helpers::FitToSize(achievements_button, TopButtonSize);
 	achievements_button->setPosition({ 168.0f, 24.0f });
 	achievements_button->setPivot({ 0.0f, 0.5f });
 	achievements_button->setActiveCallback([] {
@@ -213,10 +213,11 @@ std::vector<std::shared_ptr<Scene::Node>> MainMenu::createScrollItems()
 		if (locked)
 			image->setColor({ 0.5f, 0.5f, 0.5f });
 
-		auto padlock = std::make_shared<hcg001::Adaptive<Scene::Sprite>>();
+		auto padlock = std::make_shared<Scene::Sprite>();
 		padlock->setBatchGroup("main_menu_item_padlock");
 		padlock->setTexture(sky::GetTexture("textures/padlock.png"));
-		padlock->setAdaptSize(18.0f);
+		padlock->applyTextureSize();
+		Helpers::FitToSize(padlock, 18.0f);
 		padlock->setAnchor({ 0.5f, 0.0f });
 		padlock->setPivot({ 0.5f, 1.0f });
 		padlock->setPosition({ 0.0f, -16.0f });
