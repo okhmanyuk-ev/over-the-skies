@@ -173,9 +173,8 @@ void RubiesIndicator::hide()
 
 void hcg001::Helpers::FitToSize(std::shared_ptr<Scene::Sprite> node, const glm::vec2& size)
 {
-	auto scale = size / node->getSize();
-	auto min_scale = glm::min(scale.x, scale.y);
-	node->setSize(node->getSize() * min_scale);
+	auto scale = sky::CalculateScaleToFit(sky::FitMode::MinimalEdge, node->getSize(), size);
+	node->setSize(node->getSize() * scale);
 }
 
 void hcg001::Helpers::FitToSize(std::shared_ptr<Scene::Sprite> node, float size)
